@@ -5,7 +5,7 @@ import LoginSignup from './LoginSignup.js';
 import HomePage from './HomePage.js';
 
 const App = () => {
-const [currentPage, setCurrentPage] = useState('LoginSignup');
+const [currentPage, setCurrentPage] = useState('HomePage');
 
   const renderPage = () => {
     switch(currentPage) {
