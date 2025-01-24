@@ -1,8 +1,8 @@
-import * as React from "react";
 import { Image } from "expo-image";
+import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Subtract from "../assets/subtract.svg";
-import { Color, FontSize, FontFamily } from "../GlobalStyles";
+import { Color, FontFamily, FontSize } from "../GlobalStyles";
 
 const LoadingScreen = () => {
   return (
