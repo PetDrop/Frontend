@@ -1,11 +1,11 @@
-import React, { useMemo } from "react";
-import { StyleSheet, View, Text } from "react-native";
 import { Image } from "expo-image";
-import Polygon1 from "../assets/polygon-1.svg";
+import React, { useMemo } from "react";
+import { StyleSheet, View } from "react-native";
 import Group39 from "../assets/group-39.svg";
 import Group40 from "../assets/group-40.svg";
+import Polygon1 from "../assets/polygon-1.svg";
 import Polygon12 from "../assets/polygon-12.svg";
-import { Border, Color, FontSize, FontFamily } from "../GlobalStyles";
+import { Border, Color, FontFamily, FontSize } from "../GlobalStyles";
 
 export type GroupComponent1Type = {
   /** Style props */
@@ -27,24 +27,6 @@ const GroupComponent1 = ({ groupViewLeft }: GroupComponent1Type) => {
     <View style={[styles.groupParent, groupViewStyle]}>
       <View style={styles.rectangleParent}>
         <View style={styles.groupChild} />
-        <Text style={styles.text}>9:53</Text>
-        <View style={styles.groupContainer}>
-          <View style={styles.rectangleGroup}>
-            <View style={styles.groupItem} />
-            <View style={styles.groupInner} />
-            <View style={styles.rectangleView} />
-          </View>
-          <View style={[styles.rectangleContainer, styles.groupChild1Position]}>
-            <View style={[styles.groupChild1, styles.groupChildLayout1]} />
-            <View style={[styles.groupChild2, styles.groupChildLayout1]} />
-            <View style={[styles.groupChild3, styles.groupLayout]} />
-          </View>
-          <Image
-            style={[styles.groupIcon, styles.groupLayout]}
-            contentFit="cover"
-            source={require("../assets/group-231.png")}
-          />
-        </View>
       </View>
       <View style={styles.instanceChild} />
       <View style={[styles.groupView, styles.groupViewPosition]}>
