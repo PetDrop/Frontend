@@ -31,6 +31,7 @@ const App = () => {
       <NavigationContainer>
         {hideSplashScreen ? (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {/* first screen shown is the one rendered by default */}
             <Stack.Screen
               name="Home"
               component={Home}
