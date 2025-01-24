@@ -31,7 +31,12 @@ const App = () => {
       <NavigationContainer>
         {hideSplashScreen ? (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
-            {/* first screen shown is the one rendered by default */}
+            {/* first screen listed is the one rendered by default */}
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen
               name="Home"
               component={Home}
@@ -40,11 +45,6 @@ const App = () => {
             <Stack.Screen
               name="PetInfo1"
               component={PetInfo1}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Login"
-              component={Login}
               options={{ headerShown: false }}
             />
             <Stack.Screen

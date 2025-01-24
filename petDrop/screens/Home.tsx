@@ -1,12 +1,16 @@
 import * as React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Button } from "react-native";
 import { Image } from "expo-image";
 import Subtract3 from "../assets/subtract3.svg";
 import Group8 from "../assets/group-8.svg";
 import GroupComponent1 from "../components/GroupComponent1";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 
-const Home = () => {
+type HomeType = {
+  navigation: any;
+}
+
+const Home = (props: HomeType) => {
   return (
     <View style={styles.home}>
       <View style={[styles.homeChild, styles.homePosition]} />
@@ -85,7 +89,7 @@ const Home = () => {
         <View style={[styles.groupChild1, styles.groupPosition]} />
         <Text style={styles.medications}>MEDICATIONS</Text>
       </View>
-      <GroupComponent1 />
+      <GroupComponent1 navigation = {props.navigation}/>
     </View>
   );
 };

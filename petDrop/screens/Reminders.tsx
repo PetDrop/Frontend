@@ -4,7 +4,11 @@ import GroupComponent from "../components/GroupComponent";
 import GroupComponent1 from "../components/GroupComponent1";
 import { FontFamily, Color, FontSize, Border } from "../GlobalStyles";
 
-const Reminders = () => {
+type RemindersType = {
+  navigation: any;
+}
+
+const Reminders = (props: RemindersType) => {
   return (
     <View style={styles.reminders}>
       <Text
@@ -42,7 +46,7 @@ Message: “1 pill”`}</Text>
       <Text style={[styles.neverMissA, styles.datesTypo]}>
         NEVER MISS A DROP.
       </Text>
-      <GroupComponent1 />
+      <GroupComponent1 navigation = {props.navigation}/>
     </View>
   );
 };

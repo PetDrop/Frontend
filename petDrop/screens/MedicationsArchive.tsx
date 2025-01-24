@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Pressable } from "react-native";
 import { Image } from "expo-image";
 import Ellipse5 from "../assets/ellipse-5.svg";
 import Subtract2 from "../assets/subtract2.svg";
@@ -7,7 +7,11 @@ import GroupComponent3 from "../components/GroupComponent3";
 import GroupComponent1 from "../components/GroupComponent1";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 
-const MedicationsArchive = () => {
+type MedicationsArchiveType = {
+  navigation: any;
+}
+
+const MedicationsArchive = (props: MedicationsArchiveType) => {
   return (
     <View style={styles.medicationsArchive}>
       <View style={styles.medicationsArchiveChild} />
@@ -17,7 +21,9 @@ const MedicationsArchive = () => {
       </Text>
       <Text style={[styles.medications, styles.petdropTypo]}>Medications</Text>
       <Text style={[styles.text, styles.textTypo]}>{`>`}</Text>
-      <Text style={[styles.switch, styles.textTypo]}>SWITCH</Text>
+      <Pressable onPress={() => {props.navigation.navigate("MedicationsArchive1")}}>
+        <Text style={[styles.switch, styles.textTypo]}>SWITCH</Text>
+      </Pressable>
       <Ellipse5 style={styles.medicationsArchiveItem} width={32} height={32} />
       <Image
         style={styles.untitledArtwork52Copy3}
@@ -45,7 +51,7 @@ R/l Eye: right/left/both
 Notifications: 6am + 6pm
 Message: “2 drops”
 Other:`}</Text>
-      <GroupComponent1 groupViewLeft={1} />
+      <GroupComponent1 groupViewLeft={1} navigation = {props.navigation}/>
     </View>
   );
 };

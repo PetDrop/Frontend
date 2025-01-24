@@ -6,7 +6,11 @@ import Group8 from "../assets/group-8.svg";
 import GroupComponent1 from "../components/GroupComponent1";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 
-const PetInfo = () => {
+type PetInfoType = {
+  navigation: any;
+}
+
+const PetInfo = (props: PetInfoType) => {
   return (
     <View style={styles.petInfo}>
       <Image
@@ -14,7 +18,7 @@ const PetInfo = () => {
         contentFit="cover"
         source={require("../assets/untitled-artwork-52-copy-1.png")}
       />
-      <Subtract style={styles.subtractIcon} width={146} height={146} />
+      <Subtract style={styles.subtractIcon1} width={146} height={146} />
       <Text style={[styles.sparky, styles.blueTypo1]}>Sparky</Text>
       <Text style={[styles.age8Breed, styles.breedTypo]}>{`Age: 8
 Breed: Lab
@@ -27,7 +31,7 @@ Vet: Dog inc.
         contentFit="cover"
         source={require("../assets/untitled-artwork-52-copy-2.png")}
       />
-      <Subtract width={146} height={146} />
+      <Subtract style={styles.subtractIcon2} width={146} height={146} />
       <Text style={[styles.blue, styles.blueTypo1]}>Blue</Text>
       <Text style={[styles.age12Breed, styles.breedTypo]}>{`Age: 12
 Breed: Lab
@@ -93,7 +97,7 @@ Vet: Dog inc.
       />
       <Text style={[styles.petdrop, styles.blueTypo1]}>petdrop.</Text>
       <Text style={styles.neverMissA}>NEVER MISS A DROP.</Text>
-      <GroupComponent1 />
+      <GroupComponent1 navigation = {props.navigation}/>
     </View>
   );
 };
@@ -198,7 +202,14 @@ const styles = StyleSheet.create({
   untitledArtwork52Copy1: {
     top: 210,
   },
-  subtractIcon: {},
+  subtractIcon1: {
+    top: 190,
+    left: 10,
+  },
+  subtractIcon2: {
+    top: 430,
+    left: 10,
+  },
   sparky: {
     top: 190,
     fontSize: FontSize.size_17xl,
