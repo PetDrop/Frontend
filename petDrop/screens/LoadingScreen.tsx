@@ -1,7 +1,8 @@
-import * as React from "react";
 import { Image } from "expo-image";
+import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Color, FontSize, FontFamily } from "../GlobalStyles";
+import Subtract from "../assets/subtract.svg";
+import { Color, FontFamily, FontSize } from "../GlobalStyles";
 
 const LoadingScreen = () => {
   return (
@@ -11,11 +12,7 @@ const LoadingScreen = () => {
         contentFit="cover"
         source={require("../assets/untitled-artwork-52-copy-1.png")}
       />
-      <Image
-        style={styles.subtractIcon}
-        contentFit="cover"
-        source={require("../assets/subtract.png")}
-      />
+      <Subtract style={styles.subtractIcon} width={146} height={146} />
       <Text style={[styles.petdrop, styles.petdropFlexBox]}>petdrop.</Text>
       <Text style={[styles.neverMissA, styles.petdropFlexBox]}>
         NEVER MISS A DROP.
@@ -37,10 +34,7 @@ const styles = StyleSheet.create({
     height: 128,
     position: "absolute",
   },
-  subtractIcon: {
-    width: 146,
-    height: 146,
-  },
+  subtractIcon: {},
   petdrop: {
     top: 449,
     left: 75,
