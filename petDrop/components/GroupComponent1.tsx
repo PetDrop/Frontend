@@ -30,12 +30,12 @@ const GroupComponent1 = (props: GroupComponent1Type) => {
         <View style={styles.groupChild} />
       </View>
       <View style={styles.instanceChild} />
-      {/* <Pressable onPress={() => {props.navigation.navigate("Home")}}> */}
+      <Pressable onPress={() => {props.navigation.navigate("Home")}} style={styles.pressable}>
         <View style={[styles.groupView, styles.groupViewPosition]}>
           <Polygon1 style={styles.polygonIcon} width={20} height={15} />
           <View style={styles.groupChild4} />
         </View>
-      {/* </Pressable> */}
+      </Pressable>
       <View style={[styles.rectangleParent1, styles.groupViewPosition]}>
         <View style={[styles.groupChild5, styles.groupChildLayout]} />
         <View style={[styles.groupChild6, styles.groupChildLayout]} />
@@ -73,6 +73,12 @@ const GroupComponent1 = (props: GroupComponent1Type) => {
 };
 
 const styles = StyleSheet.create({
+  pressable: {
+    left: 5,
+    height: 50,
+    width: 390,
+    position: "absolute",
+  },
   groupChild1Position: {
     width: 22,
     top: 0,
