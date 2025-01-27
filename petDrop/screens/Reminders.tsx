@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Text, StyleSheet, View } from "react-native";
-import GroupComponent from "../components/GroupComponent";
-import GroupComponent1 from "../components/GroupComponent1";
+import MedicationInfo from "../components/MedicationInfo2";
+import TopBottomBar from "../components/TopBottomBar";
 import { FontFamily, Color, FontSize, Border } from "../GlobalStyles";
 
 type RemindersType = {
@@ -31,13 +31,13 @@ Message: “1 pill”`}</Text>
           <View style={[styles.groupInner, styles.groupLayout]} />
         </View>
       </View>
-      <GroupComponent eyeDropsSPARKY="Eye drops: SPARKY " />
-      <GroupComponent
+      <MedicationInfo eyeDropsSPARKY="Eye drops: SPARKY " />
+      <MedicationInfo
         eyeDropsSPARKY="Antibiotics: Blue "
         groupViewTop={362}
         rectangleViewBackgroundColor="#ffc635"
       />
-      <GroupComponent
+      <MedicationInfo
         eyeDropsSPARKY="Heartgard: Blue"
         groupViewTop={490}
         rectangleViewBackgroundColor="#a0c66f"
@@ -46,7 +46,7 @@ Message: “1 pill”`}</Text>
       <Text style={[styles.neverMissA, styles.datesTypo]}>
         NEVER MISS A DROP.
       </Text>
-      <GroupComponent1 navigation = {props.navigation}/>
+      <TopBottomBar navigation = {props.navigation}/>
     </View>
   );
 };

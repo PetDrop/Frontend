@@ -1,9 +1,9 @@
 import * as React from "react";
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
-import Subtract from "../assets/subtract.svg";
-import Group8 from "../assets/group-8.svg";
-import GroupComponent1 from "../components/GroupComponent1";
+import BlueCircleBig from "../assets/blue_circle_big.svg";
+import EditIcon from "../assets/edit_icon.svg";
+import TopBottomBar from "../components/TopBottomBar";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 
 type PetInfoType = {
@@ -16,9 +16,9 @@ const PetInfo = (props: PetInfoType) => {
       <Image
         style={[styles.untitledArtwork52Copy1, styles.untitledLayout]}
         contentFit="cover"
-        source={require("../assets/untitled-artwork-52-copy-1.png")}
+        source={require("../assets/blue_dog_big.png")}
       />
-      <Subtract style={styles.subtractIcon1} width={146} height={146} />
+      <BlueCircleBig style={styles.subtractIcon1} width={146} height={146} />
       <Text style={[styles.sparky, styles.blueTypo1]}>Sparky</Text>
       <Text style={[styles.age8Breed, styles.breedTypo]}>{`Age: 8
 Breed: Lab
@@ -29,9 +29,9 @@ Vet: Dog inc.
       <Image
         style={[styles.untitledArtwork52Copy2, styles.untitledLayout]}
         contentFit="cover"
-        source={require("../assets/untitled-artwork-52-copy-2.png")}
+        source={require("../assets/pink_dog_big.png")}
       />
-      <Subtract style={styles.subtractIcon2} width={146} height={146} />
+      <BlueCircleBig style={styles.subtractIcon2} width={146} height={146} />
       <Text style={[styles.blue, styles.blueTypo1]}>Blue</Text>
       <Text style={[styles.age12Breed, styles.breedTypo]}>{`Age: 12
 Breed: Lab
@@ -85,19 +85,19 @@ Vet: Dog inc.
           style={[styles.addNewPet, styles.addPosition]}
         >{`Add New pet `}</Text>
       </View>
-      <Group8
+      <EditIcon
         style={[styles.groupIcon, styles.groupIconLayout]}
         width={29}
         height={29}
       />
-      <Group8
+      <EditIcon
         style={[styles.petInfoChild4, styles.groupIconLayout]}
         width={29}
         height={29}
       />
       <Text style={[styles.petdrop, styles.blueTypo1]}>petdrop.</Text>
       <Text style={styles.neverMissA}>NEVER MISS A DROP.</Text>
-      <GroupComponent1 navigation = {props.navigation}/>
+      <TopBottomBar navigation = {props.navigation}/>
     </View>
   );
 };

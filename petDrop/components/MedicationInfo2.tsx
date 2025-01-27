@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Image } from "expo-image";
-import Group8 from "../assets/group-8.svg";
+import EditIcon from "../assets/edit_icon.svg";
 import { Color, FontFamily, Border, FontSize } from "../GlobalStyles";
 
-export type GroupComponentType = {
+export type MedicationInfo2Type = {
   eyeDropsSPARKY?: string;
 
   /** Style props */
@@ -16,11 +16,11 @@ const getStyleValue = (key: string, value: string | number | undefined) => {
   if (value === undefined) return;
   return { [key]: value === "unset" ? undefined : value };
 };
-const GroupComponent = ({
+const MedicationInfo2 = ({
   eyeDropsSPARKY,
   groupViewTop,
   rectangleViewBackgroundColor,
-}: GroupComponentType) => {
+}: MedicationInfo2Type) => {
   const groupView1Style = useMemo(() => {
     return {
       ...getStyleValue("top", groupViewTop),
@@ -46,7 +46,7 @@ const GroupComponent = ({
 Notifications: 6am + 6pm
 Message: “2 drops”`}</Text>
       <View style={[styles.groupInner, rectangleViewStyle]} />
-      <Group8 style={styles.groupIcon} width={29} height={29} />
+      <EditIcon style={styles.groupIcon} width={29} height={29} />
     </View>
   );
 };
@@ -109,4 +109,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GroupComponent;
+export default MedicationInfo2;
