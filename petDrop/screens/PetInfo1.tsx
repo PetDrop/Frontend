@@ -1,15 +1,19 @@
 import * as React from "react";
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
-import Subtract from "../assets/subtract.svg";
-import GroupComponent2 from "../components/GroupComponent2";
-import GroupComponent1 from "../components/GroupComponent1";
+import BlueCircleBig from "../assets/blue_circle_big.svg";
+import AddButtons from "../components/PetInfo1AddButtons";
+import TopBottomBar from "../components/TopBottomBar";
 import { FontFamily, Color, FontSize, Border } from "../GlobalStyles";
 
-const PetInfo1 = () => {
+type PetInfo1Type = {
+  navigation: any;
+}
+
+const PetInfo1 = (props: PetInfo1Type) => {
   return (
     <View style={styles.petInfo}>
-      <Subtract style={styles.subtractIcon} width={146} height={146} />
+      <BlueCircleBig style={styles.subtractIcon} width={146} height={146} />
       <Text style={[styles.name, styles.nameTypo]}>Name</Text>
       <Text style={[styles.medications, styles.addPetTypo]}>Medications:</Text>
       <View style={[styles.rectangleParent, styles.groupChildLayout]}>
@@ -29,8 +33,8 @@ const PetInfo1 = () => {
         <View style={[styles.groupChild1, styles.groupChild1Layout]} />
       </View>
       <Text style={[styles.addPet, styles.addPetTypo]}>Add Pet</Text>
-      <GroupComponent2 />
-      <GroupComponent1 />
+      <AddButtons />
+      <TopBottomBar navigation = {props.navigation}/>
     </View>
   );
 };

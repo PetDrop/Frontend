@@ -1,11 +1,17 @@
 import * as React from "react";
-import { Text, StyleSheet, View } from "react-native";
+import { Text, StyleSheet, View, Button, Pressable } from "react-native";
 import { Color, FontFamily, Border, FontSize } from "../GlobalStyles";
 
-const Login = () => {
+type LoginType = {
+  navigation: any;
+}
+
+const Login = (props: LoginType) => {
   return (
     <View style={styles.login}>
-      <Text style={[styles.login1, styles.login1Typo]}>Login</Text>
+      <Pressable onPress={() => {props.navigation.navigate("Home")}}>
+        <Text style={[styles.login1, styles.login1Typo]}>Login</Text>
+      </Pressable>
       <View style={styles.loginChild} />
       <View style={[styles.loginItem, styles.loginLayout]} />
       <View style={[styles.loginInner, styles.loginLayout]} />

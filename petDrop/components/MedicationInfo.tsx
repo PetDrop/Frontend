@@ -1,10 +1,12 @@
+/* This file and MedicationInfo2.tsx will be combined into one at some point */
+
 import * as React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Image } from "expo-image";
-import Group8 from "../assets/group-8.svg";
+import EditIcon from "../assets/edit_icon.svg";
 import { Border, Color, FontSize, FontFamily } from "../GlobalStyles";
 
-const GroupComponent3 = () => {
+const MedicationInfo = () => {
   return (
     <View style={styles.rectangleParent}>
       <View style={[styles.groupChild, styles.groupPosition]} />
@@ -13,7 +15,7 @@ const GroupComponent3 = () => {
         style={[styles.eyeDropsSparky, styles.groupIconPosition]}
       >{`Eye drops: SPARKY `}</Text>
       <View style={styles.groupInner} />
-      <Group8
+      <EditIcon
         style={[styles.groupIcon, styles.groupIconPosition]}
         width={29}
         height={29}
@@ -73,4 +75,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GroupComponent3;
+export default MedicationInfo;

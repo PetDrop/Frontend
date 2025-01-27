@@ -1,27 +1,28 @@
 import { Image } from "expo-image";
 import React, { useMemo } from "react";
-import { StyleSheet, View } from "react-native";
-import Group39 from "../assets/group-39.svg";
-import Group40 from "../assets/group-40.svg";
-import Polygon1 from "../assets/polygon-1.svg";
-import Polygon12 from "../assets/polygon-12.svg";
+import { Pressable, StyleSheet, View } from "react-native";
+import PetInfoButton from "../assets/pet_info_button.svg";
+import RemindersButton from "../assets/reminders_button.svg";
+import HouseButtonRoof from "../assets/house_button_roof.svg";
+import ShareButtonRightArrow from "../assets/share_button_right_arrow.svg";
 import { Border, Color, FontFamily, FontSize } from "../GlobalStyles";
 
-export type GroupComponent1Type = {
+export type TopBottomBarType = {
   /** Style props */
   groupViewLeft?: number | string;
+  navigation: any;
 };
 
 const getStyleValue = (key: string, value: string | number | undefined) => {
   if (value === undefined) return;
   return { [key]: value === "unset" ? undefined : value };
 };
-const GroupComponent1 = ({ groupViewLeft }: GroupComponent1Type) => {
+const TopBottomBar = (props: TopBottomBarType) => {
   const groupViewStyle = useMemo(() => {
     return {
-      ...getStyleValue("left", groupViewLeft),
+      ...getStyleValue("left", props.groupViewLeft),
     };
-  }, [groupViewLeft]);
+  }, [props.groupViewLeft]);
 
   return (
     <View style={[styles.groupParent, groupViewStyle]}>
@@ -29,30 +30,39 @@ const GroupComponent1 = ({ groupViewLeft }: GroupComponent1Type) => {
         <View style={styles.groupChild} />
       </View>
       <View style={styles.instanceChild} />
-      <View style={[styles.groupView, styles.groupViewPosition]}>
-        <View style={styles.groupChild4} />
-        <Polygon1 style={styles.polygonIcon} width={100} height={68} />
-      </View>
+      <Pressable onPress={() => {props.navigation.navigate("Home")}} style={styles.pressable}>
+        <View style={[styles.groupView, styles.groupViewPosition]}>
+          <HouseButtonRoof style={styles.polygonIcon} width={20} height={15} />
+          <View style={styles.groupChild4} />
+        </View>
+      </Pressable>
       <View style={[styles.rectangleParent1, styles.groupViewPosition]}>
         <View style={[styles.groupChild5, styles.groupChildLayout]} />
         <View style={[styles.groupChild6, styles.groupChildLayout]} />
         <View style={[styles.groupChild7, styles.groupChildLayout]} />
       </View>
-      <Group39 style={styles.instanceItem} width={27} height={21} />
-      <Group40
-        style={[styles.instanceInner, styles.groupChild10Layout]}
-        width={21}
-        height={20}
-      />
-      <Image
-        style={[styles.instanceChild1, styles.instanceChild1Position]}
-        contentFit="cover"
-        source={require("../assets/group-41.png")}
-      />
+      
+      <Pressable onPress={() => {props.navigation.navigate("PetInfo")}}>
+        <PetInfoButton style={styles.instanceItem} width={27} height={21} />
+      </Pressable>
+      <Pressable onPress={() => {props.navigation.navigate("Reminders")}}>
+        <RemindersButton
+          style={[styles.instanceInner, styles.groupChild10Layout]}
+          width={21}
+          height={20}
+        />
+      </Pressable>
+      <Pressable onPress={() => {props.navigation.navigate("MedicationsArchive")}}>
+        <Image
+          style={[styles.instanceChild1, styles.instanceChild1Position]}
+          contentFit="cover"
+          source={require("../assets/medications_button.png")}
+        />
+      </Pressable>
       <View style={[styles.rectangleParent2, styles.instanceChild1Position]}>
         <View style={[styles.groupChild8, styles.groupChildPosition]} />
         <View style={[styles.groupChild9, styles.groupChildPosition]} />
-        <Polygon12
+        <ShareButtonRightArrow
           style={[styles.groupChild10, styles.groupChild10Layout]}
           width={15}
           height={20}
@@ -63,6 +73,12 @@ const GroupComponent1 = ({ groupViewLeft }: GroupComponent1Type) => {
 };
 
 const styles = StyleSheet.create({
+  pressable: {
+    left: 5,
+    height: 50,
+    width: 390,
+    position: "absolute",
+  },
   groupChild1Position: {
     width: 22,
     top: 0,
@@ -232,8 +248,8 @@ const styles = StyleSheet.create({
     maxWidth: "100%",
     overflow: "hidden",
     maxHeight: "100%",
-    top: "0%",
-    left: "0%",
+    top: "-10%",
+    left: "15%",
     right: "0%",
     position: "absolute",
   },
@@ -283,19 +299,14 @@ const styles = StyleSheet.create({
     left: 0,
   },
   groupChild9: {
-    left: 10,
-    width: 4,
-    height: 9,
-    transform: [
-      {
-        rotate: "90deg",
-      },
-    ],
+    left: 1,
+    width: 10,
+    height: 3,
     borderRadius: Border.br_10xs,
   },
   groupChild10: {
     borderRadius: Border.br_12xs,
-    left: 3,
+    left: 8,
     top: 0,
   },
   rectangleParent2: {
@@ -312,4 +323,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GroupComponent1;
+export default TopBottomBar;
