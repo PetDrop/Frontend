@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Text, StyleSheet, View } from "react-native";
+import { Text, StyleSheet, View, Pressable } from "react-native";
 import { Image } from "expo-image";
 import Ellipse5 from "../assets/ellipse-5.svg";
 import Subtract1 from "../assets/subtract1.svg";
@@ -7,7 +7,11 @@ import GroupComponent from "../components/GroupComponent";
 import GroupComponent1 from "../components/GroupComponent1";
 import { FontFamily, Color, FontSize, Border } from "../GlobalStyles";
 
-const MedicationsArchive1 = () => {
+type MedicationsArchive1Type = {
+  navigation: any;
+}
+
+const MedicationsArchive1 = (props: MedicationsArchive1Type) => {
   return (
     <View style={styles.medicationsArchive}>
       <Text style={[styles.petdrop, styles.petdropTypo]}>petdrop.</Text>
@@ -17,7 +21,9 @@ const MedicationsArchive1 = () => {
       <Text style={[styles.medications, styles.petdropTypo]}>Medications</Text>
       <View style={styles.medicationsArchiveChild} />
       <Text style={[styles.text, styles.addTypo]}>{`>`}</Text>
-      <Text style={[styles.switch, styles.switchTypo]}>SWITCH</Text>
+      <Pressable onPress={() => {props.navigation.navigate("MedicationsArchive")}}>
+        <Text style={[styles.switch, styles.switchTypo]}>SWITCH</Text>
+      </Pressable>
       <Ellipse5 style={styles.medicationsArchiveItem} width={32} height={32} />
       <Image
         style={styles.untitledArtwork52Copy2}
@@ -44,7 +50,7 @@ const MedicationsArchive1 = () => {
           <View style={[styles.groupInner, styles.groupLayout]} />
         </View>
       </View>
-      <GroupComponent1 groupViewLeft={-1} />
+      <GroupComponent1 groupViewLeft={-1} navigation = {props.navigation}/>
     </View>
   );
 };

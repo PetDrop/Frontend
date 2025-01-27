@@ -6,7 +6,11 @@ import GroupComponent2 from "../components/GroupComponent2";
 import GroupComponent1 from "../components/GroupComponent1";
 import { FontFamily, Color, FontSize, Border } from "../GlobalStyles";
 
-const PetInfo1 = () => {
+type PetInfo1Type = {
+  navigation: any;
+}
+
+const PetInfo1 = (props: PetInfo1Type) => {
   return (
     <View style={styles.petInfo}>
       <Subtract style={styles.subtractIcon} width={146} height={146} />
@@ -30,7 +34,7 @@ const PetInfo1 = () => {
       </View>
       <Text style={[styles.addPet, styles.addPetTypo]}>Add Pet</Text>
       <GroupComponent2 />
-      <GroupComponent1 />
+      <GroupComponent1 navigation = {props.navigation}/>
     </View>
   );
 };
