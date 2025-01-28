@@ -1,10 +1,10 @@
 import * as React from "react";
 import { StyleSheet, View, Text, Pressable } from "react-native";
 import { Image } from "expo-image";
-import Ellipse5 from "../assets/ellipse-5.svg";
-import Subtract2 from "../assets/subtract2.svg";
-import GroupComponent3 from "../components/GroupComponent3";
-import GroupComponent1 from "../components/GroupComponent1";
+import WhiteCircle from "../assets/white_circle.svg";
+import DarkBlueCircle from "../assets/dark_blue_circle.svg";
+import MedicationInfo from "../components/MedicationInfo";
+import TopBottomBar from "../components/TopBottomBar";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 
 type MedicationsArchiveType = {
@@ -24,13 +24,13 @@ const MedicationsArchive = (props: MedicationsArchiveType) => {
       <Pressable onPress={() => {props.navigation.navigate("MedicationsArchive1")}}>
         <Text style={[styles.switch, styles.textTypo]}>SWITCH</Text>
       </Pressable>
-      <Ellipse5 style={styles.medicationsArchiveItem} width={32} height={32} />
+      <WhiteCircle style={styles.medicationsArchiveItem} width={32} height={32} />
       <Image
         style={styles.untitledArtwork52Copy3}
         contentFit="cover"
-        source={require("../assets/untitled-artwork-52-copy-3.png")}
+        source={require("../assets/blue_dog_small.png")}
       />
-      <Subtract2 style={styles.subtractIcon} width={34} height={34} />
+      <DarkBlueCircle style={styles.subtractIcon}/>
       <View style={[styles.rectangleParent, styles.groupChildLayout]}>
         <View style={[styles.groupChild, styles.groupChildLayout]} />
         <Text style={[styles.add, styles.addTypo]}>ADD</Text>
@@ -39,7 +39,7 @@ const MedicationsArchive = (props: MedicationsArchiveType) => {
           <View style={[styles.groupInner, styles.groupLayout]} />
         </View>
       </View>
-      <GroupComponent3 />
+      <MedicationInfo />
       <Text style={[styles.petSparkyDates, styles.addTypo]}>{`Pet: Sparky
 Dates: Sept 19-23
 Drug:
@@ -51,7 +51,7 @@ R/l Eye: right/left/both
 Notifications: 6am + 6pm
 Message: “2 drops”
 Other:`}</Text>
-      <GroupComponent1 groupViewLeft={1} navigation = {props.navigation}/>
+      <TopBottomBar groupViewLeft={1} navigation = {props.navigation}/>
     </View>
   );
 };
@@ -142,7 +142,12 @@ const styles = StyleSheet.create({
     height: 30,
     position: "absolute",
   },
-  subtractIcon: {},
+  subtractIcon: {
+    top: 193,
+    left: 255,
+    width: 34,
+    height: 34,
+  },
   groupChild: {
     top: 1,
     borderRadius: Border.br_3xs,

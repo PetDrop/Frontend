@@ -1,9 +1,9 @@
 import * as React from "react";
 import { StyleSheet, View, Text, Button } from "react-native";
 import { Image } from "expo-image";
-import Subtract3 from "../assets/subtract3.svg";
-import Group8 from "../assets/group-8.svg";
-import GroupComponent1 from "../components/GroupComponent1";
+import DayOutline from "../assets/day_outline.svg";
+import EditIcon from "../assets/edit_icon.svg";
+import TopBottomBar from "../components/TopBottomBar";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 
 type HomeType = {
@@ -62,7 +62,7 @@ const Home = (props: HomeType) => {
       <Text
         style={[styles.heartgardBlackBox, styles.petdropClr]}
       >{`Heartgard (Black box, 1 pill, every night) `}</Text>
-      <Subtract3 style={styles.subtractIcon} width={28} height={28} />
+      <DayOutline style={styles.dayOutline} width={28} height={28} />
       <View style={[styles.homeInner, styles.homeLayout]} />
       <View style={[styles.rectangleView, styles.homeLayout]} />
       <View style={[styles.homeChild1, styles.homeLayout]} />
@@ -84,12 +84,12 @@ const Home = (props: HomeType) => {
       <Text style={[styles.neverMissA, styles.petdropClr]}>
         NEVER MISS A DROP.
       </Text>
-      <Group8 style={styles.groupIcon} width={29} height={29} />
+      <EditIcon style={styles.groupIcon} width={29} height={29} />
       <View style={styles.rectangleContainer}>
         <View style={[styles.groupChild1, styles.groupPosition]} />
         <Text style={styles.medications}>MEDICATIONS</Text>
       </View>
-      <GroupComponent1 navigation = {props.navigation}/>
+      <TopBottomBar navigation = {props.navigation}/>
     </View>
   );
 };
@@ -436,7 +436,10 @@ const styles = StyleSheet.create({
     color: Color.colorCornflowerblue,
     left: 71,
   },
-  subtractIcon: {},
+  dayOutline: {
+    top: 418,
+    left: 230,
+  },
   homeInner: {
     top: 628,
     backgroundColor: Color.colorFirebrick,

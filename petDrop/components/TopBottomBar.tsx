@@ -1,13 +1,13 @@
 import { Image } from "expo-image";
 import React, { useMemo } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-import Group39 from "../assets/group-39.svg";
-import Group40 from "../assets/group-40.svg";
-import Polygon1 from "../assets/polygon-1.svg";
-import Polygon12 from "../assets/polygon-12.svg";
+import PetInfoButton from "../assets/pet_info_button.svg";
+import RemindersButton from "../assets/reminders_button.svg";
+import HouseButtonRoof from "../assets/house_button_roof.svg";
+import ShareButtonRightArrow from "../assets/share_button_right_arrow.svg";
 import { Border, Color, FontFamily, FontSize } from "../GlobalStyles";
 
-export type GroupComponent1Type = {
+export type TopBottomBarType = {
   /** Style props */
   groupViewLeft?: number | string;
   navigation: any;
@@ -17,7 +17,7 @@ const getStyleValue = (key: string, value: string | number | undefined) => {
   if (value === undefined) return;
   return { [key]: value === "unset" ? undefined : value };
 };
-const GroupComponent1 = (props: GroupComponent1Type) => {
+const TopBottomBar = (props: TopBottomBarType) => {
   const groupViewStyle = useMemo(() => {
     return {
       ...getStyleValue("left", props.groupViewLeft),
@@ -32,7 +32,7 @@ const GroupComponent1 = (props: GroupComponent1Type) => {
       <View style={styles.instanceChild} />
       <Pressable onPress={() => {props.navigation.navigate("Home")}} style={styles.pressable}>
         <View style={[styles.groupView, styles.groupViewPosition]}>
-          <Polygon1 style={styles.polygonIcon} width={20} height={15} />
+          <HouseButtonRoof style={styles.polygonIcon} width={20} height={15} />
           <View style={styles.groupChild4} />
         </View>
       </Pressable>
@@ -43,10 +43,10 @@ const GroupComponent1 = (props: GroupComponent1Type) => {
       </View>
       
       <Pressable onPress={() => {props.navigation.navigate("PetInfo")}}>
-        <Group39 style={styles.instanceItem} width={27} height={21} />
+        <PetInfoButton style={styles.instanceItem} width={27} height={21} />
       </Pressable>
       <Pressable onPress={() => {props.navigation.navigate("Reminders")}}>
-        <Group40
+        <RemindersButton
           style={[styles.instanceInner, styles.groupChild10Layout]}
           width={21}
           height={20}
@@ -56,13 +56,13 @@ const GroupComponent1 = (props: GroupComponent1Type) => {
         <Image
           style={[styles.instanceChild1, styles.instanceChild1Position]}
           contentFit="cover"
-          source={require("../assets/group-41.png")}
+          source={require("../assets/medications_button.png")}
         />
       </Pressable>
       <View style={[styles.rectangleParent2, styles.instanceChild1Position]}>
         <View style={[styles.groupChild8, styles.groupChildPosition]} />
         <View style={[styles.groupChild9, styles.groupChildPosition]} />
-        <Polygon12
+        <ShareButtonRightArrow
           style={[styles.groupChild10, styles.groupChild10Layout]}
           width={15}
           height={20}
@@ -323,4 +323,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GroupComponent1;
+export default TopBottomBar;

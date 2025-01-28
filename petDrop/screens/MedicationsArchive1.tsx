@@ -1,10 +1,12 @@
+/* This file will eventually be deleted, since it's essentially a duplicate of MedicationsArchive.tsx */
+
 import * as React from "react";
 import { Text, StyleSheet, View, Pressable } from "react-native";
 import { Image } from "expo-image";
-import Ellipse5 from "../assets/ellipse-5.svg";
-import Subtract1 from "../assets/subtract1.svg";
-import GroupComponent from "../components/GroupComponent";
-import GroupComponent1 from "../components/GroupComponent1";
+import WhiteCircle from "../assets/white_circle.svg";
+import DarkBlueCircle from "../assets/dark_blue_circle.svg";
+import MedicationInfo from "../components/MedicationInfo2";
+import TopBottomBar from "../components/TopBottomBar";
 import { FontFamily, Color, FontSize, Border } from "../GlobalStyles";
 
 type MedicationsArchive1Type = {
@@ -24,20 +26,20 @@ const MedicationsArchive1 = (props: MedicationsArchive1Type) => {
       <Pressable onPress={() => {props.navigation.navigate("MedicationsArchive")}}>
         <Text style={[styles.switch, styles.switchTypo]}>SWITCH</Text>
       </Pressable>
-      <Ellipse5 style={styles.medicationsArchiveItem} width={32} height={32} />
+      <WhiteCircle style={styles.medicationsArchiveItem} width={32} height={32} />
       <Image
         style={styles.untitledArtwork52Copy2}
         contentFit="cover"
-        source={require("../assets/untitled-artwork-52-copy-21.png")}
+        source={require("../assets/pink_dog_small.png")}
       />
-      <Subtract1 style={styles.subtractIcon} width={34} height={34} />
+      <DarkBlueCircle style={styles.subtractIcon}/>
       <Text style={[styles.eyeDrops, styles.switchTypo]}>{`Eye drops `}</Text>
-      <GroupComponent
+      <MedicationInfo
         eyeDropsSPARKY="Antibiotics: Blue "
         groupViewTop={264}
         rectangleViewBackgroundColor="#ffc635"
       />
-      <GroupComponent
+      <MedicationInfo
         eyeDropsSPARKY="Heartgard: Blue"
         groupViewTop={392}
         rectangleViewBackgroundColor="#a0c66f"
@@ -50,7 +52,7 @@ const MedicationsArchive1 = (props: MedicationsArchive1Type) => {
           <View style={[styles.groupInner, styles.groupLayout]} />
         </View>
       </View>
-      <GroupComponent1 groupViewLeft={-1} navigation = {props.navigation}/>
+      <TopBottomBar groupViewLeft={-1} navigation = {props.navigation}/>
     </View>
   );
 };
@@ -141,7 +143,12 @@ const styles = StyleSheet.create({
     height: 30,
     position: "absolute",
   },
-  subtractIcon: {},
+  subtractIcon: {
+    top: 193,
+    left: 255,
+    width: 34,
+    height: 34,
+  },
   eyeDrops: {
     top: 435,
     left: 67,

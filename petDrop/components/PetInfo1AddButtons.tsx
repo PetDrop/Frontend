@@ -3,33 +3,33 @@ import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
 import { Color, FontFamily, FontSize } from "../GlobalStyles";
 
-const GroupComponent2 = () => {
+const PetInfo1AddButtons = () => {
   return (
     <View style={styles.groupParent}>
       <Image
         style={[styles.groupChild, styles.groupChildPosition]}
         contentFit="cover"
-        source={require("../assets/group-21.png")}
+        source={require("../assets/add_age_button.png")}
       />
       <Image
         style={[styles.groupItem, styles.groupChildPosition]}
         contentFit="cover"
-        source={require("../assets/group-22.png")}
+        source={require("../assets/add_breed_button.png")}
       />
       <Image
         style={[styles.groupInner, styles.groupChildPosition]}
         contentFit="cover"
-        source={require("../assets/group-23.png")}
+        source={require("../assets/add_weight_button.png")}
       />
       <Image
         style={[styles.groupIcon, styles.groupChildPosition]}
         contentFit="cover"
-        source={require("../assets/group-24.png")}
+        source={require("../assets/add_address_button.png")}
       />
       <Image
         style={[styles.groupChild1, styles.groupChildPosition]}
         contentFit="cover"
-        source={require("../assets/group-25.png")}
+        source={require("../assets/add_vet_button.png")}
       />
       <Text style={styles.age}>{`Age: `}</Text>
       <Text style={[styles.breed, styles.vetTypo]}>Breed</Text>
@@ -106,4 +106,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GroupComponent2;
+export default PetInfo1AddButtons;
