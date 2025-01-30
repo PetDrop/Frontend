@@ -33,13 +33,13 @@ const App = () => {
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             {/* first screen listed is the one rendered by default */}
             <Stack.Screen
-              name="MedicationsArchive"
-              component={MedicationsArchive}
+              name="Login"
+              component={Login}
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="Login"
-              component={Login}
+              name="MedicationsArchive"
+              component={MedicationsArchive}
               options={{ headerShown: false }}
             />
             <Stack.Screen

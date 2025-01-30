@@ -1,6 +1,7 @@
 import * as React from "react";
-import { Text, StyleSheet, View, Button, Pressable } from "react-native";
+import { Text, StyleSheet, View, Button, Pressable, Image } from "react-native";
 import { Color, FontFamily, Border, FontSize } from "../GlobalStyles";
+import BlueCircleBig from "../assets/blue_circle_big.svg";
 
 type LoginType = {
   navigation: any;
@@ -12,6 +13,12 @@ const Login = (props: LoginType) => {
       <Pressable onPress={() => {props.navigation.navigate("Home")}}>
         <Text style={[styles.login1, styles.login1Typo]}>Login</Text>
       </Pressable>
+      <Image
+        style={[styles.dogImage]}
+        contentFit="cover"
+        source={require("../assets/blue_dog_big.png")}
+      />
+      <BlueCircleBig style={styles.blueCircle} width={146} height={146} />
       <View style={styles.loginChild} />
       <View style={[styles.loginItem, styles.loginLayout]} />
       <View style={[styles.loginInner, styles.loginLayout]} />
@@ -29,6 +36,17 @@ const Login = (props: LoginType) => {
 };
 
 const styles = StyleSheet.create({
+  dogImage: {
+    top: 150,
+    left: 145,
+    height: 128,
+    width: 96,
+    position: "absolute",
+  },
+  blueCircle: {
+    top: 130,
+    left: 115,
+  },
   login1Typo: {
     textAlign: "left",
     color: Color.colorCornflowerblue,
@@ -62,9 +80,9 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   login1: {
-    top: 304,
-    left: 138,
-    fontSize: 40,
+    top: 290,
+    left: 140,
+    fontSize: 45,
   },
   loginChild: {
     top: 348,
@@ -110,14 +128,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   petdrop: {
-    top: 747,
+    top: 725,
     left: 29,
     fontSize: FontSize.size_45xl,
     width: 342,
     height: 112,
   },
   neverMissA: {
-    top: 798,
+    top: 785,
     left: 58,
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
