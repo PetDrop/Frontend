@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   },
   groupViewPosition: {
     bottom: "61.7%",
-    top: "-8.51%",
+    top: "-38.51%",
     height: "46.81%",
     position: "absolute",
   },
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   instanceChild1Position: {
-    top: -2,
+    top: -20,
     position: "absolute",
   },
   groupChildPosition: {
@@ -222,8 +222,8 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   instanceChild: {
-    height: "146.81%",
-    top: "-46.81%",
+    height: "186.81%",
+    top: "-86.81%",
     left: "0%",
     right: "0%",
     width: "100%",
@@ -280,12 +280,12 @@ const styles = StyleSheet.create({
   },
   instanceItem: {
     left: 90,
-    top: -1,
+    top: -16,
     position: "absolute",
   },
   instanceInner: {
     left: 158,
-    top: -1,
+    top: -16,
   },
   instanceChild1: {
     left: 220,

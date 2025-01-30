@@ -71,14 +71,7 @@ const Home = (props: HomeType) => {
       <View style={[styles.homeChild4, styles.homeChildLayout]} />
       <View style={[styles.homeChild5, styles.homeChildPosition]} />
       <View style={[styles.homeChild6, styles.homeChildPosition]} />
-      <View style={[styles.rectangleParent, styles.homeLayout]}>
-        <View style={styles.groupChild} />
-        <View style={styles.rectangleGroup}>
-          <View style={[styles.groupItem, styles.groupLayout]} />
-          <View style={[styles.groupInner, styles.groupLayout]} />
-        </View>
-      </View>
-      <Text style={[styles.hi, styles.hiTypo]}>{`Hi, `}</Text>
+      <Text style={[styles.hi, styles.hiTypo]}>Hi, </Text>
       <Text style={[styles.jane, styles.hiTypo]}>Jane!</Text>
       <Text style={[styles.petdrop, styles.petdropClr]}>petdrop.</Text>
       <Text style={[styles.neverMissA, styles.petdropClr]}>
@@ -523,7 +516,7 @@ const styles = StyleSheet.create({
     left: 41,
   },
   jane: {
-    left: 85,
+    left: 75,
     width: 79,
   },
   petdrop: {
@@ -536,7 +529,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.jsMathCmbx10,
   },
   neverMissA: {
-    top: 133,
+    top: 143,
     left: 52,
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
