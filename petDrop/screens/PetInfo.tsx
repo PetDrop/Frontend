@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import BlueCircleBig from "../assets/blue_circle_big.svg";
 import EditIcon from "../assets/edit_icon.svg";
 import TopBottomBar from "../components/TopBottomBar";
@@ -13,90 +13,91 @@ type PetInfoType = {
 const PetInfo = (props: PetInfoType) => {
   return (
     <View style={styles.petInfo}>
-      <Image
-        style={[styles.untitledArtwork52Copy1, styles.untitledLayout]}
-        contentFit="cover"
-        source={require("../assets/blue_dog_big.png")}
-      />
-      <BlueCircleBig style={styles.subtractIcon1} width={146} height={146} />
-      <Text style={[styles.sparky, styles.blueTypo1]}>Sparky</Text>
-      <Text style={[styles.age8Breed, styles.breedTypo]}>{`Age: 8
-Breed: Lab
-Address: 123 Street Dr. 
-Vet: Dog inc. 
-      +1 123-222-4444
-`}</Text>
-      <Image
-        style={[styles.untitledArtwork52Copy2, styles.untitledLayout]}
-        contentFit="cover"
-        source={require("../assets/pink_dog_big.png")}
-      />
-      <BlueCircleBig style={styles.subtractIcon2} width={146} height={146} />
-      <Text style={[styles.blue, styles.blueTypo1]}>Blue</Text>
-      <Text style={[styles.age12Breed, styles.breedTypo]}>{`Age: 12
-Breed: Lab
-Address: 123 Street Dr. 
-Vet: Dog inc. 
-      +1 123-222-4444
-`}</Text>
-      <Text style={[styles.medications, styles.medicationsTypo]}>
-        Medications:
-      </Text>
-      <Text style={[styles.medications1, styles.medicationsTypo]}>
-        Medications:
-      </Text>
-      <Text style={[styles.eyeDropsSparky, styles.blueTypo]}>
-        Eye drops (Sparky, Red bottle, 2 drops, twice a day)
-      </Text>
-      <Text
-        style={[styles.antibioticsBlueBlue, styles.blueTypo]}
-      >{`Antibiotics (Blue, Blue bottle, 1 pill, morning) `}</Text>
-      <Text
-        style={[styles.heartgardBlueBlack, styles.blueTypo]}
-      >{`Heartgard (Blue, Black box, 1 pill, every night) `}</Text>
-      <View style={[styles.petInfoChild, styles.petLayout]} />
-      <View style={[styles.petInfoItem, styles.petLayout]} />
-      <View style={[styles.petInfoInner, styles.petLayout]} />
-      <View style={[styles.rectangleParent, styles.rectangleLayout]}>
-        <View style={styles.groupChild} />
-        <Text style={[styles.add, styles.addPosition]}>ADD</Text>
-        <View style={styles.rectangleGroup}>
-          <View style={styles.groupItem} />
-          <View style={[styles.groupInner, styles.groupPosition]} />
-        </View>
-      </View>
-      <View style={[styles.rectangleContainer, styles.rectangleLayout]}>
-        <View style={styles.groupChild} />
-        <Text style={[styles.add, styles.addPosition]}>ADD</Text>
-        <View style={styles.rectangleGroup}>
-          <View style={styles.groupItem} />
-          <View style={[styles.groupChild2, styles.groupPosition]} />
-        </View>
-      </View>
-      <View style={[styles.petInfoChild1, styles.petChildLayout]} />
-      <View style={[styles.petInfoChild2, styles.petChildLayout]} />
-      <View style={[styles.petInfoChild3, styles.groupParentPosition]} />
-      <View style={[styles.groupParent, styles.groupParentPosition]}>
-        <View style={styles.rectangleParent1}>
-          <View style={[styles.groupChild3, styles.groupChildLayout]} />
-          <View style={[styles.groupChild4, styles.groupChildLayout]} />
-        </View>
+      <ScrollView>
+        <Image
+          style={[styles.untitledArtwork52Copy1, styles.untitledLayout]}
+          contentFit="cover"
+          source={require("../assets/blue_dog_big.png")}
+        />
+        <BlueCircleBig style={styles.subtractIcon1} width={146} height={146} />
+        <Text style={[styles.sparky, styles.blueTypo1]}>Sparky</Text>
+        <Text style={[styles.age8Breed, styles.breedTypo]}>
+          {`Age: 8
+  Breed: Lab
+  Address: 123 Street Dr. 
+  Vet: Dog inc. 
+        +1 123-222-4444`}
+        </Text>
+        <Image
+          style={[styles.untitledArtwork52Copy2, styles.untitledLayout]}
+          contentFit="cover"
+          source={require("../assets/pink_dog_big.png")}
+        />
+        <BlueCircleBig style={styles.subtractIcon2} width={146} height={146} />
+        <Text style={[styles.blue, styles.blueTypo1]}>Blue</Text>
+        <Text style={[styles.age12Breed, styles.breedTypo]}>{`Age: 12
+  Breed: Lab
+  Address: 123 Street Dr. 
+  Vet: Dog inc. 
+        +1 123-222-4444`}
+        </Text>
+        <Text style={[styles.medications, styles.medicationsTypo]}>
+          Medications:
+        </Text>
+        <Text style={[styles.medications1, styles.medicationsTypo]}>
+          Medications:
+        </Text>
+        <Text style={[styles.eyeDropsSparky, styles.blueTypo]}>
+          Eye drops (Sparky, Red bottle, 2 drops, twice a day)
+        </Text>
         <Text
-          style={[styles.addNewPet, styles.addPosition]}
-        >{`Add New pet `}</Text>
-      </View>
-      <EditIcon
-        style={[styles.groupIcon, styles.groupIconLayout]}
-        width={29}
-        height={29}
-      />
-      <EditIcon
-        style={[styles.petInfoChild4, styles.groupIconLayout]}
-        width={29}
-        height={29}
-      />
-      <Text style={[styles.petdrop, styles.blueTypo1]}>petdrop.</Text>
-      <Text style={styles.neverMissA}>NEVER MISS A DROP.</Text>
+          style={[styles.antibioticsBlueBlue, styles.blueTypo]}
+        >{`Antibiotics (Blue, Blue bottle, 1 pill, morning) `}</Text>
+        <Text
+          style={[styles.heartgardBlueBlack, styles.blueTypo]}
+        >{`Heartgard (Blue, Black box, 1 pill, every night) `}</Text>
+        <View style={[styles.petInfoChild, styles.petLayout]} />
+        <View style={[styles.petInfoItem, styles.petLayout]} />
+        <View style={[styles.petInfoInner, styles.petLayout]} />
+        <View style={[styles.rectangleParent, styles.rectangleLayout]}>
+          <View style={styles.groupChild} />
+          <Text style={[styles.add, styles.addPosition]}>ADD</Text>
+          <View style={styles.rectangleGroup}>
+            <View style={styles.groupItem} />
+            <View style={[styles.groupInner, styles.groupPosition]} />
+          </View>
+        </View>
+        <View style={[styles.rectangleContainer, styles.rectangleLayout]}>
+          <View style={styles.groupChild} />
+          <Text style={[styles.add, styles.addPosition]}>ADD</Text>
+          <View style={styles.rectangleGroup}>
+            <View style={styles.groupItem} />
+            <View style={[styles.groupChild2, styles.groupPosition]} />
+          </View>
+        </View>
+        <View style={[styles.petInfoChild1, styles.petChildLayout]} />
+        <View style={[styles.petInfoChild2, styles.petChildLayout]} />
+        <View style={[styles.petInfoChild3, styles.groupParentPosition]} />
+        <View style={[styles.groupParent, styles.groupParentPosition]}>
+          <View style={styles.rectangleParent1}>
+            <View style={[styles.groupChild3, styles.groupChildLayout]} />
+            <View style={[styles.groupChild4, styles.groupChildLayout]} />
+          </View>
+          <Text style={[styles.addNewPet, styles.addPosition]}>Add new pet</Text>
+        </View>
+        <EditIcon
+          style={[styles.groupIcon, styles.groupIconLayout]}
+          width={29}
+          height={29}
+        />
+        <EditIcon
+          style={[styles.petInfoChild4, styles.groupIconLayout]}
+          width={29}
+          height={29}
+        />
+        <Text style={[styles.petdrop, styles.blueTypo1]}>petdrop.</Text>
+        <Text style={styles.neverMissA}>NEVER MISS A DROP.</Text>
+      </ScrollView>
       <TopBottomBar navigation = {props.navigation}/>
     </View>
   );
@@ -161,8 +162,8 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   groupPosition: {
-    left: 4,
-    top: 10,
+    left: 2,
+    top: 4,
     transform: [
       {
         rotate: "-90deg",
@@ -265,7 +266,7 @@ const styles = StyleSheet.create({
   groupChild: {
     top: 1,
     borderRadius: Border.br_3xs,
-    backgroundColor: Color.colorLightskyblue,
+    backgroundColor: Color.colorCornflowerblue,
     left: 0,
     width: 40,
     height: 21,
@@ -282,7 +283,7 @@ const styles = StyleSheet.create({
     height: 2,
     borderRadius: Border.br_10xs,
     width: 10,
-    left: 0,
+    left: 2,
     position: "absolute",
     backgroundColor: Color.colorFloralwhite,
   },
@@ -324,15 +325,15 @@ const styles = StyleSheet.create({
     borderRadius: 21,
     width: 269,
     height: 41,
-    backgroundColor: Color.colorLightskyblue,
+    backgroundColor: Color.colorCornflowerblue,
   },
   groupChild3: {
     top: 7,
     left: 0,
   },
   groupChild4: {
-    top: 17,
-    left: 7,
+    top: 7,
+    left: 0,
     transform: [
       {
         rotate: "-90deg",
@@ -369,7 +370,7 @@ const styles = StyleSheet.create({
     height: 112,
   },
   neverMissA: {
-    top: 133,
+    top: 143,
     left: 44,
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,

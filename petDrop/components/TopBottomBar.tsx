@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   pressable: {
     left: 5,
     height: 50,
-    width: 390,
+    width: 30,
     position: "absolute",
   },
   groupChild1Position: {
@@ -232,10 +232,10 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   groupChild4: {
-    width: "65.52%",
+    width: 20,
     top: "31.82%",
     right: "17.24%",
-    left: "17.24%",
+    left: 22,
     backgroundColor: Color.colorCornflowerblue,
     height: "68.18%",
     bottom: "0%",
@@ -245,11 +245,10 @@ const styles = StyleSheet.create({
   polygonIcon: {
     bottom: "31.82%",
     borderRadius: Border.br_11xs,
-    maxWidth: "100%",
     overflow: "hidden",
     maxHeight: "100%",
     top: "-10%",
-    left: "15%",
+    left: 22,
     right: "0%",
     position: "absolute",
   },
