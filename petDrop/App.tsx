@@ -38,11 +38,6 @@ const App = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="MedicationsArchive"
-              component={MedicationsArchive}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
               name="Home"
               component={Home}
               options={{ headerShown: false }}
@@ -70,6 +65,11 @@ const App = () => {
             <Stack.Screen
               name="MedicationsArchive1"
               component={MedicationsArchive1}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="MedicationsArchive"
+              component={MedicationsArchive}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

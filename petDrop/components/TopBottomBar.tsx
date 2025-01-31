@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
 import React, { useMemo } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View, Text } from "react-native";
 import PetInfoButton from "../assets/pet_info_button.svg";
 import RemindersButton from "../assets/reminders_button.svg";
 import HouseButtonRoof from "../assets/house_button_roof.svg";
@@ -36,20 +36,14 @@ const TopBottomBar = (props: TopBottomBarType) => {
           <View style={styles.groupChild4} />
         </View>
       </Pressable>
-      <View style={[styles.rectangleParent1, styles.groupViewPosition]}>
-        <View style={[styles.groupChild5, styles.groupChildLayout]} />
-        <View style={[styles.groupChild6, styles.groupChildLayout]} />
-        <View style={[styles.groupChild7, styles.groupChildLayout]} />
-      </View>
-      
       <Pressable onPress={() => {props.navigation.navigate("PetInfo")}}>
-        <PetInfoButton style={styles.instanceItem} width={27} height={21} />
+        <PetInfoButton style={styles.instanceItem} width={31.5} height={24.5} />
       </Pressable>
       <Pressable onPress={() => {props.navigation.navigate("Reminders")}}>
         <RemindersButton
           style={[styles.instanceInner, styles.groupChild10Layout]}
-          width={21}
-          height={20}
+          width={26.2}
+          height={25}
         />
       </Pressable>
       <Pressable onPress={() => {props.navigation.navigate("MedicationsArchive")}}>
@@ -68,11 +62,23 @@ const TopBottomBar = (props: TopBottomBarType) => {
           height={20}
         />
       </View>
+      <Text style={[styles.buttonText, {left: 45}]}>HOME</Text>
+      <Text style={[styles.buttonText, {left: 115}]}>PETS</Text>
+      <Text style={[styles.buttonText, {left: 175}]}>REMINDERS</Text>
+      <Text style={[styles.buttonText, {left: 260}]}>MEDS</Text>
+      <Text style={[styles.buttonText, {left: 320}]}>SHARE</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  buttonText: {
+    top: -12,
+    color: Color.colorCornflowerblue,
+    fontFamily: FontFamily.koulenRegular,
+    fontSize: FontSize.size_smi,
+    position: "absolute"
+  },
   pressable: {
     left: 5,
     height: 50,
@@ -93,8 +99,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   groupViewPosition: {
-    bottom: "61.7%",
-    top: "-38.51%",
+    top: -40,
     height: "46.81%",
     position: "absolute",
   },
@@ -112,7 +117,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   instanceChild1Position: {
-    top: -20,
+    top: -40,
     position: "absolute",
   },
   groupChildPosition: {
@@ -222,8 +227,8 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   instanceChild: {
-    height: "186.81%",
-    top: "-86.81%",
+    height: 115,
+    top: -64,
     left: "0%",
     right: "0%",
     width: "100%",
@@ -244,7 +249,6 @@ const styles = StyleSheet.create({
   },
   polygonIcon: {
     bottom: "31.82%",
-    borderRadius: Border.br_11xs,
     overflow: "hidden",
     maxHeight: "100%",
     top: "-10%",
@@ -255,7 +259,7 @@ const styles = StyleSheet.create({
   groupView: {
     width: "7.44%",
     right: "87.44%",
-    left: "5.13%",
+    left: 20,
   },
   groupChild5: {
     bottom: "81.82%",
@@ -278,18 +282,18 @@ const styles = StyleSheet.create({
     left: "88.77%",
   },
   instanceItem: {
-    left: 90,
-    top: -16,
+    left: 110,
+    top: -38,
     position: "absolute",
   },
   instanceInner: {
-    left: 158,
-    top: -16,
+    left: 185,
+    top: -40,
   },
   instanceChild1: {
-    left: 220,
-    width: 26,
-    height: 26,
+    left: 259,
+    width: 29,
+    height: 29,
   },
   groupChild8: {
     borderRadius: Border.br_10xs_5,
@@ -309,7 +313,7 @@ const styles = StyleSheet.create({
     top: 0,
   },
   rectangleParent2: {
-    left: 287,
+    left: 329,
     width: 18,
     height: 25,
   },

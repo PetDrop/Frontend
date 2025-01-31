@@ -77,7 +77,10 @@ const styles = StyleSheet.create({
     width: 33,
     position: "absolute",
   },
-  subtractIcon: {},
+  subtractIcon: {
+    top: 257,
+    left: 11,
+  },
   name: {
     top: 264,
     left: 176,
@@ -92,7 +95,7 @@ const styles = StyleSheet.create({
   groupChild: {
     top: 1,
     borderRadius: Border.br_3xs,
-    backgroundColor: Color.colorLightskyblue,
+    backgroundColor: Color.colorCornflowerblue,
     height: 21,
     left: 0,
   },
@@ -106,8 +109,8 @@ const styles = StyleSheet.create({
     left: 0,
   },
   groupInner: {
-    top: 10,
-    left: 4,
+    top: 4,
+    left: 0,
     transform: [
       {
         rotate: "-90deg",
@@ -134,7 +137,7 @@ const styles = StyleSheet.create({
     height: 112,
   },
   neverMissA: {
-    top: 133,
+    top: 143,
     left: 44,
     color: Color.colorCornflowerblue,
     fontFamily: FontFamily.koulenRegular,
@@ -145,8 +148,8 @@ const styles = StyleSheet.create({
     left: 0,
   },
   groupChild1: {
-    top: 33,
-    left: 13,
+    top: 13,
+    left: 0,
     transform: [
       {
         rotate: "-90deg",

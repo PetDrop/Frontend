@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   groupChild: {
     top: 1,
     borderRadius: Border.br_3xs,
-    backgroundColor: Color.colorLightskyblue,
+    backgroundColor: Color.colorCornflowerblue,
     height: 21,
     left: 0,
   },
@@ -115,8 +115,8 @@ const styles = StyleSheet.create({
     left: 0,
   },
   groupInner: {
-    top: 10,
-    left: 4,
+    top: 4,
+    left: 0,
     transform: [
       {
         rotate: "-90deg",
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     height: 112,
   },
   neverMissA: {
-    top: 133,
+    top: 143,
     left: 46,
     color: Color.colorCornflowerblue,
     fontSize: FontSize.size_smi,
