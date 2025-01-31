@@ -10,8 +10,8 @@ type LoginType = {
 const Login = (props: LoginType) => {
   return (
     <View style={styles.login}>
-      <Pressable onPress={() => {props.navigation.navigate("Home")}}>
-        <Text style={[styles.login1, styles.login1Typo]}>Login</Text>
+      <Pressable onPress={() => {props.navigation.navigate("Home")}} style={styles.login1}>
+        <Text style={styles.login1Typo}>Login</Text>
       </Pressable>
       <Image
         style={[styles.dogImage]}
@@ -22,14 +22,12 @@ const Login = (props: LoginType) => {
       <View style={styles.loginChild} />
       <View style={[styles.loginItem, styles.loginLayout]} />
       <View style={[styles.loginInner, styles.loginLayout]} />
-      <Text style={[styles.usernameEMail, styles.passwordTypo]}>
-        Username/ E-mail:
-      </Text>
+      <Text style={[styles.usernameEMail, styles.passwordTypo]}>Username/ E-mail:</Text>
       <Text style={[styles.password, styles.passwordTypo]}>Password:</Text>
       <Text style={styles.forgotPassword}>Forgot Password?</Text>
       <Text style={[styles.rememberMe, styles.signUpTypo]}>Remember me</Text>
       <Text style={[styles.signUp, styles.signUpTypo]}>Sign up</Text>
-      <Text style={[styles.petdrop, styles.login1Typo]}>petdrop.</Text>
+      <Text style={[styles.petdrop, styles.petDropTypo]}>petdrop.</Text>
       <Text style={styles.neverMissA}>NEVER MISS A DROP.</Text>
     </View>
   );
@@ -37,81 +35,87 @@ const Login = (props: LoginType) => {
 
 const styles = StyleSheet.create({
   dogImage: {
-    top: 150,
-    left: 145,
-    height: 128,
-    width: 96,
+    top: "17.77%",
+    left: "37.18%",
+    height: "15.17%",
+    width: "24.62%",
     position: "absolute",
   },
   blueCircle: {
-    top: 130,
-    left: 115,
+    top: "15.4%",
+    left: "29.49%",
   },
   login1Typo: {
     textAlign: "left",
     color: Color.colorCornflowerblue,
     fontFamily: FontFamily.jsMathCmbx10,
     position: "absolute",
+    fontSize: 45,
+  },
+  petDropTypo: {
+    textAlign: "left",
+    color: Color.colorCornflowerblue,
+    fontFamily: FontFamily.jsMathCmbx10,
+    position: "absolute",
   },
   loginLayout: {
-    height: 50,
-    width: 294,
+    height: "5.92%",
+    width: "75.38%",
     borderRadius: Border.br_sm,
-    left: 48,
+    left: "12.31%",
     position: "absolute",
     backgroundColor: Color.colorFloralwhite,
   },
   passwordTypo: {
-    height: 17,
+    height: "2.01%",
     color: Color.colorDarkslateblue,
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
-    left: 48,
+    left: "12.31%",
     textAlign: "left",
     position: "absolute",
   },
   signUpTypo: {
     textAlign: "center",
-    width: 93,
-    height: 17,
+    width: "23.85%",
+    height: "2.01%",
     color: Color.colorDarkslateblue,
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
     position: "absolute",
   },
   login1: {
-    top: 290,
-    left: 140,
-    fontSize: 45,
+    top: "34.36%",
+    left: "35.9%",
   },
   loginChild: {
-    top: 348,
-    left: 21,
+    top: "41.23%",
+    left: "5.38%",
     borderRadius: Border.br_12xl,
     backgroundColor: Color.colorLightskyblue,
-    width: 347,
-    height: 279,
+    width: "88.97%",
+    height: "33.06%",
     position: "absolute",
   },
   loginItem: {
-    top: 490,
+    top: "58.06%",
   },
   loginInner: {
-    top: 408,
+    top: "48.34%",
   },
   usernameEMail: {
-    top: 381,
-    width: 88,
+    top: "45.14%",
+    width: "22.56%",
   },
   password: {
-    top: 463,
-    width: 52,
+    top: "54.86%",
+    width: "13.33%",
   },
   forgotPassword: {
-    top: 551,
-    width: 93,
-    left: 149,
-    height: 17,
+    top: "65.28%",
+    width: "23.85%",
+    left: "38.21%",
+    height: "2.01%",
     color: Color.colorDarkslateblue,
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
@@ -119,24 +123,24 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   rememberMe: {
-    top: 573,
-    left: 148,
+    top: "67.89%",
+    left: "38.21%",
   },
   signUp: {
-    top: 595,
-    left: 149,
+    top: "70.5%",
+    left: "38.21%",
     textAlign: "center",
   },
   petdrop: {
-    top: 725,
-    left: 29,
+    top: "85.9%",
+    left: "7.44%",
     fontSize: FontSize.size_45xl,
-    width: 342,
-    height: 112,
+    width: "87.69%",
+    height: "13.27%",
   },
   neverMissA: {
-    top: 785,
-    left: 58,
+    top: "93.01%",
+    left: "14.87%",
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
     textAlign: "left",
@@ -146,7 +150,7 @@ const styles = StyleSheet.create({
   login: {
     flex: 1,
     width: "100%",
-    height: 844,
+    height: "100%",
     overflow: "hidden",
     backgroundColor: Color.colorFloralwhite,
   },
