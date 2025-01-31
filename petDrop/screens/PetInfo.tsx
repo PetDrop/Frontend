@@ -23,10 +23,10 @@ const PetInfo = (props: PetInfoType) => {
         <Text style={[styles.sparky, styles.blueTypo1]}>Sparky</Text>
         <Text style={[styles.age8Breed, styles.breedTypo]}>
           {`Age: 8
-  Breed: Lab
-  Address: 123 Street Dr. 
-  Vet: Dog inc. 
-        +1 123-222-4444`}
+Breed: Lab
+Address: 123 Street Dr. 
+Vet: Dog inc. 
+      +1 123-222-4444`}
         </Text>
         <Image
           style={[styles.untitledArtwork52Copy2, styles.untitledLayout]}
@@ -36,10 +36,10 @@ const PetInfo = (props: PetInfoType) => {
         <BlueCircleBig style={styles.subtractIcon2} width={146} height={146} />
         <Text style={[styles.blue, styles.blueTypo1]}>Blue</Text>
         <Text style={[styles.age12Breed, styles.breedTypo]}>{`Age: 12
-  Breed: Lab
-  Address: 123 Street Dr. 
-  Vet: Dog inc. 
-        +1 123-222-4444`}
+Breed: Lab
+Address: 123 Street Dr. 
+Vet: Dog inc. 
+      +1 123-222-4444`}
         </Text>
         <Text style={[styles.medications, styles.medicationsTypo]}>
           Medications:
