@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Image } from "expo-image";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import BlueCircleBig from "../assets/blue_circle_big.svg";
 import EditIcon from "../assets/edit_icon.svg";
 import TopBottomBar from "../components/TopBottomBar";
@@ -13,7 +13,7 @@ type PetInfoType = {
 const PetInfo = (props: PetInfoType) => {
   return (
     <View style={styles.petInfo}>
-      <ScrollView>
+      <ScrollView contentContainerStyle={{paddingBottom: 900}}>
         <Image
           style={[styles.untitledArtwork52Copy1, styles.untitledLayout]}
           contentFit="cover"
@@ -77,6 +77,7 @@ const PetInfo = (props: PetInfoType) => {
         </View>
         <View style={[styles.petInfoChild1, styles.petChildLayout]} />
         <View style={[styles.petInfoChild2, styles.petChildLayout]} />
+        <Pressable onPress={() => {props.navigation.navigate("PetInfo1")}} style={styles.newPetPressable}>
         <View style={[styles.petInfoChild3, styles.groupParentPosition]} />
         <View style={[styles.groupParent, styles.groupParentPosition]}>
           <View style={styles.rectangleParent1}>
@@ -85,6 +86,7 @@ const PetInfo = (props: PetInfoType) => {
           </View>
           <Text style={[styles.addNewPet, styles.addPosition]}>Add new pet</Text>
         </View>
+        </Pressable>
         <EditIcon
           style={[styles.groupIcon, styles.groupIconLayout]}
           width={29}
@@ -104,6 +106,9 @@ const PetInfo = (props: PetInfoType) => {
 };
 
 const styles = StyleSheet.create({
+  newPetPressable: {
+    position: "absolute",
+  },
   untitledLayout: {
     height: 128,
     width: 96,

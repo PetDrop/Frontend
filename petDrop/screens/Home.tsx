@@ -544,7 +544,7 @@ const styles = StyleSheet.create({
     borderRadius: 17,
     width: 137,
     height: 34,
-    backgroundColor: Color.colorLightskyblue,
+    backgroundColor: Color.colorCornflowerblue,
     position: "absolute",
   },
   medications: {
