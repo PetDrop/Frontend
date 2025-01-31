@@ -74,7 +74,7 @@ const TopBottomBar = (props: TopBottomBarType) => {
 const styles = StyleSheet.create({
   buttonText: {
     top: -12,
-    color: Color.colorCornflowerblue,
+    color: Color.colorFloralwhite,
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
     position: "absolute"
