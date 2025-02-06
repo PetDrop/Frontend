@@ -7,7 +7,7 @@ import WhiteCircle from "../assets/white_circle.svg";
 import DarkBlueCircle from "../assets/dark_blue_circle.svg";
 import MedicationInfo from "../components/MedicationInfo2";
 import TopBottomBar from "../components/TopBottomBar";
-import { FontFamily, Color, FontSize, Border } from "../GlobalStyles";
+import { FontFamily, Color, FontSize, Border, ScreenEnum } from "../GlobalStyles";
 
 const { width, height } = Dimensions.get('window');
 
@@ -54,7 +54,7 @@ const MedicationsArchive1 = (props: MedicationsArchive1Type) => {
           <View style={[styles.groupInner, styles.groupLayout]} />
         </View>
       </View>
-      <TopBottomBar navigation = {props.navigation}/>
+      <TopBottomBar navigation = {props.navigation} currentScreen={ScreenEnum.MedicationsArchive1}/>
     </View>
   );
 };

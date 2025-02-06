@@ -45,3 +45,15 @@ export const Border = {
   br_xl: 20,
   br_2xl: 21,
 };
+/* screen enum */
+export enum ScreenEnum {
+  Login = 0,
+  Login1 = 1, // will be replaced by signup page
+  Home = 2,
+  PetInfo = 3,
+  PetInfo1 = 4, //new pet page
+  Reminders = 5,
+  MedicationsArchive = 6,
+  MedicationsArchive1 = 7, //will be deleted (2nd animal on same screen)
+  LoadingScreen = 8,
+};

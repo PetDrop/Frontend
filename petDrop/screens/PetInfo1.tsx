@@ -4,7 +4,7 @@ import { Dimensions, StyleSheet, Text, View } from "react-native";
 import BlueCircleBig from "../assets/blue_circle_big.svg";
 import AddButtons from "../components/PetInfo1AddButtons";
 import TopBottomBar from "../components/TopBottomBar";
-import { FontFamily, Color, FontSize, Border } from "../GlobalStyles";
+import { FontFamily, Color, FontSize, Border, ScreenEnum } from "../GlobalStyles";
 
 const { width, height } = Dimensions.get('window');
 
@@ -36,7 +36,7 @@ const PetInfo1 = (props: PetInfo1Type) => {
       </View>
       <Text style={[styles.addPet, styles.addPetTypo]}>Add Pet</Text>
       <AddButtons />
-      <TopBottomBar navigation = {props.navigation}/>
+      <TopBottomBar navigation = {props.navigation} currentScreen={ScreenEnum.PetInfo1}/>
     </View>
   );
 };

@@ -4,7 +4,7 @@ import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from "react
 import BlueCircleBig from "../assets/blue_circle_big.svg";
 import EditIcon from "../assets/edit_icon.svg";
 import TopBottomBar from "../components/TopBottomBar";
-import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import { Color, FontFamily, FontSize, Border, ScreenEnum } from "../GlobalStyles";
 
 const { width, height } = Dimensions.get('window');
 
@@ -102,7 +102,7 @@ Vet: Dog inc.
         <Text style={[styles.petdrop, styles.blueTypo1]}>petdrop.</Text>
         <Text style={styles.neverMissA}>NEVER MISS A DROP.</Text>
       </ScrollView>
-      <TopBottomBar navigation = {props.navigation}/>
+      <TopBottomBar navigation = {props.navigation} currentScreen={ScreenEnum.PetInfo}/>
     </View>
   );
 };

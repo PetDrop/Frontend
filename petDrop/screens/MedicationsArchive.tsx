@@ -5,7 +5,7 @@ import WhiteCircle from "../assets/white_circle.svg";
 import DarkBlueCircle from "../assets/dark_blue_circle.svg";
 import MedicationInfo from "../components/MedicationInfo";
 import TopBottomBar from "../components/TopBottomBar";
-import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import { Color, FontFamily, FontSize, Border, ScreenEnum } from "../GlobalStyles";
 
 const { width, height } = Dimensions.get('window');
 type MedicationsArchiveType = {
@@ -52,7 +52,7 @@ R/l Eye: right/left/both
 Notifications: 6am + 6pm
 Message: “2 drops”
 Other:`}</Text>
-      <TopBottomBar groupViewLeft={1} navigation = {props.navigation}/>
+      <TopBottomBar groupViewLeft={1} navigation = {props.navigation} currentScreen={ScreenEnum.MedicationsArchive}/>
     </View>
   );
 };
