@@ -159,7 +159,8 @@ const styles = StyleSheet.create({
     height: (height * 0.0249),
   },
   add: {
-    left: (width * 0.0462),
+    left: (width * 0.046),
+    top: (height * -0.0006),
   },
   groupItem: {
     top: (height * 0.0047),
