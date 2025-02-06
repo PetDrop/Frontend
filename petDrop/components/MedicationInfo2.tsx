@@ -1,8 +1,10 @@
 import React, { useMemo } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Dimensions } from "react-native";
 import { Image } from "expo-image";
 import EditIcon from "../assets/edit_icon.svg";
 import { Color, FontFamily, Border, FontSize } from "../GlobalStyles";
+
+const { width, height } = Dimensions.get('window');
 
 export type MedicationInfo2Type = {
   eyeDropsSPARKY?: string;
@@ -46,15 +48,14 @@ const MedicationInfo2 = ({
 Notifications: 6am + 6pm
 Message: “2 drops”`}</Text>
       <View style={[styles.groupInner, rectangleViewStyle]} />
-      <EditIcon style={styles.groupIcon} width={29} height={29} />
+      <EditIcon style={styles.groupIcon} width={(width * 0.0744)} height={(height * 0.0344)} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   groupPosition: {
-    left: 0,
-    width: 281,
+    width: (width * 0.7205),
     position: "absolute",
   },
   datesSept1923Typo: {
@@ -64,47 +65,46 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   groupChild: {
-    top: 0,
     borderRadius: Border.br_xl,
     backgroundColor: Color.colorCornflowerblue,
-    height: 111,
+    height: (height * 0.1315),
   },
   groupItem: {
-    top: 32,
+    top: (height * 0.0379),
     borderBottomRightRadius: Border.br_xl,
     borderBottomLeftRadius: Border.br_xl,
     backgroundColor: Color.colorLightskyblue,
-    height: 79,
+    height: (height * 0.0936),
   },
   eyeDropsSparky: {
-    left: 39,
+    left: (width * 0.1),
     fontSize: FontSize.size_base,
-    top: 3,
+    top: (height * 0.0036),
   },
   datesSept1923: {
-    top: 35,
-    left: 14,
+    top: (height * 0.0415),
+    left: (width * 0.0359),
     fontSize: FontSize.size_smi,
   },
   groupInner: {
-    top: 7,
-    left: 12,
+    top: (height * 0.0083),
+    left: (width * 0.0308),
     borderRadius: Border.br_7xs,
     backgroundColor: Color.colorFirebrick,
-    width: 19,
-    height: 19,
+    width: (width * 0.0487),
+    height: (height * 0.0225),
     position: "absolute",
   },
   groupIcon: {
-    left: 245,
-    top: 3,
+    left: (width * 0.6282),
+    top: (height * 0.0036),
     position: "absolute",
   },
   rectangleParent: {
-    top: 234,
-    left: 55,
-    height: 111,
-    width: 281,
+    top: (height * 0.2773),
+    left: (width * 0.141),
+    height: (height * 0.1315),
+    width: (width * 0.7205),
     position: "absolute",
   },
 });

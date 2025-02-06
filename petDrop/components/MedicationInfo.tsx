@@ -1,10 +1,12 @@
 /* This file and MedicationInfo2.tsx will be combined into one at some point */
 
 import * as React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Dimensions } from "react-native";
 import { Image } from "expo-image";
 import EditIcon from "../assets/edit_icon.svg";
 import { Border, Color, FontSize, FontFamily } from "../GlobalStyles";
+
+const { width, height } = Dimensions.get('window');
 
 const MedicationInfo = () => {
   return (
@@ -17,8 +19,8 @@ const MedicationInfo = () => {
       <View style={styles.groupInner} />
       <EditIcon
         style={[styles.groupIcon, styles.groupIconPosition]}
-        width={29}
-        height={29}
+        width={(width * 0.0744)}
+        height={(height * 0.0344)}
       />
     </View>
   );
@@ -26,51 +28,49 @@ const MedicationInfo = () => {
 
 const styles = StyleSheet.create({
   groupPosition: {
-    left: 0,
-    width: 281,
+    width: (width * 0.7205),
     position: "absolute",
   },
   groupIconPosition: {
-    top: 3,
+    top: (height * 0.0036),
     position: "absolute",
   },
   groupChild: {
-    top: 0,
     borderRadius: Border.br_xl,
     backgroundColor: Color.colorCornflowerblue,
-    height: 111,
+    height: (height * 0.1315),
   },
   groupItem: {
-    top: 32,
+    top: (height * 0.0379),
     borderBottomRightRadius: Border.br_xl,
     borderBottomLeftRadius: Border.br_xl,
     backgroundColor: Color.colorLightskyblue,
-    height: 358,
+    height: (height * 0.4242),
   },
   eyeDropsSparky: {
-    left: 39,
+    left: (width * 0.1),
     fontSize: FontSize.size_base,
     fontFamily: FontFamily.koulenRegular,
     color: Color.colorFloralwhite,
     textAlign: "left",
   },
   groupInner: {
-    top: 7,
-    left: 12,
+    top: (height * 0.0083),
+    left: (width * 0.0308),
     borderRadius: Border.br_7xs,
     backgroundColor: Color.colorFirebrick,
-    width: 19,
-    height: 19,
+    width: (width * 0.0487),
+    height: (height * 0.0225),
     position: "absolute",
   },
   groupIcon: {
-    left: 245,
+    left: (width * 0.6282),
   },
   rectangleParent: {
-    top: 265,
-    left: 52,
-    height: 390,
-    width: 281,
+    top: (height * 0.314),
+    left: (width * 0.1333),
+    height: (height * 0.4621),
+    width: (width * 0.7205),
     position: "absolute",
   },
 });
