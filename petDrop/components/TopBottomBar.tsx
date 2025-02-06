@@ -48,7 +48,8 @@ const TopBottomBar = (props: TopBottomBarType) => {
         </View>
       </Pressable>
       <Pressable onPress={() => {props.navigation.navigate("PetInfo")}} style={styles.petInfoPressable}>
-        {props.currentScreen == ScreenEnum.PetInfo ? (
+        {props.currentScreen == ScreenEnum.PetInfo || 
+        props.currentScreen == ScreenEnum.PetInfo1 ? (
           <View style={styles.darkBackground}/>
         ) : null}
         <View style={styles.petInfoButton}>
@@ -283,8 +284,8 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   polygonIcon: {
-    top: (height * -0.002),
-    left: (width * 0.008), 
+    top: (height * 0.001),
+    left: (width * 0.0085), 
     width: (width * 0.0513),
     height: (height * 0.0178),
     overflow: "hidden",
