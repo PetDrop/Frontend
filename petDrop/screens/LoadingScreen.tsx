@@ -1,8 +1,10 @@
 import { Image } from "expo-image";
 import * as React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
 import BlueCircleBig from "../assets/blue_circle_big.svg";
 import { Color, FontFamily, FontSize } from "../GlobalStyles";
+
+const { width, height } = Dimensions.get('window');
 
 const LoadingScreen = () => {
   return (
@@ -28,37 +30,37 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   untitledArtwork52Copy1: {
-    top: 326,
-    left: 150,
-    width: 96,
-    height: 128,
+    top: (height * 0.3863),
+    left: (width * 0.3846),
+    width: (width * 0.2462),
+    height: (height * 0.1517),
     position: "absolute",
   },
   subtractIcon: {
-    top: 305,
-    left: 120,
-    width: 146,
-    height: 146,
+    top: (height * 0.3614),
+    left: (width * 0.3077),
+    width: (width * 0.3744),
+    height: (height * 0.173),
   },
   petdrop: {
-    top: 449,
-    left: 75,
+    top: (height * 0.532),
+    left: (width * 0.1923),
     fontSize: FontSize.size_45xl,
     fontFamily: FontFamily.jsMathCmbx10,
-    width: 342,
-    height: 112,
+    width: (width * 0.8769),
+    height: (height * 0.1327),
   },
   neverMissA: {
-    top: 500,
-    left: 104,
+    top: (height * 0.6043),
+    left: (width * 0.2564),
     fontSize: FontSize.size_smi,
     fontFamily: FontFamily.koulenRegular,
   },
   loadingScreen: {
     backgroundColor: Color.colorFloralwhite,
     flex: 1,
-    width: "100%",
-    height: 844,
+    width: width,
+    height: height,
     overflow: "hidden",
   },
 });

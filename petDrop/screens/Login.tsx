@@ -1,7 +1,9 @@
 import * as React from "react";
-import { Text, StyleSheet, View, Button, Pressable, Image } from "react-native";
+import { Text, StyleSheet, View, Button, Pressable, Image, Dimensions } from "react-native";
 import { Color, FontFamily, Border, FontSize } from "../GlobalStyles";
 import BlueCircleBig from "../assets/blue_circle_big.svg";
+
+const { width, height } = Dimensions.get('window');
 
 type LoginType = {
   navigation: any;
@@ -18,7 +20,7 @@ const Login = (props: LoginType) => {
         contentFit="cover"
         source={require("../assets/blue_dog_big.png")}
       />
-      <BlueCircleBig style={styles.blueCircle} width={146} height={146} />
+      <BlueCircleBig style={styles.blueCircle} width={(width * 0.3744)} height={(height * 0.173)} />
       <View style={styles.loginChild} />
       <View style={[styles.loginItem, styles.loginLayout]} />
       <View style={[styles.loginInner, styles.loginLayout]} />
@@ -35,15 +37,15 @@ const Login = (props: LoginType) => {
 
 const styles = StyleSheet.create({
   dogImage: {
-    top: "17.77%",
-    left: "37.18%",
-    height: "15.17%",
-    width: "24.62%",
+    top: (height * 0.1777),
+    left: (width * 0.3718),
+    height: (height * 0.1517),
+    width: (width * 0.2462),
     position: "absolute",
   },
   blueCircle: {
-    top: "15.4%",
-    left: "29.49%",
+    top: (height * 0.154),
+    left: (width * 0.2949),
   },
   login1Typo: {
     textAlign: "left",
@@ -59,63 +61,63 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   loginLayout: {
-    height: "5.92%",
-    width: "75.38%",
+    height: (height * 0.0592),
+    width: (width * 0.7538),
     borderRadius: Border.br_sm,
-    left: "12.31%",
+    left: (width * 0.1231),
     position: "absolute",
     backgroundColor: Color.colorFloralwhite,
   },
   passwordTypo: {
-    height: "2.01%",
+    height: (height * 0.0201),
     color: Color.colorDarkslateblue,
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
-    left: "12.31%",
+    left: (width * 0.1231),
     textAlign: "left",
     position: "absolute",
   },
   signUpTypo: {
     textAlign: "center",
-    width: "23.85%",
-    height: "2.01%",
+    width: (width * 0.2385),
+    height: (height * 0.0201),
     color: Color.colorDarkslateblue,
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
     position: "absolute",
   },
   login1: {
-    top: "34.36%",
-    left: "35.9%",
+    top: (height * 0.3436),
+    left: (width * 0.359),
   },
   loginChild: {
-    top: "41.23%",
-    left: "5.38%",
+    top: (height * 0.4123),
+    left: (width * 0.0538),
     borderRadius: Border.br_12xl,
     backgroundColor: Color.colorLightskyblue,
-    width: "88.97%",
-    height: "33.06%",
+    width: (width * 0.8897),
+    height: (height * 0.3306),
     position: "absolute",
   },
   loginItem: {
-    top: "58.06%",
+    top: (height * 0.5806),
   },
   loginInner: {
-    top: "48.34%",
+    top: (height * 0.4834),
   },
   usernameEMail: {
-    top: "45.14%",
-    width: "22.56%",
+    top: (height * 0.4514),
+    width: (width * 0.2256),
   },
   password: {
-    top: "54.86%",
-    width: "13.33%",
+    top: (height * 0.5486),
+    width: (width * 0.1333),
   },
   forgotPassword: {
-    top: "65.28%",
-    width: "23.85%",
-    left: "38.21%",
-    height: "2.01%",
+    top: (height * 0.6528),
+    width: (width * 0.2385),
+    left: (width * 0.3821),
+    height: (height * 0.201),
     color: Color.colorDarkslateblue,
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
@@ -123,24 +125,24 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   rememberMe: {
-    top: "67.89%",
-    left: "38.21%",
+    top: (height * 0.6789),
+    left: (width * 0.3821),
   },
   signUp: {
-    top: "70.5%",
-    left: "38.21%",
+    top: (height * 0.705),
+    left: (width * 0.3821),
     textAlign: "center",
   },
   petdrop: {
-    top: "85.9%",
-    left: "7.44%",
+    top: (height * 0.859),
+    left: (width * 0.0744),
     fontSize: FontSize.size_45xl,
-    width: "87.69%",
-    height: "13.27%",
+    width: (width * 0.8769),
+    height: (height * 0.1327),
   },
   neverMissA: {
-    top: "93.01%",
-    left: "14.87%",
+    top: (height * 0.9301),
+    left: (width * 0.1487),
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
     textAlign: "left",
@@ -149,8 +151,8 @@ const styles = StyleSheet.create({
   },
   login: {
     flex: 1,
-    width: "100%",
-    height: "100%",
+    width: width,
+    height: height,
     overflow: "hidden",
     backgroundColor: Color.colorFloralwhite,
   },

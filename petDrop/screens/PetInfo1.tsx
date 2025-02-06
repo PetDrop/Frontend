@@ -1,10 +1,12 @@
 import * as React from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
 import BlueCircleBig from "../assets/blue_circle_big.svg";
 import AddButtons from "../components/PetInfo1AddButtons";
 import TopBottomBar from "../components/TopBottomBar";
 import { FontFamily, Color, FontSize, Border } from "../GlobalStyles";
+
+const { width, height } = Dimensions.get('window');
 
 type PetInfo1Type = {
   navigation: any;
@@ -13,7 +15,7 @@ type PetInfo1Type = {
 const PetInfo1 = (props: PetInfo1Type) => {
   return (
     <View style={styles.petInfo}>
-      <BlueCircleBig style={styles.subtractIcon} width={146} height={146} />
+      <BlueCircleBig style={styles.subtractIcon} width={(width * 0.3744)} height={(height * 0.173)} />
       <Text style={[styles.name, styles.nameTypo]}>Name</Text>
       <Text style={[styles.medications, styles.addPetTypo]}>Medications:</Text>
       <View style={[styles.rectangleParent, styles.groupChildLayout]}>
@@ -54,7 +56,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   groupChildLayout: {
-    width: 40,
+    width: (width * 0.1026),
     position: "absolute",
   },
   addTypo: {
@@ -64,53 +66,49 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   groupLayout: {
-    height: 2,
+    height: (height * 0.0024),
     borderRadius: Border.br_10xs,
-    width: 10,
+    width: (width * 0.0256),
     position: "absolute",
     backgroundColor: Color.colorFloralwhite,
   },
   groupChild1Layout: {
-    height: 7,
+    height: (height * 0.0083),
     backgroundColor: Color.colorCornflowerblue,
     borderRadius: Border.br_8xs_9,
-    width: 33,
+    width: (width * 0.0846),
     position: "absolute",
   },
   subtractIcon: {
-    top: 257,
-    left: 11,
+    top: (height * 0.3045),
+    left: (width * 0.0282),
   },
   name: {
-    top: 264,
-    left: 176,
+    top: (height * 0.3128),
+    left: (width * 0.4513),
     fontSize: FontSize.size_17xl,
-    width: 118,
-    height: 43,
+    width: (width * 0.3026),
+    height: (height * 0.0509),
   },
   medications: {
-    top: 457,
-    left: 21,
+    top: (height * 0.5415),
+    left: (width * 0.0538),
   },
   groupChild: {
-    top: 1,
+    top: (height * 0.0012),
     borderRadius: Border.br_3xs,
     backgroundColor: Color.colorCornflowerblue,
-    height: 21,
-    left: 0,
+    height: (height * 0.0249),
   },
   add: {
-    top: 0,
-    left: 18,
+    left: (width * 0.0462),
     color: Color.colorFloralwhite,
   },
   groupItem: {
-    top: 4,
-    left: 0,
+    top: (height * 0.0047),
   },
   groupInner: {
-    top: 4,
-    left: 0,
+    top: (height * 0.0047),
     transform: [
       {
         rotate: "-90deg",
@@ -118,38 +116,36 @@ const styles = StyleSheet.create({
     ],
   },
   rectangleGroup: {
-    top: 6,
-    left: 3,
-    height: 10,
-    width: 10,
+    top: (height * 0.0071),
+    left: (width * 0.0077),
+    height: (height * 0.0118),
+    width: (width * 0.0256),
     position: "absolute",
   },
   rectangleParent: {
-    top: 491,
-    height: 23,
-    left: 22,
+    top: (height * 0.5818),
+    height: (height * 0.0273),
+    left: (width * 0.0564),
   },
   petdrop: {
-    top: 82,
-    left: 17,
+    top: (height * 0.0972),
+    left: (width * 0.0436),
     fontSize: FontSize.size_45xl,
-    width: 342,
-    height: 112,
+    width: (width * 0.8769),
+    height: (height * 0.1327),
   },
   neverMissA: {
-    top: 143,
-    left: 44,
+    top: (height * 0.1694),
+    left: (width * 0.1128),
     color: Color.colorCornflowerblue,
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
   },
   rectangleView: {
-    top: 13,
-    left: 0,
+    top: (height * 0.0154),
   },
   groupChild1: {
-    top: 13,
-    left: 0,
+    top: (height * 0.0154),
     transform: [
       {
         rotate: "-90deg",
@@ -157,21 +153,21 @@ const styles = StyleSheet.create({
     ],
   },
   rectangleContainer: {
-    top: 313,
-    left: 67,
-    height: 33,
-    width: 33,
+    top: (height * 0.3709),
+    left: (width * 0.1718),
+    height: (height * 0.0391),
+    width: (width * 0.0846),
     position: "absolute",
   },
   addPet: {
-    top: 188,
-    width: 181,
-    left: 22,
+    top: (height * 0.2227),
+    width: (width * 0.4641),
+    left: (width * 0.0564),
   },
   petInfo: {
     flex: 1,
-    width: "100%",
-    height: 1032,
+    width: width,
+    height: height,
     overflow: "hidden",
     backgroundColor: Color.colorFloralwhite,
   },
