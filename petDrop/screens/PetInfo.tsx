@@ -91,13 +91,13 @@ Vet: Dog inc.
         </Pressable>
         <EditIcon
           style={[styles.petInfoGroupIcon, styles.groupIconLayout]}
-          width={29}
-          height={29}
+          width={(width * 0.0744)}
+          height={(height * 0.0344)}
         />
         <EditIcon
           style={[styles.petInfoChild4, styles.groupIconLayout]}
-          width={29}
-          height={29}
+          width={(width * 0.0744)}
+          height={(height * 0.0344)}
         />
         <Text style={[styles.petInfoLogoText, styles.blueTypo1]}>petdrop.</Text>
         <Text style={styles.petInfoLogoSubtext}>NEVER MISS A DROP.</Text>
