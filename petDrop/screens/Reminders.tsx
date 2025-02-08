@@ -1,8 +1,10 @@
 import * as React from "react";
-import { Text, StyleSheet, View } from "react-native";
+import { Text, StyleSheet, View, Dimensions } from "react-native";
 import MedicationInfo from "../components/MedicationInfo2";
 import TopBottomBar from "../components/TopBottomBar";
 import { FontFamily, Color, FontSize, Border } from "../GlobalStyles";
+
+const { width, height } = Dimensions.get('window');
 
 type RemindersType = {
   navigation: any;
@@ -34,12 +36,12 @@ Message: “1 pill”`}</Text>
       <MedicationInfo eyeDropsSPARKY="Eye drops: SPARKY " />
       <MedicationInfo
         eyeDropsSPARKY="Antibiotics: Blue "
-        groupViewTop={362}
+        groupViewTop={(height * 0.4289)}
         rectangleViewBackgroundColor="#ffc635"
       />
       <MedicationInfo
         eyeDropsSPARKY="Heartgard: Blue"
-        groupViewTop={490}
+        groupViewTop={(height * 0.5806)}
         rectangleViewBackgroundColor="#a0c66f"
       />
       <Text style={[styles.petdrop, styles.petdropTypo]}>petdrop.</Text>
@@ -65,58 +67,54 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   groupChildLayout: {
-    width: 40,
+    width: (width * 0.1026),
     position: "absolute",
   },
   groupLayout: {
-    height: 2,
+    height: (height * 0.0024),
     borderRadius: Border.br_10xs,
-    width: 10,
+    width: (width * 0.0256),
     position: "absolute",
     backgroundColor: Color.colorFloralwhite,
   },
   reminders1: {
-    top: 196,
-    left: 34,
+    top: (height * 0.2322),
+    left: (width * 0.0872),
     fontSize: FontSize.size_5xl,
   },
   datesSept1923: {
-    top: 928,
-    left: 94,
+    top: (height * 1.0995),
+    left: (width * 0.241),
     fontSize: FontSize.size_smi,
     color: Color.colorCornflowerblue,
   },
   datesSept2022: {
-    top: 1062,
-    left: 94,
+    top: (height * 1.2583),
+    left: (width * 0.241),
     fontSize: FontSize.size_smi,
     color: Color.colorCornflowerblue,
   },
   datesSept25: {
-    top: 1237,
-    left: 94,
+    top: (height * 1.4656),
+    left: (width * 0.241),
     fontSize: FontSize.size_smi,
     color: Color.colorCornflowerblue,
   },
   groupChild: {
-    top: 1,
+    top: (height * 0.0012),
     borderRadius: Border.br_3xs,
-    backgroundColor: Color.colorLightskyblue,
-    height: 21,
-    left: 0,
+    backgroundColor: Color.colorCornflowerblue,
+    height: (height * 0.0249),
   },
   add: {
-    top: 0,
-    left: 18,
+    left: (width * 0.0462),
     color: Color.colorFloralwhite,
   },
   groupItem: {
-    top: 4,
-    left: 0,
+    top: (height * 0.0047),
   },
   groupInner: {
-    top: 10,
-    left: 4,
+    top: (height * 0.0047),
     transform: [
       {
         rotate: "-90deg",
@@ -124,34 +122,34 @@ const styles = StyleSheet.create({
     ],
   },
   rectangleGroup: {
-    top: 6,
-    left: 3,
-    height: 10,
-    width: 10,
+    top: (height * 0.0071),
+    left: (width * 0.0077),
+    height: (height * 0.0118),
+    width: (width * 0.0256),
     position: "absolute",
   },
   rectangleParent: {
-    top: 618,
-    left: 64,
-    height: 23,
+    top: (height * 0.7322),
+    left: (width * 0.1641),
+    height: (height * 0.0273),
   },
   petdrop: {
-    top: 82,
-    left: 19,
+    top: (height * 0.0972),
+    left: (width * 0.0487),
     fontSize: FontSize.size_45xl,
-    width: 342,
-    height: 112,
+    width: (width * 0.8769),
+    height: (height * 0.1327),
   },
   neverMissA: {
-    top: 133,
-    left: 46,
+    top: (height * 0.1694),
+    left: (width * 0.1179),
     color: Color.colorCornflowerblue,
     fontSize: FontSize.size_smi,
   },
   reminders: {
     flex: 1,
-    width: "100%",
-    height: 1464,
+    width: width,
+    height: height,
     overflow: "hidden",
     backgroundColor: Color.colorFloralwhite,
   },

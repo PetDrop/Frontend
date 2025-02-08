@@ -33,11 +33,6 @@ const App = () => {
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             {/* first screen listed is the one rendered by default */}
             <Stack.Screen
-              name="MedicationsArchive"
-              component={MedicationsArchive}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
               name="Login"
               component={Login}
               options={{ headerShown: false }}
@@ -70,6 +65,11 @@ const App = () => {
             <Stack.Screen
               name="MedicationsArchive1"
               component={MedicationsArchive1}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="MedicationsArchive"
+              component={MedicationsArchive}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

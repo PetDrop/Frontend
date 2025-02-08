@@ -1,7 +1,9 @@
 import * as React from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { Color, FontFamily, FontSize } from "../GlobalStyles";
+
+const { width, height } = Dimensions.get('window');
 
 const PetInfo1AddButtons = () => {
   return (
@@ -42,66 +44,64 @@ const PetInfo1AddButtons = () => {
 
 const styles = StyleSheet.create({
   groupChildPosition: {
-    height: 21,
-    left: 0,
+    height: (height * 0.0249),
     position: "absolute",
   },
   vetTypo: {
-    width: 43,
+    width: (width * 0.1103),
     textAlign: "left",
     color: Color.colorFloralwhite,
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
-    left: 6,
+    left: (width * 0.0154),
     position: "absolute",
   },
   groupChild: {
-    top: 1,
-    width: 44,
+    top: (height * 0.0012),
+    width: (width * 0.1128),
   },
   groupItem: {
-    top: 27,
-    width: 54,
+    top: (height * 0.032),
+    width: (width * 0.1385),
   },
   groupInner: {
-    top: 55,
-    width: 56,
+    top: (height * 0.0652),
+    width: (width * 0.1436),
   },
   groupIcon: {
-    top: 83,
-    width: 64,
+    top: (height * 0.0983),
+    width: (width * 0.1641),
   },
   groupChild1: {
-    top: 111,
-    width: 39,
+    top: (height * 0.1315),
+    width: (width * 0.1),
   },
   age: {
-    top: 0,
-    width: 29,
+    width: (width * 0.0744),
     textAlign: "left",
     color: Color.colorFloralwhite,
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
-    left: 6,
+    left: (width * 0.0154),
     position: "absolute",
   },
   breed: {
-    top: 26,
+    top: (height * 0.0308),
   },
   weight: {
-    top: 54,
+    top: (height * 0.064),
   },
   address: {
-    top: 82,
+    top: (height * 0.0972),
   },
   vet: {
-    top: 110,
+    top: (height * 0.1308),
   },
   groupParent: {
-    top: 307,
-    left: 176,
-    height: 133,
-    width: 64,
+    top: (height * 0.3637),
+    left: (width * 0.4513),
+    height: (height * 0.1576),
+    width: (width * 0.1641),
     position: "absolute",
   },
 });

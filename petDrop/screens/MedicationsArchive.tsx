@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View, Text, Pressable } from "react-native";
+import { StyleSheet, View, Text, Pressable, Dimensions } from "react-native";
 import { Image } from "expo-image";
 import WhiteCircle from "../assets/white_circle.svg";
 import DarkBlueCircle from "../assets/dark_blue_circle.svg";
@@ -7,6 +7,7 @@ import MedicationInfo from "../components/MedicationInfo";
 import TopBottomBar from "../components/TopBottomBar";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 
+const { width, height } = Dimensions.get('window');
 type MedicationsArchiveType = {
   navigation: any;
 }
@@ -24,7 +25,7 @@ const MedicationsArchive = (props: MedicationsArchiveType) => {
       <Pressable onPress={() => {props.navigation.navigate("MedicationsArchive1")}}>
         <Text style={[styles.switch, styles.textTypo]}>SWITCH</Text>
       </Pressable>
-      <WhiteCircle style={styles.medicationsArchiveItem} width={32} height={32} />
+      <WhiteCircle style={styles.medicationsArchiveItem} width={(width * 0.0821)} height={(height * 0.0379)} />
       <Image
         style={styles.untitledArtwork52Copy3}
         contentFit="cover"
@@ -32,7 +33,7 @@ const MedicationsArchive = (props: MedicationsArchiveType) => {
       />
       <DarkBlueCircle style={styles.subtractIcon}/>
       <View style={[styles.rectangleParent, styles.groupChildLayout]}>
-        <View style={[styles.groupChild, styles.groupChildLayout]} />
+        <View style={[styles.groupChild, styles.innerGroupChildLayout]} />
         <Text style={[styles.add, styles.addTypo]}>ADD</Text>
         <View style={styles.rectangleGroup}>
           <View style={[styles.groupItem, styles.groupLayout]} />
@@ -70,7 +71,11 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   groupChildLayout: {
-    width: 40,
+    width: (width * 0.1026),
+    position: "absolute",
+  },
+  innerGroupChildLayout: {
+    width: (width * 0.1),
     position: "absolute",
   },
   addTypo: {
@@ -81,91 +86,87 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   groupLayout: {
-    height: 2,
+    height: (height * 0.0024),
     borderRadius: Border.br_10xs,
-    width: 10,
+    width: (width * 0.0256),
     position: "absolute",
     backgroundColor: Color.colorFloralwhite,
   },
   medicationsArchiveChild: {
-    top: 189,
-    left: 250,
+    top: (height * 0.2239),
+    left: (width * 0.641),
     borderRadius: Border.br_2xl,
     backgroundColor: Color.colorGainsboro_100,
-    width: 117,
-    height: 42,
+    width: (width * 0.3),
+    height: (height * 0.0498),
     position: "absolute",
   },
   petdrop: {
-    top: 82,
-    left: 25,
+    top: (height * 0.0972),
+    left: (width * 0.0641),
     fontSize: FontSize.size_45xl,
-    width: 342,
-    height: 112,
+    width: (width * 0.8769),
+    height: (height * 0.1327),
   },
   neverMissA: {
-    top: 133,
-    left: 52,
+    top: (height * 0.1694),
+    left: (width * 0.1333),
     fontSize: FontSize.size_smi,
     fontFamily: FontFamily.koulenRegular,
   },
   medications: {
-    top: 197,
-    left: 34,
+    top: (height * 0.2334),
+    left: (width * 0.0872),
     fontSize: FontSize.size_5xl,
-    width: 181,
+    width: (width * 0.4641),
   },
   text: {
-    top: 207,
-    left: 367,
+    top: (height * 0.2334),
+    left: (width * 0.8923),
     fontSize: FontSize.size_base,
     transform: [
       {
-        rotate: "89.4deg",
+        rotate: "90deg",
       },
     ],
   },
   switch: {
-    top: 193,
-    left: 293,
+    top: (height * 0.2287),
+    left: (width * 0.7513),
     fontSize: FontSize.size_xl,
   },
   medicationsArchiveItem: {
-    top: 194,
-    left: 256,
+    top: (height * 0.2299),
+    left: (width * 0.6564),
     position: "absolute",
   },
   untitledArtwork52Copy3: {
-    top: 198,
-    left: 261,
-    width: 23,
-    height: 30,
+    top: (height * 0.2346),
+    left: (width * 0.6692),
+    width: (width * 0.059),
+    height: (height * 0.0355),
     position: "absolute",
   },
   subtractIcon: {
-    top: 193,
-    left: 255,
-    width: 34,
-    height: 34,
+    top: (height * 0.2287),
+    left: (width * 0.6538),
+    width: (width * 0.872),
+    height: (height * 0.403),
   },
   groupChild: {
-    top: 1,
     borderRadius: Border.br_3xs,
-    backgroundColor: Color.colorLightskyblue,
-    height: 21,
-    left: 0,
+    backgroundColor: Color.colorCornflowerblue,
+    height: (height * 0.0249),
   },
   add: {
-    top: 0,
-    left: 18,
+    left: (width * 0.046),
+    top: (height * -0.0006),
   },
   groupItem: {
-    top: 4,
-    left: 0,
+    top: (height * 0.0047),
   },
   groupInner: {
-    top: 10,
-    left: 4,
+    top: (height * 0.0047),
     transform: [
       {
         rotate: "-90deg",
@@ -173,28 +174,28 @@ const styles = StyleSheet.create({
     ],
   },
   rectangleGroup: {
-    top: 6,
-    left: 3,
-    height: 10,
-    width: 10,
+    top: (height * 0.0071),
+    left: (width * 0.0077),
+    height: (height * 0.0118),
+    width: (width * 0.0256),
     position: "absolute",
   },
   rectangleParent: {
-    top: 675,
-    left: 61,
-    height: 23,
+    top: (height * 0.7998),
+    left: (width * 0.1564),
+    height: (height * 0.273),
   },
   petSparkyDates: {
-    top: 307,
-    left: 73,
+    top: (height * 0.3637),
+    left: (width * 0.1872),
     lineHeight: 30,
-    width: 122,
-    height: 365,
+    width: (width * 0.3128),
+    height: (height * 0.4325),
   },
   medicationsArchive: {
     flex: 1,
-    width: "100%",
-    height: 2080,
+    width: width,
+    height: height,
     overflow: "hidden",
     backgroundColor: Color.colorFloralwhite,
   },

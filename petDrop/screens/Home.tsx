@@ -1,10 +1,12 @@
 import * as React from "react";
-import { StyleSheet, View, Text, Button } from "react-native";
+import { StyleSheet, View, Text, Button, Dimensions } from "react-native";
 import { Image } from "expo-image";
 import DayOutline from "../assets/day_outline.svg";
 import EditIcon from "../assets/edit_icon.svg";
 import TopBottomBar from "../components/TopBottomBar";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+
+const { width, height } = Dimensions.get('window');
 
 type HomeType = {
   navigation: any;
@@ -62,7 +64,7 @@ const Home = (props: HomeType) => {
       <Text
         style={[styles.heartgardBlackBox, styles.petdropClr]}
       >{`Heartgard (Black box, 1 pill, every night) `}</Text>
-      <DayOutline style={styles.dayOutline} width={28} height={28} />
+      <DayOutline style={styles.dayOutline} width={(width * 0.0718)} height={(height * 0.0332)} />
       <View style={[styles.homeInner, styles.homeLayout]} />
       <View style={[styles.rectangleView, styles.homeLayout]} />
       <View style={[styles.homeChild1, styles.homeLayout]} />
@@ -71,20 +73,13 @@ const Home = (props: HomeType) => {
       <View style={[styles.homeChild4, styles.homeChildLayout]} />
       <View style={[styles.homeChild5, styles.homeChildPosition]} />
       <View style={[styles.homeChild6, styles.homeChildPosition]} />
-      <View style={[styles.rectangleParent, styles.homeLayout]}>
-        <View style={styles.groupChild} />
-        <View style={styles.rectangleGroup}>
-          <View style={[styles.groupItem, styles.groupLayout]} />
-          <View style={[styles.groupInner, styles.groupLayout]} />
-        </View>
-      </View>
-      <Text style={[styles.hi, styles.hiTypo]}>{`Hi, `}</Text>
+      <Text style={[styles.hi, styles.hiTypo]}>Hi, </Text>
       <Text style={[styles.jane, styles.hiTypo]}>Jane!</Text>
       <Text style={[styles.petdrop, styles.petdropClr]}>petdrop.</Text>
       <Text style={[styles.neverMissA, styles.petdropClr]}>
         NEVER MISS A DROP.
       </Text>
-      <EditIcon style={styles.groupIcon} width={29} height={29} />
+      <EditIcon style={styles.groupIcon} width={(width * 0.0744)} height={(height * 0.0344)} />
       <View style={styles.rectangleContainer}>
         <View style={[styles.groupChild1, styles.groupPosition]} />
         <Text style={styles.medications}>MEDICATIONS</Text>
@@ -96,9 +91,9 @@ const Home = (props: HomeType) => {
 
 const styles = StyleSheet.create({
   homePosition: {
-    width: 347,
-    left: 21,
-    top: 218,
+    width: (width * 0.8897),
+    left: (width * 0.0538),
+    top: (height * 0.2583),
   },
   homeItemBg: {
     backgroundColor: Color.colorLightskyblue,
@@ -111,12 +106,12 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   sLayout: {
-    height: 18,
+    height: (height * 0.0213),
     fontSize: FontSize.size_mini,
-    top: 280,
+    top: (height * 0.3318),
   },
   textTypo4: {
-    left: 45,
+    left: (width * 0.1154),
     fontSize: FontSize.size_xs,
     textAlign: "left",
     color: Color.colorFloralwhite,
@@ -124,7 +119,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   textTypo3: {
-    top: 529,
+    top: (height * 0.6268),
     fontSize: FontSize.size_xs,
     textAlign: "left",
     color: Color.colorFloralwhite,
@@ -132,7 +127,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   textTypo2: {
-    left: 94,
+    left: (width * 0.241),
     fontSize: FontSize.size_xs,
     textAlign: "left",
     color: Color.colorFloralwhite,
@@ -140,7 +135,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   textTypo1: {
-    left: 139,
+    left: (width * 0.3564),
     fontSize: FontSize.size_xs,
     textAlign: "left",
     color: Color.colorFloralwhite,
@@ -148,14 +143,14 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   textPosition: {
-    left: 188,
+    left: (width * 0.4821),
     textAlign: "left",
     color: Color.colorFloralwhite,
     fontFamily: FontFamily.jsMathCmbx10,
     position: "absolute",
   },
   textTypo: {
-    left: 335,
+    left: (width * 0.859),
     fontSize: FontSize.size_xs,
     textAlign: "left",
     color: Color.colorFloralwhite,
@@ -163,10 +158,10 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   tTypo: {
-    width: 13,
-    height: 18,
+    width: (width * 0.0333),
+    height: (height * 0.0213),
     fontSize: FontSize.size_mini,
-    top: 280,
+    top: (height * 0.3318),
     textAlign: "left",
     color: Color.colorFloralwhite,
     fontFamily: FontFamily.jsMathCmbx10,
@@ -178,32 +173,32 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   homeLayout: {
-    height: 21,
-    width: 21,
-    left: 41,
+    height: (height * 0.0249),
+    width: (width * 0.0538),
+    left: (width * 0.1051),
     position: "absolute",
   },
   homeChildLayout: {
-    height: 6,
+    height: (height * 0.0071),
     borderRadius: Border.br_10xs,
     position: "absolute",
   },
   homeChildPosition: {
-    left: 38,
-    height: 6,
+    left: (width * 0.0974),
+    height: (height * 0.0071),
     borderRadius: Border.br_10xs,
     position: "absolute",
   },
   groupLayout: {
-    height: 2,
-    width: 10,
+    height: (height * 0.0024),
+    width: (width * 0.0256),
     borderRadius: Border.br_10xs,
     position: "absolute",
     backgroundColor: Color.colorFloralwhite,
   },
   hiTypo: {
-    height: 27,
-    top: 191,
+    height: (height * 0.032),
+    top: (height * 0.2263),
     color: Color.colorCornflowerblue,
     textAlign: "left",
     fontFamily: FontFamily.jsMathCmbx10,
@@ -211,354 +206,327 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   groupPosition: {
-    top: 4,
-    left: 0,
+    top: (height * 0.0047),
   },
   homeChild: {
     borderRadius: Border.br_12xl,
     backgroundColor: Color.colorCornflowerblue,
-    height: 347,
+    height: (height * 0.4111),
     position: "absolute",
   },
   homeItem: {
     borderTopLeftRadius: Border.br_12xl,
     borderTopRightRadius: Border.br_12xl,
-    height: 48,
-    width: 347,
-    left: 21,
-    top: 218,
+    height: (height * 0.0569),
+    width: (width * 0.8897),
+    left: (width * 0.0538),
+    top: (height * 0.2583),
   },
   september: {
-    top: 234,
-    left: 40,
+    top: (height * 0.2773),
+    left: (width * 0.1026),
     fontSize: FontSize.size_5xl,
     color: Color.colorFloralwhite,
   },
   s: {
-    width: 11,
-    height: 18,
+    width: (width * 0.0282),
+    height: (height * 0.0213),
     fontSize: FontSize.size_mini,
-    top: 280,
+    top: (height * 0.6318),
     textAlign: "left",
     color: Color.colorFloralwhite,
     fontFamily: FontFamily.jsMathCmbx10,
     position: "absolute",
-    left: 41,
+    left: (width * 0.1051),
   },
   text: {
     fontSize: FontSize.size_xs,
-    top: 321,
+    top: (height * 0.3803),
   },
   text1: {
-    top: 373,
+    top: (height * 0.4419),
     fontSize: FontSize.size_xs,
   },
   text2: {
-    top: 425,
+    top: (height * 0.5036),
     fontSize: FontSize.size_xs,
-    left: 41,
+    left: (width * 0.1051),
   },
   text3: {
-    top: 477,
+    top: (height * 0.5652),
     fontSize: FontSize.size_xs,
-    left: 41,
+    left: (width * 0.1051),
   },
   text4: {
-    left: 41,
+    left: (width * 0.1051),
   },
   text5: {
-    top: 321,
+    top: (height * 0.3803),
   },
   text6: {
-    top: 373,
+    top: (height * 0.4419),
   },
   text7: {
-    left: 90,
-    top: 425,
+    left: (width * 0.2308),
+    top: (height * 0.5036),
     fontSize: FontSize.size_xs,
   },
   text8: {
-    left: 90,
-    top: 477,
+    left: (width * 0.2308),
+    top: (height * 0.5652),
     fontSize: FontSize.size_xs,
   },
   text9: {
-    left: 90,
+    left: (width * 0.2308),
   },
   text10: {
-    left: 143,
+    left: (width * 0.3667),
     fontSize: FontSize.size_xs,
-    top: 321,
+    top: (height * 0.3803),
   },
   text11: {
-    top: 373,
+    top: (height * 0.4419),
   },
   text12: {
-    top: 425,
+    top: (height * 0.5036),
   },
   text13: {
-    top: 477,
+    top: (height * 0.5652),
   },
   text14: {
-    left: 192,
+    left: (width * 0.4923),
     fontSize: FontSize.size_xs,
-    top: 321,
+    top: (height * 0.3803),
   },
   text15: {
-    top: 373,
+    top: (height * 0.4419),
     fontSize: FontSize.size_xs,
   },
   text16: {
-    top: 425,
+    top: (height * 0.5036),
     fontSize: FontSize.size_xs,
   },
   text17: {
-    top: 477,
+    top: (height * 0.5652),
     fontSize: FontSize.size_xs,
   },
   text18: {
-    left: 241,
+    left: (width * 0.6197),
     fontSize: FontSize.size_xs,
-    top: 321,
+    top: (height * 0.3803),
   },
   text19: {
-    left: 237,
-    top: 373,
+    left: (width * 0.6077),
+    top: (height * 0.4419),
     fontSize: FontSize.size_xs,
   },
   text20: {
-    left: 237,
-    top: 425,
+    left: (width * 0.6077),
+    top: (height * 0.5036),
     fontSize: FontSize.size_xs,
   },
   text21: {
-    left: 237,
-    top: 477,
+    left: (width * 0.6077),
+    top: (height * 0.5652),
     fontSize: FontSize.size_xs,
   },
   text22: {
-    left: 290,
+    left: (width * 0.7436),
     fontSize: FontSize.size_xs,
-    top: 321,
+    top: (height * 0.3803),
   },
   text23: {
-    left: 286,
-    top: 373,
+    left: (width * 0.7333),
+    top: (height * 0.4419),
     fontSize: FontSize.size_xs,
   },
   text24: {
-    left: 286,
-    top: 425,
+    left: (width * 0.7333),
+    top: (height * 0.5036),
     fontSize: FontSize.size_xs,
   },
   text25: {
-    left: 286,
-    top: 477,
+    left: (width * 0.7333),
+    top: (height * 0.5652),
     fontSize: FontSize.size_xs,
   },
   text26: {
-    left: 339,
+    left: (width * 0.8692),
     fontSize: FontSize.size_xs,
-    top: 321,
+    top: (height * 0.3803),
   },
   text27: {
-    top: 373,
+    top: (height * 0.4419),
   },
   text28: {
-    top: 425,
+    top: (height * 0.5036),
   },
   text29: {
-    top: 477,
+    top: (height * 0.5652),
   },
   s1: {
-    left: 338,
-    width: 11,
-    height: 18,
+    left: (width * 0.8667),
+    width: (width * 0.0282),
+    height: (height * 0.0213),
     fontSize: FontSize.size_mini,
-    top: 280,
+    top: (height * 0.3318),
     textAlign: "left",
     color: Color.colorFloralwhite,
     fontFamily: FontFamily.jsMathCmbx10,
     position: "absolute",
   },
   m: {
-    left: 87,
-    width: 18,
-    height: 18,
+    left: (width * 0.2231),
+    width: (width * 0.0462),
+    height: (height * 0.0213),
     fontSize: FontSize.size_mini,
-    top: 280,
+    top: (height * 0.3318),
     textAlign: "left",
     color: Color.colorFloralwhite,
     fontFamily: FontFamily.jsMathCmbx10,
     position: "absolute",
   },
   t: {
-    left: 140,
+    left: (width * 0.359),
   },
   w: {
-    width: 20,
-    height: 18,
+    width: (width * 0.0513),
+    height: (height * 0.0213),
     fontSize: FontSize.size_mini,
-    top: 280,
+    top: (height * 0.3318),
   },
   t1: {
-    left: 243,
+    left: (width * 0.6231),
   },
   f: {
-    left: 291,
-    width: 12,
-    height: 18,
+    left: (width * 0.7462),
+    width: (width * 0.0308),
+    height: (height * 0.0213),
     fontSize: FontSize.size_mini,
-    top: 280,
+    top: (height * 0.3318),
     textAlign: "left",
     color: Color.colorFloralwhite,
     fontFamily: FontFamily.jsMathCmbx10,
     position: "absolute",
   },
   eyeDropsRed: {
-    top: 627,
+    top: (height * 0.7429),
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
     color: Color.colorCornflowerblue,
-    left: 71,
+    left: (width * 0.1821),
   },
   antibioticsBlueBottle: {
-    top: 661,
+    top: (height * 0.7832),
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
     color: Color.colorCornflowerblue,
-    left: 71,
+    left: (width * 0.1821),
   },
   heartgardBlackBox: {
-    top: 695,
+    top: (height * 0.8235),
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
     color: Color.colorCornflowerblue,
-    left: 71,
+    left: (width * 0.1821),
   },
   dayOutline: {
-    top: 418,
-    left: 230,
+    top: (height * 0.4953),
+    left: (width * 0.5897),
   },
   homeInner: {
-    top: 628,
+    top: (height * 0.7441),
     backgroundColor: Color.colorFirebrick,
     borderRadius: Border.br_7xs,
-    width: 21,
+    width: (width * 0.0538),
   },
   rectangleView: {
-    top: 662,
+    top: (height * 0.7844),
     backgroundColor: Color.colorGoldenrod,
     borderRadius: Border.br_7xs,
-    width: 21,
+    width: (width * 0.0538),
   },
   homeChild1: {
-    top: 696,
+    top: (height * 0.8246),
     backgroundColor: Color.colorDarkkhaki,
     borderRadius: Border.br_7xs,
-    width: 21,
+    width: (width * 0.0538),
   },
   homeChild2: {
-    top: 449,
-    width: 112,
+    top: (height * 0.532),
+    width: (width * 0.2872),
     backgroundColor: Color.colorFirebrick,
-    left: 237,
+    left: (width * 0.6077),
   },
   homeChild3: {
-    top: 345,
-    width: 158,
+    top: (height * 0.4088),
+    width: (width * 0.4051),
     backgroundColor: Color.colorDarkkhaki,
-    left: 90,
+    left: (width * 0.2308),
   },
   homeChild4: {
-    top: 458,
-    width: 63,
+    top: (height * 0.5427),
+    width: (width * 0.1615),
     backgroundColor: Color.colorGoldenrod,
-    left: 286,
+    left: (width * 0.7333),
   },
   homeChild5: {
-    top: 504,
-    width: 17,
+    top: (height * 0.5972),
+    width: (width * 0.0436),
     backgroundColor: Color.colorGoldenrod,
   },
   homeChild6: {
-    top: 495,
-    width: 66,
+    top: (height * 0.5865),
+    width: (width * 0.1692),
     backgroundColor: Color.colorFirebrick,
   },
   groupChild: {
     borderRadius: 11,
-    left: 0,
-    top: 0,
-    height: 21,
-    width: 21,
+    height: (height * 0.0249),
+    width: (width * 0.0538),
     backgroundColor: Color.colorLightskyblue,
     position: "absolute",
   },
-  groupItem: {
-    top: 4,
-    left: 0,
-  },
-  groupInner: {
-    top: 10,
-    left: 4,
-    transform: [
-      {
-        rotate: "-90deg",
-      },
-    ],
-  },
-  rectangleGroup: {
-    top: 5,
-    left: 6,
-    height: 10,
-    width: 10,
-    position: "absolute",
-  },
-  rectangleParent: {
-    top: 732,
-  },
   hi: {
-    width: 40,
-    left: 41,
+    width: (width * 0.1026),
+    left: (width * 0.1051),
   },
   jane: {
-    left: 85,
-    width: 79,
+    left: (width * 0.1923),
+    width: (width * 0.2026),
   },
   petdrop: {
-    top: 82,
-    left: 25,
+    top: (height * 0.0972),
+    left: (width * 0.0641),
     fontSize: FontSize.size_45xl,
-    width: 342,
-    height: 112,
+    width: (width * 0.8769),
+    height: (height * 0.1327),
     color: Color.colorCornflowerblue,
     fontFamily: FontFamily.jsMathCmbx10,
   },
   neverMissA: {
-    top: 133,
-    left: 52,
+    top: (height * 0.1694),
+    left: (width * 0.1333),
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
     color: Color.colorCornflowerblue,
   },
   groupIcon: {
-    top: 231,
-    left: 327,
+    top: (height * 0.2737),
+    left: (width * 0.8385),
     position: "absolute",
   },
   groupChild1: {
     borderRadius: 17,
-    width: 137,
-    height: 34,
-    backgroundColor: Color.colorLightskyblue,
+    width: (width * 0.3513),
+    height: (height * 0.0403),
+    backgroundColor: Color.colorCornflowerblue,
     position: "absolute",
   },
   medications: {
-    left: 15,
-    width: 149,
-    height: 33,
-    top: 0,
+    left: (width * 0.0385),
+    width: (width * 0.3821),
+    height: (height * 0.0391),
     fontFamily: FontFamily.koulenRegular,
     textAlign: "left",
     color: Color.colorFloralwhite,
@@ -566,16 +534,16 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   rectangleContainer: {
-    top: 582,
-    width: 164,
-    height: 38,
-    left: 41,
+    top: (height * 0.6896),
+    width: (width * 0.4205),
+    height: (height * 0.045),
+    left: (width * 0.1051),
     position: "absolute",
   },
   home: {
     flex: 1,
-    width: "100%",
-    height: 2286,
+    width: width,
+    height: height,
     overflow: "hidden",
     backgroundColor: Color.colorFloralwhite,
   },
