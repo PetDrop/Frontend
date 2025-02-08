@@ -2,7 +2,7 @@ import * as React from "react";
 import { Text, StyleSheet, View, Dimensions } from "react-native";
 import MedicationInfo from "../components/MedicationInfo2";
 import TopBottomBar from "../components/TopBottomBar";
-import { FontFamily, Color, FontSize, Border } from "../GlobalStyles";
+import { FontFamily, Color, FontSize, Border, ScreenEnum } from "../GlobalStyles";
 
 const { width, height } = Dimensions.get('window');
 
@@ -48,7 +48,7 @@ Message: “1 pill”`}</Text>
       <Text style={[styles.neverMissA, styles.datesTypo]}>
         NEVER MISS A DROP.
       </Text>
-      <TopBottomBar navigation = {props.navigation}/>
+      <TopBottomBar navigation = {props.navigation} currentScreen={ScreenEnum.Reminders}/>
     </View>
   );
 };

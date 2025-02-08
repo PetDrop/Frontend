@@ -1,11 +1,11 @@
 import { Image } from "expo-image";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Pressable, StyleSheet, View, Text, Dimensions } from "react-native";
 import PetInfoButton from "../assets/pet_info_button.svg";
 import RemindersButton from "../assets/reminders_button.svg";
 import HouseButtonRoof from "../assets/house_button_roof.svg";
 import ShareButtonRightArrow from "../assets/share_button_right_arrow.svg";
-import { Border, Color, FontFamily, FontSize } from "../GlobalStyles";
+import { Border, Color, FontFamily, FontSize, ScreenEnum } from "../GlobalStyles";
 
 const { width, height } = Dimensions.get('window');
 
@@ -13,6 +13,7 @@ export type TopBottomBarType = {
   /** Style props */
   groupViewLeft?: number | string;
   navigation: any;
+  currentScreen: number;
 };
 
 const getStyleValue = (key: string, value: string | number | undefined) => {
@@ -20,6 +21,7 @@ const getStyleValue = (key: string, value: string | number | undefined) => {
   return { [key]: value === "unset" ? undefined : value };
 };
 const TopBottomBar = (props: TopBottomBarType) => {
+
   const groupViewStyle = useMemo(() => {
     return {
       ...getStyleValue("left", props.groupViewLeft),
@@ -32,66 +34,123 @@ const TopBottomBar = (props: TopBottomBarType) => {
         <View style={styles.groupChild} />
       </View>
       <View style={styles.instanceChild} />
-      <Pressable onPress={() => {props.navigation.navigate("Home")}} style={styles.pressable}>
-        <View style={[styles.groupView, styles.groupViewPosition]}>
-          <HouseButtonRoof 
-            style={styles.polygonIcon} 
-            width={(width * 0.0513)} 
-            height={(height * 0.0178)} />
-          <View style={styles.groupChild4} />
+      <Pressable onPress={() => {props.navigation.navigate("Home")}} style={styles.homePressable}>
+        {/* this conditional is for putting a background on whichever
+            button corresponds to the current screen showing.
+            there is one for each of the 4 screens on the nav bar */}
+        {props.currentScreen == ScreenEnum.Home ? (
+          <View style={styles.darkBackground}/>
+        ) : null}
+        <View style={styles.homeButton}>
+          <HouseButtonRoof style={styles.polygonIcon}/>
+          <View style={styles.groupChild4}/>
+          <Text style={styles.buttonText}>HOME</Text>
         </View>
       </Pressable>
-      <Pressable onPress={() => {props.navigation.navigate("PetInfo")}}>
-        <PetInfoButton 
-          style={styles.instanceItem} 
-          width={(width * 0.0808)} 
-          height={(height * 0.029)} />
+      <Pressable onPress={() => {props.navigation.navigate("PetInfo")}} style={styles.petInfoPressable}>
+        {props.currentScreen == ScreenEnum.PetInfo || 
+        props.currentScreen == ScreenEnum.PetInfo1 ? (
+          <View style={styles.darkBackground}/>
+        ) : null}
+        <View style={styles.petInfoButton}>
+          <PetInfoButton 
+            style={styles.instanceItem} 
+            width={(width * 0.0808)} 
+            height={(height * 0.029)} />
+          <Text style={styles.buttonText}>PETS</Text>
+        </View>
       </Pressable>
-      <Pressable onPress={() => {props.navigation.navigate("Reminders")}}>
-        <RemindersButton
-          style={[styles.instanceInner, styles.groupChild10Layout]}
-          width={(width * 0.0672)}
-          height={(height * 0.0296)}
-        />
+      <Pressable onPress={() => {props.navigation.navigate("Reminders")}} style={styles.remindersPressable}>
+        {props.currentScreen == ScreenEnum.Reminders ? (
+          <View style={styles.darkBackground}/>
+        ) : null}
+        <View style={styles.remindersButton}>
+          <RemindersButton
+            style={[styles.instanceInner, styles.groupChild10Layout]}
+            width={(width * 0.0672)}
+            height={(height * 0.0296)}
+          />
+          <Text style={styles.buttonText}>REMINDERS</Text>
+        </View>
       </Pressable>
-      <Pressable onPress={() => {props.navigation.navigate("MedicationsArchive")}}>
-        <Image
-          style={[styles.instanceChild1, styles.instanceChild1Position]}
-          contentFit="cover"
-          source={require("../assets/medications_button.png")}
-        />
+      <Pressable onPress={() => {props.navigation.navigate("MedicationsArchive")}} style={styles.medsPressable}>
+        {props.currentScreen == ScreenEnum.MedicationsArchive ||
+          props.currentScreen == ScreenEnum.MedicationsArchive1 ? ( //this second condition is temporary
+          <View style={styles.darkBackground}/>
+        ) : null}
+        <View style={styles.medsButton}>
+          <Image
+            style={[styles.instanceChild1, styles.instanceChild1Position]}
+            contentFit="cover"
+            source={require("../assets/medications_button.png")}
+          />
+          <Text style={styles.buttonText}>MEDS</Text>
+        </View>
       </Pressable>
-      <View style={[styles.rectangleParent2, styles.instanceChild1Position]}>
-        <View style={[styles.groupChild8, styles.groupChildPosition]} />
-        <View style={[styles.groupChild9, styles.groupChildPosition]} />
-        <ShareButtonRightArrow
-          style={[styles.groupChild10, styles.groupChild10Layout]}
-          width={(width * 0.0385)}
-          height={(height * 0.0237)}
-        />
-      </View>
-      <Text style={[styles.buttonText, {left: (width * 0.1154)}]}>HOME</Text>
-      <Text style={[styles.buttonText, {left: (width * 0.2949)}]}>PETS</Text>
-      <Text style={[styles.buttonText, {left: (width * 0.4487)}]}>REMINDERS</Text>
-      <Text style={[styles.buttonText, {left: (width * 0.6667)}]}>MEDS</Text>
-      <Text style={[styles.buttonText, {left: (width * 0.8205)}]}>SHARE</Text>
+      <Pressable style={styles.sharePressable}>
+        <View style={styles.shareButton}>
+          <View style={[styles.groupChild8, styles.groupChildPosition]} />
+          <View style={[styles.groupChild9, styles.groupChildPosition]} />
+          <ShareButtonRightArrow
+            style={[styles.groupChild10, styles.groupChild10Layout]}
+            width={(width * 0.0385)}
+            height={(height * 0.0237)}
+          />
+          <Text style={styles.buttonText}>SHARE</Text>
+        </View>
+      </Pressable>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   buttonText: {
-    top: (height * -0.0142),
+    top: (height * 0.032),
+    left: (width * 0.005),
     color: Color.colorFloralwhite,
     fontFamily: FontFamily.koulenRegular,
     fontSize: FontSize.size_smi,
     position: "absolute"
   },
-  pressable: {
-    left: (width * 0.0128),
-    height: (height * 0.0592),
-    width: (width * 0.0769),
+  homePressable: {
+    left: (width * 0.06),
+    top: (height * -0.05),
+    height: (height * 0.08),
+    width: (width * 0.15),
     position: "absolute",
+    borderRadius: 15,
+  },
+  petInfoPressable: {
+    left: (width * 0.24),
+    top: (height * -0.05),
+    height: (height * 0.08),
+    width: (width * 0.15),
+    position: "absolute",
+    borderRadius: 15,
+  },
+  remindersPressable: {
+    left: (width * 0.42),
+    top: (height * -0.05),
+    height: (height * 0.08),
+    width: (width * 0.15),
+    position: "absolute",
+    borderRadius: 15,
+  },
+  medsPressable: {
+    left: (width * 0.6),
+    top: (height * -0.05),
+    height: (height * 0.08),
+    width: (width * 0.15),
+    position: "absolute",
+    borderRadius: 15,
+  },
+  sharePressable: {
+    left: (width * 0.78),
+    top: (height * -0.05),
+    height: (height * 0.08),
+    width: (width * 0.15),
+    position: "absolute",
+    borderRadius: 15,
   },
   groupChild1Position: {
     width: (width * 0.0564),
@@ -105,17 +164,11 @@ const styles = StyleSheet.create({
     width: (width * 0.0256),
     position: "absolute",
   },
-  groupViewPosition: {
-    top: (height * -0.0474),
-    height: (height * 0.028),
-    position: "absolute",
-  },
   groupChild10Layout: {
     height: (height * 0.0237),
     position: "absolute",
   },
   instanceChild1Position: {
-    top: (height * -0.0474),
     position: "absolute",
   },
   groupChildPosition: {
@@ -222,56 +275,94 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   groupChild4: {
+    left: (width * 0.008),
+    top: (height * 0.01),
     width: (width * 0.0513),
-    top: (height * 0.0089),
-    left: (width * 0.0564),
     backgroundColor: Color.colorCornflowerblue,
     height: (height * 0.0191),
     borderRadius: Border.br_10xs,
     position: "absolute",
   },
   polygonIcon: {
+    top: (height * 0.001),
+    left: (width * 0.0085), 
+    width: (width * 0.0513),
+    height: (height * 0.0178),
     overflow: "hidden",
-    top: (height * -0.0028),
-    left: (width * 0.0564),
     position: "absolute",
   },
-  groupView: {
-    width: (width * 0.0744),
-    left: (width * 0.0513),
+  darkBackground: {
+    backgroundColor: Color.colorDarkslateblue,
+    height: (height * 0.08),
+    width: (width * 0.15),
+    borderRadius: 15,
+  },
+  homeButton: {
+    left: (width * 0.04),
+    top: (height * 0.01),
+    width: (width * 0.15),
+    height: (height * 0.08),
+    position: "absolute",
+  },
+  petInfoButton: {
+    left: (width * 0.045),
+    top: (height * 0.01),
+    width: (width * 0.15),
+    height: (height * 0.08),
+    position: "absolute",
+  },
+  remindersButton: {
+    left: (width * 0.005),
+    top: (height * 0.01),
+    width: (width * 0.15),
+    height: (height * 0.08),
+    position: "absolute",
+  },
+  medsButton: {
+    left: (width * 0.04),
+    top: (height * 0.01),
+    width: (width * 0.15),
+    height: (height * 0.08),
+    position: "absolute",
+  },
+  shareButton: {
+    left: (width * 0.035),
+    top: (height * 0.01),
+    width: (width * 0.15),
+    height: (height * 0.08),
+    position: "absolute",
   },
   instanceItem: {
-    left: (width * 0.2821),
-    top: (height * -0.045),
+    left: (width * -0.01),
+    top: (height * 0.002),
     position: "absolute",
   },
   instanceInner: {
-    left: (width * 0.4744),
-    top: (height * -0.0474),
+    left: (width * 0.035)
   },
   instanceChild1: {
-    left: (width * 0.6641),
+    top: (height * -0.003),
     width: (width * 0.0744),
     height: (height * 0.0344),
   },
   groupChild8: {
     borderRadius: Border.br_10xs_5,
+    left: (width * 0.02),
     width: (width * 0.0077),
     height: (height * 0.0201),
   },
   groupChild9: {
-    left: (width * 0.0026),
+    left: (width * 0.0226),
     width: (width * 0.0256),
     height: (height * 0.0036),
     borderRadius: Border.br_10xs,
   },
   groupChild10: {
     borderRadius: Border.br_12xs,
-    left: (width * 0.0205),
+    left: (width * 0.0405),
   },
   rectangleParent2: {
-    left: (width * 0.8436),
-    width: (width * 0.0462),
+    width: (width * 0.1),
     height: (height * 0.0296),
   },
   groupParent: {

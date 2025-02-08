@@ -4,7 +4,7 @@ import { Image } from "expo-image";
 import DayOutline from "../assets/day_outline.svg";
 import EditIcon from "../assets/edit_icon.svg";
 import TopBottomBar from "../components/TopBottomBar";
-import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import { Color, FontFamily, FontSize, Border, ScreenEnum } from "../GlobalStyles";
 
 const { width, height } = Dimensions.get('window');
 
@@ -84,7 +84,7 @@ const Home = (props: HomeType) => {
         <View style={[styles.groupChild1, styles.groupPosition]} />
         <Text style={styles.medications}>MEDICATIONS</Text>
       </View>
-      <TopBottomBar navigation = {props.navigation}/>
+      <TopBottomBar navigation = {props.navigation} currentScreen={ScreenEnum.Home}/>
     </View>
   );
 };
