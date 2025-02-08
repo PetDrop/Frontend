@@ -19,7 +19,11 @@ import BlueCircleBig from '../assets/blue_circle_big.svg';
 
 const { width, height } = Dimensions.get('window');
 
-const Login = (props) => {
+type LoginType = {
+	navigation: any;
+};
+
+const Login = (props: LoginType) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
