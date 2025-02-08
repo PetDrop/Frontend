@@ -1,20 +1,20 @@
 const Stack = createNativeStackNavigator();
-import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
+import * as React from "react";
 import Home from "./screens/Home";
-import PetInfo1 from "./screens/PetInfo1";
+import LoadingScreen from "./screens/LoadingScreen";
 import Login from "./screens/Login";
 import Login1 from "./screens/Login1";
-import Reminders from "./screens/Reminders";
-import PetInfo from "./screens/PetInfo";
-import LoadingScreen from "./screens/LoadingScreen";
-import MedicationsArchive1 from "./screens/MedicationsArchive1";
 import MedicationsArchive from "./screens/MedicationsArchive";
+import MedicationsArchive1 from "./screens/MedicationsArchive1";
+import PetInfo from "./screens/PetInfo";
+import PetInfo1 from "./screens/PetInfo1";
+import Reminders from "./screens/Reminders";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useState } from "react";
-import { ScreenEnum } from "./GlobalStyles";
+import Signup from "./screens/Signup";
 
 const App = () => {
   const [hideSplashScreen, setHideSplashScreen] = useState(true);
@@ -37,6 +37,11 @@ const App = () => {
             <Stack.Screen
               name="Login"
               component={Login}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Signup"
+              component={Signup}
               options={{ headerShown: false }}
             />
             <Stack.Screen
