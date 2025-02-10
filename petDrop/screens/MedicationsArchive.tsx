@@ -35,9 +35,9 @@ const MedicationsArchive = (props: MedicationsArchiveType) => {
       <View style={[styles.medsRectangleParent, styles.medsGroupChildLayout]}>
         <View style={[styles.petInfoGroupChild, styles.medsGroupChildLayout]} />
         <Text style={[styles.add, styles.addTypo]}>ADD</Text>
-        <View style={styles.rectangleGroup}>
-          <View style={styles.groupItem} />
-          <View style={[styles.groupInner, styles.groupLayout]} />
+        <View style={styles.petInfoRectangleGroup}>
+          <View style={styles.petInfoGroupItem} />
+          <View style={[styles.remindersGroupInner, styles.homeGroupLayout]} />
         </View>
       </View>
       <MedicationInfo />

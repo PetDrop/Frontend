@@ -64,7 +64,13 @@ export enum ScreenEnum {
 /* global stylesheet */
 const { width, height } = Dimensions.get('window');
 
+/* 
+*  keep in mind that some styles are duplicates between screens,
+*  so a section for a particular screen may not have a style that
+*  it uses. All this should eventually be made less jank
+*/
 export const styles = StyleSheet.create({
+  // BEGIN SCREENS
   // begin home
   homePosition: {
     width: (width * 0.8897),
@@ -165,7 +171,7 @@ export const styles = StyleSheet.create({
     borderRadius: Border.br_10xs,
     position: "absolute",
   },
-  groupLayout: {
+  homeGroupLayout: {
     height: (height * 0.0024),
     width: (width * 0.0256),
     borderRadius: Border.br_10xs,
@@ -526,120 +532,134 @@ export const styles = StyleSheet.create({
   },
   // end home
   // begin login
-  dogImage: {
-    top: (height * 0.1777),
-    left: (width * 0.3718),
-    height: (height * 0.1517),
-    width: (width * 0.2462),
-    position: "absolute",
-  },
-  blueCircle: {
-    top: (height * 0.154),
-    left: (width * 0.2949),
-  },
-  login1Typo: {
-    textAlign: "left",
-    color: Color.colorCornflowerblue,
-    fontFamily: FontFamily.jsMathCmbx10,
-    position: "absolute",
-    fontSize: 45,
-  },
-  petDropTypo: {
-    textAlign: "left",
-    color: Color.colorCornflowerblue,
-    fontFamily: FontFamily.jsMathCmbx10,
-    position: "absolute",
-  },
-  loginLayout: {
-    height: (height * 0.0592),
-    width: (width * 0.7538),
-    borderRadius: Border.br_sm,
-    left: (width * 0.1231),
-    position: "absolute",
+  container: {
+    flex: 1,
     backgroundColor: Color.colorFloralwhite,
   },
-  passwordTypo: {
-    height: (height * 0.0201),
-    color: Color.colorDarkslateblue,
-    fontFamily: FontFamily.koulenRegular,
-    fontSize: FontSize.size_smi,
-    left: (width * 0.1231),
-    textAlign: "left",
-    position: "absolute",
+  scrollContainer: {
+      flexGrow: 1,
+      alignItems: 'center',
+      paddingBottom: height * 0.025,
   },
-  signUpTypo: {
-    textAlign: "center",
-    width: (width * 0.2385),
-    height: (height * 0.0201),
-    color: Color.colorDarkslateblue,
-    fontFamily: FontFamily.koulenRegular,
-    fontSize: FontSize.size_smi,
-    position: "absolute",
+  blueCircle: {
+      justifyContent: 'center',
   },
-  login1: {
-    top: (height * 0.3436),
-    left: (width * 0.359),
+  dogImage: {
+      top: height * 0.17,
+      left: width * 0.070,
+      justifyContent: 'center',
+      width: width * 0.2462,
+      height: height * 0.1517,
   },
-  loginChild: {
-    top: (height * 0.4123),
-    left: (width * 0.0538),
-    borderRadius: Border.br_12xl,
-    backgroundColor: Color.colorLightskyblue,
-    width: (width * 0.8897),
-    height: (height * 0.3306),
-    position: "absolute",
+  loginSignupText: {
+      fontSize: 45,
+      color: Color.colorCornflowerblue,
+      fontFamily: FontFamily.jsMathCmbx10,
+      textAlign: 'center',
+      marginTop: height * 0.02,
   },
-  loginItem: {
-    top: (height * 0.5806),
+  blueContainer: {
+    width: width * 0.9, // Slightly smaller than full width
+    minHeight: height * 0.3, // Enough space for input fields later
+    backgroundColor: Color.colorLightskyblue, // Match the theme
+    borderRadius: Border.br_12xl, // Rounded edges
+    marginTop: height * 0.01, // Space between dog image and input fields
+    alignSelf: 'stretch', // Ensures it takes the full width of parent
+    flexGrow: 0.4, // Allows it to expand dynamically
+    marginLeft: width * 0.05, // Center the container
   },
-  loginInner: {
-    top: (height * 0.4834),
+  inputLabel: {
+      fontSize: 18,
+      color: Color.colorDarkslateblue,
+      fontFamily: FontFamily.koulenRegular,
+      marginTop: height * 0.035,
+      marginLeft: width * 0.065,
   },
-  usernameEMail: {
-    top: (height * 0.4514),
-    width: (width * 0.2256),
+  inputField: {
+      width: width * 0.775,
+      height: height * 0.06,
+      borderRadius: Border.br_sm,
+      backgroundColor: Color.colorFloralwhite,
+      paddingHorizontal: 10,
+      fontSize: 16,
+      color: Color.colorDarkslateblue,
+      marginBottom: height * -0.03, // Space between fields
+      marginLeft: width * 0.065,
   },
-  password: {
-    top: (height * 0.5486),
-    width: (width * 0.1333),
+  /* Checkbox */
+  loginCheckboxContainer: {
+      flexDirection: 'row',
+      alignSelf: 'center',
+      marginTop: height * 0.05,
   },
+  checkbox: {
+      width: width * 0.05,
+      height: width * 0.05,
+      borderWidth: 2,
+      borderColor: Color.colorDarkslateblue,
+      borderRadius: 4,
+      marginRight: width * 0.03,
+  },
+  checkboxChecked: {
+      backgroundColor: Color.colorCornflowerblue, // Change when checked
+  },
+  checkboxText: {
+      fontSize: 16,
+      color: Color.colorDarkslateblue,
+      fontFamily: FontFamily.koulenRegular,
+  },
+  /* Forgot Password */
   forgotPassword: {
-    top: (height * 0.6528),
-    width: (width * 0.2385),
-    left: (width * 0.3821),
-    height: (height * 0.201),
-    color: Color.colorDarkslateblue,
-    fontFamily: FontFamily.koulenRegular,
-    fontSize: FontSize.size_smi,
-    textAlign: "left",
-    position: "absolute",
+      fontSize: 16,
+      color: Color.colorDarkslateblue,
+      fontFamily: FontFamily.koulenRegular,
+      textAlign: 'center',
+      marginTop: height * 0.015,
   },
-  rememberMe: {
-    top: (height * 0.6789),
-    left: (width * 0.3821),
+  /* Button Row */
+  buttonRow: {
+      flexDirection: 'row', // Align buttons horizontally
+      justifyContent: 'space-between', // Space between buttons
+      width: width * 0.75, // Keeps buttons from being too wide
+      marginTop: height * 0.03, // Space below blue container
   },
-  signUp: {
-    top: (height * 0.705),
-    left: (width * 0.3821),
-    textAlign: "center",
+  button: {
+      width: width * 0.35, // Rectangular shape
+      height: height * 0.06, // Not too large
+      backgroundColor: Color.colorLightskyblue, // Matching theme
+      borderRadius: Border.br_sm,
+      justifyContent: 'center',
+      alignItems: 'center',
   },
-  loginLogoText: {
-    top: (height * 0.859),
-    left: (width * 0.0744),
-    fontSize: FontSize.size_45xl,
-    width: (width * 0.8769),
-    height: (height * 0.1327),
+  loginButtonText: {
+      fontSize: 18,
+      color: 'black',
+      fontFamily: FontFamily.koulenRegular,
   },
-  loginLogoSubtext: {
-    top: (height * 0.9301),
-    left: (width * 0.1487),
-    fontFamily: FontFamily.koulenRegular,
-    fontSize: FontSize.size_smi,
-    textAlign: "left",
-    color: Color.colorCornflowerblue,
-    position: "absolute",
-  },
+  /* Slogan Image */
+  sloganImage: {
+    width: width * 0.5, // Proportional width
+    height: height * 0.1, // Proportional height
+    resizeMode: 'contain', // Ensures the image scales correctly
+    marginTop: height * 0.02, // Space below the buttons
+    alignSelf: 'flex-start', 
+    marginLeft: width * 0.05, 
+},
   // end login
+  // begin signup
+  /* Checkbox Styles */
+  Checkboxes: {
+      marginTop: height * 0.03,
+      marginBottom: height * 0.02,
+  },
+  signupCheckboxContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: height * 0.015,
+      marginLeft: width * 0.065,
+      width: width * 0.475,
+  },
+  // end signup
   // begin petinfo
   newPetPressable: {
     position: "absolute",
@@ -780,7 +800,7 @@ export const styles = StyleSheet.create({
     top: (height * 0.9052),
     fontSize: FontSize.size_5xl,
   },
-  eyeDropsSparky: {
+  petInfoEyeDropsSparky: {
     top: (height * 0.4905),
   },
   antibioticsBlueBlue: {
@@ -815,7 +835,7 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.size_smi,
     color: Color.colorFloralwhite,
   },
-  groupItem: {
+  petInfoGroupItem: {
     top: (height * 0.0047),
     height: (height * 0.0024),
     borderRadius: Border.br_10xs,
@@ -823,7 +843,7 @@ export const styles = StyleSheet.create({
     position: "absolute",
     backgroundColor: Color.colorFloralwhite,
   },
-  rectangleGroup: {
+  petInfoRectangleGroup: {
     top: (height * 0.0071),
     left: (width * 0.0077),
     height: (height * 0.0118),
@@ -833,7 +853,7 @@ export const styles = StyleSheet.create({
   petInfoRectangleParent: {
     top: (height * 0.532),
   },
-  groupChild2: {
+  petInfoGroupChild2: {
     transform: [
       {
         rotate: "-90deg",
@@ -856,10 +876,10 @@ export const styles = StyleSheet.create({
     height: (height * 0.0486),
     backgroundColor: Color.colorCornflowerblue,
   },
-  groupChild3: {
+  petInfoGroupChild3: {
     top: (height * 0.0083),
   },
-  groupChild4: {
+  petInfoGroupChild4: {
     top: (height * 0.0083),
     transform: [
       {
@@ -877,7 +897,7 @@ export const styles = StyleSheet.create({
     left: (width * 0.0821),
     fontSize: FontSize.size_5xl,
   },
-  groupParent: {
+  petInfoGroupParent: {
     left: (width * 0.3128),
     width: (width * 0.3718),
     height: (height * 0.0509),
@@ -996,7 +1016,7 @@ export const styles = StyleSheet.create({
     left: (width * 0.0872),
     fontSize: FontSize.size_5xl,
   },
-  datesSept1923: {
+  remindersDatesSept1923: {
     top: (height * 1.0995),
     left: (width * 0.241),
     fontSize: FontSize.size_smi,
@@ -1014,7 +1034,7 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.size_smi,
     color: Color.colorCornflowerblue,
   },
-  groupInner: {
+  remindersGroupInner: {
     top: (height * 0.0047),
     transform: [
       {
@@ -1179,4 +1199,414 @@ export const styles = StyleSheet.create({
     fontFamily: FontFamily.koulenRegular,
   },
   // end loadingscreen
+  // END SCREENS
+  // BEGIN COMPONENTS
+  // begin medicationinfo
+  medsInfoGroupPosition: {
+    width: (width * 0.7205),
+    position: "absolute",
+  },
+  groupIconPosition: {
+    top: (height * 0.0036),
+    position: "absolute",
+  },
+  medsInfoGroupChild: {
+    borderRadius: Border.br_xl,
+    backgroundColor: Color.colorCornflowerblue,
+    height: (height * 0.1315),
+  },
+  medsInfoGroupItem: {
+    top: (height * 0.0379),
+    borderBottomRightRadius: Border.br_xl,
+    borderBottomLeftRadius: Border.br_xl,
+    backgroundColor: Color.colorLightskyblue,
+    height: (height * 0.4242),
+  },
+  medsInfoEyeDropsSparky: {
+    left: (width * 0.1),
+    fontSize: FontSize.size_base,
+    fontFamily: FontFamily.koulenRegular,
+    color: Color.colorFloralwhite,
+    textAlign: "left",
+  },
+  medsInfoGroupInner: {
+    top: (height * 0.0083),
+    left: (width * 0.0308),
+    borderRadius: Border.br_7xs,
+    backgroundColor: Color.colorFirebrick,
+    width: (width * 0.0487),
+    height: (height * 0.0225),
+    position: "absolute",
+  },
+  medsInfoGroupIcon: {
+    left: (width * 0.6282),
+  },
+  medsInfoRectangleParent: {
+    top: (height * 0.314),
+    left: (width * 0.1333),
+    height: (height * 0.4621),
+    width: (width * 0.7205),
+    position: "absolute",
+  },
+  // end medicationinfo
+  // begin medicationinfo2
+  datesSept1923Typo: {
+    textAlign: "left",
+    color: Color.colorFloralwhite,
+    fontFamily: FontFamily.koulenRegular,
+    position: "absolute",
+  },
+  medsInfo2DatesSept1923: {
+    top: (height * 0.0415),
+    left: (width * 0.0359),
+    fontSize: FontSize.size_smi,
+  },
+  medsInfo2RectangleParent: {
+    top: (height * 0.2773),
+    left: (width * 0.141),
+    height: (height * 0.1315),
+    width: (width * 0.7205),
+    position: "absolute",
+  },
+  medsInfo2GroupItem: {
+    top: (height * 0.0379),
+    borderBottomRightRadius: Border.br_xl,
+    borderBottomLeftRadius: Border.br_xl,
+    backgroundColor: Color.colorLightskyblue,
+    height: (height * 0.0936),
+  },
+  // end medicationinfo2
+  // begin petinfo1addbuttons
+  newPetButtonGroupChildPosition: {
+    height: (height * 0.0249),
+    position: "absolute",
+  },
+  vetTypo: {
+    width: (width * 0.1103),
+    textAlign: "left",
+    color: Color.colorFloralwhite,
+    fontFamily: FontFamily.koulenRegular,
+    fontSize: FontSize.size_smi,
+    left: (width * 0.0154),
+    position: "absolute",
+  },
+  newPetButtonGroupChild: {
+    top: (height * 0.0012),
+    width: (width * 0.1128),
+  },
+  newPetButtonGroupItem: {
+    top: (height * 0.032),
+    width: (width * 0.1385),
+  },
+  newPetButtonGroupInner: {
+    top: (height * 0.0652),
+    width: (width * 0.1436),
+  },
+  newPetButtonGroupIcon: {
+    top: (height * 0.0983),
+    width: (width * 0.1641),
+  },
+  newPetButtonGroupChild1: {
+    top: (height * 0.1315),
+    width: (width * 0.1),
+  },
+  age: {
+    width: (width * 0.0744),
+    textAlign: "left",
+    color: Color.colorFloralwhite,
+    fontFamily: FontFamily.koulenRegular,
+    fontSize: FontSize.size_smi,
+    left: (width * 0.0154),
+    position: "absolute",
+  },
+  breed: {
+    top: (height * 0.0308),
+  },
+  weight: {
+    top: (height * 0.064),
+  },
+  address: {
+    top: (height * 0.0972),
+  },
+  vet: {
+    top: (height * 0.1308),
+  },
+  newPetButtonGroupParent: {
+    top: (height * 0.3637),
+    left: (width * 0.4513),
+    height: (height * 0.1576),
+    width: (width * 0.1641),
+    position: "absolute",
+  },
+  // end petinfo1addbuttons
+  // begin topbottombar
+  topBottomBarButtonText: {
+    top: (height * 0.032),
+    left: (width * 0.005),
+    color: Color.colorFloralwhite,
+    fontFamily: FontFamily.koulenRegular,
+    fontSize: FontSize.size_smi,
+    position: "absolute"
+  },
+  homePressable: {
+    left: (width * 0.06),
+    top: (height * -0.05),
+    height: (height * 0.08),
+    width: (width * 0.15),
+    position: "absolute",
+    borderRadius: 15,
+  },
+  petInfoPressable: {
+    left: (width * 0.24),
+    top: (height * -0.05),
+    height: (height * 0.08),
+    width: (width * 0.15),
+    position: "absolute",
+    borderRadius: 15,
+  },
+  remindersPressable: {
+    left: (width * 0.42),
+    top: (height * -0.05),
+    height: (height * 0.08),
+    width: (width * 0.15),
+    position: "absolute",
+    borderRadius: 15,
+  },
+  medsPressable: {
+    left: (width * 0.6),
+    top: (height * -0.05),
+    height: (height * 0.08),
+    width: (width * 0.15),
+    position: "absolute",
+    borderRadius: 15,
+  },
+  sharePressable: {
+    left: (width * 0.78),
+    top: (height * -0.05),
+    height: (height * 0.08),
+    width: (width * 0.15),
+    position: "absolute",
+    borderRadius: 15,
+  },
+  groupChild1Position: {
+    width: (width * 0.0564),
+    position: "absolute",
+  },
+  groupChildLayout1: {
+    height: (height * 0.0024),
+    borderRadius: Border.br_9xs,
+  },
+  topBottomBarGroupLayout: {
+    width: (width * 0.0256),
+    position: "absolute",
+  },
+  groupChild10Layout: {
+    height: (height * 0.0237),
+    position: "absolute",
+  },
+  instanceChild1Position: {
+    position: "absolute",
+  },
+  topBottomBarGroupChildPosition: {
+    top: (height * 0.0095),
+    backgroundColor: Color.colorCornflowerblue,
+    position: "absolute",
+  },
+  topBottomBarGroupChild: {
+    backgroundColor: Color.colorLightskyblue,
+    height: (height * 0.0735),
+    width: width,
+    position: "absolute",
+  },
+  topBottomBarText: {
+    top: (height * 0.0225),
+    left: (width * 0.0923),
+    fontSize: FontSize.size_lg,
+    fontFamily: FontFamily.juaRegular,
+    color: Color.colorWhite,
+    textAlign: "left",
+    width: (width * 0.1974),
+    height: (height * 0.0273),
+    position: "absolute",
+  },
+  topBottomBarGroupItem: {
+    top: (height * 0.0024),
+    left: (width * 0.0051),
+    width: (width * 0.0359),
+    height: (height * 0.0095),
+    backgroundColor: Color.colorWhite,
+    borderRadius: Border.br_10xs,
+    position: "absolute",
+  },
+  topBottomBarGroupInner: {
+    top: (height * 0.0047),
+    left: (width * 0.0513),
+    borderWidth: 0.5,
+    width: (width * 0.0026),
+    height: (height * 0.0047),
+    borderColor: Color.colorWhite,
+    borderStyle: "solid",
+    borderRadius: Border.br_10xs,
+    position: "absolute",
+  },
+  topBottomBarRectangleView: {
+    borderWidth: 1,
+    width: (width * 0.0513),
+    borderRadius: Border.br_9xs,
+    borderColor: Color.colorWhite,
+    borderStyle: "solid",
+    height: (height * 0.0142),
+    position: "absolute",
+  },
+  topBottomBarRectangleGroup: {
+    left: (width * 0.1333),
+    width: (width * 0.0538),
+    height: (height * 0.0142),
+    position: "absolute",
+  },
+  topBottomBarGroupChild1: {
+    backgroundColor: Color.colorGainsboro_200,
+    width: (width * 0.0564),
+    position: "absolute",
+  },
+  topBottomBarGroupChild2: {
+    top: (height * 0.0059),
+    width: (width * 0.0436),
+    left: (width * 0.0077),
+    backgroundColor: Color.colorWhite,
+    position: "absolute",
+  },
+  topBottomBarGroupChild3: {
+    top: (height * 0.0118),
+    left: (width * 0.0154),
+    height: (height * 0.0024),
+    borderRadius: Border.br_9xs,
+    backgroundColor: Color.colorWhite,
+  },
+  topBottomBarRectangleContainer: {
+    left: (width * 0.059),
+    height: (height * 0.0142),
+  },
+  groupIcon: {
+    height: (height * 0.0142),
+  },
+  groupContainer: {
+    top: (height * 0.0273),
+    left: (width * 0.7487),
+    width: (width * 0.1872),
+    height: (height * 0.0142),
+    position: "absolute",
+  },
+  topBottomBarRectangleParent: {
+    top: (height * -0.9443),
+    height: (height * 0.0735),
+    width: width,
+    position: "absolute",
+  },
+  instanceChild: {
+    height: (height * 0.1363),
+    top: (height * -0.0758),
+    width: width,
+    backgroundColor: Color.colorLightskyblue,
+    position: "absolute",
+  },
+  topBottomBarGroupChild4: {
+    left: (width * 0.008),
+    top: (height * 0.01),
+    width: (width * 0.0513),
+    backgroundColor: Color.colorCornflowerblue,
+    height: (height * 0.0191),
+    borderRadius: Border.br_10xs,
+    position: "absolute",
+  },
+  polygonIcon: {
+    top: (height * 0.001),
+    left: (width * 0.0085), 
+    width: (width * 0.0513),
+    height: (height * 0.0178),
+    overflow: "hidden",
+    position: "absolute",
+  },
+  darkBackground: {
+    backgroundColor: Color.colorDarkslateblue,
+    height: (height * 0.08),
+    width: (width * 0.15),
+    borderRadius: 15,
+  },
+  homeButton: {
+    left: (width * 0.04),
+    top: (height * 0.01),
+    width: (width * 0.15),
+    height: (height * 0.08),
+    position: "absolute",
+  },
+  petInfoButton: {
+    left: (width * 0.045),
+    top: (height * 0.01),
+    width: (width * 0.15),
+    height: (height * 0.08),
+    position: "absolute",
+  },
+  remindersButton: {
+    left: (width * 0.005),
+    top: (height * 0.01),
+    width: (width * 0.15),
+    height: (height * 0.08),
+    position: "absolute",
+  },
+  medsButton: {
+    left: (width * 0.04),
+    top: (height * 0.01),
+    width: (width * 0.15),
+    height: (height * 0.08),
+    position: "absolute",
+  },
+  shareButton: {
+    left: (width * 0.035),
+    top: (height * 0.01),
+    width: (width * 0.15),
+    height: (height * 0.08),
+    position: "absolute",
+  },
+  instanceItem: {
+    left: (width * -0.01),
+    top: (height * 0.002),
+    position: "absolute",
+  },
+  instanceInner: {
+    left: (width * 0.035)
+  },
+  instanceChild1: {
+    top: (height * -0.003),
+    width: (width * 0.0744),
+    height: (height * 0.0344),
+  },
+  groupChild8: {
+    borderRadius: Border.br_10xs_5,
+    left: (width * 0.02),
+    width: (width * 0.0077),
+    height: (height * 0.0201),
+  },
+  groupChild9: {
+    left: (width * 0.0226),
+    width: (width * 0.0256),
+    height: (height * 0.0036),
+    borderRadius: Border.br_10xs,
+  },
+  groupChild10: {
+    borderRadius: Border.br_12xs,
+    left: (width * 0.0405),
+  },
+  rectangleParent2: {
+    width: (width * 0.1),
+    height: (height * 0.0296),
+  },
+  topBottomBarGroupParent: {
+    top: (height * 0.9443),
+    height: (height * 0.0557),
+    width: width,
+    position: "absolute",
+  },
+  // end topbottombar
+  // END COMPONENTS
 });

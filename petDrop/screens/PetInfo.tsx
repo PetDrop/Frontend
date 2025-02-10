@@ -49,7 +49,7 @@ Vet: Dog inc.
         <Text style={[styles.medications1, styles.medicationsTypo]}>
           Medications:
         </Text>
-        <Text style={[styles.eyeDropsSparky, styles.blueTypo]}>
+        <Text style={[styles.petInfoEyeDropsSparky, styles.blueTypo]}>
           Eye drops (Sparky, Red bottle, 2 drops, twice a day)
         </Text>
         <Text
@@ -64,27 +64,27 @@ Vet: Dog inc.
         <View style={[styles.petInfoRectangleParent, styles.rectangleLayout]}>
           <View style={styles.petInfoGroupChild} />
           <Text style={[styles.add, styles.addPosition]}>ADD</Text>
-          <View style={styles.rectangleGroup}>
-            <View style={styles.groupItem} />
-            <View style={[styles.groupInner, styles.petInfoGroupPosition]} />
+          <View style={styles.petInfoRectangleGroup}>
+            <View style={styles.petInfoGroupItem} />
+            <View style={[styles.remindersGroupInner, styles.petInfoGroupPosition]} />
           </View>
         </View>
         <View style={[styles.petInfoRectangleContainer, styles.rectangleLayout]}>
           <View style={styles.petInfoGroupChild} />
           <Text style={[styles.add, styles.addPosition]}>ADD</Text>
-          <View style={styles.rectangleGroup}>
-            <View style={styles.groupItem} />
-            <View style={[styles.groupChild2, styles.petInfoGroupPosition]} />
+          <View style={styles.petInfoRectangleGroup}>
+            <View style={styles.petInfoGroupItem} />
+            <View style={[styles.petInfoGroupChild2, styles.petInfoGroupPosition]} />
           </View>
         </View>
         <View style={[styles.petInfoChild1, styles.petChildLayout]} />
         <View style={[styles.petInfoChild2, styles.petChildLayout]} />
         <Pressable onPress={() => {props.navigation.navigate("PetInfo1")}} style={styles.newPetPressable}>
         <View style={[styles.petInfoChild3, styles.groupParentPosition]} />
-        <View style={[styles.groupParent, styles.groupParentPosition]}>
+        <View style={[styles.petInfoGroupParent, styles.groupParentPosition]}>
           <View style={styles.rectangleParent1}>
-            <View style={[styles.groupChild3, styles.petInfoGroupChildLayout]} />
-            <View style={[styles.groupChild4, styles.petInfoGroupChildLayout]} />
+            <View style={[styles.petInfoGroupChild3, styles.petInfoGroupChildLayout]} />
+            <View style={[styles.petInfoGroupChild4, styles.petInfoGroupChildLayout]} />
           </View>
           <Text style={[styles.addNewPet, styles.addPosition]}>Add new pet</Text>
         </View>

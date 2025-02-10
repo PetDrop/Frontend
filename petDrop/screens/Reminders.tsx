@@ -16,7 +16,7 @@ const Reminders = (props: RemindersType) => {
       <Text
         style={[styles.reminders1, styles.petdropTypo]}
       >{`Reminders `}</Text>
-      <Text style={[styles.datesSept1923, styles.datesTypo]}>{`Dates: Sept 19-23
+      <Text style={[styles.remindersDatesSept1923, styles.datesTypo]}>{`Dates: Sept 19-23
 Notifications: 6am + 6pm
 Message: “2 drops”`}</Text>
       <Text style={[styles.datesSept2022, styles.datesTypo]}>{`Dates: Sept 20-22
@@ -28,9 +28,9 @@ Message: “1 pill”`}</Text>
       <View style={[styles.remindersRectangleParent, styles.remindersGroupChildLayout]}>
         <View style={styles.petInfoGroupChild} />
         <Text style={[styles.add, styles.datesTypo]}>ADD</Text>
-        <View style={styles.rectangleGroup}>
-          <View style={[styles.groupItem, styles.groupLayout]} />
-          <View style={[styles.groupInner, styles.groupLayout]} />
+        <View style={styles.petInfoRectangleGroup}>
+          <View style={[styles.petInfoGroupItem, styles.homeGroupLayout]} />
+          <View style={[styles.remindersGroupInner, styles.homeGroupLayout]} />
         </View>
       </View>
       <MedicationInfo eyeDropsSPARKY="Eye drops: SPARKY " />

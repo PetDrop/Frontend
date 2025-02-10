@@ -21,9 +21,9 @@ const PetInfo1 = (props: PetInfo1Type) => {
       <View style={[styles.petInfo1RectangleParent, styles.petInfo1GroupChildLayout]}>
         <View style={[styles.petInfoGroupChild, styles.petInfo1GroupChildLayout]} />
         <Text style={[styles.add, styles.addTypo]}>ADD</Text>
-        <View style={styles.rectangleGroup}>
-          <View style={[styles.groupItem, styles.groupLayout]} />
-          <View style={[styles.groupInner, styles.groupLayout]} />
+        <View style={styles.petInfoRectangleGroup}>
+          <View style={[styles.petInfoGroupItem, styles.homeGroupLayout]} />
+          <View style={[styles.remindersGroupInner, styles.homeGroupLayout]} />
         </View>
       </View>
       <Text style={[styles.petInfoLogoText, styles.nameTypo]}>petdrop.</Text>

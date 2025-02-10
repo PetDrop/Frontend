@@ -49,9 +49,9 @@ const MedicationsArchive1 = (props: MedicationsArchive1Type) => {
       <View style={[styles.meds1RectangleParent, styles.medsGroupChildLayout]}>
         <View style={[styles.petInfoGroupChild, styles.medsGroupChildLayout]} />
         <Text style={[styles.add, styles.addTypo]}>ADD</Text>
-        <View style={styles.rectangleGroup}>
-          <View style={[styles.groupItem, styles.groupLayout]} />
-          <View style={[styles.groupInner, styles.groupLayout]} />
+        <View style={styles.petInfoRectangleGroup}>
+          <View style={[styles.petInfoGroupItem, styles.homeGroupLayout]} />
+          <View style={[styles.remindersGroupInner, styles.homeGroupLayout]} />
         </View>
       </View>
       <TopBottomBar navigation = {props.navigation} currentScreen={ScreenEnum.MedicationsArchive1}/>
