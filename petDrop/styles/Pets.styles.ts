@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
 		paddingTop: height * 0.05,
 	},
 	pageTitle: {
-		fontSize: 30,
+		fontSize: FontSize.size_17xl,
 		fontFamily: FontFamily.jsMathCmbx10,
 		color: Color.colorCornflowerblue,
 		left: width * 0.1,
