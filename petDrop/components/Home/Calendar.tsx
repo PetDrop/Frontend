@@ -51,12 +51,23 @@ const Calendar = () => {
 		return medBars;
 	};
 
-	const daysInMonth = 30; // Change if needed
-	const firstDayOffset = 4; // Example: If Sept 1st starts on a Friday (0=Sunday, 6=Saturday)
+	const daysInMonth = 30;
+	const firstDayOffset = 4;
 
-	const calendarDays = Array(firstDayOffset).fill(null); // Empty slots before the first day
+	const calendarDays: (number | null)[] = Array(firstDayOffset).fill(null);
+
 	for (let i = 1; i <= daysInMonth; i++) {
 		calendarDays.push(i);
+	}
+
+	const totalDays = calendarDays.length;
+	const remainingSlots = totalDays % 7;
+
+	if (remainingSlots !== 0) {
+		// Instead of removing, we leave it as-is without adding empty slots
+		while (calendarDays.length % 7 !== 0) {
+			calendarDays.push(null); // Add empty spaces to align the grid properly
+		}
 	}
 
 	return (
