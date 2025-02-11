@@ -1,0 +1,42 @@
+{
+	"pets": [
+		{
+			"id": 1,
+			"name": "Sparky",
+			"medications": [
+				{
+					"name": "Eye Drops",
+					"color": "#AE2828",
+					"description": "Red bottle, 2 drops, twice a day",
+					"dates": [
+						"2024-09-02",
+						"2024-09-03",
+						"2024-09-04",
+						"2024-09-05"
+					],
+                    "range": 4
+				},
+				{
+					"name": "Antibiotics",
+					"color": "#FFC635",
+					"description": "Blue bottle, 1 pill, morning",
+					"dates": ["2024-09-19", "2024-09-20"],
+                    "range": 4
+				}
+			]
+		},
+		{
+			"id": 2,
+			"name": "Blue",
+			"medications": [
+				{
+					"name": "Heartgard",
+					"color": "#A0C66F",
+					"description": "Black box, 1 pill, every night",
+					"dates": ["2024-09-10", "2024-09-20", "2024-09-30"],
+                    "range": 4
+				}
+			]
+		}
+	]
+}

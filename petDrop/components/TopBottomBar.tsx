@@ -366,10 +366,9 @@ const styles = StyleSheet.create({
     height: (height * 0.0296),
   },
   groupParent: {
-    top: (height * 0.9443),
-    height: (height * 0.0557),
+    top: (height * 0.125),
+    height: (height * 0),
     width: width,
-    position: "absolute",
   },
 });
 
