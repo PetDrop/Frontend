@@ -141,12 +141,15 @@ export const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-        paddingTop: height * 0.05,
 	},
 	menuIcon: {
 		width: 30,
 		height: 30,
 	},
+    scrollContainer: {
+         paddingBottom: height * 0.2,
+		paddingTop: height * 0.05,
+    }
 });
 
 export default styles;

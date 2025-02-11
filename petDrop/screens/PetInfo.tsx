@@ -20,10 +20,10 @@ const PetInfo = ({ navigation }: Props) => {
         <Image source={require("../assets/petdrop_slogan.png")} style={logoImage} />
         <Text style={styles.pageTitle}>Pets</Text>
         {mockData.pets.map((pet) => (
-          <>
-          <PetCard key={pet.id} pet={pet} />
-          <Image style={styles.petImage} src={pet.image}/>
-          </>
+          <View key={pet.id}>
+            <PetCard key={pet.id} pet={pet} />
+            <Image style={styles.petImage} src={pet.image}/>
+          </View>
         ))}
         <AddNewPetButton navigation={navigation} />
       </ScrollView>

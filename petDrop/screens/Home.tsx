@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, Text, View } from "react-native";
+import { Dimensions, Text, View, ScrollView } from "react-native";
 import EditIcon from "../assets/edit_icon.svg";
 import Calendar from "../components/Home/Calendar";
 import Header from "../components/Home/Header";
@@ -18,6 +18,7 @@ type HomeProps = {
 const Home = ({ navigation }: HomeProps) => {
   return (
     <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
       {/* Header */}
       <Header />
       
@@ -35,7 +36,7 @@ const Home = ({ navigation }: HomeProps) => {
       
       {/* Medications List */}
       <MedicationsList />
-      
+      </ScrollView>
       {/* Bottom Navigation */}
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} />
     </View>
