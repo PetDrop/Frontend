@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
 		height: height * 0.365,
 	},
 	monthText: {
-		fontSize: FontSize.size_5xl,
+		fontSize: 32,
 		fontFamily: FontFamily.jsMathCmbx10,
 		color: Color.colorFloralwhite,
 		textAlign: 'left',
@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: width * 0.05,
 	},
 	weekdayText: {
-		fontSize: FontSize.size_smi,
+		fontSize: 18,
 		fontFamily: FontFamily.jsMathCmbx10,
 		color: Color.colorFloralwhite,
 	},
@@ -67,7 +67,7 @@ export const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	dayText: {
-		fontSize: FontSize.size_xs,
+		fontSize: 15,
 		color: Color.colorFloralwhite,
 		fontFamily: FontFamily.jsMathCmbx10,
 	},
