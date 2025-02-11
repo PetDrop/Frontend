@@ -91,8 +91,8 @@ export const styles = StyleSheet.create({
 		backgroundColor: Color.colorCornflowerblue,
 		borderRadius: height * 0.04, // Adjusted to create an oval shape
 		alignSelf: 'flex-start',
-        left: width * 0.05,
-        width: width * 0.4,
+		left: width * 0.05,
+		width: width * 0.4,
 	},
 
 	medicationsHeaderText: {
@@ -104,7 +104,7 @@ export const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		marginTop: 10,
-        left: width * 0.05,
+		left: width * 0.05,
 	},
 	medicationIndicator: {
 		width: width * 0.03,
@@ -146,8 +146,10 @@ export const styles = StyleSheet.create({
 		paddingTop: 40, // Adjust for status bar
 	},
 	logoImage: {
-		width: 180, // Adjust to match Figma sizing
-		height: 50, // Adjust to match Figma sizing
+		width: width * 0.6,
+		height: height * 0.115,
+        marginTop: height * 0.025,
+        marginBottom: height * - 0.025,
 		resizeMode: 'contain',
 	},
 	menuIcon: {

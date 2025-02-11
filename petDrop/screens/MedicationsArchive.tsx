@@ -52,7 +52,7 @@ R/l Eye: right/left/both
 Notifications: 6am + 6pm
 Message: “2 drops”
 Other:`}</Text>
-      <TopBottomBar groupViewLeft={1} navigation = {props.navigation} currentScreen={ScreenEnum.MedicationsArchive}/>
+      <TopBottomBar navigation = {props.navigation} currentScreen={ScreenEnum.MedicationsArchive}/>
     </View>
   );
 };
