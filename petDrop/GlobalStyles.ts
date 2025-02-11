@@ -1,9 +1,22 @@
 /* fonts */
+import { Dimensions, ImageResizeMode } from "react-native";
+const { width, height } = Dimensions.get("window");
+
 export const FontFamily = {
   juaRegular: "Jua-Regular",
   koulenRegular: "Koulen-Regular",
   jsMathCmbx10: "jsMath-cmbx10",
 };
+/* Petdrop logo on all pages */
+export const logoImage = {
+		width: width * 0.6,
+		height: height * 0.115,
+    marginTop: height * 0.025,
+    marginBottom: height * 0.025,
+    marginLeft: width * 0.05,
+		resizeMode: "contain" as ImageResizeMode,
+	};
+
 /* font sizes */
 export const FontSize = {
   size_lg: 18,

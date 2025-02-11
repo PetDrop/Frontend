@@ -3,7 +3,11 @@
 		{
 			"id": 1,
 			"name": "Sparky",
-			"medications": [
+            "image": "sparky",
+            "age": 3,
+            "breed": "Golden Retriever",
+            "address": "123 Pet St",
+            "medications":[
 				{
 					"name": "Eye Drops",
 					"color": "#AE2828",
@@ -23,11 +27,17 @@
 					"dates": ["2024-09-19", "2024-09-20"],
                     "range": 4
 				}
-			]
+			],
+            "vet": "Dr. Bujan",
+            "vetPhone": "983-555-1234"
 		},
 		{
 			"id": 2,
 			"name": "Blue",
+            "image": "blue",
+            "age": 1,
+            "breed": "Poodle",
+            "address": "123 Adoption Avenue",
 			"medications": [
 				{
 					"name": "Heartgard",
@@ -36,7 +46,9 @@
 					"dates": ["2024-09-10", "2024-09-20", "2024-09-30"],
                     "range": 4
 				}
-			]
+			],
+            "vet": "Dr. Bujan",
+            "vetPhone": "983-555-1234"
 		}
 	]
 }

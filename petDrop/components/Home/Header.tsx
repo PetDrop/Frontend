@@ -2,6 +2,7 @@ import React from 'react';
 import { Image, TouchableOpacity, View } from 'react-native';
 // import MenuIcon from '../../assets/menu_icon.svg';
 import { styles } from '../../styles/Home.styles';
+import { logoImage } from '../../GlobalStyles';
 
 const Header = () => {
 	return (
@@ -9,7 +10,7 @@ const Header = () => {
 			{/* PetDrop Logo */}
 			<Image
 				source={require('../../assets/petdrop_slogan.png')}
-				style={styles.logoImage}
+				style={logoImage}
 			/>
 
 			{/* Menu Button */}

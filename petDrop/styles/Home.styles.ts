@@ -122,7 +122,6 @@ export const styles = StyleSheet.create({
 	greetingContainer: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginTop: height * 0.03,
 		paddingHorizontal: width * 0.05,
 	},
 	greetingText: {
@@ -142,15 +141,7 @@ export const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingHorizontal: 20,
-		paddingTop: 40, // Adjust for status bar
-	},
-	logoImage: {
-		width: width * 0.6,
-		height: height * 0.115,
-        marginTop: height * 0.025,
-        marginBottom: height * - 0.025,
-		resizeMode: 'contain',
+        paddingTop: height * 0.05,
 	},
 	menuIcon: {
 		width: 30,
