@@ -107,11 +107,11 @@ const Signup = (props: SignupType) => {
             </View>
             <View style={styles.buttonRow}>
                 <Pressable style={styles.button} onPress={() => props.navigation.navigate('Login')}>
-                    <Text style={styles.buttonText}>Login</Text>
+                    <Text style={styles.loginButtonText}>Login</Text>
                 </Pressable>
 
                 <Pressable style={styles.button} onPress={() => props.navigation.navigate('Home')}>
-                    <Text style={styles.buttonText}>Submit</Text>
+                    <Text style={styles.loginButtonText}>Submit</Text>
                 </Pressable>
             </View>
             <Image
