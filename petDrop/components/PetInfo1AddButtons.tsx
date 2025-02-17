@@ -1,10 +1,7 @@
 import * as React from "react";
-import { Image } from "expo-image";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
-import { Color, FontFamily, FontSize, styles } from "../GlobalStyles";
+import { Dimensions, View } from "react-native";
+import { styles } from "../GlobalStyles";
 import NewPetAddButton from "./NewPetAddButton";
-
-const { width, height } = Dimensions.get('window');
 
 const PetInfo1AddButtons = () => {
   return (

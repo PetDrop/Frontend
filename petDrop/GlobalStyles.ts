@@ -1,5 +1,4 @@
 import { StyleSheet, Dimensions } from "react-native";
-import NewPetAddButton from "./components/NewPetAddButton";
 
 /* fonts */
 export const FontFamily = {
