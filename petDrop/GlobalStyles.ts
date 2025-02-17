@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
+import NewPetAddButton from "./components/NewPetAddButton";
 
 /* fonts */
 export const FontFamily = {
@@ -1334,9 +1335,10 @@ export const styles = StyleSheet.create({
   newPetButtonGroupParent: {
     top: (height * 0.3637),
     left: (width * 0.4513),
-    height: (height * 0.1576),
+    height: (height * 0.325),
     width: (width * 0.1641),
     position: "absolute",
+    justifyContent: "space-evenly"
   },
   // end petinfo1addbuttons
   // begin topbottombar
@@ -1608,5 +1610,28 @@ export const styles = StyleSheet.create({
     position: "absolute",
   },
   // end topbottombar
+  // begin newpetaddbutton
+  newPetAddButtonBlueOval: {
+    height: (height * 0.0249),
+    width: "100%",
+    borderRadius: Border.br_3xs,
+    backgroundColor: Color.colorCornflowerblue,
+  },
+  newPetAddButtonPlusContainer: {
+    top: (height * 0.0071),
+    right: (width * 0.01),
+    height: (height * 0.0118),
+    width: (width * 0.0256),
+    position: "absolute",
+  },
+  newPetAddButtonText: {
+    textAlign: "left",
+    color: Color.colorFloralwhite,
+    fontFamily: FontFamily.koulenRegular,
+    fontSize: FontSize.size_smi,
+    left: (width * 0.0154),
+    top: (height * -0.001),
+  },
+  // end newpetaddbutton
   // END COMPONENTS
 });
