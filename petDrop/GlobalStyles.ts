@@ -50,7 +50,7 @@ export const Border = {
 /* screen enum */
 export enum ScreenEnum {
   Login = 0,
-  Login1 = 1, // will be replaced by signup page
+  Signup = 1,
   Home = 2,
   PetInfo = 3,
   PetInfo1 = 4, //new pet page
