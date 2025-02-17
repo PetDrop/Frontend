@@ -8,7 +8,6 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableWithoutFeedback,
@@ -105,121 +104,5 @@ const Login = (props: LoginType) => {
         </KeyboardAvoidingView>
     );
 };
-
-// const styles = StyleSheet.create({
-    // container: {
-    //     flex: 1,
-    //     backgroundColor: Color.colorFloralwhite,
-    // },
-    // scrollContainer: {
-    //     flexGrow: 1,
-    //     alignItems: 'center',
-    //     paddingBottom: height * 0.025,
-    // },
-    // blueCircle: {
-    //     justifyContent: 'center',
-    // },
-    // dogImage: {
-    //     top: height * 0.17,
-    //     left: width * 0.070,
-    //     justifyContent: 'center',
-    //     width: width * 0.2462,
-    //     height: height * 0.1517,
-    // },
-    // loginText: {
-    //     fontSize: 45,
-    //     color: Color.colorCornflowerblue,
-    //     fontFamily: FontFamily.jsMathCmbx10,
-    //     textAlign: 'center',
-    //     marginTop: height * 0.02,
-    // },
-    // blueContainer: {
-    //     width: width * 0.9,
-    //     backgroundColor: Color.colorLightskyblue,
-    //     borderRadius: Border.br_12xl,
-    //     marginTop: height * 0.01,
-    //     alignSelf: 'stretch',
-    //     flexGrow: 0.4,
-    //     marginLeft: width * 0.05,
-    //     // paddingVertical: height * 0.01,
-    // },
-    // inputLabel: {
-    //     fontSize: 18,
-    //     color: Color.colorDarkslateblue,
-    //     fontFamily: FontFamily.koulenRegular,
-    //     marginTop: height * 0.035,
-    //     marginLeft: width * 0.065,
-    // },
-    // inputField: {
-    //     width: width * 0.775,
-    //     height: height * 0.06,
-    //     borderRadius: Border.br_sm,
-    //     backgroundColor: Color.colorFloralwhite,
-    //     paddingHorizontal: 10,
-    //     fontSize: 16,
-    //     color: Color.colorDarkslateblue,
-    //     marginBottom: height * -0.03, // Space between fields
-    //     marginLeft: width * 0.065,
-    // },
-    // /* Checkbox */
-    // checkboxContainer: {
-    //     flexDirection: 'row',
-    //     alignSelf: 'center',
-    //     marginTop: height * 0.05,
-    // },
-    // checkbox: {
-    //     width: width * 0.05,
-    //     height: width * 0.05,
-    //     borderWidth: 2,
-    //     borderColor: Color.colorDarkslateblue,
-    //     borderRadius: 4,
-    //     marginRight: width * 0.03,
-    // },
-    // checkboxChecked: {
-    //     backgroundColor: Color.colorCornflowerblue,
-    // },
-    // checkboxText: {
-    //     fontSize: 16,
-    //     color: Color.colorDarkslateblue,
-    //     fontFamily: FontFamily.koulenRegular,
-    // },
-    // /* Forgot Password */
-    // forgotPassword: {
-    //     fontSize: 16,
-    //     color: Color.colorDarkslateblue,
-    //     fontFamily: FontFamily.koulenRegular,
-    //     textAlign: 'center',
-    //     marginTop: height * 0.015,
-    // },
-    // /* Button Row */
-    // buttonRow: {
-    //     flexDirection: 'row',
-    //     justifyContent: 'space-between',
-    //     width: width * 0.75,
-    //     marginTop: height * 0.03,
-    // },
-    // button: {
-    //     width: width * 0.35,
-    //     height: height * 0.06,
-    //     backgroundColor: Color.colorLightskyblue,
-    //     borderRadius: Border.br_sm,
-    //     justifyContent: 'center',
-    //     alignItems: 'center',
-    // },
-    // buttonText: {
-    //     fontSize: 18,
-    //     color: 'black',
-    //     fontFamily: FontFamily.koulenRegular,
-    // },
-    // /* Slogan Image */
-    // sloganImage: {
-    //     width: width * 0.5,
-    //     height: height * 0.1,
-    //     resizeMode: 'contain',
-    //     marginTop: height * 0.02,
-    //     alignSelf: 'flex-start',
-    //     marginLeft: width * 0.05,
-    // },
-// });
 
 export default Login;

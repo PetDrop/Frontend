@@ -8,7 +8,6 @@ import {
     Platform,
     Pressable,
     ScrollView,
-    StyleSheet,
     Text,
     TextInput,
     TouchableWithoutFeedback,
@@ -123,118 +122,5 @@ const Signup = (props: SignupType) => {
 		</KeyboardAvoidingView>
 	);
 };
-
-// const styles = StyleSheet.create({
-	// container: {
-    //     flex: 1,
-    //     backgroundColor: Color.colorFloralwhite,
-    // },
-    // scrollContainer: {
-    //     flexGrow: 1, // Allows scrolling when content exceeds screen height
-    //     alignItems: 'center',
-    //     paddingBottom: height * 0.025, // Ensures extra space at the bottom
-    // },
-	// blueCircle: {
-    //     justifyContent: 'center',
-	// },
-	// dogImage: {
-	// 	top: height * 0.17,
-    //     left: width * 0.070,
-    //     justifyContent: 'center',
-	// 	width: width * 0.2462,
-	// 	height: height * 0.1517,
-	// },
-    // signupText: {
-	// 	fontSize: 45, // Match the login page font size
-	// 	color: Color.colorCornflowerblue, // Match the theme
-	// 	fontFamily: FontFamily.jsMathCmbx10,
-	// 	textAlign: 'center',
-    //     marginTop: height * 0.02, // Space between dog image and text
-	// },
-    // blueContainer: {
-    //     width: width * 0.9, // Slightly smaller than full width
-    //     minHeight: height * 0.3, // Enough space for input fields later
-    //     backgroundColor: Color.colorLightskyblue, // Match the theme
-    //     borderRadius: Border.br_12xl, // Rounded edges
-    //     marginTop: height * 0.01, // Space between dog image and input fields
-    //     alignSelf: 'stretch', // Ensures it takes the full width of parent
-    //     flexGrow: 0.4, // Allows it to expand dynamically
-    //     marginLeft: width * 0.05, // Center the container
-    // },
-    // inputLabel: {
-    //     fontSize: 18,
-    //     color: Color.colorDarkslateblue,
-    //     fontFamily: FontFamily.koulenRegular,
-    //     marginTop: height * 0.035,
-    //     marginLeft: width * 0.065,
-    // },
-    // inputField: {
-    //     width: width * 0.775,
-    //     height: height * 0.06,
-    //     borderRadius: Border.br_sm,
-    //     backgroundColor: Color.colorFloralwhite,
-    //     paddingHorizontal: 10,
-    //     fontSize: 16,
-    //     color: Color.colorDarkslateblue,
-    //     marginBottom: height * -0.03, // Space between fields
-    //     marginLeft: width * 0.065,
-    // },
-    // /* Checkbox Styles */
-    // Checkboxes: {
-    //     marginTop: height * 0.03,
-    //     marginBottom: height * 0.02,
-    // },
-    // checkboxContainer: {
-    //     flexDirection: 'row',
-    //     alignItems: 'center',
-    //     marginTop: height * 0.015,
-    //     marginLeft: width * 0.065,
-    //     width: width * 0.475,
-    // },
-    // checkbox: {
-    //     width: width * 0.05,
-    //     height: width * 0.05,
-    //     borderWidth: 2,
-    //     borderColor: Color.colorDarkslateblue,
-    //     borderRadius: 4,
-    //     marginRight: width * 0.03,
-    // },
-    // checkboxChecked: {
-    //     backgroundColor: Color.colorCornflowerblue, // Change when checked
-    // },
-    // checkboxText: {
-    //     fontSize: 16,
-    //     color: Color.colorDarkslateblue,
-    //     fontFamily: FontFamily.koulenRegular,
-    // },
-    // // BUTTON ROW STYLES
-    // buttonRow: {
-    //     flexDirection: 'row', // Align buttons horizontally
-    //     justifyContent: 'space-between', // Space between buttons
-    //     width: width * 0.75, // Keeps buttons from being too wide
-    //     marginTop: height * 0.03, // Space below blue container
-    // },
-    // button: {
-    //     width: width * 0.35, // Rectangular shape
-    //     height: height * 0.06, // Not too large
-    //     backgroundColor: Color.colorLightskyblue, // Matching theme
-    //     borderRadius: Border.br_sm,
-    //     justifyContent: 'center',
-    //     alignItems: 'center',
-    // },
-    // buttonText: {
-    //     fontSize: 18,
-    //     color: 'black',
-    //     fontFamily: FontFamily.koulenRegular,
-    // },
-    // sloganImage: {
-    //     width: width * 0.5, // Proportional width
-    //     height: height * 0.1, // Proportional height
-    //     resizeMode: 'contain', // Ensures the image scales correctly
-    //     marginTop: height * 0.02, // Space below the buttons
-    //     alignSelf: 'flex-start', 
-    //     marginLeft: width * 0.05, 
-    // },
-// });
 
 export default Signup;
