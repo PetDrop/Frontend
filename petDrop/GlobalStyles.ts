@@ -70,3 +70,10 @@ export enum ScreenEnum {
   MedicationsArchive1 = 7, //will be deleted (2nd animal on same screen)
   LoadingScreen = 8,
 };
+
+export const petImages: { [key: string]: any } = {
+  sparky: require("./assets/blue_dog_big.png"),
+  blue: require("./assets/pink_dog_big.png"),
+  small_blue: require("./assets/pink_dog_small.png"),
+  small_sparky: require("./assets/blue_dog_small.png"),
+};

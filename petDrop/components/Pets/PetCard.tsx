@@ -3,6 +3,7 @@ import { View, Text, Image } from 'react-native';
 import EditIcon from '../../assets/edit_icon.svg';
 import styles from '../../styles/Pets.styles';
 import { Pressable } from 'react-native';
+import { petImages } from '../../GlobalStyles';
 
 interface Pet {
 	image: string;
@@ -14,11 +15,6 @@ interface Pet {
 	vetPhone: string;
 	medications: { name: string; color: string }[];
 }
-
-const petImages: { [key: string]: any } = {
-  sparky: require("../../assets/blue_dog_big.png"),
-  blue: require("../../assets/pink_dog_big.png"),
-};
 
 const PetCard = ({ pet }: { pet: Pet }) => {
 	return (

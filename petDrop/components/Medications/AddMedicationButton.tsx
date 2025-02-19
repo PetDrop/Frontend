@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, Dimensions } from 'react-native';
-import { styles } from '../../styles/Reminders.styles';
+import styles from '../../styles/Medications.styles';
 
-const AddReminderButton = () => {
+const AddMedicationButton = () => {
 	return (
 		<Pressable style={styles.addButton}>
 			<View style={styles.buttonContent}>
@@ -12,4 +12,4 @@ const AddReminderButton = () => {
 	);
 };
 
-export default AddReminderButton;
+export default AddMedicationButton;
