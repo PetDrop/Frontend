@@ -22,10 +22,6 @@ export const styles = StyleSheet.create({
 		borderRadius: Border.br_3xs,
 		marginHorizontal: width * 0.05, // Keep horizontal margin, reduce vertical
 		paddingHorizontal: width * 0.05, // Keep padding for content
-		shadowColor: '#000',
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.1,
-		shadowRadius: 4,
 	},
 
 	petHeader: {
