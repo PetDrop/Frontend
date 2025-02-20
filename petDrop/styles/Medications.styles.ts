@@ -189,26 +189,6 @@ const styles = StyleSheet.create({
 		marginLeft: width * - 0.0125,
 		position: 'absolute',
 	},
-	// Add Medication Button
-
-	addButton: {
-		backgroundColor: Color.colorCornflowerblue,
-		borderRadius: Border.br_xl,
-		alignItems: 'center',
-		justifyContent: 'center',
-		marginTop: height * 0.02,
-        width: width * 0.2,
-        marginLeft: width * 0.1,
-	},
-	buttonContent: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	buttonText: {
-		fontSize: FontSize.size_5xl,
-		fontFamily: FontFamily.koulenRegular,
-		color: Color.colorFloralwhite,
-	},
 });
 
 export default styles;

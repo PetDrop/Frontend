@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View, Text, Pressable } from 'react-native';
-import styles from '../styles/Medications.styles';
+import styles from '../styles/AddButton.styles';
 
 const AddButton = () => {
 	return (

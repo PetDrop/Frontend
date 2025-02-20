@@ -109,7 +109,6 @@ export const styles = StyleSheet.create({
 		marginBottom: height * -0.06, // Space below bar
 	},
 	addMedicationButton: {
-		flexDirection: 'column',
 		left: width * -0.1,
     },
 });

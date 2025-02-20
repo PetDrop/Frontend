@@ -48,11 +48,6 @@ const PetCard = ({ pet }: { pet: Pet }) => {
 						<Text style={styles.medicationText}>{med.name}</Text>
 					</View>
 				))}
-                {/* <Pressable style={styles.addMedicationButton}>
-                    <View style={styles.addButtonContainer}>
-                    	<Text style={styles.addButtonText}>+ ADD</Text>
-                    </View>
-                </Pressable> */}
 			</View>
 			<View style={styles.addMedicationButton}>
 				<AddMedicationButton/>
