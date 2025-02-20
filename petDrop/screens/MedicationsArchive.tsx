@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import * as React from 'react';
+import  { useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import TopBottomBar from '../components/TopBottomBar';
 import MedicationCard from '../components/Medications/MedicationCard';
@@ -35,7 +36,7 @@ const MedicationsArchive = ({
 						onSwitch={setSelectedPet}
 					/>
 				</View>
-				{selectedPet.medications.map((medication, index) => (
+				{selectedPet.medications.map((medication: any, index: any) => (
 					<MedicationCard
 						key={index}
 						medication={medication}

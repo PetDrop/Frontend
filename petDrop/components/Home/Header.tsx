@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Image, TouchableOpacity, View } from 'react-native';
 // import MenuIcon from '../../assets/menu_icon.svg';
 import { styles } from '../../styles/Home.styles';

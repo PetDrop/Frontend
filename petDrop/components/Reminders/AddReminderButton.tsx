@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { View, Text, Pressable, StyleSheet, Dimensions } from 'react-native';
 import { styles } from '../../styles/Reminders.styles';
 

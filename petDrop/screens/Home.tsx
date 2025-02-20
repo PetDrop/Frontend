@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { Dimensions, Text, View, ScrollView } from "react-native";
 import EditIcon from "../assets/edit_icon.svg";
 import Calendar from "../components/Home/Calendar";

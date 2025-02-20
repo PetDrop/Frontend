@@ -65,17 +65,19 @@ const styles = StyleSheet.create({
 		borderTopLeftRadius: 30,
 		borderTopRightRadius: 30,
 	},
+	medicationInnerHeader: {
+		alignItems: 'center',
+		flexDirection: 'row',
+		width: width * 0.7
+	},
 	medicationTitle: {
 		fontSize: 22,
 		fontFamily: FontFamily.koulenRegular,
 		color: Color.colorFloralwhite,
 	},
 	editIcon: {
-		position: 'absolute', // should not be absolute, but for now it is fine ig
 		width: width * 0.06,
 		height: height * 0.03,
-		marginLeft: width * 0.31,
-		marginTop: height * -0.02,
 	},
 	medicationBody: {
 		padding: width * 0.04,
@@ -91,11 +93,6 @@ const styles = StyleSheet.create({
 	},
 
 	/** Medication Indicator **/
-	medIndicator: {
-		width: width * 0.06,
-		height: width * 0.06,
-	},
-
 	medicationColor: {
 		width: width * 0.06,
 		height: width * 0.06,

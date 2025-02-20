@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { View, Text, Image } from 'react-native';
 import EditIcon from '../../assets/edit_icon.svg';
 import styles from '../../styles/Pets.styles';
@@ -32,7 +32,7 @@ const PetCard = ({ pet }: { pet: Pet }) => {
 					<Text style={styles.petDetails}>Vet: {pet.vet}</Text>
 					<Text style={styles.petDetails}>{pet.vetPhone}</Text>
 				</View>
-				<EditIcon style={styles.editIcon} width={25} height={25} />
+				<EditIcon style={styles.editIcon} />
 			</View>
 			<Text style={styles.medicationsTitle}>Medications:</Text>
 			<View style={styles.medicationsContainer}>

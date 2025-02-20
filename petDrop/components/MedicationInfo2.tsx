@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+import * as React from "react";
+import { useMemo } from "react";
 import { StyleSheet, View, Text, Dimensions } from "react-native";
 import { Image } from "expo-image";
 import EditIcon from "../assets/edit_icon.svg";

@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import React from "react";
+import * as React from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
 import AddReminderButton from "../components/Reminders/AddReminderButton";
 import ReminderCard from "../components/Reminders/ReminderCard";
@@ -27,7 +27,7 @@ const Reminders = ({ navigation }: Props) => {
         <Text style={styles.pageTitle}>Reminders</Text>
         
         {/* Reminder Cards */}
-        {mockData.reminders.map((reminder) => (
+        {mockData.reminders.map((reminder: any) => (
           <ReminderCard key={reminder.id} reminder={reminder} />
         ))}
 

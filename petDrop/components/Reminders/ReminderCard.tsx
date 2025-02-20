@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Dimensions, Text, View, Pressable } from 'react-native';
 import { styles } from '../../styles/Reminders.styles';
 import EditIcon from '../../assets/edit_icon.svg';
@@ -20,9 +20,10 @@ const ReminderCard = ({ reminder }: ReminderProps) => {
 	return (
 		<View style={styles.cardContainer}>
 			<View style={styles.header}>
-                <View style={[styles.reminderColor, { backgroundColor: reminder.color }]}>
-                </View>
-				<Text style={styles.reminderTitle}>{reminder.name}</Text>
+				<View style={styles.innerHeader}>
+					<View style={[styles.reminderColor, { backgroundColor: reminder.color }]} />
+					<Text style={styles.reminderTitle}>{reminder.name}</Text>
+				</View>
 				<Pressable>
 					<EditIcon style={styles.editIcon} />
 				</Pressable>

@@ -30,12 +30,12 @@ export const styles = StyleSheet.create({
 
 	petHeader: {
 		flexDirection: 'row',
-		alignItems: 'center',
 		justifyContent: 'space-between',
 	},
 	petImage: {
 		width: width * 0.2,
-		height: width * 0.225,
+		height: width * 0.25,
+		marginTop: height * 0.06,
 		borderRadius: Border.br_3xs,
 	},
 	petInfo: {
@@ -57,6 +57,7 @@ export const styles = StyleSheet.create({
 	editIcon: {
 		width: width * 0.07,
 		height: height * 0.03,
+		marginTop: height * 0.015
 	},
 	medicationsTitle: {
 		fontSize: 32,
@@ -98,7 +99,7 @@ export const styles = StyleSheet.create({
 		width: width * 0.3, // Adjust size as needed
 		height: width * 0.3,
 		left: width * -0.06,
-		top: height * 0.016,
+		top: height * 0.035,
 	},
 
 	separatorBar: {

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { View, Text, Pressable, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
 import HouseButtonRoof from '../assets/house_button_roof.svg';

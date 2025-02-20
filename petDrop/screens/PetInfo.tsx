@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { ScrollView, View, Text, Image } from "react-native";
 import TopBottomBar from "../components/TopBottomBar";
 import PetCard from "../components/Pets/PetCard";
@@ -19,7 +19,7 @@ const PetInfo = ({ navigation }: Props) => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Image source={require("../assets/petdrop_slogan.png")} style={logoImage} />
         <Text style={styles.pageTitle}>Pets</Text>
-        {mockData.pets.map((pet) => (
+        {mockData.pets.map((pet: any) => (
           <View key={pet.id}>
             <PetCard key={pet.id} pet={pet} />
             <Image style={styles.petImage} src={pet.image}/>

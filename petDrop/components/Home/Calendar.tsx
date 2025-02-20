@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Dimensions, Text, View } from 'react-native';
 import mockData from '../../data/mockData.json'; // Load JSON data
 import styles from '../../styles/Home.styles';

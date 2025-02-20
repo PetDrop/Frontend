@@ -60,12 +60,14 @@ export const styles = StyleSheet.create({
 		borderTopLeftRadius: 30,
 		borderTopRightRadius: 30,
 	},
+	innerHeader: {
+		alignItems: 'center',
+		flexDirection: 'row',
+		width: width * 0.7
+	},
 	editIcon: {
-		position: 'absolute', // should not be absolute, but for now it is fine ig
 		width: width * 0.06,
 		height: height * 0.03,
-		marginLeft: width * 0.23,
-		marginTop: height * -0.02,
 	},
 	body: {
 		padding: width * 0.04,
