@@ -8,15 +8,11 @@ import mockData from '../data/mockData.json';
 import styles from '../styles/Medications.styles';
 import { ScreenEnum, logoImage } from '../GlobalStyles';
 import { Image } from 'expo-image';
-import AddMedicationButton from '../components/Medications/AddMedicationButton';
+import AddMedicationButton from '../components/AddButton';
 
 import { NavigationProp } from '@react-navigation/native';
 
-const MedicationsArchive = ({
-	navigation,
-}: {
-	navigation: NavigationProp<any>;
-}) => {
+const MedicationsArchive = ({navigation}: { navigation: NavigationProp<any> }) => {
 	const [selectedPet, setSelectedPet] = useState(mockData.pets[0]);
 
 	return (

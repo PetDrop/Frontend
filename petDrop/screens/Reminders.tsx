@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import * as React from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
-import AddReminderButton from "../components/Reminders/AddReminderButton";
+import AddReminderButton from "../components/AddButton";
 import ReminderCard from "../components/Reminders/ReminderCard";
 import TopBottomBar from "../components/TopBottomBar";
 import mockData from "../data/mockData.json";

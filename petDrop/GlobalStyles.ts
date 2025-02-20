@@ -61,14 +61,13 @@ export const Border = {
 /* screen enum */
 export enum ScreenEnum {
   Login = 0,
-  Login1 = 1, // will be replaced by signup page
+  Signup = 1,
   Home = 2,
   PetInfo = 3,
   PetInfo1 = 4, //new pet page
   Reminders = 5,
   MedicationsArchive = 6,
-  MedicationsArchive1 = 7, //will be deleted (2nd animal on same screen)
-  LoadingScreen = 8,
+  LoadingScreen = 7,
 };
 
 export const petImages: { [key: string]: any } = {

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { View, Text, Pressable, StyleSheet, Dimensions } from 'react-native';
-import styles from '../../styles/Medications.styles';
+import { View, Text, Pressable } from 'react-native';
+import styles from '../styles/Medications.styles';
 
-const AddMedicationButton = () => {
+const AddButton = () => {
 	return (
 		<Pressable style={styles.addButton}>
 			<View style={styles.buttonContent}>
@@ -12,4 +12,4 @@ const AddMedicationButton = () => {
 	);
 };
 
-export default AddMedicationButton;
+export default AddButton;

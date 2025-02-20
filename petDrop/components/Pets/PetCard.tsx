@@ -4,6 +4,7 @@ import EditIcon from '../../assets/edit_icon.svg';
 import styles from '../../styles/Pets.styles';
 import { Pressable } from 'react-native';
 import { petImages } from '../../GlobalStyles';
+import AddMedicationButton from '../../components/AddButton';
 
 interface Pet {
 	image: string;
@@ -47,13 +48,16 @@ const PetCard = ({ pet }: { pet: Pet }) => {
 						<Text style={styles.medicationText}>{med.name}</Text>
 					</View>
 				))}
-                <Pressable style={styles.addMedicationButton}>
+                {/* <Pressable style={styles.addMedicationButton}>
                     <View style={styles.addButtonContainer}>
-                    <Text style={styles.addButtonText}>+ ADD</Text>
+                    	<Text style={styles.addButtonText}>+ ADD</Text>
                     </View>
-                </Pressable>
-                <View style={styles.separatorBar} />
+                </Pressable> */}
 			</View>
+			<View style={styles.addMedicationButton}>
+				<AddMedicationButton/>
+			</View>
+            <View style={styles.separatorBar} />
 		</View>
 	);
 };

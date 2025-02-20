@@ -61,7 +61,8 @@ export const styles = StyleSheet.create({
 		color: Color.colorCornflowerblue,
 		marginTop: height * 0.02,
 	},
-	medicationsContainer: {},
+	medicationsContainer: {
+	},
 	medicationItem: {
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -107,24 +108,10 @@ export const styles = StyleSheet.create({
 		borderRadius: Border.br_10xs,
 		marginBottom: height * -0.06, // Space below bar
 	},
-
-	addButtonContainer: {
-	},
-
 	addMedicationButton: {
-        width: width * 0.2,
-        backgroundColor: Color.colorCornflowerblue,
-        borderRadius: Border.br_xl,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: height * 0.02,
+		flexDirection: 'column',
+		left: width * -0.1,
     },
-
-	addButtonText: {
-		fontSize: FontSize.size_5xl,
-		fontFamily: FontFamily.koulenRegular,
-		color: Color.colorFloralwhite,
-	},
 });
 
 export default styles;
