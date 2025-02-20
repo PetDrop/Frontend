@@ -1,6 +1,8 @@
 import * as React from "react";
-import { Text, View } from "react-native";
+import { Dimensions, Text, View } from "react-native";
 import { styles } from "../GlobalStyles";
+
+const screenWidth = Dimensions.get('window').width;
 
 export type NewPetAddButtonType = {
     innerText: string;
@@ -8,7 +10,7 @@ export type NewPetAddButtonType = {
 
 const NewPetAddButton = ({innerText}: NewPetAddButtonType) => {
   return (
-    <View style={{width: (30 + innerText.length * 5)}}>
+    <View style={{width: ((screenWidth * 0.08) + innerText.length * (screenWidth * 0.015))}}>
         <View style={styles.newPetAddButtonBlueOval}>
             <Text style={styles.newPetAddButtonText}>{innerText}</Text>
             <View style={styles.newPetAddButtonPlusContainer}>
