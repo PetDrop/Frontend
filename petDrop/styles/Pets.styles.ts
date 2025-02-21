@@ -17,6 +17,7 @@ export const styles = StyleSheet.create({
 		fontFamily: FontFamily.jsMathCmbx10,
 		color: Color.colorCornflowerblue,
 		left: width * 0.1,
+		marginBottom: height * 0.02,
 	},
 	petCard: {
 		borderRadius: Border.br_3xs,
@@ -31,8 +32,8 @@ export const styles = StyleSheet.create({
 	petImage: {
 		width: width * 0.2,
 		height: width * 0.25,
-		marginTop: height * 0.06,
 		borderRadius: Border.br_3xs,
+		top: height * 0.03,
 	},
 	petInfo: {
 		flex: 1,
@@ -96,7 +97,7 @@ export const styles = StyleSheet.create({
 		width: width * 0.3, // Adjust size as needed
 		height: width * 0.3,
 		left: width * -0.06,
-		top: height * 0.035,
+		top: height * 0.01,
 	},
 
 	separatorBar: {
