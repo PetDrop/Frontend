@@ -1,13 +1,13 @@
 import * as React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, ScrollView } from "react-native";
 import { Image } from "expo-image";
-import Subtract from "../assets/subtract.svg";
+import Subtract from "../assets/blue_circle_big.svg";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import { styles } from '../styles/ProfilePage.styles';
 
 const ProfilePage = () => {
   return (
-    <View style={styles.profilePage}>
+    <ScrollView style={styles.profilePage}>
       <View style={styles.groupChildPosition}>
         <View style={[styles.groupChild, styles.groupChildPosition]} />
         <Text style={styles.text}>9:53</Text>
@@ -22,11 +22,6 @@ const ProfilePage = () => {
             <View style={[styles.groupChild2, styles.groupChild2Position]} />
             <View style={[styles.groupChild3, styles.groupChildLayout2]} />
           </View>
-          <Image
-            style={[styles.groupIcon, styles.groupPosition]}
-            contentFit="cover"
-            source={require("../assets/group-231.png")}
-          />
         </View>
       </View>
       <Subtract style={styles.subtractIcon} width={146} height={146} />
@@ -62,7 +57,7 @@ const ProfilePage = () => {
           <View style={[styles.groupChild12, styles.groupChildTransform]} />
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
