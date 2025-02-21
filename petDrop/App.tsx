@@ -9,6 +9,7 @@ import MedicationsArchive from "./screens/MedicationsArchive";
 import PetInfo from "./screens/PetInfo";
 import PetInfo1 from "./screens/PetInfo1";
 import Reminders from "./screens/Reminders";
+import Profile from "./screens/ProfilePage";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useState } from "react";
@@ -32,6 +33,11 @@ const App = () => {
         {hideSplashScreen ? (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             {/* first screen listed is the one rendered by default */}
+            <Stack.Screen
+              name="Profile"
+              component={Profile}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen
               name="Login"
               component={Login}

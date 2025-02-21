@@ -1,0 +1,328 @@
+import { Dimensions, StyleSheet } from 'react-native';
+import { Border, Color, FontFamily, FontSize } from '../GlobalStyles';
+
+const { width, height } = Dimensions.get('window');
+
+export const styles = StyleSheet.create({
+    groupChildPosition: {
+        height: 62,
+        width: 390,
+        left: 0,
+        top: 0,
+        position: "absolute",
+    },
+    groupPosition: {
+        top: 0,
+        height: 12,
+    },
+    groupInnerBorder: {
+        borderColor: Color.colorWhite,
+        borderStyle: "solid",
+        position: "absolute",
+    },
+    groupChild1Position: {
+        width: 22,
+        top: 0,
+        position: "absolute",
+    },
+    groupChild2Position: {
+        left: 3,
+        position: "absolute",
+    },
+    groupChildLayout2: {
+        top: 10,
+        width: 10,
+        height: 2,
+    },
+    nameTypo: {
+        color: Color.colorCornflowerblue,
+        fontFamily: FontFamily.jsMathCmbx10,
+        textAlign: "left",
+        position: "absolute",
+    },
+    emailTypo: {
+        fontSize: FontSize.size_mini,
+        left: 67,
+        fontFamily: FontFamily.koulenRegular,
+        color: Color.colorCornflowerblue,
+        textAlign: "left",
+        position: "absolute",
+    },
+    groupChildLayout1: {
+        height: 7,
+        width: 33,
+        borderRadius: Border.br_8xs_9,
+        backgroundColor: Color.colorCornflowerblue,
+    },
+    groupChildTransform: {
+        transform: [
+        {
+            rotate: "-90deg",
+        },
+        ],
+        position: "absolute",
+    },
+    groupChildLayout: {
+        height: 50,
+        borderWidth: 4,
+        borderColor: Color.colorCornflowerblue,
+        borderRadius: Border.br_sm,
+        width: 289,
+        borderStyle: "solid",
+        position: "absolute",
+    },
+    groupChild9Layout: {
+        width: 89,
+        position: "absolute",
+    },
+    addTypo: {
+        color: Color.colorFloralwhite,
+        fontFamily: FontFamily.koulenRegular,
+        textAlign: "left",
+        top: 0,
+        position: "absolute",
+    },
+    groupChild10Layout: {
+        width: 40,
+        position: "absolute",
+    },
+    groupChild: {
+        backgroundColor: Color.colorLightskyblue,
+    },
+    text: {
+        top: 19,
+        left: 36,
+        fontSize: FontSize.size_lg,
+        fontFamily: FontFamily.juaRegular,
+        color: Color.colorWhite,
+        width: 77,
+        height: 23,
+        textAlign: "left",
+        position: "absolute",
+    },
+    groupItem: {
+        top: 2,
+        left: 2,
+        width: 14,
+        height: 8,
+        backgroundColor: Color.colorWhite,
+        borderRadius: Border.br_10xs,
+        position: "absolute",
+    },
+    groupInner: {
+        left: 20,
+        borderWidth: 0.5,
+        width: 1,
+        height: 4,
+        top: 4,
+        borderRadius: Border.br_10xs,
+    },
+    rectangleView: {
+        borderWidth: 1,
+        width: 20,
+        borderRadius: Border.br_9xs,
+        height: 12,
+        left: 0,
+        top: 0,
+    },
+    rectangleGroup: {
+        left: 52,
+        width: 21,
+        height: 12,
+        position: "absolute",
+    },
+    groupChild1: {
+        backgroundColor: Color.colorGainsboro_200,
+        height: 2,
+        borderRadius: Border.br_9xs,
+        left: 0,
+    },
+    groupChild2: {
+        top: 5,
+        width: 17,
+        height: 2,
+        borderRadius: Border.br_9xs,
+        backgroundColor: Color.colorWhite,
+    },
+    groupChild3: {
+        left: 6,
+        width: 10,
+        borderRadius: Border.br_9xs,
+        backgroundColor: Color.colorWhite,
+        position: "absolute",
+    },
+    rectangleContainer: {
+        left: 23,
+        height: 12,
+    },
+    groupIcon: {
+        width: 10,
+        height: 12,
+        left: 0,
+        position: "absolute",
+    },
+    groupParent: {
+        top: 23,
+        left: 292,
+        width: 73,
+        height: 12,
+        position: "absolute",
+    },
+    subtractIcon: {},
+    name: {
+        top: 371,
+        left: 54,
+        fontSize: 40,
+        width: 118,
+        height: 43,
+    },
+    petdrop: {
+        top: 82,
+        left: 17,
+        fontSize: FontSize.size_45xl,
+        width: 342,
+        height: 112,
+    },
+    neverMissA: {
+        top: 133,
+        left: 44,
+        fontFamily: FontFamily.koulenRegular,
+        fontSize: FontSize.size_smi,
+        color: Color.colorCornflowerblue,
+        textAlign: "left",
+        position: "absolute",
+    },
+    address: {
+        top: 459,
+    },
+    email: {
+        top: 531,
+    },
+    phone: {
+        top: 603,
+    },
+    password: {
+        top: 676,
+    },
+    emergencyContacts: {
+        top: 749,
+    },
+    groupChild4: {
+        top: 13,
+        left: 219,
+        position: "absolute",
+    },
+    groupChild5: {
+        top: 33,
+        left: 232,
+        height: 7,
+        width: 33,
+        borderRadius: Border.br_8xs_9,
+        backgroundColor: Color.colorCornflowerblue,
+    },
+    groupChild6: {
+        top: 132,
+        left: 0,
+    },
+    groupChild7: {
+        top: 204,
+        left: 0,
+    },
+    groupChild8: {
+        top: 276,
+        left: 0,
+    },
+    groupView: {
+        top: 313,
+        height: 326,
+        width: 289,
+        left: 50,
+        position: "absolute",
+    },
+    profile: {
+        top: 188,
+        left: 22,
+        width: 181,
+        fontSize: FontSize.size_5xl,
+    },
+    profilePageChild: {
+        top: 662,
+        left: 50,
+        borderWidth: 4,
+        borderColor: Color.colorCornflowerblue,
+        borderRadius: Border.br_sm,
+    },
+    profilePageItem: {
+        top: 735,
+        left: 50,
+        borderWidth: 4,
+        borderColor: Color.colorCornflowerblue,
+        borderRadius: Border.br_sm,
+    },
+    groupChild9: {
+        borderRadius: 17,
+        height: 34,
+        backgroundColor: Color.colorCornflowerblue,
+        left: 0,
+        top: 4,
+    },
+    submit: {
+        left: 15,
+        width: 65,
+        height: 33,
+        fontSize: FontSize.size_5xl,
+    },
+    rectangleParent1: {
+        top: 931,
+        left: 266,
+        height: 38,
+    },
+    groupChild10: {
+        top: 1,
+        borderRadius: Border.br_3xs,
+        height: 21,
+        backgroundColor: Color.colorCornflowerblue,
+        left: 0,
+    },
+    add: {
+        left: 18,
+        fontSize: FontSize.size_smi,
+        color: Color.colorFloralwhite,
+    },
+    groupChild11: {
+        width: 10,
+        height: 2,
+        top: 4,
+        borderRadius: Border.br_10xs,
+        left: 0,
+        position: "absolute",
+        backgroundColor: Color.colorFloralwhite,
+    },
+    groupChild12: {
+        left: 4,
+        width: 10,
+        top: 10,
+        height: 2,
+        borderRadius: Border.br_10xs,
+        backgroundColor: Color.colorFloralwhite,
+    },
+    rectangleParent3: {
+        top: 6,
+        height: 10,
+        width: 10,
+    },
+    rectangleParent2: {
+        top: 792,
+        left: 299,
+        height: 23,
+    },
+    profilePage: {
+        flex: 1,
+        width: "100%",
+        height: 1053,
+        overflow: "hidden",
+        backgroundColor: Color.colorFloralwhite,
+    },
+});
+
+export default styles;
