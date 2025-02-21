@@ -1,9 +1,22 @@
 /* fonts */
+import { Dimensions, ImageResizeMode } from "react-native";
+const { width, height } = Dimensions.get("window");
+
 export const FontFamily = {
   juaRegular: "Jua-Regular",
   koulenRegular: "Koulen-Regular",
   jsMathCmbx10: "jsMath-cmbx10",
 };
+/* Petdrop logo on all pages */
+export const logoImage = {
+		width: width * 0.6,
+		height: height * 0.115,
+    marginTop: height * 0.025,
+    marginBottom: height * 0.025,
+    marginLeft: width * 0.05,
+		resizeMode: "contain" as ImageResizeMode,
+	};
+
 /* font sizes */
 export const FontSize = {
   size_lg: 18,
@@ -48,12 +61,18 @@ export const Border = {
 /* screen enum */
 export enum ScreenEnum {
   Login = 0,
-  Login1 = 1, // will be replaced by signup page
+  Signup = 1,
   Home = 2,
   PetInfo = 3,
   PetInfo1 = 4, //new pet page
   Reminders = 5,
   MedicationsArchive = 6,
-  MedicationsArchive1 = 7, //will be deleted (2nd animal on same screen)
-  LoadingScreen = 8,
+  LoadingScreen = 7,
+};
+
+export const petImages: { [key: string]: any } = {
+  sparky: require("./assets/blue_dog_big.png"),
+  blue: require("./assets/pink_dog_big.png"),
+  small_blue: require("./assets/pink_dog_small.png"),
+  small_sparky: require("./assets/blue_dog_small.png"),
 };

@@ -1,0 +1,89 @@
+{
+	"pets": [
+		{
+			"id": 1,
+			"name": "Sparky",
+			"image": "sparky",
+			"age": 3,
+			"breed": "Golden Retriever",
+			"address": "123 Pet St",
+			"medications": [
+				{
+					"name": "Eye Drops",
+					"color": "#AE2828",
+					"description": "Red bottle, 2 drops, twice a day",
+					"dates": [
+						"2024-09-02",
+						"2024-09-03",
+						"2024-09-04",
+						"2024-09-05"
+					],
+					"range": 4
+				},
+				{
+					"name": "Antibiotics",
+					"color": "#FFC635",
+					"description": "Blue bottle, 1 pill, morning",
+					"dates": ["2024-09-19", "2024-09-20"],
+					"range": 4
+				}
+			],
+			"vet": "Dr. Bujan",
+			"vetPhone": "983-555-1234"
+		},
+		{
+			"id": 2,
+			"name": "Blue",
+			"image": "blue",
+			"age": 1,
+			"breed": "Poodle",
+			"address": "123 Adoption Avenue",
+			"medications": [
+				{
+					"name": "Heartgard",
+					"color": "#A0C66F",
+					"description": "Black box, 1 pill, every night",
+					"dates": ["2024-09-10", "2024-09-20", "2024-09-30"],
+					"range": 4
+				}
+			],
+			"vet": "Dr. Bujan",
+			"vetPhone": "983-555-1234"
+		}
+	],
+	"reminders": [
+		{
+            "id": 1,
+			"medication": "Eye Drops",
+			"pet": "Sparky",
+            "name": "Eye Drops: Sparky",
+			"color": "#d73a3a",
+			"dates": [ "Sept. 19-23"
+			],
+			"notifications": ["6AM, ", "6PM"],
+			"message": "2 Drops"
+		},
+		{
+            "id": 2,
+			"medication": "Antibiotics",
+            "name": "Antibiotics: Sparky",
+			"pet": "Sparky",
+			"color": "#ffc635",
+			"dates": [
+				"Sept. 19-23"
+			],
+			"notifications": ["6AM"],
+			"message": "1 Pill"
+		},
+		{
+            "id": 3,
+			"medication": "Heartgard",
+            "name": "Heartgard: Blue",
+			"pet": "Blue",
+			"color": "#a0c66f",
+			"dates": ["Sept. 2-5"],
+			"notifications": ["6PM"],
+			"message": "1 Pill"
+		}
+	]
+}
