@@ -9,7 +9,7 @@ import MedicationsArchive from "./screens/MedicationsArchive";
 import PetInfo from "./screens/PetInfo";
 import PetInfo1 from "./screens/PetInfo1";
 import Reminders from "./screens/Reminders";
-import Profile from "./screens/ProfilePage";
+import Profile from "./screens/Profile";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useState } from "react";

@@ -4,15 +4,22 @@ import { Border, Color, FontFamily, FontSize } from '../GlobalStyles';
 const { width, height } = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
-    groupChildPosition: {
+	container: {
+		flex: 1,
+		width: width,
+		height: height,
+		overflow: 'hidden',
+		backgroundColor: Color.colorFloralwhite,
+	},
+    scrollContainer: {
+        paddingBottom: height * 0.4,
+    },
+    banner: {
         height: 62,
         width: 390,
-        left: 0,
-        top: 0,
-        position: "absolute",
+        backgroundColor: Color.colorLightskyblue,
     },
     groupPosition: {
-        top: 0,
         height: 12,
     },
     groupInnerBorder: {
@@ -22,7 +29,6 @@ export const styles = StyleSheet.create({
     },
     groupChild1Position: {
         width: 22,
-        top: 0,
         position: "absolute",
     },
     groupChild2Position: {
@@ -38,21 +44,6 @@ export const styles = StyleSheet.create({
         color: Color.colorCornflowerblue,
         fontFamily: FontFamily.jsMathCmbx10,
         textAlign: "left",
-        position: "absolute",
-    },
-    emailTypo: {
-        fontSize: FontSize.size_mini,
-        left: 67,
-        fontFamily: FontFamily.koulenRegular,
-        color: Color.colorCornflowerblue,
-        textAlign: "left",
-        position: "absolute",
-    },
-    groupChildLayout1: {
-        height: 7,
-        width: 33,
-        borderRadius: Border.br_8xs_9,
-        backgroundColor: Color.colorCornflowerblue,
     },
     groupChildTransform: {
         transform: [
@@ -62,14 +53,18 @@ export const styles = StyleSheet.create({
         ],
         position: "absolute",
     },
-    groupChildLayout: {
-        height: 50,
+    textInput: {
+        height: height * 0.06,
         borderWidth: 4,
         borderColor: Color.colorCornflowerblue,
         borderRadius: Border.br_sm,
-        width: 289,
-        borderStyle: "solid",
-        position: "absolute",
+        width: width * 0.75,
+        marginBottom: height * 0.02,
+        marginTop: height * 0.02,
+        marginLeft: width * 0.1282,
+        fontWeight: '700',
+        color: Color.colorCornflowerblue,
+        paddingLeft: width * 0.0256,
     },
     groupChild9Layout: {
         width: 89,
@@ -84,20 +79,6 @@ export const styles = StyleSheet.create({
     },
     groupChild10Layout: {
         width: 40,
-        position: "absolute",
-    },
-    groupChild: {
-        backgroundColor: Color.colorLightskyblue,
-    },
-    text: {
-        top: 19,
-        left: 36,
-        fontSize: FontSize.size_lg,
-        fontFamily: FontFamily.juaRegular,
-        color: Color.colorWhite,
-        width: 77,
-        height: 23,
-        textAlign: "left",
         position: "absolute",
     },
     groupItem: {
@@ -168,57 +149,40 @@ export const styles = StyleSheet.create({
         height: 12,
         position: "absolute",
     },
-    subtractIcon: {},
     name: {
-        top: 371,
         left: 54,
         fontSize: 40,
         width: 118,
         height: 43,
     },
-    petdrop: {
-        top: 82,
-        left: 17,
-        fontSize: FontSize.size_45xl,
-        width: 342,
-        height: 112,
+    addPictureContainer: {
+        marginLeft: width * 0.5462,
+        marginTop: height * 0.15,
     },
-    neverMissA: {
-        top: 133,
-        left: 44,
-        fontFamily: FontFamily.koulenRegular,
-        fontSize: FontSize.size_smi,
-        color: Color.colorCornflowerblue,
-        textAlign: "left",
-        position: "absolute",
+    circle: {
+        width: width * 0.3744,
+        height: height * 0.173,
     },
-    address: {
-        top: 459,
-    },
-    email: {
-        top: 531,
-    },
-    phone: {
-        top: 603,
-    },
-    password: {
-        top: 676,
-    },
-    emergencyContacts: {
-        top: 749,
-    },
-    groupChild4: {
-        top: 13,
-        left: 219,
-        position: "absolute",
-    },
-    groupChild5: {
-        top: 33,
-        left: 232,
+    horizontalLine: {
+        top: height * -0.09,
+        left: width * 0.14,
         height: 7,
         width: 33,
         borderRadius: Border.br_8xs_9,
         backgroundColor: Color.colorCornflowerblue,
+    },
+    verticalLine: {
+        top: height * -0.0985,
+        left: width * 0.14,
+        height: 7,
+        width: 33,
+        borderRadius: Border.br_8xs_9,
+        backgroundColor: Color.colorCornflowerblue,
+        transform: [
+            {
+                rotate: "-90deg",
+            },
+        ],
     },
     groupChild6: {
         top: 132,
@@ -240,24 +204,9 @@ export const styles = StyleSheet.create({
         position: "absolute",
     },
     profile: {
-        top: 188,
         left: 22,
         width: 181,
         fontSize: FontSize.size_5xl,
-    },
-    profilePageChild: {
-        top: 662,
-        left: 50,
-        borderWidth: 4,
-        borderColor: Color.colorCornflowerblue,
-        borderRadius: Border.br_sm,
-    },
-    profilePageItem: {
-        top: 735,
-        left: 50,
-        borderWidth: 4,
-        borderColor: Color.colorCornflowerblue,
-        borderRadius: Border.br_sm,
     },
     groupChild9: {
         borderRadius: 17,
@@ -315,13 +264,6 @@ export const styles = StyleSheet.create({
         top: 792,
         left: 299,
         height: 23,
-    },
-    profilePage: {
-        flex: 1,
-        width: "100%",
-        height: 1053,
-        overflow: "hidden",
-        backgroundColor: Color.colorFloralwhite,
     },
 });
 
