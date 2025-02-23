@@ -8,7 +8,7 @@ const { width, height } = Dimensions.get('window');
 const AddPicture = () => {
     return (
         <View style={styles.addPictureContainer}>
-            <Circle style={styles.circle} />
+            <Circle />
             <View style={styles.horizontalLine} />
             <View style={styles.verticalLine} />
         </View>

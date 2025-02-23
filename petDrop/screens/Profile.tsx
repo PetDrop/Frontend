@@ -1,9 +1,11 @@
 import * as React from "react";
 import { View, Text, ScrollView, TextInput } from "react-native";
-import AddPicture from '../components/Profile/AddPicture';
+import { Color } from "../GlobalStyles";
 import { styles } from '../styles/ProfilePage.styles';
 import Header from "../components/Home/Header";
-import { Color } from "../GlobalStyles";
+import AddPicture from '../components/Profile/AddPicture';
+import AddButton from "../components/AddButton";
+import SubmitButton from '../components/Profile/SubmitButton';
 
 const Profile = () => {
   const [address, setAddress] = React.useState('');
@@ -18,16 +20,16 @@ const Profile = () => {
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* header */}
-        <Header/>
+        <Header />
 
         {/* profile title */}
-        <Text style={[styles.profile, styles.nameTypo]}>Profile</Text>
+        <Text style={styles.title}>Profile</Text>
 
         {/* cirlce with plus sign for adding profile picture */}
         <AddPicture />
 
         {/* user's name */}
-        <Text style={[styles.name, styles.nameTypo]}>Name</Text>
+        <Text style={styles.nameHeading}>Name</Text>
 
         {/* text inputs */}
         <TextInput 
@@ -54,18 +56,16 @@ const Profile = () => {
           //onChangeText={setEmergencyContacts}
         />
 
-        <View style={[styles.rectangleParent1, styles.groupChild9Layout]}>
-          <View style={[styles.groupChild9, styles.groupChild9Layout]} />
-          <Text style={[styles.submit, styles.addTypo]}>SUBMIT</Text>
+        {/* add button */}
+        <View style={styles.addButtonContainer}>
+          <AddButton />
         </View>
-        <View style={[styles.rectangleParent2, styles.groupChild10Layout]}>
-          <View style={[styles.groupChild10, styles.groupChild10Layout]} />
-          <Text style={[styles.add, styles.addTypo]}>ADD</Text>
-          <View style={[styles.rectangleParent3, styles.groupChild2Position]}>
-            <View style={styles.groupChild11} />
-            <View style={[styles.groupChild12, styles.groupChildTransform]} />
-          </View>
+
+        {/* submit button */}
+        <View style={styles.submitButtonContainer}>
+          <SubmitButton />
         </View>
+
       </ScrollView>
     </View>
   );
