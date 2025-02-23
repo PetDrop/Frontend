@@ -8,6 +8,7 @@ import UserGreeting from "../components/Home/UserGreeting";
 import TopBottomBar from "../components/TopBottomBar";
 import { ScreenEnum } from "../GlobalStyles";
 import { styles } from "../styles/Home.styles";
+import ReminderPopup from "../components/ReminderPopup";
 
 const { width, height } = Dimensions.get("window");
 
@@ -39,6 +40,7 @@ const Home = ({ navigation }: HomeProps) => {
       </ScrollView>
       {/* Bottom Navigation */}
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} />
+      <ReminderPopup isActive={true} />
     </View>
   );
 };

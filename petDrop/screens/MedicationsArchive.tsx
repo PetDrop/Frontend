@@ -9,8 +9,8 @@ import styles from '../styles/Medications.styles';
 import { ScreenEnum, logoImage } from '../GlobalStyles';
 import { Image } from 'expo-image';
 import AddMedicationButton from '../components/AddButton';
-
 import { NavigationProp } from '@react-navigation/native';
+import MedicationPopup from '../components/MedicationPopup';
 
 const MedicationsArchive = ({navigation}: { navigation: NavigationProp<any> }) => {
 	const [selectedPet, setSelectedPet] = useState(mockData.pets[0]);
@@ -39,12 +39,13 @@ const MedicationsArchive = ({navigation}: { navigation: NavigationProp<any> }) =
 						petName={selectedPet.name}
 					/>
 				))}
-				<AddMedicationButton/>
+				<AddMedicationButton />
 			</ScrollView>
 			<TopBottomBar
 				navigation={navigation}
 				currentScreen={ScreenEnum.MedicationsArchive}
 			/>
+			<MedicationPopup isActive={false} />
 		</View>
 	);
 };
