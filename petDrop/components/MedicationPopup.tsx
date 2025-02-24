@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Pressable } from "react-native";
 import { Image } from "expo-image";
 import Polygon6 from "../assets/dropdown_arrow.svg";
 import Ellipse17 from "../assets/blue_circle_small.svg";
@@ -7,9 +7,10 @@ import styles from '../styles/MedicationPopup.styles';
 
 type MedicationPopupProps = {
   isActive: boolean;
+  showingFunction: Function;
 };
 
-const MedicationPopup = ({isActive}: MedicationPopupProps) => {
+const MedicationPopup = ({isActive, showingFunction}: MedicationPopupProps) => {
   if (isActive) { 
     return (
     <View style={{position: "absolute"}}>
@@ -28,11 +29,13 @@ const MedicationPopup = ({isActive}: MedicationPopupProps) => {
               <Text style={[styles.save, styles.saveTypo]}>{`SAVE
     `}</Text>
             </View>
-            <Image
-              style={styles.groupIcon}
-              contentFit="cover"
-              source={require("../assets/remove_x_white.png")}
-            />
+            <Pressable onPress={() => {showingFunction(false)}}>
+              <Image
+                style={styles.closePopup}
+                contentFit="cover"
+                source={require("../assets/remove_x_white.png")}
+              />
+            </Pressable>
             <Text style={[styles.medication, styles.saveTypo]}>Medication</Text>
             <View style={styles.groupChild1} />
             <Text style={[styles.datesSeptember19, styles.textTypo]}>{`Dates:

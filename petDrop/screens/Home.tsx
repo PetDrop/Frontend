@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Dimensions, Text, View, ScrollView } from "react-native";
+import { Dimensions, Text, View, ScrollView, Pressable } from "react-native";
 import EditIcon from "../assets/edit_icon.svg";
 import Calendar from "../components/Home/Calendar";
 import Header from "../components/Home/Header";
@@ -17,6 +17,8 @@ type HomeProps = {
 };
 
 const Home = ({ navigation }: HomeProps) => {
+  const [popupShowing, setPopupShowing] = React.useState(false);
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -31,7 +33,9 @@ const Home = ({ navigation }: HomeProps) => {
         <Text style={styles.monthText}>September.</Text>
           <EditIcon style={styles.editIcon} width={width * 0.07} height={height * 0.1} />
         <View style={styles.calendarBody}>
-          <Calendar />
+          <Pressable onPress={() => {setPopupShowing(true)}}>
+            <Calendar />
+          </Pressable>
         </View>
       </View>
       
@@ -40,7 +44,7 @@ const Home = ({ navigation }: HomeProps) => {
       </ScrollView>
       {/* Bottom Navigation */}
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} />
-      <ReminderPopup isActive={true} />
+      <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} />
     </View>
   );
 };

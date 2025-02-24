@@ -84,12 +84,11 @@ const styles = StyleSheet.create({
         width: 74,
         position: "absolute",
     },
-    groupIcon: {
-        top: 22,
-        left: 348,
-        width: 24,
-        height: 24,
-        position: "absolute",
+    closePopup: {
+        top: 10,
+        left: 330,
+        width: 45,
+        height: 45,
     },
     medication: {
         top: 12,

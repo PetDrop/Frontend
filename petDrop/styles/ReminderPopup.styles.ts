@@ -44,13 +44,6 @@ const styles = StyleSheet.create({
         backgroundColor: Color.colorFloralwhite,
         height: 346,
       },
-      reminderPopupInner: {
-        top: 28,
-        left: 348,
-        width: 24,
-        height: 24,
-        position: "absolute",
-      },
       groupIcon: {
         top: 234,
       },
@@ -71,6 +64,7 @@ const styles = StyleSheet.create({
         textAlign: "left",
         fontFamily: FontFamily.koulenRegular,
         position: "absolute",
+        width: 270,
       },
       rectangleView: {
         top: 26,
@@ -122,6 +116,12 @@ const styles = StyleSheet.create({
           height: height * 0.5,
           width: width,
           position: 'absolute'
+      },
+      closePopup: {
+        top: 15,
+        left: 330,
+        width: 45,
+        height: 45,      
       },
 });
 

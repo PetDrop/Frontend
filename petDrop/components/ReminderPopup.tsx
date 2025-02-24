@@ -1,13 +1,14 @@
 import * as React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Pressable } from "react-native";
 import { Image } from "expo-image";
 import styles from '../styles/ReminderPopup.styles';
 
 type ReminderPopupProps = {
   isActive: boolean;
+  showingFunction: Function;
 };
 
-const ReminderPopup = ({isActive}: ReminderPopupProps) => {
+const ReminderPopup = ({isActive, showingFunction}: ReminderPopupProps) => {
   if (isActive) { 
     return (
     <View style={{position: "absolute"}}>
@@ -16,11 +17,13 @@ const ReminderPopup = ({isActive}: ReminderPopupProps) => {
         <View style={styles.reminderPopup}>
           <View style={[styles.reminderPopupChild, styles.reminderPosition]} />
           <View style={[styles.reminderPopupItem, styles.reminderPosition]} />
-          <Image
-            style={styles.reminderPopupInner}
-            contentFit="cover"
-            source={require("../assets/remove_x_white.png")}
-          />
+          <Pressable onPress={() => {showingFunction(false)}}>
+            <Image
+              style={styles.closePopup}
+              contentFit="cover"
+              source={require("../assets/remove_x_white.png")}
+            />
+          </Pressable>
           <Image
             style={[styles.groupIcon, styles.reminderChildLayout]}
             contentFit="cover"
@@ -43,20 +46,14 @@ const ReminderPopup = ({isActive}: ReminderPopupProps) => {
           />
           <Text style={styles.eyeDrops}>{`Eye drops `}</Text>
           <View style={styles.rectangleView} />
-          <Text style={styles.datesNotifications6am}>{`Dates: 
-
-
-    Notifications: 
-    6am - 6pm
-    Eye
-    Message: 
-    “2 drops”`}</Text>
-          <Text style={[styles.start0919Container, styles.containerTypo]}>
-            {`Start: 09 `}/{`19 `}/25
-          </Text>
-          <Text style={[styles.end0923Container, styles.containerTypo]}>
-            {`End: 09 `}/{`23 `}/25
-          </Text>
+          <Text style={styles.datesNotifications6am}>{`Dates:
+Start: 09 / 19 / 25
+End: 09 /23 /25
+Notifications: 
+6am - 6pm
+Eye
+Message: 
+“2 drops”`}</Text>
           <Text style={[styles.am, styles.amTypo]}>6 : 00 AM</Text>
           <Text style={[styles.pm, styles.amTypo]}>6 : 00 PM</Text>
         </View>
