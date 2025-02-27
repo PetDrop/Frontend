@@ -1,13 +1,17 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { styles } from '../../styles/ProfilePage.styles';
 
-const AddPicture = () => {
+type SubmitButtonType = {
+	onPressFunction: () => void;
+}
+
+const SubmitButton = ({onPressFunction}: SubmitButtonType) => {
     return (
-        <View style={styles.submitButton}>
+		<Pressable style={styles.submitButton} onPress={onPressFunction}>
             <Text style={styles.submitText}>SUBMIT</Text>
-        </View>
+        </Pressable>
     );
 };
 
-export default AddPicture;
+export default SubmitButton;
