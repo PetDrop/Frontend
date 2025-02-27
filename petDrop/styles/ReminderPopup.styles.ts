@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
     reminderPosition: {
         left: 0,
         position: "absolute",
-        width: 390,
+        width: 360,
       },
       reminderChildLayout: {
         height: 14,
@@ -43,6 +43,8 @@ const styles = StyleSheet.create({
         top: 76,
         backgroundColor: Color.colorFloralwhite,
         height: 346,
+        borderBottomLeftRadius: Border.br_12xl,
+        borderBottomRightRadius: Border.br_12xl,
       },
       groupIcon: {
         top: 234,
@@ -64,7 +66,7 @@ const styles = StyleSheet.create({
         textAlign: "left",
         fontFamily: FontFamily.koulenRegular,
         position: "absolute",
-        width: 270,
+        width: 240,
       },
       rectangleView: {
         top: 26,
@@ -99,11 +101,11 @@ const styles = StyleSheet.create({
         top: 203,
       },
       reminderPopup: {
-        backgroundColor: Color.colorWhite,
         top: 212,
         height: 420,
         overflow: "hidden",
-        width: 390,
+        width: 360,
+        left: 15,
       },
       opaqueBackground: {
           backgroundColor: Color.colorGainsboro_100,
@@ -115,11 +117,11 @@ const styles = StyleSheet.create({
       reminderPopupContainer: {
           height: height * 0.5,
           width: width,
-          position: 'absolute'
+          position: 'absolute',
       },
       closePopup: {
         top: 15,
-        left: 330,
+        left: 300,
         width: 45,
         height: 45,      
       },
