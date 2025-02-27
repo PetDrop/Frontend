@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Text, ScrollView, TextInput } from "react-native";
+import { View, Text, ScrollView, TextInput, KeyboardAvoidingView } from "react-native";
 import { Color } from "../GlobalStyles";
 import { styles } from '../styles/ProfilePage.styles';
 import Header from "../components/Home/Header";
@@ -7,7 +7,7 @@ import AddPicture from '../components/Profile/AddPicture';
 import AddButton from "../components/AddButton";
 import SubmitButton from '../components/Profile/SubmitButton';
 
-function updateEmergencyContacts(state: string[], action: {index: number, value: string}) {
+function updateEmergencyContacts(state: string[], action: {index: number, text: string}) {
   let newState;
   /* new inputs have been added */
   if (state.length < action.index + 1) {
@@ -15,19 +15,23 @@ function updateEmergencyContacts(state: string[], action: {index: number, value:
     newState = state.concat(Array<string>((action.index + 1) - state.length).fill(''));
 
     /* add new value to copy of old state */
-    newState = newState.slice(0, action.index).concat([action.value]).concat(newState.slice(action.index + 1));
+    newState = newState.slice(0, action.index).concat([action.text]).concat(newState.slice(action.index + 1));
   } else {
     /* add new value to copy of old state */
-    newState = state.slice(0, action.index).concat([action.value]).concat(state.slice(action.index + 1));
+    newState = state.slice(0, action.index).concat([action.text]).concat(state.slice(action.index + 1));
   }
   return newState;
 }
 
-const Profile = () => {
+type ProfileType = {
+	navigation: any;
+};
+
+const Profile = (props: ProfileType) => {
   const [address, setAddress] = React.useState('');
   const [phone, setPhone] = React.useState('');
   const [numEmergencyContacts, setNumEmergencyContacts] = React.useState(1);
-  const [emergencyContacts, setEmergencyContacts] = React.useReducer(updateEmergencyContacts, Array<string>(numEmergencyContacts).fill(''));
+  const [emergencyContacts, setEmergencyContacts] = React.useReducer(updateEmergencyContacts, ['']);
 
   /* list of emergency contact text inputs */
   let emergencyContactInputs = Array<React.JSX.Element>(numEmergencyContacts);
@@ -39,15 +43,14 @@ const Profile = () => {
       placeholder="EMERGENCY CONTACT"
       placeholderTextColor={Color.colorCornflowerblue}
       value={emergencyContacts[i]}
-      onChangeText={(value) => {
-        let index = i; // not sure why this is needed, but I get an error trying to pass i into the following:
-        setEmergencyContacts({index, value});
+      onChangeText={(text) => {
+        setEmergencyContacts({index: i, text});
       }}
     />
   }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView behavior='padding' style={styles.container}>
 
       {/* top banner */}
       <View style={styles.banner} />
@@ -91,11 +94,11 @@ const Profile = () => {
 
         {/* submit button */}
         <View style={styles.submitButtonContainer}>
-          <SubmitButton onPressFunction={() => {console.log('submit')}}/>
+          <SubmitButton onPressFunction={() => {props.navigation.navigate('Home')}}/>
         </View>
 
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
