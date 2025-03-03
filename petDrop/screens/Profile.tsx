@@ -6,6 +6,7 @@ import Header from "../components/Home/Header";
 import AddPicture from '../components/Profile/AddPicture';
 import AddButton from "../components/AddButton";
 import SubmitButton from '../components/Profile/SubmitButton';
+import RNFSTurbo from 'react-native-fs-turbo'
 
 function updateEmergencyContacts(state: string[], action: {index: number, text: string}) {
   let newState;
@@ -25,6 +26,7 @@ function updateEmergencyContacts(state: string[], action: {index: number, text: 
 
 type ProfileType = {
 	navigation: any;
+  route: any;
 };
 
 const Profile = (props: ProfileType) => {
@@ -32,6 +34,51 @@ const Profile = (props: ProfileType) => {
   const [phone, setPhone] = React.useState('');
   const [numEmergencyContacts, setNumEmergencyContacts] = React.useState(1);
   const [emergencyContacts, setEmergencyContacts] = React.useReducer(updateEmergencyContacts, ['']);
+
+  /* helper function to find an element in db */
+  function checkEmail(element: any) {
+    return element.email === props.route.params.email;
+  }
+
+  /* puts all state info into an object 
+  * that is then written to the db
+  */
+  function writeToDB(): boolean {
+
+    // Path to db
+    const path = '../data/accounts.json';
+
+    try {
+      // read the data
+      const data = RNFSTurbo.readFile(path, 'utf8');
+
+      // parse data into json object
+      const accounts = JSON.parse(data);
+
+      // get the old account
+      const account = accounts.find(checkEmail);
+
+      /* add new info to account */
+      const updatedAccount = 
+      {
+        id: account?.id,
+        username: account?.username, 
+        email: account?.email,
+        password: account?.password,
+        address: address,
+        phoneNumber: phone,
+        emergencyContacts: emergencyContacts
+      }
+
+      // write new account to file
+      RNFSTurbo.writeFile(path, JSON.stringify(updatedAccount), 'utf8');
+      return true;
+      
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  }
 
   /* list of emergency contact text inputs */
   let emergencyContactInputs = Array<React.JSX.Element>(numEmergencyContacts);
@@ -87,14 +134,20 @@ const Profile = (props: ProfileType) => {
         {/* emergency contacts */}
         {emergencyContactInputs}
 
-        {/* add button */}
+        {/* add emergency contact button */}
         <View style={styles.addButtonContainer}>
           <AddButton onPressFunction={() => {setNumEmergencyContacts(numEmergencyContacts + 1)}}/>
         </View>
 
         {/* submit button */}
         <View style={styles.submitButtonContainer}>
-          <SubmitButton onPressFunction={() => {props.navigation.navigate('Home')}}/>
+          <SubmitButton onPressFunction={async () => {
+              if (writeToDB()) {
+                props.navigation.navigate('Home');
+              } else {
+                console.log("unable to write user info to db");
+              }
+            }}/>
         </View>
 
       </ScrollView>

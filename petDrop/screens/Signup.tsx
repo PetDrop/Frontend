@@ -110,7 +110,7 @@ const Signup = (props: SignupType) => {
                     <Text style={styles.buttonText}>Login</Text>
                 </Pressable>
 
-                <Pressable style={styles.button} onPress={() => props.navigation.navigate('Home')}>
+                <Pressable style={styles.button} onPress={() => props.navigation.navigate('Profile', {email: 'PUT EMAIL HERE'})}>
                     <Text style={styles.buttonText}>Submit</Text>
                 </Pressable>
             </View>
