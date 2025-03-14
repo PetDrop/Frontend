@@ -1,0 +1,12 @@
+export const ADD_ACCOUNT = 'http://localhost:8080/addaccount';
+export const UPDATE_ACCOUNT = 'http://localhost:8080/updateaccount';
+export const UPDATE_ACCOUNT_USERNAME = 'http://localhost:8080/updateaccount/username/';
+export const UPDATE_ACCOUNT_EMAIL = 'http://localhost:8080/updateaccount/email/';
+export const UPDATE_ACCOUNT_PASSWORD = 'http://localhost:8080/updateaccount/password/';
+export const UPDATE_ACCOUNT_PHONE = 'http://localhost:8080/updateaccount/phone/';
+export const UPDATE_ACCOUNT_ADDRESS = 'http://localhost:8080/updateaccount/address/';
+export const UPDATE_ACCOUNT_EMERGENCY_CONTACTS = 'http://localhost:8080/updateaccount/emergencycontacts/';
+export const GET_ALL_ACCOUNTS = 'http://localhost:8080/getallaccounts';
+export const GET_ACCOUNT_BY_USERNAME = 'http://localhost:8080/getaccountbyusername';
+export const GET_ACCOUNT_BY_EMAIL = 'http://localhost:8080/getaccountbyemail';
+export const GET_ACCOUNT_BY_PHONE = 'http://localhost:8080/getaccountbyphone';

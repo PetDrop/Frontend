@@ -35,49 +35,11 @@ const Profile = (props: ProfileType) => {
   const [numEmergencyContacts, setNumEmergencyContacts] = React.useState(1);
   const [emergencyContacts, setEmergencyContacts] = React.useReducer(updateEmergencyContacts, ['']);
 
-  /* helper function to find an element in db */
-  function checkEmail(element: any) {
-    return element.email === props.route.params.email;
-  }
-
   /* puts all state info into an object 
   * that is then written to the db
   */
   function writeToDB(): boolean {
-
-    // Path to db
-    const path = '../data/accounts.json';
-
-    try {
-      // read the data
-      const data = RNFSTurbo.readFile(path, 'utf8');
-
-      // parse data into json object
-      const accounts = JSON.parse(data);
-
-      // get the old account
-      const account = accounts.find(checkEmail);
-
-      /* add new info to account */
-      const updatedAccount = 
-      {
-        id: account?.id,
-        username: account?.username, 
-        email: account?.email,
-        password: account?.password,
-        address: address,
-        phoneNumber: phone,
-        emergencyContacts: emergencyContacts
-      }
-
-      // write new account to file
-      RNFSTurbo.writeFile(path, JSON.stringify(updatedAccount), 'utf8');
-      return true;
-      
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
+    return false;
   }
 
   /* list of emergency contact text inputs */

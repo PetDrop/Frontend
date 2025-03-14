@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import { Border, Color, FontFamily } from '../GlobalStyles';
 import BlueCircleBig from '../assets/blue_circle_big.svg';
+import { ADD_ACCOUNT } from '../data/endpoints';
 
 const { width, height } = Dimensions.get('window');
     
@@ -25,10 +26,34 @@ type SignupType = {
 
 const Signup = (props: SignupType) => {
 
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [termsOfService, setTermsOfService] = useState(false);
     const [privacyPolicy, setPrivacyPolicy] = useState(false);
     const [dataUsage, setDataUsage] = useState(false);
+
+    const writeToDB = async () => {
+        const response = await fetch(ADD_ACCOUNT, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username,
+                email: email,
+                password: password,
+                phone: '',
+                address: '',
+                emergencyContacts: []
+            }),
+        });
+        if (!response.ok) {
+            console.log('unable to write account to database: status code ' + response.status);
+        }
+    }
 
 	return (
 		<KeyboardAvoidingView
@@ -59,6 +84,8 @@ const Signup = (props: SignupType) => {
                     style={styles.inputField}
                     placeholder="Choose a username"
                     placeholderTextColor="#A9A9A9"
+                    value={username}
+                    onChangeText={setUsername}
                 />
 
                 <Text style={styles.inputLabel}>E-Mail:</Text>
@@ -66,6 +93,8 @@ const Signup = (props: SignupType) => {
                     style={styles.inputField}
                     placeholder="Enter your email"
                     placeholderTextColor="#A9A9A9"
+                    value={email}
+                    onChangeText={setEmail}
                 />
                 <Text style={styles.inputLabel}>Password:</Text>
                 <TextInput
@@ -73,6 +102,8 @@ const Signup = (props: SignupType) => {
                     placeholder="Enter your password"
                     placeholderTextColor="#A9A9A9"
                     secureTextEntry={true}
+                    value={password}
+                    onChangeText={setPassword}
                 />
 
                 <Text style={styles.inputLabel}>Re-enter Password:</Text>
@@ -110,7 +141,11 @@ const Signup = (props: SignupType) => {
                     <Text style={styles.buttonText}>Login</Text>
                 </Pressable>
 
-                <Pressable style={styles.button} onPress={() => props.navigation.navigate('Profile', {email: 'PUT EMAIL HERE'})}>
+                <Pressable style={styles.button} onPress={() => {
+                        writeToDB;
+                        alert('submitted');
+                        // props.navigation.navigate('Profile', {email: email});
+                    }}>
                     <Text style={styles.buttonText}>Submit</Text>
                 </Pressable>
             </View>
