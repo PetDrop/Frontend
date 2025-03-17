@@ -29,14 +29,29 @@ const Signup = (props: SignupType) => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [termsOfService, setTermsOfService] = useState(false);
     const [privacyPolicy, setPrivacyPolicy] = useState(false);
     const [dataUsage, setDataUsage] = useState(false);
 
+    /* handles submit button being pressed
+        and checks to make sure all fields have something entered
+        as well as the passwords matching, then calls the write 
+    */
+    const Submit = () => {
+        if (username === '' || email === '' || password === '') {
+            alert('Must enter username, email, and password');
+        } else if (password !== confirmPassword) {
+            alert('Passwords must match');
+        } else {
+            WriteToDB();
+        }
+    }
+
     /* creates new account with the information provided -
         navigates on success, alerts on failure */
-    const writeToDB = async () => {
+    const WriteToDB = async () => {
         try {
             const response = await fetch(ADD_ACCOUNT, {
                 method: 'POST',
@@ -122,6 +137,8 @@ const Signup = (props: SignupType) => {
                     placeholder="Re-enter your password"
                     placeholderTextColor="#A9A9A9"
                     secureTextEntry={true}
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
                 />
 
                 <View style={styles.Checkboxes}>
@@ -151,7 +168,7 @@ const Signup = (props: SignupType) => {
                     <Text style={styles.buttonText}>Login</Text>
                 </Pressable>
 
-                <Pressable style={styles.button} onPress={writeToDB}>
+                <Pressable style={styles.button} onPress={Submit}>
                     <Text style={styles.buttonText}>Submit</Text>
                 </Pressable>
             </View>

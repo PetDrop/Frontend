@@ -35,10 +35,29 @@ const Profile = (props: ProfileType) => {
   const [numEmergencyContacts, setNumEmergencyContacts] = React.useState(1);
   const [emergencyContacts, setEmergencyContacts] = React.useReducer(updateEmergencyContacts, ['']);
 
+  /* handles submit button being pressed
+    checks to make sure required fields have values
+    and removes empty values from emergencyContacts - 
+    passes the result into call to write to db
+  */
+  const Submit = () => {
+    if (address === '' || phone === '') {
+      alert('Must enter address and phone number');
+      return;
+    }
+    let contacts: string[] = [];
+    emergencyContacts.forEach(contact => {
+      if (contact !== '') {
+        contacts.push(contact);
+      }
+    });
+    WriteToDB(contacts);
+  }
+
   /* puts all state info into an object 
   * that is then written to the db
   */
-  const writeToDB = async () => {
+  const WriteToDB = async (contacts: string[]) => {
     const email = props.route.params.email;
     let id, username, password;
     try {
@@ -74,7 +93,7 @@ const Profile = (props: ProfileType) => {
           password: password,
           phone: phone,
           address: address,
-          emergencyContacts: emergencyContacts
+          emergencyContacts: contacts
         }),
       });
       if (response.ok) {
@@ -95,7 +114,7 @@ const Profile = (props: ProfileType) => {
       <TextInput
         key={`emergencyContact${i + 1}`}
         style={[styles.textInput]}
-        placeholder="EMERGENCY CONTACT"
+        placeholder="ENTER EMERGENCY CONTACT"
         placeholderTextColor={Color.colorCornflowerblue}
         value={emergencyContacts[i]}
         onChangeText={(text) => {
@@ -126,14 +145,14 @@ const Profile = (props: ProfileType) => {
         {/* text inputs */}
         <TextInput
           style={[styles.textInput]}
-          placeholder="ADDRESS"
+          placeholder="ENTER ADDRESS"
           placeholderTextColor={Color.colorCornflowerblue}
           value={address}
           onChangeText={setAddress}
         />
         <TextInput
           style={[styles.textInput]}
-          placeholder="PHONE"
+          placeholder="ENTER PHONE"
           placeholderTextColor={Color.colorCornflowerblue}
           value={phone}
           onChangeText={setPhone}
@@ -149,7 +168,7 @@ const Profile = (props: ProfileType) => {
 
         {/* submit button */}
         <View style={styles.submitButtonContainer}>
-          <SubmitButton onPressFunction={writeToDB} />
+          <SubmitButton onPressFunction={Submit} />
         </View>
 
       </ScrollView>
