@@ -34,24 +34,34 @@ const Signup = (props: SignupType) => {
     const [privacyPolicy, setPrivacyPolicy] = useState(false);
     const [dataUsage, setDataUsage] = useState(false);
 
+    /* creates new account with the information provided -
+        navigates on success, alerts on failure */
     const writeToDB = async () => {
-        const response = await fetch(ADD_ACCOUNT, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: username,
-                email: email,
-                password: password,
-                phone: '',
-                address: '',
-                emergencyContacts: []
-            }),
-        });
-        if (!response.ok) {
-            console.log('unable to write account to database: status code ' + response.status);
+        try {
+            const response = await fetch(ADD_ACCOUNT, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    email: email,
+                    password: password,
+                    phone: '',
+                    address: '',
+                    emergencyContacts: []
+                }),
+            });
+            if (response.ok) {
+                props.navigation.navigate('Profile', {email: email});
+            } else {
+                console.log('unable to write account to database: status code ' + response.status);
+                alert('submission failed');
+            }
+        } catch (error) {
+            console.error(error);
+            
         }
     }
 
@@ -141,11 +151,7 @@ const Signup = (props: SignupType) => {
                     <Text style={styles.buttonText}>Login</Text>
                 </Pressable>
 
-                <Pressable style={styles.button} onPress={() => {
-                        writeToDB;
-                        alert('submitted');
-                        // props.navigation.navigate('Profile', {email: email});
-                    }}>
+                <Pressable style={styles.button} onPress={writeToDB}>
                     <Text style={styles.buttonText}>Submit</Text>
                 </Pressable>
             </View>

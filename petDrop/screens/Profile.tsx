@@ -6,9 +6,9 @@ import Header from "../components/Home/Header";
 import AddPicture from '../components/Profile/AddPicture';
 import AddButton from "../components/AddButton";
 import SubmitButton from '../components/Profile/SubmitButton';
-import RNFSTurbo from 'react-native-fs-turbo'
+import { GET_ACCOUNT_BY_EMAIL, UPDATE_ACCOUNT } from "../data/endpoints";
 
-function updateEmergencyContacts(state: string[], action: {index: number, text: string}) {
+function updateEmergencyContacts(state: string[], action: { index: number, text: string }) {
   let newState;
   /* new inputs have been added */
   if (state.length < action.index + 1) {
@@ -25,7 +25,7 @@ function updateEmergencyContacts(state: string[], action: {index: number, text: 
 }
 
 type ProfileType = {
-	navigation: any;
+  navigation: any;
   route: any;
 };
 
@@ -38,24 +38,70 @@ const Profile = (props: ProfileType) => {
   /* puts all state info into an object 
   * that is then written to the db
   */
-  function writeToDB(): boolean {
-    return false;
+  const writeToDB = async () => {
+    const email = props.route.params.email;
+    let id, username, password;
+    try {
+      // first get the account to be updated from the db
+      // in order to pass the prior info along
+      let response = await fetch(GET_ACCOUNT_BY_EMAIL + `${email}`, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.ok) {
+        const account = await response.json();
+        id = account.id;
+        username = account.username
+        password = account.password
+      } else {
+        console.log('unable to retrieve account from database: status code ' + response.status);
+        alert('submission failed');
+      }
+      // then update the account with the new info
+      response = await fetch(UPDATE_ACCOUNT, {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: id,
+          username: username,
+          email: email,
+          password: password,
+          phone: phone,
+          address: address,
+          emergencyContacts: emergencyContacts
+        }),
+      });
+      if (response.ok) {
+        props.navigation.navigate('Home');
+      } else {
+        console.log('unable to write account to database: status code ' + response.status);
+        alert('submission failed');
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   /* list of emergency contact text inputs */
   let emergencyContactInputs = Array<React.JSX.Element>(numEmergencyContacts);
   for (let i: number = 0; i < numEmergencyContacts; i++) {
-    emergencyContactInputs[i] = 
-    <TextInput 
-      key={`emergencyContact${i + 1}`}
-      style={[styles.textInput]}
-      placeholder="EMERGENCY CONTACT"
-      placeholderTextColor={Color.colorCornflowerblue}
-      value={emergencyContacts[i]}
-      onChangeText={(text) => {
-        setEmergencyContacts({index: i, text});
-      }}
-    />
+    emergencyContactInputs[i] =
+      <TextInput
+        key={`emergencyContact${i + 1}`}
+        style={[styles.textInput]}
+        placeholder="EMERGENCY CONTACT"
+        placeholderTextColor={Color.colorCornflowerblue}
+        value={emergencyContacts[i]}
+        onChangeText={(text) => {
+          setEmergencyContacts({ index: i, text });
+        }}
+      />
   }
 
   return (
@@ -78,14 +124,14 @@ const Profile = (props: ProfileType) => {
         <Text style={styles.nameHeading}>Name</Text>
 
         {/* text inputs */}
-        <TextInput 
+        <TextInput
           style={[styles.textInput]}
           placeholder="ADDRESS"
           placeholderTextColor={Color.colorCornflowerblue}
           value={address}
           onChangeText={setAddress}
         />
-        <TextInput 
+        <TextInput
           style={[styles.textInput]}
           placeholder="PHONE"
           placeholderTextColor={Color.colorCornflowerblue}
@@ -98,18 +144,12 @@ const Profile = (props: ProfileType) => {
 
         {/* add emergency contact button */}
         <View style={styles.addButtonContainer}>
-          <AddButton onPressFunction={() => {setNumEmergencyContacts(numEmergencyContacts + 1)}}/>
+          <AddButton onPressFunction={() => { setNumEmergencyContacts(numEmergencyContacts + 1) }} />
         </View>
 
         {/* submit button */}
         <View style={styles.submitButtonContainer}>
-          <SubmitButton onPressFunction={async () => {
-              if (writeToDB()) {
-                props.navigation.navigate('Home');
-              } else {
-                console.log("unable to write user info to db");
-              }
-            }}/>
+          <SubmitButton onPressFunction={writeToDB} />
         </View>
 
       </ScrollView>
