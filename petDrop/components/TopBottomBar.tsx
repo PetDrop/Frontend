@@ -13,6 +13,7 @@ const { width, height } = Dimensions.get('window');
 type TopBottomBarProps = {
 	navigation: any;
 	currentScreen: number;
+	username: any;
 };
 
 // Reusable NavButton Component
@@ -27,7 +28,7 @@ const NavButton = ({ icon, label, isActive, onPress }: any) => {
 	);
 };
 
-const TopBottomBar = ({ navigation, currentScreen }: TopBottomBarProps) => {
+const TopBottomBar = ({ navigation, currentScreen, username }: TopBottomBarProps) => {
 	return (
     <>
     <View style={styles.topBar}>
@@ -44,7 +45,7 @@ const TopBottomBar = ({ navigation, currentScreen }: TopBottomBarProps) => {
 				}
 				label="HOME"
 				isActive={currentScreen === ScreenEnum.Home}
-				onPress={() => navigation.navigate('Home')}
+				onPress={() => navigation.navigate('Home', {username: username})}
 			/>
 
 			{/* PETS Button */}
@@ -61,7 +62,7 @@ const TopBottomBar = ({ navigation, currentScreen }: TopBottomBarProps) => {
 					currentScreen === ScreenEnum.PetInfo ||
 					currentScreen === ScreenEnum.PetInfo1
 				}
-				onPress={() => navigation.navigate('PetInfo')}
+				onPress={() => navigation.navigate('PetInfo', {username: username})}
 			/>
 
 			{/* REMINDERS Button */}
@@ -75,7 +76,7 @@ const TopBottomBar = ({ navigation, currentScreen }: TopBottomBarProps) => {
 				}
 				label="REMINDERS"
 				isActive={currentScreen === ScreenEnum.Reminders}
-				onPress={() => navigation.navigate('Reminders')}
+				onPress={() => navigation.navigate('Reminders', {username: username})}
 			/>
 
 			{/* MEDS Button */}
@@ -88,7 +89,7 @@ const TopBottomBar = ({ navigation, currentScreen }: TopBottomBarProps) => {
 				}
 				label="MEDS"
 				isActive={currentScreen === ScreenEnum.MedicationsArchive}
-				onPress={() => navigation.navigate('MedicationsArchive')}
+				onPress={() => navigation.navigate('MedicationsArchive', {username: username})}
 			/>
 
 			{/* SHARE Button */}

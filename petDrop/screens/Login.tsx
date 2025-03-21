@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { Border, Color, FontFamily } from '../GlobalStyles';
 import BlueCircleBig from '../assets/blue_circle_big.svg';
-import { GET_ACCOUNT_BY_EMAIL } from '../data/endpoints';
+import { GET_ACCOUNT_BY_EMAIL, GET_ACCOUNT_BY_USERNAME } from '../data/endpoints';
 
 const { width, height } = Dimensions.get('window');
 
@@ -40,12 +40,12 @@ const Login = (props: LoginType) => {
         }
         try {
             // try to find account with the email entered
-            const response = await fetch(GET_ACCOUNT_BY_EMAIL + username);
+            const response = await fetch(GET_ACCOUNT_BY_USERNAME + username);
             if (response.ok) {
                 // if account found check its password against the one entered
                 const account = await response.json();
                 if (account.password === password) {
-                    props.navigation.navigate('Home');
+                    props.navigation.navigate('Home', {username: username});
                 } else {
                     console.log('incorrect password for email: ' + username);
                     alert('Incorrect email or password');

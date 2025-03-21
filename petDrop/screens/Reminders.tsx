@@ -14,9 +14,10 @@ const { width, height } = Dimensions.get("window");
 
 interface Props {
   navigation: NavigationProp<any>;
+  route: any;
 }
 
-const Reminders = ({ navigation }: Props) => {
+const Reminders = ({ navigation, route }: Props) => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -32,11 +33,11 @@ const Reminders = ({ navigation }: Props) => {
         ))}
 
         {/* Add Reminder Button */}
-        <AddReminderButton />
+        <AddReminderButton onPressFunction={() => {}}/>
       </ScrollView>
       
       {/* Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} username={route.params.username}/>
     </View>
   );
 };

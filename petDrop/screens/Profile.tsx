@@ -93,11 +93,12 @@ const Profile = (props: ProfileType) => {
           password: password,
           phone: phone,
           address: address,
-          emergencyContacts: contacts
+          emergencyContacts: contacts,
+          pets: []
         }),
       });
       if (response.ok) {
-        props.navigation.navigate('Home');
+        props.navigation.navigate('Home', {username: username});
       } else {
         console.log('unable to write account to database: status code ' + response.status);
         alert('submission failed');

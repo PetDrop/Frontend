@@ -9,10 +9,14 @@ import styles from '../styles/Medications.styles';
 import { ScreenEnum, logoImage } from '../GlobalStyles';
 import { Image } from 'expo-image';
 import AddMedicationButton from '../components/AddButton';
-import { NavigationProp } from '@react-navigation/native';
 import MedicationPopup from '../components/MedicationPopup';
 
-const MedicationsArchive = ({navigation}: { navigation: NavigationProp<any> }) => {
+type MedicationsArchiveProps = {
+	navigation: any;
+	route: any;
+}
+
+const MedicationsArchive = ({navigation, route}: MedicationsArchiveProps) => {
 	const [selectedPet, setSelectedPet] = useState(mockData.pets[0]);
 	const [popupShowing, setPopupShowing] = useState(false);
 
@@ -45,6 +49,7 @@ const MedicationsArchive = ({navigation}: { navigation: NavigationProp<any> }) =
 			<TopBottomBar
 				navigation={navigation}
 				currentScreen={ScreenEnum.MedicationsArchive}
+				username={route.params.username}
 			/>
 			<MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing}/>
 		</View>

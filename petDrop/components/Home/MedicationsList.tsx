@@ -1,26 +1,14 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
-import mockData from '../../data/mockData.json';
 import { styles } from '../../styles/Home.styles';
+import { Pet } from '../../data/dataTypes';
 
-// Define the structure for medications
-interface Medication {
-	name: string;
-	color: string;
+type MedicationsListProps = {
+	pets: Pet[];
 }
 
-interface Pet {
-	name: string;
-	medications: Medication[];
-}
-
-const MedicationsList = () => {
-	const [medications, setMedications] = useState<Pet[]>([]);
-
-	useEffect(() => {
-		setMedications(mockData.pets);
-	}, []);
+const MedicationsList = (props: MedicationsListProps) => {
 
 	return (
 		<View style={styles.medicationsContainer}>
@@ -30,7 +18,7 @@ const MedicationsList = () => {
 			</View>
 
 			{/* Medications List */}
-			{medications.map((pet) =>
+			{props.pets.map((pet) =>
 				pet.medications.map((med, index) => (
 					<View
 						key={`${pet.name}-${index}`}

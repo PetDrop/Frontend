@@ -14,7 +14,7 @@ import styles from '../../styles/Medications.styles';
 
 interface PetSwitchProps {
 	selectedPet: {
-		id: number;
+		id: string;
 		name: string;
 		image: string;
 		age: number;
@@ -31,7 +31,7 @@ interface PetSwitchProps {
 		vetPhone: string;
 	};
 	pets: {
-		id: number;
+		id: string;
 		name: string;
 		image: string;
 		age: number;

@@ -1,48 +1,22 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Dimensions, Text, View } from 'react-native';
-import mockData from '../../data/mockData.json'; // Load JSON data
 import styles from '../../styles/Home.styles';
+import { Pet } from '../../data/dataTypes';
+import mockData from '../../data/mockData.json';
 
-const Calendar = () => {
+type CalendarProps = {
+	pets: Pet[];
+}
+
+const Calendar = (props: CalendarProps) => {
 	const { width, height } = Dimensions.get('window');
-	const [calendarData, setCalendarData] = useState<
-		{
-			id: number;
-			name: string;
-			medications: {
-				name: string;
-				range: number;
-				color: string;
-				description: string;
-				dates: string[];
-			}[];
-		}[]
-	>([]);
-
-	useEffect(() => {
-		setCalendarData(mockData.pets);
-	}, []);
-
-	interface Medication {
-		name: string;
-		color: string;
-		description: string;
-		dates: string[];
-		range: number;
-	}
-
-	interface Pet {
-		id: number;
-		name: string;
-		medications: Medication[];
-	}
 
 	const getMedicationBars = (
 		date: string
 	): { color: string; range: number }[] => {
 		let medBars: { color: string; range: number }[] = [];
-		calendarData.forEach((pet) => {
+		props.pets.forEach((pet) => {
 			pet.medications.forEach((med) => {
 				if (med.dates.includes(date)) {
 					medBars.push({ color: med.color, range: med.range });

@@ -11,9 +11,10 @@ import { NavigationProp } from "@react-navigation/native";
 
 interface Props {
   navigation: NavigationProp<any>;
+  route: any;
 }
 
-const PetInfo = ({ navigation }: Props) => {
+const PetInfo = ({ navigation, route }: Props) => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -27,7 +28,7 @@ const PetInfo = ({ navigation }: Props) => {
         ))}
         <AddNewPetButton navigation={navigation} />
       </ScrollView>
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo} username={route.params.username}/>
     </View>
   );
 };
