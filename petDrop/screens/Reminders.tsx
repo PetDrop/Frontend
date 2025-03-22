@@ -9,6 +9,9 @@ import { logoImage, ScreenEnum } from "../GlobalStyles";
 import styles from "../styles/Reminders.styles";
 
 import { NavigationProp } from "@react-navigation/native";
+import { useEffect } from "react";
+import { GET_ACCOUNT_BY_USERNAME } from "../data/endpoints";
+import { Account, Pet, Reminder } from "../data/dataTypes";
 
 const { width, height } = Dimensions.get("window");
 
@@ -18,6 +21,31 @@ interface Props {
 }
 
 const Reminders = ({ navigation, route }: Props) => {
+  const [reminders, setReminders] = React.useState<Reminder[]>([]);
+
+  // fetch pets for this account from db
+  useEffect(() => {
+      try {
+        // get the account of the user
+        fetch(GET_ACCOUNT_BY_USERNAME + `${route.params.username}`)
+        .then((response) => {
+          if (response.ok) {
+            // if account found, extract the pets
+            response.json()
+            .then((value) => {
+              const account: Account = value;
+              setReminders(account.reminders);
+              console.log(reminders);
+            })
+          } else {
+            console.log('unable to find account of user');
+          }
+        })
+      } catch (error) {
+        console.error(error);
+      }
+    }, []);
+    
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -28,7 +56,7 @@ const Reminders = ({ navigation, route }: Props) => {
         <Text style={styles.pageTitle}>Reminders</Text>
         
         {/* Reminder Cards */}
-        {mockData.reminders.map((reminder: any) => (
+        {reminders.map((reminder: Reminder) => (
           <ReminderCard key={reminder.id} reminder={reminder} />
         ))}
 

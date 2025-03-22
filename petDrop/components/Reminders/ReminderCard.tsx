@@ -2,27 +2,19 @@ import * as React from 'react';
 import { Dimensions, Text, View, Pressable } from 'react-native';
 import { styles } from '../../styles/Reminders.styles';
 import EditIcon from '../../assets/edit_icon.svg';
+import { Reminder } from '../../data/dataTypes';
 
-interface ReminderProps {
-	reminder: {
-		id: number;
-		name: string;
-		dates: string[];
-		notifications: string[];
-		message: string;
-		color: string;
-        medication: string;
-        pet: string;
-	};
+type ReminderCardProps = {
+	reminder: Reminder;
 }
 
-const ReminderCard = ({ reminder }: ReminderProps) => {
+const ReminderCard = ({ reminder }: ReminderCardProps) => {
 	return (
 		<View style={styles.cardContainer}>
 			<View style={styles.header}>
 				<View style={styles.innerHeader}>
-					<View style={[styles.reminderColor, { backgroundColor: reminder.color }]} />
-					<Text style={styles.reminderTitle}>{reminder.name}</Text>
+					<View style={[styles.reminderColor, { backgroundColor: reminder.medication.color }]} />
+					<Text style={styles.reminderTitle}>{reminder.medication.name}</Text>
 				</View>
 				<Pressable>
 					<EditIcon style={styles.editIcon} />
@@ -30,13 +22,13 @@ const ReminderCard = ({ reminder }: ReminderProps) => {
 			</View>
 			<View style={styles.body}>
 				<Text style={styles.reminderDetails}>
-					DATES: {reminder.dates}
+					DATES: {reminder.medication.dates}
 				</Text>
 				<Text style={styles.reminderDetails}>
-					NOTIFICATIONS: {reminder.notifications}
+					NOTIFICATIONS: {reminder.medication.description}
 				</Text>
 				<Text style={styles.reminderDetails}>
-					MESSAGE: "{reminder.message}"
+					MESSAGE: "{reminder.medication.description}"
 				</Text>
 			</View>
 		</View>

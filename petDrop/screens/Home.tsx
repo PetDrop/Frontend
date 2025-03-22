@@ -24,6 +24,7 @@ const Home = (props: HomeProps) => {
   const [popupShowing, setPopupShowing] = React.useState(false);
   const [pets, setPets] = React.useState<Pet[]>([]);
 
+  // fetch pets for this account from db, to be passed to child components
   useEffect(() => {
     try {
       // get the account of the user
@@ -35,7 +36,6 @@ const Home = (props: HomeProps) => {
           .then((value) => {
             const account: Account = value;
             setPets(account.pets);
-            // console.log(pets);
           })
         } else {
           console.log('unable to find account of user');

@@ -6,12 +6,14 @@ export interface Account {
     phone: string,
     address: string,
     emergencyContacts: string[],
-    pets: Pet[]
+    pets: Pet[],
+    reminders: Reminder[]
 }
 
 export interface Pet {
     id: string,
     name: string,
+    image: string,
     age: number,
     breed: string,
     address: string,
