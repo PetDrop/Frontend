@@ -34,5 +34,6 @@ export interface Medication {
 export interface Reminder {
     id: string,
     medication: Medication,
-    pet: Pet
+    pet: Pet,
+    notifications: string[]
 }

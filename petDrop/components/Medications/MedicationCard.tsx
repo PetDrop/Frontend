@@ -2,27 +2,18 @@ import * as React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import EditIcon from '../../assets/edit_icon.svg';
 import styles from '../../styles/Medications.styles';
-import mockData from '../../data/mockData.json'; // Import mockData for reminders lookup
+import { Medication, Reminder } from '../../data/dataTypes';
 
 interface MedicationCardProps {
-	medication: {
-		name: string;
-		dates: string[];
-		description: string;
-		color: string;
-		range: number;
-	};
-	petName: string;
+	reminderProp: Reminder[]
 }
 
-const MedicationCard = ({ medication, petName }: MedicationCardProps) => {
-	// Find the reminder for this medication and pet
-	const reminder = mockData.reminders.find(
-		(rem: any) => rem.medication === medication.name && rem.pet === petName
-	);
+const MedicationCard = ({ reminderProp }: MedicationCardProps) => {
+	const reminder: Reminder = reminderProp[0];
+	const medication: Medication = reminder.medication;
 
 	// Format notifications as a string, e.g., "6AM, 6PM"
-	const remindersText = reminder?.notifications?.join(' ') || 'No reminders';
+	const remindersText: string = reminder?.notifications?.join(' ') || 'No reminders';
 
 	return (
 		<View style={styles.medicationCardContainer}>
@@ -39,7 +30,7 @@ const MedicationCard = ({ medication, petName }: MedicationCardProps) => {
 
 			{/* Medication Body */}
 			<View style={styles.medicationBody}>
-				<Text style={styles.medicationText}>PET: {petName}</Text>
+				<Text style={styles.medicationText}>PET: {reminder.pet.name}</Text>
 				<Text style={styles.medicationText}>
 					DATES: {medication.dates.join(', ')}
 				</Text>

@@ -25,7 +25,7 @@ const ReminderCard = ({ reminder }: ReminderCardProps) => {
 					DATES: {reminder.medication.dates}
 				</Text>
 				<Text style={styles.reminderDetails}>
-					NOTIFICATIONS: {reminder.medication.description}
+					NOTIFICATIONS: {reminder.notifications}
 				</Text>
 				<Text style={styles.reminderDetails}>
 					MESSAGE: "{reminder.medication.description}"
