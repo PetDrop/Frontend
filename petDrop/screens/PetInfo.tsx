@@ -53,7 +53,7 @@ const PetInfo = ({ navigation, route }: Props) => {
             <Image style={styles.petImage} src={pet.image}/>
           </View>
         ))}
-        <AddNewPetButton navigation={navigation} />
+        <AddNewPetButton navigation={navigation} username={route.params.username}/>
       </ScrollView>
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo} username={route.params.username}/>
     </View>
