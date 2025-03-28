@@ -22,7 +22,7 @@ const ReminderCard = ({ reminder }: ReminderCardProps) => {
 			</View>
 			<View style={styles.body}>
 				<Text style={styles.reminderDetails}>
-					DATES: {reminder.medication.dates}
+					DATES: {reminder.medication.dates.join(', ')}
 				</Text>
 				<Text style={styles.reminderDetails}>
 					NOTIFICATIONS: {reminder.notifications}

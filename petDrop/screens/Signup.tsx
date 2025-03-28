@@ -17,6 +17,7 @@ import {
 import { Border, Color, FontFamily } from '../GlobalStyles';
 import BlueCircleBig from '../assets/blue_circle_big.svg';
 import { ADD_ACCOUNT } from '../data/endpoints';
+import { Account } from '../data/dataTypes';
 
 const { width, height } = Dimensions.get('window');
     
@@ -69,7 +70,9 @@ const Signup = (props: SignupType) => {
                 }),
             });
             if (response.ok) {
-                props.navigation.navigate('Profile', {email: email});
+                // if account successfully created, navigate to profile page for additional info, and pass the account along
+                const account: Account = await response.json();
+                props.navigation.navigate('Profile', {account: account});
             } else {
                 console.log('unable to write account to database: status code ' + response.status);
                 alert('submission failed');

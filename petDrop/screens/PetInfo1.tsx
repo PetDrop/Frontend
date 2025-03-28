@@ -6,6 +6,7 @@ import TopBottomBar from "../components/TopBottomBar";
 import { ScreenEnum } from "../GlobalStyles";
 import { NavigationProp } from "@react-navigation/core";
 import styles from '../styles/PetInfo1.styles';
+import { Account } from "../data/dataTypes";
 
 const { width, height } = Dimensions.get('window');
 
@@ -15,6 +16,9 @@ type PetInfo1Type = {
 }
 
 const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
+  // store the user's account info to avoid typing "route.params.account" repeatedly
+  const account: Account = route.params.account;
+
   return (
     <View style={styles.outermostView}>
       <BlueCircleBig style={styles.petInfo1SubtractIcon} width={(width * 0.3744)} height={(height * 0.173)} />
@@ -38,7 +42,7 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
       </View>
       <Text style={[styles.petInfo1AddPet, styles.addPetTypo]}>Add Pet</Text>
       <AddButtons />
-      <TopBottomBar navigation = {navigation} currentScreen={ScreenEnum.PetInfo1} username={route.params.username}/>
+      <TopBottomBar navigation = {navigation} currentScreen={ScreenEnum.PetInfo1} account={account}/>
     </View>
   );
 };

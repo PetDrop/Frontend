@@ -4,13 +4,10 @@ import { Dimensions, ScrollView, Text, View } from "react-native";
 import AddReminderButton from "../components/AddButton";
 import ReminderCard from "../components/Reminders/ReminderCard";
 import TopBottomBar from "../components/TopBottomBar";
-import mockData from "../data/mockData.json";
 import { logoImage, ScreenEnum } from "../GlobalStyles";
 import styles from "../styles/Reminders.styles";
 
 import { NavigationProp } from "@react-navigation/native";
-import { useEffect } from "react";
-import { GET_ACCOUNT_BY_USERNAME } from "../data/endpoints";
 import { Account, Pet, Reminder } from "../data/dataTypes";
 
 const { width, height } = Dimensions.get("window");
@@ -21,31 +18,9 @@ interface Props {
 }
 
 const Reminders = ({ navigation, route }: Props) => {
-  const [reminders, setReminders] = React.useState<Reminder[]>([]);
+  // store the user's account info to avoid typing "route.params.account" repeatedly
+  const account: Account = route.params.account;
 
-  // fetch pets for this account from db
-  useEffect(() => {
-      try {
-        // get the account of the user
-        fetch(GET_ACCOUNT_BY_USERNAME + `${route.params.username}`)
-        .then((response) => {
-          if (response.ok) {
-            // if account found, extract the pets
-            response.json()
-            .then((value) => {
-              const account: Account = value;
-              setReminders(account.reminders);
-              console.log(reminders);
-            })
-          } else {
-            console.log('unable to find account of user');
-          }
-        })
-      } catch (error) {
-        console.error(error);
-      }
-    }, []);
-    
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -56,7 +31,7 @@ const Reminders = ({ navigation, route }: Props) => {
         <Text style={styles.pageTitle}>Reminders</Text>
         
         {/* Reminder Cards */}
-        {reminders.map((reminder: Reminder) => (
+        {account.reminders.map((reminder: Reminder) => (
           <ReminderCard key={reminder.id} reminder={reminder} />
         ))}
 
@@ -65,7 +40,7 @@ const Reminders = ({ navigation, route }: Props) => {
       </ScrollView>
       
       {/* Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} username={route.params.username}/>
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} account={account}/>
     </View>
   );
 };

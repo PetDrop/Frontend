@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable } from 'react-native';
 import TopBottomBar from '../components/TopBottomBar';
 import MedicationCard from '../components/Medications/MedicationCard';
@@ -10,8 +10,6 @@ import { Image } from 'expo-image';
 import AddMedicationButton from '../components/AddButton';
 import MedicationPopup from '../components/MedicationPopup';
 import { Account, Medication, Pet, Reminder } from '../data/dataTypes';
-import { GET_ACCOUNT_BY_USERNAME } from '../data/endpoints';
-import { useEffect } from 'react';
 
 type MedicationsArchiveProps = {
 	navigation: any;
@@ -19,39 +17,22 @@ type MedicationsArchiveProps = {
 }
 
 const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
-	const [account, setAccount] = useState<Account>({id: "", username: "", email: "", password: "", address: "", phone: "", emergencyContacts: [""], pets: [], reminders: []});
 	const [selectedPetId, setSelectedPetId] = useState("");
 	const [popupShowing, setPopupShowing] = useState(false);
 
-	// fetch account from db
+	// store the user's account info to avoid typing "route.params.account" repeatedly
+	const account: Account = route.params.account;
+
 	useEffect(() => {
-		try {
-			// get the account of the user
-			fetch(GET_ACCOUNT_BY_USERNAME + `${route.params.username}`)
-				.then((response) => {
-					if (response.ok) {
-						// if account found, update the state
-						response.json()
-							.then((value) => {
-								const account: Account = value;
-								setAccount(account);
-								setSelectedPetId(account.pets[0].id);
-							})
-					} else {
-						console.log('unable to find account of user');
-					}
-				})
-		} catch (error) {
-			console.error(error);
-		}
+		setSelectedPetId(account.pets[0].id);
 	}, []);
 
-	// create MedicationCards here to avoid errors with undefined values when the useEffect is executing
+	// create MedicationCards here to avoid errors with undefined values if user has no pets and/or reminders
 	let medicationCards: React.JSX.Element[] = [];
 	let selectedPet: Pet | undefined = account.pets.find((pet) => pet.id === selectedPetId);
 	let selectedReminders: Reminder[] = account.reminders.filter((reminder) => reminder.pet.id === selectedPetId);
 
-	if (selectedPet !== undefined) { // should always be true once the useEffect returns
+	if (selectedPet !== undefined) { // should always be true once the user registers a pet
 		medicationCards = selectedPet.medications.map((medication: Medication, index: any) => (
 			<MedicationCard
 				key={index}
@@ -85,7 +66,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 			<TopBottomBar
 				navigation={navigation}
 				currentScreen={ScreenEnum.MedicationsArchive}
-				username={route.params.username}
+				account={account}
 			/>
 			<MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} />
 		</View>

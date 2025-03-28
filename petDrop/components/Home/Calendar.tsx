@@ -9,14 +9,14 @@ type CalendarProps = {
 	pets: Pet[];
 }
 
-const Calendar = (props: CalendarProps) => {
+const Calendar = ({ pets }: CalendarProps) => {
 	const { width, height } = Dimensions.get('window');
 
 	const getMedicationBars = (
 		date: string
 	): { color: string; range: number }[] => {
 		let medBars: { color: string; range: number }[] = [];
-		props.pets.forEach((pet) => {
+		pets.forEach((pet) => {
 			pet.medications.forEach((med) => {
 				if (med.dates.includes(date)) {
 					medBars.push({ color: med.color, range: med.range });

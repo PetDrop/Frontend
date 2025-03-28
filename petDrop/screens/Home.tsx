@@ -20,31 +20,11 @@ type HomeProps = {
   route: any;
 };
 
-const Home = (props: HomeProps) => {
+const Home = ({ navigation, route }: HomeProps) => {
   const [popupShowing, setPopupShowing] = React.useState(false);
-  const [pets, setPets] = React.useState<Pet[]>([]);
 
-  // fetch pets for this account from db, to be passed to child components
-  useEffect(() => {
-    try {
-      // get the account of the user
-      fetch(GET_ACCOUNT_BY_USERNAME + `${props.route.params.username}`)
-      .then((response) => {
-        if (response.ok) {
-          // if account found, extract the pets
-          response.json()
-          .then((value) => {
-            const account: Account = value;
-            setPets(account.pets);
-          })
-        } else {
-          console.log('unable to find account of user');
-        }
-      })
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+  // store the user's account info to avoid typing "route.params.account" repeatedly
+  let account: Account = route.params.account;
 
   return (
     <View style={styles.container}>
@@ -53,7 +33,7 @@ const Home = (props: HomeProps) => {
         <Header />
 
         {/* User Greeting */}
-        <UserGreeting name={props.route.params.username} />
+        <UserGreeting name={account.username} />
 
         {/* Calendar Section */}
         <View style={styles.calendarContainer}>
@@ -61,17 +41,17 @@ const Home = (props: HomeProps) => {
           <EditIcon style={styles.editIcon} width={width * 0.07} height={height * 0.1} />
           <View style={styles.calendarBody}>
             <Pressable onPress={() => { setPopupShowing(true) }}>
-              <Calendar pets={pets}/>
+              <Calendar pets={account.pets}/>
             </Pressable>
           </View>
         </View>
 
         {/* Medications List */}
-        <MedicationsList pets={pets}/>
+        <MedicationsList pets={account.pets}/>
 
       </ScrollView>
       {/* Bottom Navigation */}
-      <TopBottomBar navigation={props.navigation} currentScreen={ScreenEnum.Home} username={props.route.params.username}/>
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} account={account}/>
       <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} />
     </View>
   );
