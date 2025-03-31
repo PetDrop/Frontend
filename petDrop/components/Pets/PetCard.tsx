@@ -7,7 +7,12 @@ import { petImages } from '../../GlobalStyles';
 import AddMedicationButton from '../../components/AddButton';
 import { Pet } from '../../data/dataTypes';
 
-const PetCard = ({ pet }: { pet: Pet }) => {
+type PetCardProps = {
+	pet: Pet,
+	onPressFunction: () => void
+}
+
+const PetCard = ({ pet, onPressFunction }: PetCardProps) => {
 	return (
 		<View style={styles.petCard}>
 			<View style={styles.petHeader}>
@@ -40,7 +45,7 @@ const PetCard = ({ pet }: { pet: Pet }) => {
 				))}
 			</View>
 			<View style={styles.addMedicationButton}>
-				<AddMedicationButton onPressFunction={() => {}}/>
+				<AddMedicationButton onPressFunction={onPressFunction}/>
 			</View>
             <View style={styles.separatorBar} />
 		</View>

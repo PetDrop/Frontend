@@ -38,6 +38,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				key={index}
 				// even though a single element is desired, filter is used to avoid a "possibly undefined" error
 				reminderProp={selectedReminders.filter((reminder) => reminder.medication.id === medication.id)}
+				medProp={medication}
 			/>
 		))
 	}
@@ -68,7 +69,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				currentScreen={ScreenEnum.MedicationsArchive}
 				account={account}
 			/>
-			<MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} />
+			<MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={selectedPet}/>
 		</View>
 	);
 };

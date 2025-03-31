@@ -5,9 +5,10 @@ import PetCard from "../components/Pets/PetCard";
 import AddNewPetButton from "../components/Pets/AddNewPetButton";
 import styles from "../styles/Pets.styles";
 import { ScreenEnum, logoImage } from "../GlobalStyles";
-
 import { NavigationProp } from "@react-navigation/native";
 import { Account, Pet } from "../data/dataTypes";
+import { useState } from "react";
+import MedicationPopup from "../components/MedicationPopup";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -15,6 +16,9 @@ interface Props {
 }
 
 const PetInfo = ({ navigation, route }: Props) => {
+  const [popupShowing, setPopupShowing] = useState(false);
+  const [petBeingEdited, setPetBeingEdited] = useState<Pet>(); // the pet the user is adding a medication to
+
   // store the user's account info to avoid typing "route.params.account" repeatedly
   const account: Account = route.params.account;
 
@@ -25,13 +29,17 @@ const PetInfo = ({ navigation, route }: Props) => {
         <Text style={styles.pageTitle}>Pets</Text>
         {account.pets.map((pet: Pet) => (
           <View key={pet.id}>
-            <PetCard key={pet.id} pet={pet} />
-            <Image style={styles.petImage} src={pet.image}/>
+            <PetCard key={pet.id} pet={pet} onPressFunction={() => {
+              setPopupShowing(true);
+              setPetBeingEdited(pet);
+            }} />
+            <Image style={styles.petImage} src={pet.image} />
           </View>
         ))}
-        <AddNewPetButton navigation={navigation} account={account}/>
+        <AddNewPetButton navigation={navigation} account={account} />
       </ScrollView>
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo} account={account}/>
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo} account={account} />
+      <MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={petBeingEdited} />
     </View>
   );
 };

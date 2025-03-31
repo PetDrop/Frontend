@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Dimensions, Text, View } from "react-native";
+import { Dimensions, Pressable, Text, View } from "react-native";
 import BlueCircleBig from "../assets/blue_circle_big.svg";
 import AddButtons from "../components/AddPets/PetInfo1AddButtons";
 import TopBottomBar from "../components/TopBottomBar";
@@ -7,6 +7,8 @@ import { ScreenEnum } from "../GlobalStyles";
 import { NavigationProp } from "@react-navigation/core";
 import styles from '../styles/PetInfo1.styles';
 import { Account } from "../data/dataTypes";
+import { useState } from "react";
+import MedicationPopup from "../components/MedicationPopup";
 
 const { width, height } = Dimensions.get('window');
 
@@ -16,6 +18,8 @@ type PetInfo1Type = {
 }
 
 const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
+  const [popupShowing, setPopupShowing] = useState(false);
+
   // store the user's account info to avoid typing "route.params.account" repeatedly
   const account: Account = route.params.account;
 
@@ -25,12 +29,14 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
       <Text style={[styles.petInfo1Name, styles.nameTypo]}>Name</Text>
       <Text style={[styles.petInfo1Medications, styles.addPetTypo]}>Medications:</Text>
       <View style={[styles.petInfo1RectangleParent, styles.petInfo1GroupChildLayout]}>
-        <View style={[styles.petInfo1GroupChild, styles.petInfo1GroupChildLayout]} />
-        <Text style={[styles.petInfo1Add, styles.petInfo1AddTypo]}>ADD</Text>
-        <View style={styles.petInfo1RectangleGroup}>
-          <View style={[styles.petInfo1GroupItem, styles.petInfo1GroupLayout]} />
-          <View style={[styles.petInfo1GroupInner, styles.petInfo1GroupLayout]} />
-        </View>
+        <Pressable onPress={() => { setPopupShowing(true) }}>
+          <View style={[styles.petInfo1GroupChild, styles.petInfo1GroupChildLayout]} />
+          <Text style={[styles.petInfo1Add, styles.petInfo1AddTypo]}>ADD</Text>
+          <View style={styles.petInfo1RectangleGroup}>
+            <View style={[styles.petInfo1GroupItem, styles.petInfo1GroupLayout]} />
+            <View style={[styles.petInfo1GroupInner, styles.petInfo1GroupLayout]} />
+          </View>
+        </Pressable>
       </View>
       <Text style={[styles.petInfo1LogoText, styles.nameTypo]}>petdrop.</Text>
       <Text style={styles.petInfo1LogoSubtext}>
@@ -42,7 +48,8 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
       </View>
       <Text style={[styles.petInfo1AddPet, styles.addPetTypo]}>Add Pet</Text>
       <AddButtons />
-      <TopBottomBar navigation = {navigation} currentScreen={ScreenEnum.PetInfo1} account={account}/>
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo1} account={account} />
+      <MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={undefined}/>
     </View>
   );
 };

@@ -21,6 +21,9 @@ export const UPDATE_PET_IMAGE = 'http://localhost:8080/updatepet/image/';
 export const UPDATE_PET_AGE = 'http://localhost:8080/updatepet/age/';
 export const UPDATE_PET_BREED = 'http://localhost:8080/updatepet/breed/';
 export const UPDATE_PET_ADDRESS = 'http://localhost:8080/updatepet/address/';
+export const UPDATE_PET_VET = 'http://localhost:8080/updatepet/vet/';
+export const UPDATE_PET_VETPHONE = 'http://localhost:8080/updatepet/vetphone/';
+export const UPDATE_PET_MEDICATIONS = 'http://localhost:8080/updatepet/medications/';
 export const GET_ALL_PETS = 'http://localhost:8080/getallpets';
 export const GET_PET_BY_ID = 'http://localhost:8080/getpetbyid/';
 // MEDICATIONS

@@ -9,9 +9,7 @@ import TopBottomBar from "../components/TopBottomBar";
 import { ScreenEnum } from "../GlobalStyles";
 import { styles } from "../styles/Home.styles";
 import ReminderPopup from "../components/ReminderPopup";
-import { useEffect } from "react";
-import { GET_ACCOUNT_BY_USERNAME } from "../data/endpoints";
-import { Account, Pet } from "../data/dataTypes";
+import { Account } from "../data/dataTypes";
 
 const { width, height } = Dimensions.get("window");
 
@@ -41,17 +39,19 @@ const Home = ({ navigation, route }: HomeProps) => {
           <EditIcon style={styles.editIcon} width={width * 0.07} height={height * 0.1} />
           <View style={styles.calendarBody}>
             <Pressable onPress={() => { setPopupShowing(true) }}>
-              <Calendar pets={account.pets}/>
+              <Calendar pets={account.pets} />
             </Pressable>
           </View>
         </View>
 
         {/* Medications List */}
-        <MedicationsList pets={account.pets}/>
+        <MedicationsList pets={account.pets} />
 
       </ScrollView>
       {/* Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} account={account}/>
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} account={account} />
+
+      {/* Pop-up to view a reminder */}
       <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} />
     </View>
   );
