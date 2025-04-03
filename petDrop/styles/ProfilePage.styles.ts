@@ -31,30 +31,9 @@ export const styles = StyleSheet.create({
 
     // add picture
     addPictureContainer: {
-        marginLeft: width * 0.5462,
+        marginLeft: width * 0.54,
         width: width * 0.3744,
         height: height * 0.173,
-    },
-    horizontalLine: {
-        top: height * -0.09,
-        left: width * 0.14,
-        height: height * 0.0083,
-        width: width * 0.0846,
-        borderRadius: Border.br_8xs_9,
-        backgroundColor: Color.colorCornflowerblue,
-    },
-    verticalLine: {
-        top: height * -0.0985,
-        left: width * 0.14,
-        height: height * 0.0083,
-        width: width * 0.0846,
-        borderRadius: Border.br_8xs_9,
-        backgroundColor: Color.colorCornflowerblue,
-        transform: [
-            {
-                rotate: "-90deg",
-            },
-        ],
     },
 
     // user's name
@@ -80,17 +59,15 @@ export const styles = StyleSheet.create({
         paddingLeft: width * 0.0256,
     },
 
-
     // add button
     addButtonContainer: {
-        marginLeft: width * 0.575,
-        marginTop: height * -0.025,
+        marginLeft: width * 0.675,
     },
 
     // submit button
     submitButtonContainer: {
-        marginLeft: width * 0.625,
-        marginTop: height * 0.05,
+        marginLeft: width * 0.6,
+        marginTop: height * 0.04,
     },
     submitButton: {
         borderRadius: Border.br_17,

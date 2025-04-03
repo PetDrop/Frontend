@@ -90,7 +90,9 @@ const Reminders = ({ navigation, route }: Props) => {
         ))}
 
         {/* Add Reminder Button */}
-        <AddReminderButton onPressFunction={addReminder} />
+        <View style={styles.addReminderButton}>
+          <AddReminderButton onPressFunction={addReminder} />
+        </View>
       </ScrollView>
 
       {/* Bottom Navigation */}

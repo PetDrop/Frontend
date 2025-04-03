@@ -3,7 +3,7 @@ import { View, Text, ScrollView, TextInput, KeyboardAvoidingView } from "react-n
 import { Color } from "../GlobalStyles";
 import { styles } from '../styles/ProfilePage.styles';
 import Header from "../components/Home/Header";
-import AddPicture from '../components/Profile/AddPicture';
+import AddImage from "../components/AddImage";
 import AddButton from "../components/AddButton";
 import SubmitButton from '../components/Profile/SubmitButton';
 import { GET_ACCOUNT_BY_EMAIL, UPDATE_ACCOUNT } from "../data/endpoints";
@@ -124,7 +124,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
         <Text style={styles.title}>Profile</Text>
 
         {/* cirlce with plus sign for adding profile picture */}
-        <AddPicture />
+        <AddImage onPressFunction={() => {}} containerStyle={styles.addPictureContainer}/>
 
         {/* user's name */}
         <Text style={styles.nameHeading}>Name</Text>

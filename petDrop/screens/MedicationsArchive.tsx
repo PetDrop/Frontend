@@ -62,14 +62,16 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				</View>
 				{medicationCards}
 
-				<AddMedicationButton onPressFunction={() => { setPopupShowing(true) }} />
+				<View style={styles.addMedicationButton}>
+					<AddMedicationButton onPressFunction={() => { setPopupShowing(true) }} />
+				</View>
 			</ScrollView>
 			<TopBottomBar
 				navigation={navigation}
 				currentScreen={ScreenEnum.MedicationsArchive}
 				account={account}
 			/>
-			<MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={selectedPet}/>
+			<MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={selectedPet} />
 		</View>
 	);
 };

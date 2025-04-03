@@ -3,17 +3,16 @@ import { View } from "react-native";
 import NewPetAddButton from "./NewPetAddButton";
 import styles from '../../styles/PetInfo1AddButtons.styles';
 
-const PetInfo1AddButtons = () => {
+type PetInfo1AddButtonsProps = {
+  inputFields: string[];
+}
+
+const PetInfo1AddButtons = ({ inputFields }: PetInfo1AddButtonsProps) => {
   return (
     <View style={styles.newPetButtonGroupParent}>
-      <NewPetAddButton innerText={"species"} ></NewPetAddButton>
-      <NewPetAddButton innerText={"sex"}></NewPetAddButton>
-      <NewPetAddButton innerText={"age"}></NewPetAddButton>
-      <NewPetAddButton innerText={"breed"}></NewPetAddButton>
-      <NewPetAddButton innerText={"weight"}></NewPetAddButton>
-      <NewPetAddButton innerText={"address"}></NewPetAddButton>
-      <NewPetAddButton innerText={"vet"}></NewPetAddButton>
-      <NewPetAddButton innerText={"diagnosis"}></NewPetAddButton>
+      {inputFields.map((fieldName: string, index: number) => {
+        return <NewPetAddButton innerText={fieldName} key={index}/>
+      })}
     </View>
   );
 };
