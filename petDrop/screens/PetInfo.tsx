@@ -39,7 +39,7 @@ const PetInfo = ({ navigation, route }: Props) => {
         <AddNewPetButton navigation={navigation} account={account} />
       </ScrollView>
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo} account={account} />
-      <MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={petBeingEdited} />
+      <MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={petBeingEdited} updateMedications={null}/>
     </View>
   );
 };

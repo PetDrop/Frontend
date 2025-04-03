@@ -5,17 +5,25 @@ import Polygon6 from "../assets/dropdown_arrow.svg";
 import Ellipse17 from "../assets/blue_circle_small.svg";
 import styles from '../styles/MedicationPopup.styles';
 import { ADD_MEDICATION, UPDATE_PET } from "../data/endpoints";
-import { Pet } from "../data/dataTypes";
+import { Medication, Pet } from "../data/dataTypes";
 
 type MedicationPopupProps = {
   isActive: boolean;
   showingFunction: Function;
   pet: Pet | undefined;
+  updateMedications: Function | null;
 };
 
-const MedicationPopup = ({ isActive, showingFunction, pet }: MedicationPopupProps) => {
+const MedicationPopup = ({ isActive, showingFunction, pet, updateMedications }: MedicationPopupProps) => {
   const saveMedication = async () => {
+    const color = Math.round(Math.random() * 899998 + 100000);
+    if (updateMedications !== null) {
+      updateMedications({med: { id: '', name: 'medname', color: `#${color}`, description: 'med description', dates: [], range: 4 }});
+      showingFunction(false);
+      return;
+    }
     try {
+      
       let response = await fetch(ADD_MEDICATION, {
         method: 'POST',
         headers: {
@@ -24,7 +32,7 @@ const MedicationPopup = ({ isActive, showingFunction, pet }: MedicationPopupProp
         },
         body: JSON.stringify({
           name: "medname",
-          color: "",
+          color: `#${color}`,
           description: "meddescription",
           dates: [],
           range: 4
@@ -60,7 +68,7 @@ const MedicationPopup = ({ isActive, showingFunction, pet }: MedicationPopupProp
           }
         } else {
           showingFunction(false);
-          alert('Medication submitted successfully');
+          alert('Unable to add medication to pet');
         }
       } else {
         console.log('unable to write medication to database: status code ' + response.status);

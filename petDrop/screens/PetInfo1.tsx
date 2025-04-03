@@ -6,13 +6,15 @@ import TopBottomBar from "../components/TopBottomBar";
 import { logoImage, ScreenEnum } from "../GlobalStyles";
 import { NavigationProp } from "@react-navigation/core";
 import styles from '../styles/PetInfo1.styles';
-import { Account } from "../data/dataTypes";
-import { useState } from "react";
+import { Account, Medication } from "../data/dataTypes";
+import { useReducer, useState } from "react";
 import MedicationPopup from "../components/MedicationPopup";
 import AddMedicationButton from "../components/AddButton";
 import AddPetImage from "../components/AddImage";
 
-const { width, height } = Dimensions.get('window');
+function updateMedications(state: Medication[], action: { med: Medication }) {
+  return state.concat([action.med]);
+}
 
 type PetInfo1Type = {
   navigation: NavigationProp<any>;
@@ -21,6 +23,7 @@ type PetInfo1Type = {
 
 const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
   const [popupShowing, setPopupShowing] = useState(false);
+  const [medications, setMedications] = useReducer(updateMedications, []);
 
   // store the user's account info to avoid typing "route.params.account" repeatedly
   const account: Account = route.params.account;
@@ -39,15 +42,22 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
       <Text style={[styles.petInfo1AddPet, styles.addPetTypo]}>Add Pet</Text>
 
       {/* Add Image Circle w/ Plus Sign */}
-      <AddPetImage onPressFunction={() => {}} containerStyle={styles.addImageContainer}/>
+      <AddPetImage onPressFunction={() => { }} containerStyle={styles.addImageContainer} />
 
       {/* Pet Info Input Section */}
       <Text style={[styles.petInfo1Name, styles.nameTypo]}>Pet Info</Text>
-      <AddButtons inputFields={inputFields}/>
+      <AddButtons inputFields={inputFields} />
 
       {/* Add Medications Section */}
       <Text style={[styles.petInfo1Medications, styles.addPetTypo]}>Medications</Text>
-      {/* TODO: meds list like on pets page */}
+      <View style={styles.medicationList}>
+        {medications.map((med, index) => (
+          <View key={index} style={styles.medicationItem}>
+            <View style={[styles.medicationIndicator, { backgroundColor: med.color }]} />
+            <Text style={styles.medicationText}>{med.name}</Text>
+          </View>
+        ))}
+      </View>
       <View style={styles.addMedicationButton}>
         <AddMedicationButton onPressFunction={() => { setPopupShowing(true) }} />
       </View>
@@ -56,7 +66,7 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo1} account={account} />
 
       {/* Pop-up for Adding Medications */}
-      <MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={undefined} />
+      <MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={undefined} updateMedications={setMedications} />
     </View>
   );
 };

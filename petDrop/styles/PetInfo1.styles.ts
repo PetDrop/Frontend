@@ -36,11 +36,9 @@ const styles = StyleSheet.create({
         left: (width * 0.0538),
     },
     addMedicationButton: {
-        top: (height * 0.58),
         height: (height * 0.05),
         left: (width * 0.0564),
         width: (width * 0.1026),
-        position: "absolute",
     },
     petInfo1AddPet: {
         top: (height * 0.2227),
@@ -54,6 +52,26 @@ const styles = StyleSheet.create({
         marginTop: height * 0.09,
         marginLeft: width * 0.0282,
     },
+    medicationList: {
+        marginTop: height * 0.2,
+        marginLeft: width * 0.05
+    },
+	medicationItem: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginVertical: height * 0.005,
+	},
+	medicationIndicator: {
+		width: width * 0.03,
+		height: width * 0.03,
+		borderRadius: Border.br_10xs,
+		marginRight: width * 0.02,
+	},
+	medicationText: {
+		fontSize: 18,
+		fontFamily: FontFamily.koulenRegular,
+		color: Color.colorCornflowerblue,
+	},
 });
 
 export default styles;

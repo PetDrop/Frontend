@@ -71,7 +71,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				currentScreen={ScreenEnum.MedicationsArchive}
 				account={account}
 			/>
-			<MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={selectedPet} />
+			<MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={selectedPet} updateMedications={null}/>
 		</View>
 	);
 };
