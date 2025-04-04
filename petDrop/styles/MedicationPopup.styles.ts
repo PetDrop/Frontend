@@ -86,9 +86,11 @@ const styles = StyleSheet.create({
         width: 74,
         position: "absolute",
     },
-    closePopup: {
+    closePopupContainer: {
         top: 10,
         left: 300,
+    },
+    closePopup: {
         width: 45,
         height: 45,
     },

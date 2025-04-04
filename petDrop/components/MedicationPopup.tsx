@@ -98,7 +98,7 @@ const MedicationPopup = ({ isActive, showingFunction, pet, updateMedications }: 
                   <Text style={[styles.save, styles.saveTypo]}>SAVE</Text>
                 </View>
               </Pressable>
-              <Pressable onPress={() => { showingFunction(false) }}>
+              <Pressable onPress={() => { showingFunction(false) }} style={styles.closePopupContainer}>
                 <Image
                   style={styles.closePopup}
                   contentFit="cover"

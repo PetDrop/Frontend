@@ -5,7 +5,7 @@ import { styles } from '../styles/ProfilePage.styles';
 import Header from "../components/Home/Header";
 import AddImage from "../components/AddImage";
 import AddButton from "../components/AddButton";
-import SubmitButton from '../components/Profile/SubmitButton';
+import SubmitButton from '../components/SubmitButton';
 import { GET_ACCOUNT_BY_EMAIL, UPDATE_ACCOUNT } from "../data/endpoints";
 import { Account } from "../data/dataTypes";
 

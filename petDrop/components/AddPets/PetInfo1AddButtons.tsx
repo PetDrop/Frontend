@@ -4,14 +4,15 @@ import NewPetAddButton from "./NewPetAddButton";
 import styles from '../../styles/PetInfo1AddButtons.styles';
 
 type PetInfo1AddButtonsProps = {
-  inputFields: string[];
+  inputFields: Map<string, string>;
+  inputFieldsSetter: Function;
 }
 
-const PetInfo1AddButtons = ({ inputFields }: PetInfo1AddButtonsProps) => {
+const PetInfo1AddButtons = ({ inputFields, inputFieldsSetter }: PetInfo1AddButtonsProps) => {
   return (
     <View style={styles.newPetButtonGroupParent}>
-      {inputFields.map((fieldName: string, index: number) => {
-        return <NewPetAddButton innerText={fieldName} key={index}/>
+      {Array.from(inputFields.keys()).map((key: string, index: number) => {
+        return <NewPetAddButton innerText={key} inputFieldsSetter={inputFieldsSetter} key={index} />
       })}
     </View>
   );

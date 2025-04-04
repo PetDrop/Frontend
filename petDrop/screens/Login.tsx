@@ -87,10 +87,10 @@ const Login = (props: LoginType) => {
 
                     {/* Blue Container with Inputs */}
                     <View style={styles.blueContainer}>
-                        <Text style={styles.inputLabel}>Username / E-Mail:</Text>
+                        <Text style={styles.inputLabel}>Username:</Text>
                         <TextInput
                             style={styles.inputField}
-                            placeholder="Enter your email"
+                            placeholder="Enter your username"
                             placeholderTextColor="#A9A9A9"
                             value={username}
                             onChangeText={setUsername}

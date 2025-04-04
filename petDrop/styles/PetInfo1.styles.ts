@@ -11,10 +11,12 @@ const styles = StyleSheet.create({
         overflow: "hidden",
         backgroundColor: Color.colorFloralwhite,
     },
+    scrollContainer: {
+        paddingBottom: height * 0.5,
+    },
     nameTypo: {
         textAlign: "left",
         fontFamily: FontFamily.jsMathCmbx10,
-        position: "absolute",
         color: Color.colorCornflowerblue,
     },
     addPetTypo: {
@@ -25,14 +27,15 @@ const styles = StyleSheet.create({
         position: "absolute",
     },
     petInfo1Name: {
-        top: (height * 0.3128),
+        top: (height * 0.32),
         left: (width * 0.4513),
         fontSize: FontSize.size_17xl,
         width: (width * 0.3026),
         height: (height * 0.0509),
+        position: 'absolute',
     },
     petInfo1Medications: {
-        top: (height * 0.5415),
+        top: (height * 0.54),
         left: (width * 0.0538),
     },
     addMedicationButton: {
@@ -72,6 +75,11 @@ const styles = StyleSheet.create({
 		fontFamily: FontFamily.koulenRegular,
 		color: Color.colorCornflowerblue,
 	},
+    submitButtonContainer: {
+        marginTop: height * 0.875,
+        marginLeft: width * 0.65,
+        position: 'absolute',
+    },
 });
 
 export default styles;
