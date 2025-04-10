@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, Pressable } from "react-native";
 import { Image } from "expo-image";
 import Polygon6 from "../assets/dropdown_arrow.svg";
 import styles from '../styles/MedicationPopup.styles';
-import { ADD_MEDICATION, UPDATE_PET } from "../data/endpoints";
+import { ADD_MEDICATION, httpRequest, UPDATE_PET } from "../data/endpoints";
 import { Pet } from "../data/dataTypes";
 
 type MedicationPopupType = {
@@ -25,42 +25,30 @@ const MedicationPopup = ({ isActive, showingFunction, pet, updateMedications }: 
     }
     try {
       // create med from user input - to be done
-      let response = await fetch(ADD_MEDICATION, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: "medname",
-          color: `#${color}`,
-          description: "meddescription",
-          dates: [],
-          range: 4
-        }),
-      });
+      let response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify({
+        name: "medname",
+        color: `#${color}`,
+        description: "meddescription",
+        dates: [],
+        range: 4
+      })
+      );
       if (response.ok) {
         // if med created successfully and for an existent pet, add it to the pet
         if (pet !== undefined) {
           pet.medications.push(await response.json());
-          response = await fetch(UPDATE_PET, {
-            method: 'PUT',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              id: pet.id,
-              name: pet.name,
-              image: pet.image,
-              age: pet.age,
-              breed: pet.breed,
-              address: pet.address,
-              vet: pet.vet,
-              vetPhone: pet.vetPhone,
-              medications: pet.medications
-            }),
-          });
+          response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify({
+            id: pet.id,
+            name: pet.name,
+            image: pet.image,
+            age: pet.age,
+            breed: pet.breed,
+            address: pet.address,
+            vet: pet.vet,
+            vetPhone: pet.vetPhone,
+            medications: pet.medications
+          })
+          );
           if (response.ok) {
             showingFunction(false);
             alert('Medication submitted successfully');

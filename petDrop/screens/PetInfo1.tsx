@@ -1,6 +1,5 @@
 import * as React from "react";
-import { Dimensions, Pressable, Text, View, Image, KeyboardAvoidingView, ScrollView } from "react-native";
-import BlueCircleBig from "../assets/blue_circle_big.svg";
+import { Text, View, Image, KeyboardAvoidingView, ScrollView } from "react-native";
 import AddButtons from "../components/AddPets/PetInfo1AddButtons";
 import TopBottomBar from "../components/TopBottomBar";
 import { logoImage, ScreenEnum } from "../GlobalStyles";
@@ -12,7 +11,7 @@ import MedicationPopup from "../components/MedicationPopup";
 import AddMedicationButton from "../components/AddButton";
 import AddPetImage from "../components/AddImage";
 import SubmitButton from "../components/SubmitButton";
-import { ADD_PET } from "../data/endpoints";
+import { ADD_PET, httpRequest } from "../data/endpoints";
 
 type PetInfo1Type = {
   navigation: NavigationProp<any>;
@@ -50,23 +49,16 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
       alert('You must input all info for your pet. Tap the blue buttons along the right side of the screen to get text boxes to type in.');
     } else {
       try {
-        const response = await fetch(ADD_PET, {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: inputFields.get('pet name'),
-            image: '',
-            age: 0,
-            breed: inputFields.get('pet breed'),
-            address: inputFields.get('pet address'),
-            vet: inputFields.get('pet vet'),
-            vetPhone: inputFields.get('vet phone'),
-            medications: medications
-          }),
-        });
+        const response = await httpRequest(ADD_PET, 'POST', JSON.stringify({
+          name: inputFields.get('pet name'),
+          image: '',
+          age: 0,
+          breed: inputFields.get('pet breed'),
+          address: inputFields.get('pet address'),
+          vet: inputFields.get('pet vet'),
+          vetPhone: inputFields.get('vet phone'),
+          medications: medications
+        }));
         if (response.ok) {
           alert('submission successful');
           navigation.navigate('PetInfo', { account: account });

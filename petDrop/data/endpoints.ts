@@ -45,3 +45,15 @@ export const UPDATE_REMINDER_MEDICATION = 'http://localhost:8080/updatereminder/
 export const UPDATE_REMINDER_PET = 'http://localhost:8080/updatereminder/pet/';
 export const GET_ALL_REMINDERS = 'http://localhost:8080/getallreminders';
 export const GET_REMINDER_BY_ID = 'http://localhost:8080/getreminderbyid/';
+
+// http function with parameters for url and request body
+export const httpRequest = async (url: string, method: string, body: string): Promise<Response> => {
+    return await fetch(url, {
+        method: method,
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: body,
+    });
+}

@@ -9,7 +9,7 @@ import styles from "../styles/Reminders.styles";
 
 import { NavigationProp } from "@react-navigation/native";
 import { Account, Reminder } from "../data/dataTypes";
-import { ADD_REMINDER, UPDATE_ACCOUNT } from "../data/endpoints";
+import { ADD_REMINDER, httpRequest, UPDATE_ACCOUNT } from "../data/endpoints";
 import { useState } from "react";
 
 const { width, height } = Dimensions.get("window");
@@ -27,38 +27,14 @@ const Reminders = ({ navigation, route }: Props) => {
 
   const addReminder = async () => {
     try {
-      let response = await fetch(ADD_REMINDER, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          medication: account.pets[0].medications[0],
-          pet: account.pets[0],
-          notifications: ['1AM', '11PM']
-        }),
-      });
+      let response = await httpRequest(ADD_REMINDER, 'POST', JSON.stringify({
+        medication: account.pets[0].medications[0],
+        pet: account.pets[0],
+        notifications: ['1AM', '11PM']
+      }));
       if (response.ok) {
         account.reminders.push(await response.json());
-        response = await fetch(UPDATE_ACCOUNT, {
-          method: 'PUT',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            id: account.id,
-            username: account.username,
-            email: account.email,
-            password: account.password,
-            phone: account.phone,
-            address: account.address,
-            emergencyContacts: account.emergencyContacts,
-            pets: account.pets,
-            reminders: account.reminders
-          }),
-        });
+        response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
         if (response.ok) {
           alert('Reminder submitted successfully');
           setPopupShowing(!popupShowing);
