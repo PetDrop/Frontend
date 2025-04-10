@@ -4,6 +4,13 @@ import { Border, Color, FontFamily, FontSize } from '../GlobalStyles';
 const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+    container: {
+		flex: 1,
+		width: width,
+		height: height,
+		overflow: 'hidden',
+        position: 'absolute',
+	},
     opaqueBackground: {
 		backgroundColor: Color.colorGainsboro_100,
 		opacity: 0.5,
@@ -41,9 +48,11 @@ const styles = StyleSheet.create({
         left: width * 0.103,
         borderRadius: Border.br_12xs,
     },
-    closePopup: {
+    closePopupContainer: {
         top: height * 0.012,
-        left: width * 0.41,
+        left: width * 0.25,
+    },
+    closePopup: {
         width: width * 0.115,
         height: height * 0.053,
     },
@@ -54,10 +63,24 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: Border.br_12xl,
         borderBottomRightRadius: Border.br_12xl,
     },
+    textInput: {
+        height: height * 0.12,
+        borderWidth: Border.br_9xs,
+        borderColor: Color.colorCornflowerblue,
+        borderRadius: Border.br_sm,
+        width: width * 0.75,
+        marginTop: height * 0.2,
+        marginLeft: width * 0.0282,
+        fontWeight: 700,
+        fontSize: FontSize.size_base,
+        color: Color.colorCornflowerblue,
+        paddingLeft: width * 0.0256,
+        paddingTop: height * 0.01,
+    },
     saveButtonOval: {
         borderRadius: Border.br_17,
         height: height * 0.04,
-        top: height * 0.373,
+        top: height * 0.015,
         left: width * 0.692,
         width: width * 0.19,
         backgroundColor: Color.colorCornflowerblue,
