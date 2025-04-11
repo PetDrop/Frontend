@@ -13,8 +13,8 @@ const ReminderCard = ({ reminder }: ReminderCardProps) => {
 		<View style={styles.cardContainer}>
 			<View style={styles.header}>
 				<View style={styles.innerHeader}>
-					<View style={[styles.reminderColor, { backgroundColor: reminder.medication.color }]} />
-					<Text style={styles.reminderTitle}>{reminder.medication.name}</Text>
+					<View style={[styles.reminderColor, { backgroundColor: reminder.medication?.color }]} />
+					<Text style={styles.reminderTitle}>{reminder.medication?.name}</Text>
 				</View>
 				<Pressable>
 					<EditIcon style={styles.editIcon} />
@@ -22,13 +22,13 @@ const ReminderCard = ({ reminder }: ReminderCardProps) => {
 			</View>
 			<View style={styles.body}>
 				<Text style={styles.reminderDetails}>
-					DATES: {reminder.medication.dates.join(', ')}
+					DATES: {reminder.medication?.dates.join(', ')}
 				</Text>
 				<Text style={styles.reminderDetails}>
 					NOTIFICATIONS: {reminder.notifications}
 				</Text>
 				<Text style={styles.reminderDetails}>
-					MESSAGE: "{reminder.medication.description}"
+					MESSAGE: "{reminder.medication?.description}"
 				</Text>
 			</View>
 		</View>

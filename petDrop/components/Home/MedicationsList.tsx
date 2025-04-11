@@ -14,7 +14,7 @@ const MedicationsList = (props: MedicationsListProps) => {
 		<View style={styles.medicationsContainer}>
 			{/* Header */}
 			<View style={styles.medicationsHeader}>
-				<Text style={styles.medicationsHeaderText}>MEDICATIONS</Text>
+				<Text style={styles.medicationsHeaderText}>Reminders</Text>
 			</View>
 
 			{/* Medications List */}

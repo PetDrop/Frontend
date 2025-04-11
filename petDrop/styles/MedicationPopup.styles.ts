@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
 		width: width,
 	},
     medicationPopup: {
-        top: height * -0.756,
-        height: height * 0.512,
+        top: height * -0.85,
+        height: height * 0.75,
         width: width * 0.923,
         left: width * 0.038,
     },
@@ -39,14 +39,21 @@ const styles = StyleSheet.create({
         width: width * 0.067,
         height: height * 0.031,
     },
-    medicationName: {
+    dropdownDefault: {
         top: height * 0.014,
         left: width * 0.077,
+        flexDirection: 'row',
+        width: width * 0.461,
     },
     downArrow: {
-        top: height * 0.031,
-        left: width * 0.103,
+        top: height * 0.0175,
+        left: width * 0.025,
         borderRadius: Border.br_12xs,
+    },
+    dropdownItem: {
+        backgroundColor: Color.colorCornflowerblue,
+        paddingBottom: height * 0.012,
+        alignItems: 'center',
     },
     closePopupContainer: {
         top: height * 0.012,
@@ -57,11 +64,16 @@ const styles = StyleSheet.create({
         height: height * 0.053,
     },
     popupBody: {
-        height: height * 0.432,
+        height: height * 0.9,
         backgroundColor: Color.colorFloralwhite,
         width: width * 0.923,
         borderBottomLeftRadius: Border.br_12xl,
         borderBottomRightRadius: Border.br_12xl,
+        borderColor: Color.colorCornflowerblue,
+        borderWidth: 3,
+    },
+    dateCardContainer: {
+        marginTop: height * 0.01
     },
     textInput: {
         height: height * 0.12,
@@ -69,8 +81,9 @@ const styles = StyleSheet.create({
         borderColor: Color.colorCornflowerblue,
         borderRadius: Border.br_sm,
         width: width * 0.75,
-        marginTop: height * 0.2,
+        marginTop: height * 0.05,
         marginLeft: width * 0.0282,
+        marginBottom: height * 0.075,
         fontWeight: 700,
         fontSize: FontSize.size_base,
         color: Color.colorCornflowerblue,
@@ -80,19 +93,18 @@ const styles = StyleSheet.create({
     saveButtonOval: {
         borderRadius: Border.br_17,
         height: height * 0.04,
-        top: height * 0.015,
+        top: height * -0.05,
         left: width * 0.692,
         width: width * 0.19,
         backgroundColor: Color.colorCornflowerblue,
     },
     saveButtonText: {
         top: height * -0.005,
-        left: width * 0.046,
     },
     text: {
         color: Color.colorFloralwhite,
         fontSize: FontSize.size_5xl,
-        textAlign: "left",
+        textAlign: "center",
         fontFamily: FontFamily.koulenRegular,
     },
 });

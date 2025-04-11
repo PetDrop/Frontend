@@ -37,7 +37,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 			<MedicationCard
 				key={index}
 				// even though a single element is desired, filter is used to avoid a "possibly undefined" error
-				reminderProp={selectedReminders.filter((reminder) => reminder.medication.id === medication.id)}
+				reminderProp={selectedReminders.filter((reminder) => reminder.medication?.id === medication.id)}
 				medProp={medication}
 				petProp={selectedPet}
 			/>

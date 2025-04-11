@@ -1,14 +1,15 @@
 import * as React from "react";
-import { StyleSheet, View, Text, Pressable, Button, TextInput, TouchableWithoutFeedback, Keyboard, SectionListComponent } from "react-native";
+import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingView } from "react-native";
 import { Image } from "expo-image";
-import Polygon6 from "../assets/dropdown_arrow.svg";
+import DropdownArrow from "../assets/dropdown_arrow.svg";
 import styles from '../styles/MedicationPopup.styles';
 import { ADD_MEDICATION, httpRequest, UPDATE_PET } from "../data/endpoints";
 import { Pet } from "../data/dataTypes";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { useReducer, useState } from "react";
+import { useState } from "react";
 import { Color } from "../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
+import DateCard from "./DateCard";
 
 type MedicationPopupType = {
   isActive: boolean;
@@ -19,18 +20,23 @@ type MedicationPopupType = {
 
 const MedicationPopup = ({ isActive, showingFunction, pet, updateMedications }: MedicationPopupType) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [dates, setDates] = useReducer(updateDates, []);
+  const [dates, setDates] = useState(new Map<string, boolean>());
   const [description, setDescription] = useState('');
   const [medName, setMedName] = useState('');
 
   // function for updating dates state
-  function updateDates(state: string[], action: { date: string }) {
-    return state.concat([action.date]);
+  function updateDates(date: string, recurring: boolean) {
+    if (date === 'clear') {
+      setDates(new Map<string, boolean>());
+    } else {
+      setDates((prevState) => new Map(prevState.set(date, recurring)));
+    }
   }
 
   const close = () => {
     showingFunction(false);
     setDescription('');
+    updateDates('clear', false);
   }
 
   const saveMedication = async () => {
@@ -48,7 +54,7 @@ const MedicationPopup = ({ isActive, showingFunction, pet, updateMedications }: 
         name: medName,
         color: `#${color}`,
         description: description,
-        dates: dates,
+        dates: Array.from(dates.keys()),
         range: 4
       })
       );
@@ -56,18 +62,7 @@ const MedicationPopup = ({ isActive, showingFunction, pet, updateMedications }: 
         // if med created successfully and for an existent pet, add it to the pet
         if (pet !== undefined) {
           pet.medications.push(await response.json());
-          response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify({
-            id: pet.id,
-            name: pet.name,
-            image: pet.image,
-            age: pet.age,
-            breed: pet.breed,
-            address: pet.address,
-            vet: pet.vet,
-            vetPhone: pet.vetPhone,
-            medications: pet.medications
-          })
-          );
+          response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(pet));
           if (response.ok) {
             close();
             alert('Medication submitted successfully');
@@ -88,80 +83,102 @@ const MedicationPopup = ({ isActive, showingFunction, pet, updateMedications }: 
     }
   };
 
+  const dateCards: Array<React.JSX.Element> = [];
+  Array.from(dates.keys()).forEach((date: string, index: number) => {
+    dateCards.push(
+      <DateCard date={date} key={index} />
+    )
+  })
+
   if (isActive) {
     return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ position: 'absolute' }}>
-          {/* opaque layer to blur background */}
-          <View style={styles.opaqueBackground} />
+      <KeyboardAvoidingView style={{ position: 'absolute' }} behavior="padding">
+        {/* opaque layer to blur background */}
+        <View style={styles.opaqueBackground} />
 
-          {/* the popup itself */}
-          <View style={styles.medicationPopup}>
+        {/* the popup itself */}
+        <View style={styles.medicationPopup}>
 
-            {/* blue top banner */}
-            <View style={styles.topBanner}>
+          {/* blue top banner */}
+          <View style={styles.topBanner}>
 
-              {/* TODO: make this pressable to pick a color */}
-              {/* color indicator */}
-              <View style={styles.colorIndicator} />
+            {/* TODO: make this pressable to pick a color */}
+            {/* color indicator */}
+            <View style={styles.colorIndicator} />
 
-              {/* medication selection */}
-              <Selection
-                data={['med 1', 'med 2', 'med 3']}
-                onSelect={(selectedItem: string) => {setMedName(selectedItem)}}
-                renderButton={(selectedItem: string) => {return <View style={{flexDirection: 'row', width: 180}}><Text>{selectedItem ? selectedItem : 'Medifefefhefehdcation'}</Text><Polygon6 style={styles.downArrow} width={19} height={12} /></View>}}
-                renderItem={(selectedItem: string) => {return <View><Text>{selectedItem}</Text></View>}}
+            {/* medication selection */}
+            <Selection
+              data={['med 1', 'med 2', 'med 3']}
+              onSelect={(selectedItem: string) => { setMedName(selectedItem) }}
+              renderButton={(selectedItem: string) => {
+                return (
+                  <View style={styles.dropdownDefault}>
+                    <Text style={styles.text}>
+                      {selectedItem ? selectedItem : 'Medication'}
+                    </Text>
+                    <DropdownArrow style={styles.downArrow} width={19} height={12} />
+                  </View>
+                )
+              }}
+              renderItem={(selectedItem: string) => {
+                return (
+                  <View style={styles.dropdownItem}>
+                    <Text style={styles.text}>{selectedItem}</Text>
+                  </View>
+                )
+              }}
+            />
+
+            {/* close x button */}
+            <Pressable onPress={() => { close() }} style={styles.closePopupContainer}>
+              <Image
+                style={styles.closePopup}
+                contentFit="cover"
+                source={require("../assets/remove_x_white.png")}
               />
+            </Pressable>
 
-              {/* close x button */}
-              <Pressable onPress={() => { close() }} style={styles.closePopupContainer}>
-                <Image
-                  style={styles.closePopup}
-                  contentFit="cover"
-                  source={require("../assets/remove_x_white.png")}
-                />
-              </Pressable>
-
-            </View>
-
-            {/* white main area */}
-            <View style={styles.popupBody}>
-
-              {/* dates will be displayed here, with each one having another input option for how often it repeats */}
-
-              <Button title="Add Date" onPress={() => { setDatePickerVisibility(true) }} />
-              <DateTimePickerModal
-                isVisible={isDatePickerVisible}
-                mode="date"
-                onConfirm={(date) => {
-                  if (!dates.includes(date.toDateString())) {
-                    setDates({ date: date.toDateString() });
-                  }
-                  setDatePickerVisibility(false);
-                }}
-                onCancel={() => { setDatePickerVisibility(false) }}
-              />
-
-              <TextInput
-                style={[styles.textInput]}
-                placeholder="Enter any info you'll need later"
-                placeholderTextColor={Color.colorCornflowerblue}
-                value={description}
-                onChangeText={setDescription}
-                multiline={true}
-              />
-
-              {/* save button */}
-              <Pressable onPress={saveMedication}>
-                <View style={styles.saveButtonOval}>
-                  <Text style={[styles.saveButtonText, styles.text]}>SAVE</Text>
-                </View>
-              </Pressable>
-
-            </View>
           </View>
+
+          {/* white main area */}
+          <ScrollView style={styles.popupBody}>
+
+            <View style={styles.dateCardContainer}>
+              {dateCards}
+            </View>
+
+            <Button title="Add Date" onPress={() => { setDatePickerVisibility(true) }} />
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={(date) => {
+                if (!Array.from(dates.keys()).includes(date.toDateString())) {
+                  updateDates(date.toDateString(), false);
+                }
+                setDatePickerVisibility(false);
+              }}
+              onCancel={() => { setDatePickerVisibility(false) }}
+            />
+
+            <TextInput
+              style={[styles.textInput]}
+              placeholder="Enter any info you'll need later"
+              placeholderTextColor={Color.colorCornflowerblue}
+              value={description}
+              onChangeText={setDescription}
+              multiline={true}
+            />
+
+          </ScrollView>
+
+          {/* save button */}
+          <Pressable onPress={saveMedication}>
+            <View style={styles.saveButtonOval}>
+              <Text style={[styles.saveButtonText, styles.text]}>SAVE</Text>
+            </View>
+          </Pressable>
         </View>
-      </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     );
   }
 };
