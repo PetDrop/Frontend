@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable } from 'react-native';
 import TopBottomBar from '../components/TopBottomBar';
 import MedicationCard from '../components/Medications/MedicationCard';
-import MedicationSwitch from '../components/Medications/PetSwtich';
+import PetSwitch from '../components/ItemSwitch';
 import styles from '../styles/Medications.styles';
 import { ScreenEnum, logoImage } from '../GlobalStyles';
 import { Image } from 'expo-image';
@@ -55,10 +55,11 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				/>
 				<View style={styles.headerContainer}>
 					<Text style={styles.pageTitle}>Medications</Text>
-					<MedicationSwitch
-						pets={account.pets}
-						selectedPetId={selectedPetId}
+					<PetSwitch
+						data={account.pets}
+						selectedItemId={selectedPetId}
 						onSwitch={setSelectedPetId}
+						switchItem='Pet'
 					/>
 				</View>
 				{medicationCards}

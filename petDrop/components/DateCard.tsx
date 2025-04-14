@@ -2,6 +2,7 @@ import * as React from 'react';
 import { View, Pressable, Text } from "react-native";
 import styles from "../styles/DateCard.styles";
 import { useState } from 'react';
+import { Color } from '../GlobalStyles';
 
 type DateCardType = {
     date: string;
@@ -16,11 +17,7 @@ const DateCard = ({ date }: DateCardType) => {
             </View>
             <Text style={styles.checkboxText}>Recurring?</Text>
             <Pressable onPress={() => { setRecurring(!recurring) }}>
-                {recurring ?
-                    <View style={[styles.checkbox, { backgroundColor: 'black' }]} />
-                    :
-                    <View style={styles.checkbox} />
-                }
+                <View style={[styles.checkbox, recurring && { backgroundColor: Color.colorCornflowerblue }]} />
             </Pressable>
         </View>
     )

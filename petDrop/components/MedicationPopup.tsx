@@ -42,9 +42,9 @@ const MedicationPopup = ({ isActive, showingFunction, pet, updateMedications }: 
   const saveMedication = async () => {
     // random color for creating med - will be removed eventually
     const color = Math.round(Math.random() * 899998 + 100000);
-    // create default med - will be removed eventually
+    // if on new pet page, add medication to the list that will be created when the pet is submitted
     if (updateMedications !== null) {
-      updateMedications({ med: { id: '', name: 'medname', color: `#${color}`, description: 'med description', dates: [], range: 4 } });
+      updateMedications({ med: { id: '', name: medName, color: `#${color}`, description: description, dates: Array.from(dates.keys()), range: 4 } });
       close();
       return;
     }
@@ -162,7 +162,7 @@ const MedicationPopup = ({ isActive, showingFunction, pet, updateMedications }: 
 
             <TextInput
               style={[styles.textInput]}
-              placeholder="Enter any info you'll need later"
+              placeholder="Enter any info you'll need later (notes, instructions, etc.)"
               placeholderTextColor={Color.colorCornflowerblue}
               value={description}
               onChangeText={setDescription}

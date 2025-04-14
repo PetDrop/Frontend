@@ -52,7 +52,7 @@ const Home = ({ navigation, route }: HomeProps) => {
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} account={account} />
 
       {/* Pop-up to view a reminder */}
-      <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} />
+      <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} pets={account.pets} />
     </View>
   );
 };

@@ -10,13 +10,14 @@ const styles = StyleSheet.create({
     },
     dateCard: {
         paddingBottom: height * 0.01,
-        backgroundColor: Color.colorCornflowerblue,
         borderRadius: Border.br_30,
+        borderWidth: 3,
+        borderColor: Color.colorCornflowerblue,
         width: width * 0.45,
         marginLeft: width * 0.03,
     },
     dateText: {
-        color: Color.colorFloralwhite,
+        color: Color.colorCornflowerblue,
         fontSize: FontSize.size_5xl,
         textAlign: "center",
         fontFamily: FontFamily.koulenRegular,
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
         width: width * 0.05, 
         height: height * 0.024, 
         borderWidth: 2, 
-        borderColor: 'black',
+        borderColor: Color.colorCornflowerblue,
         marginLeft: width * 0.02,
         marginTop: height * 0.02,
     },
@@ -34,6 +35,7 @@ const styles = StyleSheet.create({
         marginTop: height * 0.02,
         fontSize: FontSize.size_xl,
         fontFamily: FontFamily.juaRegular,
+        color: Color.colorCornflowerblue,
     },
 });
 
