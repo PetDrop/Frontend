@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
         backgroundColor: Color.colorFloralwhite,
     },
     scrollContainer: {
-        paddingBottom: height * 0.5,
+        paddingBottom: height * 0.7,
     },
     nameTypo: {
         textAlign: "left",

@@ -5,13 +5,13 @@ import styles from '../../styles/Medications.styles';
 import { Medication, Pet, Reminder } from '../../data/dataTypes';
 
 interface MedicationCardProps {
-	reminderProp: Reminder[];
+	reminderProp: Reminder;
 	medProp: Medication;
 	petProp: Pet;
 }
 
 const MedicationCard = ({ reminderProp, medProp, petProp }: MedicationCardProps) => {
-	const reminder: Reminder = reminderProp[0];
+	const reminder: Reminder = reminderProp;
 	const medication: Medication = medProp;
 
 	// Format notifications as a string, e.g., "6AM, 6PM"

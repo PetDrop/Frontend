@@ -40,10 +40,10 @@ const ItemSwitch: React.FC<ItemSwitchProps> = ({
 		const imageString = selectedItem.image ? selectedItem.image : '';
 		image =
 			<View>
-				<Image source={require('../../assets/white_circle.png')} style={styles.whiteCircle} />
+				<Image source={require('../assets/white_circle.png')} style={styles.whiteCircle} />
 				<Image source={petImages[imageString]} style={styles.itemImage} />
 				<Image
-					source={require('../../assets/blue_circle_big.png')}
+					source={require('../assets/blue_circle_big.png')}
 					style={styles.itemCircle}
 				/>
 			</View>;

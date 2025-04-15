@@ -4,21 +4,25 @@ import { Image } from "expo-image";
 import DropdownArrow from "../assets/dropdown_arrow.svg";
 import styles from '../styles/MedicationPopup.styles';
 import { ADD_MEDICATION, httpRequest, UPDATE_PET } from "../data/endpoints";
-import { Pet } from "../data/dataTypes";
+import { emptyMed, emptyPet, emptyReminder, Pet, Reminder } from "../data/dataTypes";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useState } from "react";
 import { Color } from "../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
 import DateCard from "./DateCard";
+import ReminderPopup from "./ReminderPopup";
 
 type MedicationPopupType = {
   isActive: boolean;
   showingFunction: Function;
+  setMedication: Function;
+  setReminder: Function;
   pet: Pet | undefined;
-  updateMedications: Function | null;
+  pets: Pet[];
 };
 
-const MedicationPopup = ({ isActive, showingFunction, pet, updateMedications }: MedicationPopupType) => {
+const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder, pet, pets }: MedicationPopupType) => {
+  const [popupShowing, setPopupShowing] = useState<Reminder>();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [dates, setDates] = useState(new Map<string, boolean>());
   const [description, setDescription] = useState('');
@@ -42,45 +46,9 @@ const MedicationPopup = ({ isActive, showingFunction, pet, updateMedications }: 
   const saveMedication = async () => {
     // random color for creating med - will be removed eventually
     const color = Math.round(Math.random() * 899998 + 100000);
-    // if on new pet page, add medication to the list that will be created when the pet is submitted
-    if (updateMedications !== null) {
-      updateMedications({ med: { id: '', name: medName, color: `#${color}`, description: description, dates: Array.from(dates.keys()), range: 4 } });
-      close();
-      return;
-    }
-    try {
-      // create med from user input - to be done
-      let response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify({
-        name: medName,
-        color: `#${color}`,
-        description: description,
-        dates: Array.from(dates.keys()),
-        range: 4
-      })
-      );
-      if (response.ok) {
-        // if med created successfully and for an existent pet, add it to the pet
-        if (pet !== undefined) {
-          pet.medications.push(await response.json());
-          response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(pet));
-          if (response.ok) {
-            close();
-            alert('Medication submitted successfully');
-          } else {
-            console.log('unable to add medication to pet: status code ' + response.status);
-            alert('failed to add medication to pet');
-          }
-        } else {
-          close();
-          alert('Unable to add medication to pet');
-        }
-      } else {
-        console.log('unable to write medication to database: status code ' + response.status);
-        alert('submission failed');
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    // add medication to the list that will be created when the pet is submitted
+    setMedication({ id: '', name: medName, color: `#${color}`, description: description, dates: Array.from(dates.keys()), range: 4 });
+    close();
   };
 
   const dateCards: Array<React.JSX.Element> = [];
@@ -171,13 +139,24 @@ const MedicationPopup = ({ isActive, showingFunction, pet, updateMedications }: 
 
           </ScrollView>
 
+          {/* add reminder button */}
+          <Pressable onPress={() => { setPopupShowing({ id: '', medication: emptyMed, pet: pet ? pet : emptyPet, notifications: [] }) }}>
+            <View style={styles.reminderButtonOval}>
+              <Text style={[styles.reminderButtonText, styles.text]}>ADD REMINDER</Text>
+            </View>
+          </Pressable>
+
+
           {/* save button */}
           <Pressable onPress={saveMedication}>
             <View style={styles.saveButtonOval}>
               <Text style={[styles.saveButtonText, styles.text]}>SAVE</Text>
             </View>
           </Pressable>
+
         </View>
+        
+        <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} pets={pets} setReminder={setReminder} />
       </KeyboardAvoidingView>
     );
   }

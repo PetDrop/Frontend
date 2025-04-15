@@ -5,13 +5,11 @@ import TopBottomBar from "../components/TopBottomBar";
 import { logoImage, ScreenEnum } from "../GlobalStyles";
 import { NavigationProp } from "@react-navigation/core";
 import styles from '../styles/PetInfo1.styles';
-import { Account, Medication } from "../data/dataTypes";
-import { useReducer, useState } from "react";
-import MedicationPopup from "../components/MedicationPopup";
-import AddMedicationButton from "../components/AddButton";
+import { Account, Pet } from "../data/dataTypes";
+import { useState } from "react";
 import AddPetImage from "../components/AddImage";
 import SubmitButton from "../components/SubmitButton";
-import { ADD_PET, httpRequest } from "../data/endpoints";
+import { ADD_PET, httpRequest, UPDATE_ACCOUNT } from "../data/endpoints";
 
 type PetInfo1Type = {
   navigation: NavigationProp<any>;
@@ -19,8 +17,6 @@ type PetInfo1Type = {
 }
 
 const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
-  const [popupShowing, setPopupShowing] = useState(false);
-  const [medications, setMedications] = useReducer(updateMedications, []);
   const [inputFields, setInputFields] = useState(new Map<string, string>([
     ['pet name', ''],
     ['pet age', ''],
@@ -29,11 +25,6 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
     ['pet vet', ''],
     ['vet phone', ''],
   ]));
-
-  // function for updating medications state
-  function updateMedications(state: Medication[], action: { med: Medication }) {
-    return state.concat([action.med]);
-  }
 
   // function for updating inputfields state
   function updateInputFields(key: string, value: string) {
@@ -49,19 +40,29 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
       alert('You must input all info for your pet. Tap the blue buttons along the right side of the screen to get text boxes to type in.');
     } else {
       try {
-        const response = await httpRequest(ADD_PET, 'POST', JSON.stringify({
+        let ageString: string | undefined = inputFields.get('pet age');
+        let age: number = Number.parseInt(ageString ? ageString : '0');
+        let response = await httpRequest(ADD_PET, 'POST', JSON.stringify({
           name: inputFields.get('pet name'),
           image: '',
-          age: 0,
+          age: age,
           breed: inputFields.get('pet breed'),
           address: inputFields.get('pet address'),
           vet: inputFields.get('pet vet'),
           vetPhone: inputFields.get('vet phone'),
-          medications: medications
+          medications: []
         }));
         if (response.ok) {
-          alert('submission successful');
-          navigation.navigate('PetInfo', { account: account });
+          const pet: Pet = await response.json();
+          account.pets.push(pet);
+          response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
+          if (response.ok) {
+            alert('submission successful. You will now be redirected to the Pet Info page where you can add medications and reminders for this pet.');
+            navigation.navigate('PetInfo', { account: account });
+          } else {
+            console.log('unable to add pet to account');
+            alert('submission failed');
+          }
         } else {
           console.log('unable to write pet to database: status code ' + response.status);
           alert('submission failed');
@@ -87,20 +88,6 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
         {/* Add Image Circle w/ Plus Sign */}
         <AddPetImage onPressFunction={() => { }} containerStyle={styles.addImageContainer} />
 
-        {/* Add Medications Section */}
-        <Text style={[styles.petInfo1Medications, styles.addPetTypo]}>Medications</Text>
-        <View style={styles.medicationList}>
-          {medications.map((med, index) => (
-            <View key={index} style={styles.medicationItem}>
-              <View style={[styles.medicationIndicator, { backgroundColor: med.color }]} />
-              <Text style={styles.medicationText}>{med.name}</Text>
-            </View>
-          ))}
-        </View>
-        <View style={styles.addMedicationButton}>
-          <AddMedicationButton onPressFunction={() => { setPopupShowing(true) }} />
-        </View>
-
         {/* Pet Info Input Section */}
         <Text style={[styles.petInfo1Name, styles.nameTypo]}>Pet Info</Text>
         <AddButtons inputFields={inputFields} inputFieldsSetter={updateInputFields} />
@@ -115,8 +102,6 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
       {/* Top Banner and Bottom Navigation */}
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo1} account={account} />
 
-      {/* Pop-up for Adding Medications */}
-      <MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={undefined} updateMedications={setMedications} />
     </KeyboardAvoidingView>
   );
 };
