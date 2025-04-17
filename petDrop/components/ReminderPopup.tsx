@@ -1,10 +1,10 @@
 import * as React from "react";
-import { View, Text, Pressable, TextInput, Button } from "react-native";
+import { View, Text, Pressable, Button } from "react-native";
 import { Image } from "expo-image";
 import styles from '../styles/ReminderPopup.styles';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useReducer, useState } from "react";
-import { emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
+import { emptyMed, emptyPet, Medication, Pet, Reminder } from "../data/dataTypes";
 import Selection from './ItemSwitch';
 
 type ReminderPopupType = {
@@ -26,17 +26,20 @@ const ReminderPopup = ({ isActive, showingFunction, setReminder, pets }: Reminde
   const [isTimePickerVisible, setTImePickerVisibility] = useState(false);
   const [selectedMedId, setSelectedMedId] = useState<string | undefined>();
 
+  const ObjectID = require('bson-objectid');
+  const id: string = ObjectID();
+
   const med: Medication | undefined = isActive?.pet?.medications?.find((med) => med.id === selectedMedId);
 
   const close = () => {
-    showingFunction(undefined);
+    showingFunction(undefined);     
     setNotifications({ notif: 'clear' });
     setSelectedMedId(undefined);
   }
 
   const saveReminder = async () => {
     // create reminder with the intended info from this popup, depending on conditions
-    let rem: Reminder = { id: '', medication: emptyMed, pet: emptyPet, notifications: [] };
+    let rem: Reminder = { id: id, medication: emptyMed, pet: emptyPet, notifications: [] };
     // ternary operator spaghetti equates to 'set it as value passed as prop, else value chosen by user, else nothing'
     // either value passed or value chosen will be defined, so the last option is to avoid getting errors
     rem.medication = isActive && isActive.medication.name !== '' ? isActive.medication : med ? med : emptyMed;
@@ -89,11 +92,11 @@ const ReminderPopup = ({ isActive, showingFunction, setReminder, pets }: Reminde
           <View style={styles.popupBody}>
 
             <View style={styles.selectionContainer}>
-              <Text style={[styles.text, styles.selectionText]}>{`FOR PET: ${isActive.pet.name ? isActive.pet.name : ''}`}</Text>
+              <Text style={[styles.text, styles.selectionText]}>{`FOR PET: ${isActive.pet.name ? isActive.pet.name : 'NONE SELECTED'}`}</Text>
             </View>
 
             <View style={styles.selectionContainer}>
-              <Text style={[styles.text, styles.selectionText]}>{`FOR MEDICATION: ${isActive.medication.name !== '' ? isActive.medication.name : med ? med.name : ''}`}</Text>
+              <Text style={[styles.text, styles.selectionText]}>{`FOR MEDICATION: ${isActive.medication.name !== '' ? isActive.medication.name : med ? med.name : 'NONE SELECTED'}`}</Text>
               {isActive.medication.name === '' ?
                 <View style={styles.itemSwitchContainer}>
                   {isActive.medication.name === '' ?

@@ -82,9 +82,6 @@ const Reminders = ({ navigation, route }: Props) => {
         />
 
         {/* Reminder Cards */}
-        {/* {account.reminders.map((reminder: Reminder) => (
-          <ReminderCard key={reminder.id} reminder={reminder} />
-        ))} */}
         {reminderCards}
 
         {/* Add Reminder Button */}
