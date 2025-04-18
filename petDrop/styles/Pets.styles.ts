@@ -30,10 +30,10 @@ export const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 	},
 	petImage: {
-		width: width * 0.2,
+		width: width * 0.25,
 		height: width * 0.25,
-		borderRadius: Border.br_3xs,
-		top: height * 0.03,
+		top: height * 0.02,
+		left: width * -0.032
 	},
 	petInfo: {
 		flex: 1,
@@ -107,7 +107,7 @@ export const styles = StyleSheet.create({
 		alignSelf: 'center',
 		marginTop: height * 0.03, // Space above bar
 		borderRadius: Border.br_10xs,
-		marginBottom: height * -0.06, // Space below bar
+		marginBottom: height * 0.03, // Space below bar
 	},
 	addMedicationButton: {
 		marginTop: height * 0.02,

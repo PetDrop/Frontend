@@ -27,6 +27,9 @@ const styles = StyleSheet.create({
         width: (width * 0.0846),
         position: "absolute",
     },
+    imageContainer: {
+        top: height * -0.173,
+    },
 });
 
 export default styles;

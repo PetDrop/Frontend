@@ -2,8 +2,6 @@ import * as React from 'react';
 import { View, Text, Image } from 'react-native';
 import EditIcon from '../../assets/edit_icon.svg';
 import styles from '../../styles/Pets.styles';
-import { Pressable } from 'react-native';
-import { petImages } from '../../GlobalStyles';
 import AddMedicationButton from '../../components/AddButton';
 import { Pet } from '../../data/dataTypes';
 
@@ -16,7 +14,7 @@ const PetCard = ({ pet, onPressFunction }: PetCardProps) => {
 	return (
 		<View style={styles.petCard}>
 			<View style={styles.petHeader}>
-				<Image source={petImages[pet.image]} style={styles.petImage} />
+				<Image src={pet.image} style={styles.petImage} />
                 <Image source={require("../../assets/blue_circle_big.png")} style={styles.circleBackground} />
 				<View style={styles.petInfo}>
 					<Text style={styles.petName}>{pet.name}</Text>
