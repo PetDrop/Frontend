@@ -15,7 +15,7 @@ const PetCard = ({ pet, onPressFunction }: PetCardProps) => {
 		<View style={styles.petCard}>
 			<View style={styles.petHeader}>
 				<Image src={pet.image} style={styles.petImage} />
-                <Image source={require("../../assets/blue_circle_big.png")} style={styles.circleBackground} />
+                <View style={styles.imageOutline} />
 				<View style={styles.petInfo}>
 					<Text style={styles.petName}>{pet.name}</Text>
 					<Text style={styles.petDetails}>Age: {pet.age}</Text>

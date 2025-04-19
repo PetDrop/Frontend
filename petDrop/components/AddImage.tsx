@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Pressable, StyleProp, View, Image } from 'react-native';
+import { Pressable, StyleProp, View, Image, Text } from 'react-native';
 import styles from '../styles/AddImage.styles';
-import OuterCircle from '../assets/blue_circle_big.svg';
 
 type AddImageType = {
     onPressFunction: () => void;
@@ -13,19 +12,20 @@ const AddImage = ({ onPressFunction, containerStyle, uri }: AddImageType) => {
     return (
         <View style={containerStyle}>
             <Pressable onPress={onPressFunction}>
-                <OuterCircle style={styles.outerCircle} />
                 {uri === '' ?
                     <View>
                         <View style={styles.plusSign}>
                             <View style={styles.plusSignLine} />
                             <View style={[styles.rotate90, styles.plusSignLine]} />
+                            <Text style={styles.addImageText}>ADD IMAGE</Text>
                         </View>
                     </View>
                     :
-                    <View style={styles.imageContainer}>
-                        <Image source={{ uri: uri }} width={styles.outerCircle.width} height={styles.outerCircle.height} />
+                    <View>
+                        <Image source={{ uri: uri }} style={styles.image} />
                     </View>
                 }
+                <View style={styles.imageOutline} />
             </Pressable>
         </View>
     );

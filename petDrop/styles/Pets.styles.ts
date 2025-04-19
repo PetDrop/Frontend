@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
 		width: width * 0.25,
 		height: width * 0.25,
 		top: height * 0.02,
-		left: width * -0.032
+		left: width * -0.03
 	},
 	petInfo: {
 		flex: 1,
@@ -92,12 +92,15 @@ export const styles = StyleSheet.create({
 		fontFamily: FontFamily.koulenRegular,
 		color: Color.colorFloralwhite,
 	},
-	circleBackground: {
+	imageOutline: {
 		position: 'absolute',
 		width: width * 0.3, // Adjust size as needed
 		height: width * 0.3,
-		left: width * -0.06,
-		top: height * 0.01,
+		left: width * -0.055,
+		top: height * 0.0085,
+		borderWidth: 10,
+		borderColor: Color.colorLightskyblue,
+		borderRadius: Border.br_12xl,
 	},
 
 	separatorBar: {

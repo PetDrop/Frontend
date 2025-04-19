@@ -4,12 +4,16 @@ import { Border, Color, FontFamily, FontSize } from '../GlobalStyles';
 const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-    outerCircle: {
-        width: (width * 0.3744),
+    imageOutline: {
+        position: 'absolute',
+        width: (width * 0.375),
         height: (height * 0.173),
+        borderWidth: 10,
+        borderColor: Color.colorLightskyblue,
+        borderRadius: Border.br_12xl,
     },
     plusSign: {
-        marginTop: height * -0.105,
+        marginTop: height * 0.05,
         marginLeft: width * 0.1425
     },
     rotate90: {
@@ -27,8 +31,18 @@ const styles = StyleSheet.create({
         width: (width * 0.0846),
         position: "absolute",
     },
-    imageContainer: {
-        top: height * -0.173,
+    addImageText: {
+        fontFamily: FontFamily.jsMathCmbx10,
+        color: Color.colorCornflowerblue,
+        fontWeight: 'bold',
+        top: height * 0.05,
+        left: width * -0.055,
+    },
+    image: {
+        width: width * 0.325,
+        height: height * 0.15,
+        top: height * 0.012,
+        left: width * 0.025
     },
 });
 
