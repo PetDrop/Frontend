@@ -74,12 +74,14 @@ const Reminders = ({ navigation, route }: Props) => {
 
         {/* Page Title */}
         <Text style={styles.pageTitle}>Reminders</Text>
-        <PetSwitch
-          data={account.pets}
-          selectedItemId={selectedPetId}
-          onSwitch={setSelectedPetId}
-          switchItem="Pet"
-        />
+        <View style={styles.petSwitchContainer}>
+          <PetSwitch
+            data={account.pets}
+            selectedItemId={selectedPetId}
+            onSwitch={setSelectedPetId}
+            switchItem="Pet"
+          />
+        </View>
 
         {/* Reminder Cards */}
         {reminderCards}
