@@ -33,11 +33,13 @@ type ProfileType = {
 };
 
 const Profile = ({ navigation, route }: ProfileType) => {
+  const account: Account = route.params.account;
+
   const [image, setImage] = useState('');
-  const [address, setAddress] = useState('');
-  const [phone, setPhone] = useState('');
-  const [numEmergencyContacts, setNumEmergencyContacts] = useState(1);
-  const [emergencyContacts, setEmergencyContacts] = useReducer(updateEmergencyContacts, ['']);
+  const [address, setAddress] = useState(account.address);
+  const [phone, setPhone] = useState(account.phone);
+  const [numEmergencyContacts, setNumEmergencyContacts] = useState(Math.max(account.emergencyContacts.length, 1));
+  const [emergencyContacts, setEmergencyContacts] = useReducer(updateEmergencyContacts, account.emergencyContacts);
 
   /* handles submit button being pressed
     checks to make sure required fields have values
@@ -62,18 +64,17 @@ const Profile = ({ navigation, route }: ProfileType) => {
   * that is then written to the db
   */
   const WriteToDB = async (contacts: string[]) => {
-    const oldAccount = route.params.account;
     // create updated account object with new info, to be put in the db
     const updatedAccount: Account = {
-      id: oldAccount.id,
-      username: oldAccount.username,
-      email: oldAccount.email,
-      password: oldAccount.password,
+      id: account.id,
+      username: account.username,
+      email: account.email,
+      password: account.password,
       phone: phone,
       address: address,
       emergencyContacts: contacts,
-      pets: [],
-      reminders: []
+      pets: account.pets,
+      reminders: account.reminders
     };
     // then update the account in the db with the new info
     try {
@@ -128,11 +129,11 @@ const Profile = ({ navigation, route }: ProfileType) => {
         {/* profile title */}
         <Text style={styles.title}>Profile</Text>
 
-        {/* cirlce with plus sign for adding profile picture */}
+        {/* profile picture */}
         <AddImage onPressFunction={addImage} containerStyle={styles.addPictureContainer} uri={image}/>
 
-        {/* user's name */}
-        <Text style={styles.nameHeading}>Name</Text>
+        {/* user's username */}
+        <Text style={styles.nameHeading}>{route.params.account.username}</Text>
 
         {/* text inputs */}
         <TextInput
