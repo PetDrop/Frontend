@@ -65,11 +65,11 @@ export const styles = StyleSheet.create({
     },
 
     // submit button
-    submitButtonContainer: {
+    saveChangesButtonContainer: {
         marginLeft: width * 0.6,
         marginTop: height * 0.04,
     },
-    submitButton: {
+    saveChangesButton: {
         borderRadius: Border.br_17,
         height: height * 0.05,
         width: width * 0.275,

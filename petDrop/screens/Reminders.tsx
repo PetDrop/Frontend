@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import * as React from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
-import AddReminderButton from "../components/AddButton";
+import AddReminderButton from "../components/CustomButton";
 import ReminderCard from "../components/Reminders/ReminderCard";
 import TopBottomBar from "../components/TopBottomBar";
 import { logoImage, ScreenEnum } from "../GlobalStyles";
@@ -92,6 +92,7 @@ const Reminders = ({ navigation, route }: Props) => {
               reminder.pet = selectedPet ? selectedPet : emptyPet;
               setPopupShowing(reminder);
             }}
+            innerText={'+ ADD'}
           />
         </View>
       </ScrollView>

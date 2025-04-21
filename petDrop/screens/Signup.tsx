@@ -60,7 +60,7 @@ const Signup = (props: SignupType) => {
                 password: password,
                 phone: '',
                 address: '',
-                emergencyContacts: [],
+                sharedUsers: [],
                 pets: [],
                 reminders: []
             }));

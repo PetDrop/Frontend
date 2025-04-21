@@ -4,14 +4,14 @@ import { Color } from "../GlobalStyles";
 import { styles } from '../styles/ProfilePage.styles';
 import Header from "../components/Home/Header";
 import AddImage from "../components/AddImage";
-import AddButton from "../components/AddButton";
-import SubmitButton from '../components/SubmitButton';
+import AddButton from "../components/CustomButton";
+import SaveChangesButton from '../components/CustomButton';
 import { GET_ACCOUNT_BY_EMAIL, httpRequest, UPDATE_ACCOUNT } from "../data/endpoints";
 import { Account } from "../data/dataTypes";
 import { useReducer, useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
 
-function updateEmergencyContacts(state: string[], action: { index: number, text: string }) {
+function updateSharedUsers(state: string[], action: { index: number, text: string }) {
   let newState;
   /* new inputs have been added */
   if (state.length < action.index + 1) {
@@ -36,23 +36,20 @@ const Profile = ({ navigation, route }: ProfileType) => {
   const account: Account = route.params.account;
 
   const [image, setImage] = useState('');
-  const [address, setAddress] = useState(account.address);
-  const [phone, setPhone] = useState(account.phone);
-  const [numEmergencyContacts, setNumEmergencyContacts] = useState(Math.max(account.emergencyContacts.length, 1));
-  const [emergencyContacts, setEmergencyContacts] = useReducer(updateEmergencyContacts, account.emergencyContacts);
+  const [username, setUsername] = useState(account.username);
+  const [email, setEmail] = useState(account.email);
+  const [password, setPassword] = useState(account.password);
+  const [numSharedUsers, setNumSharedUsers] = useState(Math.max(account.sharedUsers.length, 1));
+  const [sharedUsers, setSharedUsers] = useReducer(updateSharedUsers, account.sharedUsers);
 
   /* handles submit button being pressed
     checks to make sure required fields have values
-    and removes empty values from emergencyContacts - 
+    and removes empty values from sharedUsers - 
     passes the result into call to write to db
   */
-  const Submit = () => {
-    if (address === '' || phone === '') {
-      alert('Must enter address and phone number');
-      return;
-    }
+  const UpdateAccount = () => {
     let contacts: string[] = [];
-    emergencyContacts.forEach(contact => {
+    sharedUsers.forEach(contact => {
       if (contact !== '') {
         contacts.push(contact);
       }
@@ -67,12 +64,10 @@ const Profile = ({ navigation, route }: ProfileType) => {
     // create updated account object with new info, to be put in the db
     const updatedAccount: Account = {
       id: account.id,
-      username: account.username,
-      email: account.email,
-      password: account.password,
-      phone: phone,
-      address: address,
-      emergencyContacts: contacts,
+      username: username,
+      email: email,
+      password: password,
+      sharedUsers: contacts,
       pets: account.pets,
       reminders: account.reminders
     };
@@ -91,18 +86,18 @@ const Profile = ({ navigation, route }: ProfileType) => {
     }
   }
 
-  /* list of emergency contact text inputs */
-  let emergencyContactInputs = Array<React.JSX.Element>(numEmergencyContacts);
-  for (let i: number = 0; i < numEmergencyContacts; i++) {
-    emergencyContactInputs[i] =
+  /* list of shared user text inputs */
+  let sharedUserInputs = Array<React.JSX.Element>(numSharedUsers);
+  for (let i: number = 0; i < numSharedUsers; i++) {
+    sharedUserInputs[i] =
       <TextInput
-        key={`emergencyContact${i + 1}`}
+        key={`sharedUser${i + 1}`}
         style={[styles.textInput]}
-        placeholder="ENTER EMERGENCY CONTACT"
+        placeholder="ENTER SHARED USER"
         placeholderTextColor={Color.colorCornflowerblue}
-        value={emergencyContacts[i]}
+        value={sharedUsers[i]}
         onChangeText={(text) => {
-          setEmergencyContacts({ index: i, text });
+          setSharedUsers({ index: i, text });
         }}
       />
   }
@@ -138,30 +133,31 @@ const Profile = ({ navigation, route }: ProfileType) => {
         {/* text inputs */}
         <TextInput
           style={[styles.textInput]}
-          placeholder="ENTER ADDRESS"
-          placeholderTextColor={Color.colorCornflowerblue}
-          value={address}
-          onChangeText={setAddress}
+          value={username}
+          onChangeText={setUsername}
         />
         <TextInput
           style={[styles.textInput]}
-          placeholder="ENTER PHONE"
-          placeholderTextColor={Color.colorCornflowerblue}
-          value={phone}
-          onChangeText={setPhone}
+          value={email}
+          onChangeText={setEmail}
+        />
+        <TextInput
+          style={[styles.textInput]}
+          value={password}
+          onChangeText={setPassword}
         />
 
-        {/* emergency contacts */}
-        {emergencyContactInputs}
+        {/* shared users */}
+        {sharedUserInputs}
 
-        {/* add emergency contact button */}
+        {/* add shared user button */}
         <View style={styles.addButtonContainer}>
-          <AddButton onPressFunction={() => { setNumEmergencyContacts(numEmergencyContacts + 1) }} />
+          <AddButton onPressFunction={() => { setNumSharedUsers(numSharedUsers + 1) }} innerText={'+ ADD'}/>
         </View>
 
-        {/* submit button */}
-        <View style={styles.submitButtonContainer}>
-          <SubmitButton onPressFunction={Submit} />
+        {/* save changes button */}
+        <View style={styles.saveChangesButtonContainer}>
+          <SaveChangesButton onPressFunction={UpdateAccount} innerText={'Save Changes'} />
         </View>
 
       </ScrollView>
