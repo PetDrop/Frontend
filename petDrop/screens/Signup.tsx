@@ -58,8 +58,6 @@ const Signup = (props: SignupType) => {
                 username: username,
                 email: email,
                 password: password,
-                phone: '',
-                address: '',
                 sharedUsers: [],
                 pets: [],
                 reminders: []
