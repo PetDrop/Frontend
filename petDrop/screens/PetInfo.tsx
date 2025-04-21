@@ -8,7 +8,7 @@ import { ScreenEnum, logoImage } from "../GlobalStyles";
 import { NavigationProp } from "@react-navigation/native";
 import { Account, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
 import { useState } from "react";
-import MedicationPopup from "../components/MedicationPopup";
+import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
 import { ADD_MEDICATION, ADD_REMINDER, httpRequest, UPDATE_ACCOUNT, UPDATE_PET } from "../data/endpoints";
 
 interface Props {

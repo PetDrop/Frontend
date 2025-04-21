@@ -8,7 +8,7 @@ import styles from '../styles/Medications.styles';
 import { ScreenEnum, logoImage } from '../GlobalStyles';
 import { Image } from 'expo-image';
 import AddMedicationButton from '../components/AddButton';
-import MedicationPopup from '../components/MedicationPopup';
+import MedicationPopup from '../components/MedicationPopup/MedicationPopup';
 import { Account, Medication, Pet, Reminder } from '../data/dataTypes';
 import { httpRequest, ADD_MEDICATION, UPDATE_PET, ADD_REMINDER, UPDATE_ACCOUNT } from '../data/endpoints';
 

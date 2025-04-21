@@ -1,15 +1,15 @@
 import * as React from "react";
 import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingView } from "react-native";
 import { Image } from "expo-image";
-import DropdownArrow from "../assets/dropdown_arrow.svg";
-import styles from '../styles/MedicationPopup.styles';
-import { emptyMed, emptyPet, Pet, Reminder } from "../data/dataTypes";
+import DropdownArrow from "../../assets/dropdown_arrow.svg";
+import styles from '../../styles/MedicationPopup.styles';
+import { emptyMed, emptyPet, Pet, Reminder } from "../../data/dataTypes";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useState } from "react";
-import { Color } from "../GlobalStyles";
+import { Color } from "../../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
 import DateCard from "./DateCard";
-import ReminderPopup from "./ReminderPopup";
+import ReminderPopup from "../ReminderPopup";
 
 type MedicationPopupType = {
   isActive: boolean;
@@ -23,7 +23,7 @@ type MedicationPopupType = {
 const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder, pet, pets }: MedicationPopupType) => {
   const [popupShowing, setPopupShowing] = useState<Reminder>();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [dates, setDates] = useState(new Map<string, boolean>());
+  const [dateMap, setDateMap] = useState(new Map<Date, number>());
   const [description, setDescription] = useState('');
   const [medName, setMedName] = useState('');
   const [color, setColor] = useState(Math.round(Math.random() * 899998 + 100000));
@@ -31,32 +31,43 @@ const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder
 const ObjectID = require('bson-objectid');
 const id = ObjectID();
 
+// # of milliseconds in a week used when adding recurring dates
+const MS_IN_WEEK: number = 604800000;
+
 // function for updating dates state
-function updateDates(date: string, recurring: boolean) {
-  if (date === 'clear') {
-    setDates(new Map<string, boolean>());
+function updateDates(date: Date | undefined, recurring: number) {
+  if (date === undefined) {
+    setDateMap(new Map<Date, number>());
   } else {
-    setDates((prevState) => new Map(prevState.set(date, recurring)));
+    setDateMap((prevState) => new Map(prevState.set(date, recurring)));
   }
 }
 
 const close = () => {
   showingFunction(false);
   setDescription('');
-  updateDates('clear', false);
+  updateDates(undefined, 0); // undefined clears the map
 }
 
 const saveMedication = async () => {
-  // random color for creating med - will be removed eventually
+  // create list of dates from dateMap
+  const dates: string[] = [];
+  dateMap.forEach((occurances: number, date: Date) => {
+    let writableDate: Date = date; // make copy of the read-only value
+    for (let i = 0; i < occurances; i++) {
+      dates.push(writableDate.toDateString());
+      writableDate.setTime(writableDate.getTime() + MS_IN_WEEK);
+    }
+  })
   // add medication to the list that will be created when the pet is submitted
-  setMedication({ id: id, name: medName, color: `#${color}`, description: description, dates: Array.from(dates.keys()), range: 4 });
+  setMedication({ id: id, name: medName, color: `#${color}`, description: description, dates: dates, range: 4 });
   close();
 };
 
 const dateCards: Array<React.JSX.Element> = [];
-Array.from(dates.keys()).forEach((date: string, index: number) => {
+Array.from(dateMap.keys()).forEach((date: Date, index: number) => {
   dateCards.push(
-    <DateCard date={date} key={index} />
+    <DateCard date={date} updateDates={updateDates} key={index} />
   )
 })
 
@@ -104,7 +115,7 @@ if (isActive) {
             <Image
               style={styles.closePopup}
               contentFit="cover"
-              source={require("../assets/remove_x_white.png")}
+              source={require("../../assets/remove_x_white.png")}
             />
           </Pressable>
 
@@ -122,8 +133,8 @@ if (isActive) {
             isVisible={isDatePickerVisible}
             mode="date"
             onConfirm={(date) => {
-              if (!Array.from(dates.keys()).includes(date.toDateString())) {
-                updateDates(date.toDateString(), false);
+              if (!Array.from(dateMap.keys()).includes(date)) {
+                updateDates(date, 0);
               }
               setDatePickerVisibility(false);
             }}
