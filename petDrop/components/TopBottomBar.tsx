@@ -102,9 +102,9 @@ const TopBottomBar = ({ navigation, currentScreen, account }: TopBottomBarProps)
 						height={height * 0.03}
 					/>
 				}
-				label="SHARE"
+				label="PROFILE"
 				isActive={false}
-				onPress={() => console.log('Share Pressed')}
+				onPress={() => navigation.navigate('Profile', {account: account})}
 			/>
 		</View>
     </>

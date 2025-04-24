@@ -8,7 +8,7 @@ import styles from '../styles/PetInfo1.styles';
 import { Account, Pet } from "../data/dataTypes";
 import { useState } from "react";
 import AddPetImage from "../components/AddImage";
-import SubmitButton from "../components/SubmitButton";
+import SubmitButton from "../components/CustomButton";
 import { ADD_PET, httpRequest, UPDATE_ACCOUNT } from "../data/endpoints";
 import * as ImagePicker from 'expo-image-picker';
 
@@ -105,7 +105,7 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
 
         {/* submit button */}
         <View style={styles.submitButtonContainer}>
-          <SubmitButton onPressFunction={Submit} />
+          <SubmitButton onPressFunction={Submit} innerText={'Submit'}/>
         </View>
 
       </ScrollView>
