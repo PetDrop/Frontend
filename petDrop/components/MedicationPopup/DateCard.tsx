@@ -9,7 +9,7 @@ type DateCardType = {
 }
 
 const DateCard = ({ date, updateDates }: DateCardType) => {
-    const [occurrances, setOccurrances] = useState(0);
+    const [occurrances, setOccurrances] = useState(1);
     return (
         <View style={styles.container}>
             <View style={styles.dateCard}>
@@ -23,7 +23,7 @@ const DateCard = ({ date, updateDates }: DateCardType) => {
                 value={`${occurrances === 0 ? '' : occurrances}`}
                 onChangeText={(e) => {
                     let num: number = Number.parseInt(e);
-                    num = isNaN(num) ? 0 : num;
+                    num = isNaN(num) ? 1 : num;
                     setOccurrances(num);
                     updateDates(date, num);
                 }}
