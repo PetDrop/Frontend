@@ -6,10 +6,9 @@ import AddNewPetButton from "../components/Pets/AddNewPetButton";
 import styles from "../styles/Pets.styles";
 import { ScreenEnum, logoImage } from "../GlobalStyles";
 import { NavigationProp } from "@react-navigation/native";
-import { Account, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
+import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
 import { useState } from "react";
 import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
-import { ADD_MEDICATION, ADD_REMINDER, httpRequest, UPDATE_ACCOUNT, UPDATE_PET } from "../data/endpoints";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -17,52 +16,8 @@ interface Props {
 }
 
 const PetInfo = ({ navigation, route }: Props) => {
-  const [popupShowing, setPopupShowing] = useState(false);
-  const [petBeingEdited, setPetBeingEdited] = useState<Pet>(); // the pet the user is adding a medication to
-  const [med, setMed] = useState<Medication>();
-  const [rem, setRem] = useState<Reminder>();
-
-  const WriteToDB = async () => {
-    // write med to db
-    let response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify(med));
-    let medication: Medication;
-    if (response.ok) {
-      console.log('med created');
-      medication = await response.json();
-      // update pet with new med in db
-      petBeingEdited?.medications.push(medication);
-      response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(petBeingEdited));
-      if (response.ok) {
-        console.log('med added to pet');
-      }
-      // write rem to db if user decided to make one
-      if (rem !== undefined) {
-        let reminder: Reminder = rem;
-        reminder.medication = medication;
-        response = await httpRequest(ADD_REMINDER, 'POST', JSON.stringify(reminder));
-        if (response.ok) {
-          console.log('rem created');
-        }
-        // add rem to account
-        reminder = await response.json();
-        account.reminders.push(reminder);
-        response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
-        if (response.ok) {
-          console.log('rem added to account');
-          alert('Medication and reminder submitted successfully');
-        }
-      }
-      else {
-        alert('Medication submitted successfully');
-      }
-    }
-    setMed(undefined);
-    setRem(undefined);
-  }
-
-  if (med !== undefined) {
-    WriteToDB();
-  }
+  const [popupShowing, setPopupShowing] = useState<Medication>();
+  const [petBeingEdited, setPetBeingEdited] = useState<Pet>(emptyPet); // the pet the user is adding a medication to
 
   // store the user's account info to avoid typing "route.params.account" repeatedly
   const account: Account = route.params.account;
@@ -75,7 +30,7 @@ const PetInfo = ({ navigation, route }: Props) => {
         {account.pets.map((pet: Pet) => (
           <View key={pet.id}>
             <PetCard key={pet.id} pet={pet} onPressFunction={() => {
-              setPopupShowing(true);
+              setPopupShowing(emptyMed);
               setPetBeingEdited(pet);
             }} />
           </View>
@@ -83,7 +38,7 @@ const PetInfo = ({ navigation, route }: Props) => {
         <AddNewPetButton navigation={navigation} account={account} />
       </ScrollView>
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo} account={account} />
-      <MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} setMedication={setMed} setReminder={setRem} pet={petBeingEdited} pets={account.pets} />
+      <MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={petBeingEdited} />
     </View>
   );
 };

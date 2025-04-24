@@ -22,49 +22,16 @@ interface Props {
 const Reminders = ({ navigation, route }: Props) => {
   const [selectedPetId, setSelectedPetId] = useState('');
   const [popupShowing, setPopupShowing] = useState<Reminder>();
-  const [rem, setRem] = useState<Reminder>();
 
   // store the user's account info to avoid typing "route.params.account" repeatedly
   const account: Account = route.params.account;
-
-  const WriteToDB = async () => {
-    // write rem to db
-    let response = await httpRequest(ADD_REMINDER, 'POST', JSON.stringify(rem));
-    if (response.ok) {
-      console.log('rem created');
-      // add rem to account and update it in the db
-      const reminder = await response.json();
-      account.reminders.push(reminder);
-      response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
-      if (response.ok) {
-        console.log('rem added to account');
-        alert('Reminder submitted successfully');
-      }
-    }
-    setRem(undefined);
-  }
-
-  if (rem !== undefined) {
-    WriteToDB();
-  }
 
   useEffect(() => {
     setSelectedPetId(account.pets[0].id);
   }, []);
 
-  // create reminderCards here to avoid errors with undefined values if user has no pets and/or reminders
-  let reminderCards: React.JSX.Element[] = [];
   let selectedPet: Pet | undefined = account.pets.find((pet) => pet.id === selectedPetId);
-  let selectedReminders: Reminder[] = account.reminders.filter((reminder) => reminder.pet.id === selectedPetId);
-
-  if (selectedPet !== undefined) { // should always be true once the user registers a pet
-    reminderCards = selectedReminders.map((reminder: Reminder, index: any) => (
-      <ReminderCard
-        key={index}
-        reminder={reminder}
-      />
-    ))
-  }
+  selectedPet = selectedPet ? selectedPet : emptyPet; // if no selected pet, use emptypet to avoid undefined errors
 
   return (
     <View style={styles.container}>
@@ -82,15 +49,21 @@ const Reminders = ({ navigation, route }: Props) => {
         />
 
         {/* Reminder Cards */}
-        {reminderCards}
+        {selectedPet.medications.map((med: Medication, index: any) =>
+          med.reminder.id !== '' ?
+            <ReminderCard
+              key={index}
+              med={med}
+            />
+            :
+            <View></View>
+        )}
 
         {/* Add Reminder Button */}
         <View style={styles.addReminderButton}>
           <AddReminderButton
             onPressFunction={() => {
-              let reminder = emptyReminder;
-              reminder.pet = selectedPet ? selectedPet : emptyPet;
-              setPopupShowing(reminder);
+              setPopupShowing(emptyReminder);
             }}
             innerText={'+ ADD'}
           />
@@ -101,7 +74,7 @@ const Reminders = ({ navigation, route }: Props) => {
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} account={account} />
 
       {/* popup for adding reminder */}
-      <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} setReminder={setRem} pets={account.pets} />
+      <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={selectedPet} />
     </View>
   );
 };

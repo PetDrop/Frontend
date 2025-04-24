@@ -9,7 +9,7 @@ import TopBottomBar from "../components/TopBottomBar";
 import { ScreenEnum } from "../GlobalStyles";
 import { styles } from "../styles/Home.styles";
 import ReminderPopup from "../components/ReminderPopup";
-import { Account, emptyReminder, Reminder } from "../data/dataTypes";
+import { Account, emptyPet, emptyReminder, Reminder } from "../data/dataTypes";
 import { useState } from "react";
 
 const { width, height } = Dimensions.get("window");
@@ -53,7 +53,7 @@ const Home = ({ navigation, route }: HomeProps) => {
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} account={account} />
 
       {/* Pop-up to view a reminder */}
-      <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} pets={account.pets} setReminder={() => {}}/>
+      <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={emptyPet} />
     </View>
   );
 };

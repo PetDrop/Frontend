@@ -3,24 +3,22 @@ import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingV
 import { Image } from "expo-image";
 import DropdownArrow from "../../assets/dropdown_arrow.svg";
 import styles from '../../styles/MedicationPopup.styles';
-import { emptyMed, emptyPet, Pet, Reminder } from "../../data/dataTypes";
+import { emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../../data/dataTypes";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useState } from "react";
 import { Color } from "../../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
 import DateCard from "./DateCard";
 import ReminderPopup from "../ReminderPopup";
+import { ADD_MEDICATION, httpRequest, UPDATE_MEDICATION } from "../../data/endpoints";
 
 type MedicationPopupType = {
-  isActive: boolean;
+  isActive: Medication | undefined;
   showingFunction: Function;
-  setMedication: Function;
-  setReminder: Function;
-  pet: Pet | undefined;
-  pets: Pet[];
+  pet: Pet;
 };
 
-const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder, pet, pets }: MedicationPopupType) => {
+const MedicationPopup = ({ isActive, showingFunction, pet }: MedicationPopupType) => {
   const [popupShowing, setPopupShowing] = useState<Reminder>();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [dateMap, setDateMap] = useState(new Map<Date, number>());
@@ -49,7 +47,7 @@ const close = () => {
   updateDates(undefined, 0); // undefined clears the map
 }
 
-const saveMedication = async () => {
+const saveMedication = async (method: 'POST' | 'PUT') => {
   // create list of dates from dateMap
   const dates: string[] = [];
   dateMap.forEach((occurances: number, date: Date) => {
@@ -58,10 +56,20 @@ const saveMedication = async () => {
       dates.push(writableDate.toDateString());
       writableDate.setTime(writableDate.getTime() + MS_IN_WEEK);
     }
-  })
-  // add medication to the list that will be created when the pet is submitted
-  setMedication({ id: id, name: medName, color: `#${color}`, description: description, dates: dates, range: 4 });
-  close();
+  });
+  // set the url based on fetch method
+  const url: string = method === 'POST' ? ADD_MEDICATION : UPDATE_MEDICATION;
+  // create new med object
+  const newMed: Medication = { id: id, name: medName, color: `#${color}`, description: description, dates: dates, reminder: emptyReminder, range: 4 };
+  // make request based on previous parameters
+  const response = await httpRequest(url, method, JSON.stringify(newMed));
+  if (response.ok) {
+    close();
+    alert('Medication saved');
+  } else {
+    console.log(`http ${method} request failed with error code: ${response.status}`);
+    alert('Failed to save medication');
+  }
 };
 
 const dateCards: Array<React.JSX.Element> = [];
@@ -153,7 +161,7 @@ if (isActive) {
         </ScrollView>
 
         {/* add reminder button */}
-        <Pressable onPress={() => { setPopupShowing({ id: '', medication: emptyMed, pet: pet ? pet : emptyPet, notifications: [] }) }}>
+        <Pressable onPress={() => { setPopupShowing(emptyReminder) }}>
           <View style={styles.reminderButtonOval}>
             <Text style={[styles.reminderButtonText, styles.text]}>ADD REMINDER</Text>
           </View>
@@ -161,7 +169,7 @@ if (isActive) {
 
 
         {/* save button */}
-        <Pressable onPress={saveMedication}>
+        <Pressable onPress={() => {isActive.id === '' ? saveMedication('POST') : saveMedication('PUT')}}>
           <View style={styles.saveButtonOval}>
             <Text style={[styles.saveButtonText, styles.text]}>SAVE</Text>
           </View>
@@ -169,7 +177,7 @@ if (isActive) {
 
       </View>
 
-      <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} pets={pets} setReminder={setReminder} />
+      <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={pet} />
     </KeyboardAvoidingView>
   );
 }

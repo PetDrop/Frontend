@@ -69,7 +69,6 @@ const Profile = ({ navigation, route }: ProfileType) => {
       password: password,
       sharedUsers: contacts,
       pets: account.pets,
-      reminders: account.reminders
     };
     // then update the account in the db with the new info
     try {
