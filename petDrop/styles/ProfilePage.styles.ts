@@ -32,6 +32,7 @@ export const styles = StyleSheet.create({
     // add picture
     addPictureContainer: {
         marginLeft: width * 0.54,
+        marginBottom: height * 0.02,
         width: width * 0.3744,
         height: height * 0.173,
     },
@@ -51,22 +52,28 @@ export const styles = StyleSheet.create({
         borderColor: Color.colorCornflowerblue,
         borderRadius: Border.br_sm,
         width: width * 0.75,
-        marginBottom: height * 0.02,
-        marginTop: height * 0.02,
+        marginBottom: height * 0.03,
         marginLeft: width * 0.1282,
         fontWeight: 700,
         color: Color.colorCornflowerblue,
         paddingLeft: width * 0.0256,
     },
+    inputHeading: {
+        color: Color.colorCornflowerblue,
+        fontFamily: FontFamily.jsMathCmbx10,
+        fontSize: FontSize.size_5xl,
+        marginLeft: width * 0.1282,
+    },
 
     // add button
     addButtonContainer: {
-        marginLeft: width * 0.675,
+        marginLeft: width * 0.625,
+        marginTop: height * -0.02,
     },
 
     // submit button
     saveChangesButtonContainer: {
-        marginLeft: width * 0.6,
+        marginLeft: width * 0.5,
         marginTop: height * 0.04,
     },
     saveChangesButton: {

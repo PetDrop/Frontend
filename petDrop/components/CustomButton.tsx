@@ -11,7 +11,7 @@ type CustomButtonType = {
 
 const CustomButton = ({ onPressFunction, innerText }: CustomButtonType) => {
     return (
-        <Pressable style={[styles.customButton, {width: ((width * 0.1) + innerText.length * (width * 0.035))}]} onPress={onPressFunction}>
+        <Pressable style={[styles.customButton, {width: ((width * 0.1) + innerText.length * (width * 0.03))}]} onPress={onPressFunction}>
             <Text style={styles.customText}>{innerText}</Text>
         </Pressable>
     );

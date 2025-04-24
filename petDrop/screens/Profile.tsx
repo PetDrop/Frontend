@@ -122,25 +122,26 @@ const Profile = ({ navigation, route }: ProfileType) => {
         <Header />
 
         {/* profile title */}
-        <Text style={styles.title}>Profile</Text>
+        <Text style={styles.title}>{`${account.username}'s Profile`}</Text>
 
         {/* profile picture */}
         <AddImage onPressFunction={addImage} containerStyle={styles.addPictureContainer} uri={image}/>
 
-        {/* user's username */}
-        <Text style={styles.nameHeading}>{route.params.account.username}</Text>
 
         {/* text inputs */}
+        <Text style={styles.inputHeading}>Username</Text>
         <TextInput
           style={[styles.textInput]}
           value={username}
           onChangeText={setUsername}
         />
+        <Text style={styles.inputHeading}>Email</Text>
         <TextInput
           style={[styles.textInput]}
           value={email}
           onChangeText={setEmail}
         />
+        <Text style={styles.inputHeading}>Password</Text>
         <TextInput
           style={[styles.textInput]}
           value={password}
@@ -148,6 +149,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
         />
 
         {/* shared users */}
+        <Text style={styles.inputHeading}>Shared Users</Text>
         {sharedUserInputs}
 
         {/* add shared user button */}
