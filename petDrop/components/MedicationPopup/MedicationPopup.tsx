@@ -10,28 +10,40 @@ import { Color } from "../../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
 import DateCard from "./DateCard";
 import ReminderPopup from "../ReminderPopup";
+import { httpRequest, UPDATE_MEDICATION } from "../../data/endpoints";
 
 type MedicationPopupType = {
-  isActive: Medication | undefined;
+  isActive: boolean;
   showingFunction: Function;
   setMedication: Function;
   setReminder: Function;
   pet: Pet;
+  med: Medication;
 };
 
-const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder, pet }: MedicationPopupType) => {
-  const [popupShowing, setPopupShowing] = useState<Reminder>();
+const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder, pet, med }: MedicationPopupType) => {
+  const [popupShowing, setPopupShowing] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [dateMap, setDateMap] = useState(new Map<Date, number>());
-  const [description, setDescription] = useState('');
-  const [medName, setMedName] = useState('');
-  const [color, setColor] = useState(Math.round(Math.random() * 899998 + 100000));
+  const [description, setDescription] = useState(med.description);
+  const [medName, setMedName] = useState(med.name);
+  const [color, setColor] = useState(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
 
   const ObjectID = require('bson-objectid');
-  const id = ObjectID();
+  const id = med.id !== '' ? med.id : ObjectID();
 
   // # of milliseconds in a week used when adding recurring dates
   const MS_IN_WEEK: number = 604800000;
+
+  // create list of dates from dateMap
+  const dates: string[] = [];
+  dateMap.forEach((occurances: number, date: Date) => {
+    let writableDate: Date = new Date(date); // make copy of the value so it doesn't update the dateMap
+    for (let i = 0; i < occurances; i++) {
+      dates.push(writableDate.toDateString());
+      writableDate.setTime(writableDate.getTime() + MS_IN_WEEK);
+    }
+  })
 
   // function for updating dates state
   function updateDates(date: Date | undefined, recurring: number) {
@@ -46,20 +58,15 @@ const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder
     showingFunction(false);
     setDescription('');
     updateDates(undefined, 0); // undefined clears the map
+    setDescription(med.description);
+    setMedName(med.name);
+    setColor(`#${Math.round(Math.random() * 899998 + 100000)}`);
   }
 
   const saveMedication = async () => {
-    // create list of dates from dateMap
-    const dates: string[] = [];
-    dateMap.forEach((occurances: number, date: Date) => {
-      let writableDate: Date = date; // make copy of the read-only value
-      for (let i = 0; i < occurances; i++) {
-        dates.push(writableDate.toDateString());
-        writableDate.setTime(writableDate.getTime() + MS_IN_WEEK);
-      }
-    })
-    // add medication to the list that will be created when the pet is submitted
-    setMedication({ id: id, name: medName, color: `#${color}`, description: description, dates: dates, range: 4 });
+    const newMed: Medication = { id: id, name: medName, color: color, description: description, dates: dates, reminder: med.reminder, range: 4 };
+    // add medication to the list that will be created when the popup is closed
+    setMedication(newMed);
     close();
   };
 
@@ -84,7 +91,7 @@ const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder
 
             {/* TODO: make this pressable to pick a color */}
             {/* color indicator */}
-            <View style={[styles.colorIndicator, { backgroundColor: `#${color}` }]} />
+            <View style={[styles.colorIndicator, { backgroundColor: color }]} />
 
             {/* medication selection */}
             <Selection
@@ -129,6 +136,7 @@ const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder
 
             <Button title="Add Date" onPress={() => { setDatePickerVisibility(true) }} />
             <DateTimePickerModal
+              date={new Date(Date.now())}
               isVisible={isDatePickerVisible}
               mode="date"
               onConfirm={(date) => {
@@ -152,9 +160,9 @@ const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder
           </ScrollView>
 
           {/* add reminder button */}
-          <Pressable onPress={() => { setPopupShowing(emptyReminder) }}>
+          <Pressable onPress={() => { setPopupShowing(true) }}>
             <View style={styles.reminderButtonOval}>
-              <Text style={[styles.reminderButtonText, styles.text]}>ADD REMINDER</Text>
+              <Text style={[styles.reminderButtonText, styles.text]}>{`${med.reminder.id !== '' ? 'VIEW' : 'ADD'} REMINDER`}</Text>
             </View>
           </Pressable>
 
@@ -168,15 +176,21 @@ const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder
 
         </View>
 
-        <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} setReminder={setReminder} pet={pet} med={{
-          id: '',
-          color: '',
-          dates: [],
-          description: '',
-          name: medName === '' ? 'MED BEING ADDED' : medName,
-          range: 0,
-          reminder: emptyReminder
-        }} />
+        <ReminderPopup
+          isActive={popupShowing}
+          showingFunction={setPopupShowing}
+          setRem={setReminder}
+          setMed={() => {}}
+          pet={pet}
+          med={{
+            id: med.id,
+            color: color,
+            dates: dates,
+            description: description,
+            name: medName === '' ? 'MED BEING ADDED' : medName,
+            range: med.range,
+            reminder: med.reminder
+          }} />
       </KeyboardAvoidingView>
     );
   }

@@ -19,7 +19,7 @@ type MedicationsArchiveProps = {
 
 const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	const [selectedPetId, setSelectedPetId] = useState('');
-	const [popupShowing, setPopupShowing] = useState<Medication>();
+	const [popupShowing, setPopupShowing] = useState(false);
 	const [med, setMed] = useState<Medication>();
 	const [rem, setRem] = useState<Reminder>();
 
@@ -27,7 +27,8 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	const account: Account = route.params.account;
 
 	const WriteToDB = async () => {
-		let response, reminder;
+		let response;
+		let reminder = emptyReminder;
 		// write rem to db if user decided to make one
 		if (rem !== undefined) {
 			reminder = rem;
@@ -38,9 +39,9 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				return;
 			}
 		}
-		if (med !== undefined) { // completely redundant but IDE stupid
+		if (med !== undefined) {
 			// write med to db
-			med.reminder = reminder ? reminder : emptyReminder; // completely redundant but IDE stupid again
+			med.reminder = reminder;
 			response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify(med));
 			let medication: Medication;
 			if (response.ok) {
@@ -110,7 +111,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				))}
 
 				<View style={styles.addMedicationButton}>
-					<AddMedicationButton onPressFunction={() => { setPopupShowing(emptyMed) }} innerText={'+ ADD'} />
+					<AddMedicationButton onPressFunction={() => { setPopupShowing(true) }} innerText={'+ ADD'} />
 				</View>
 			</ScrollView>
 			<TopBottomBar
@@ -118,7 +119,14 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				currentScreen={ScreenEnum.MedicationsArchive}
 				account={account}
 			/>
-			<MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} setMedication={setMed} setReminder={setRem} pet={selectedPet} />
+			<MedicationPopup
+				isActive={popupShowing}
+				showingFunction={setPopupShowing}
+				setMedication={setMed}
+				setReminder={setRem}
+				pet={selectedPet}
+				med={emptyMed}
+			/>
 		</View>
 	);
 };

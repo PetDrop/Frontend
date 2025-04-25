@@ -12,7 +12,7 @@ import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder }
 import { useEffect, useState } from "react";
 import ReminderPopup from "../components/ReminderPopup";
 import PetSwitch from '../components/ItemSwitch';
-import { httpRequest, ADD_REMINDER, UPDATE_ACCOUNT } from "../data/endpoints";
+import { httpRequest, ADD_REMINDER, UPDATE_ACCOUNT, UPDATE_MEDICATION } from "../data/endpoints";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -21,8 +21,9 @@ interface Props {
 
 const Reminders = ({ navigation, route }: Props) => {
   const [selectedPetId, setSelectedPetId] = useState('');
-  const [popupShowing, setPopupShowing] = useState<Reminder>();
+  const [popupShowing, setPopupShowing] = useState(false);
   const [rem, setRem] = useState<Reminder>();
+  const [med, setMed] = useState<Medication>();
 
   // store the user's account info to avoid typing "route.params.account" repeatedly
   const account: Account = route.params.account;
@@ -31,9 +32,22 @@ const Reminders = ({ navigation, route }: Props) => {
     // write rem to db
     let response = await httpRequest(ADD_REMINDER, 'POST', JSON.stringify(rem));
     if (response.ok) {
-      console.log('rem created');
+      if (med !== undefined) {
+        med.reminder = await response.json();
+        response = await httpRequest(UPDATE_MEDICATION, 'PUT', JSON.stringify(med));
+        if (response.ok) {
+          alert('Reminder created successfully');
+        } else {
+          console.log(`http PUT request failed with error code: ${response.status}`);
+        }
+      } else {
+        alert('A medication must be selected to add the reminder to. If none exist')
+      }
+    } else {
+      console.log(`http POST request failed with error code: ${response.status}`);
     }
     setRem(undefined);
+    setMed(undefined);
   }
 
   if (rem !== undefined) {
@@ -69,7 +83,7 @@ const Reminders = ({ navigation, route }: Props) => {
         {selectedPet.medications.map((med: Medication, index: number) =>
           med.reminder.id !== '' ?
             <ReminderCard
-              key={index * 2}
+              key={index}
               med={med}
             />
             :
@@ -80,7 +94,7 @@ const Reminders = ({ navigation, route }: Props) => {
         <View style={styles.addReminderButton}>
           <AddReminderButton
             onPressFunction={() => {
-              setPopupShowing(emptyReminder);
+              setPopupShowing(true);
             }}
             innerText={'+ ADD'}
           />
@@ -91,7 +105,14 @@ const Reminders = ({ navigation, route }: Props) => {
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} account={account} />
 
       {/* popup for adding reminder */}
-      <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} setReminder={setRem} pet={selectedPet} med={emptyMed} />
+      <ReminderPopup
+        isActive={popupShowing}
+        showingFunction={setPopupShowing}
+        setRem={setRem}
+        setMed={setMed}
+        pet={selectedPet}
+        med={emptyMed}
+      />
     </View>
   );
 };

@@ -9,7 +9,7 @@ import TopBottomBar from "../components/TopBottomBar";
 import { ScreenEnum } from "../GlobalStyles";
 import { styles } from "../styles/Home.styles";
 import ReminderPopup from "../components/ReminderPopup";
-import { Account, emptyPet, emptyReminder, Reminder } from "../data/dataTypes";
+import { Account, emptyMed, emptyPet, emptyReminder, Reminder } from "../data/dataTypes";
 import { useState } from "react";
 
 const { width, height } = Dimensions.get("window");
@@ -20,7 +20,7 @@ type HomeProps = {
 };
 
 const Home = ({ navigation, route }: HomeProps) => {
-  const [popupShowing, setPopupShowing] = useState<Reminder>();
+  const [popupShowing, setPopupShowing] = useState(false);
 
   // store the user's account info to avoid typing "route.params.account" repeatedly
   let account: Account = route.params.account;
@@ -39,7 +39,7 @@ const Home = ({ navigation, route }: HomeProps) => {
           <Text style={styles.monthText}>September.</Text>
           <EditIcon style={styles.editIcon} width={width * 0.07} height={height * 0.1} />
           <View style={styles.calendarBody}>
-            <Pressable onPress={() => { let rem = emptyReminder; rem.id = '1'; setPopupShowing(rem) }}>{/* fix this utter nonsense*/}
+            <Pressable onPress={() => { let rem = emptyReminder; rem.id = '1'; setPopupShowing(true) }}>{/* fix this utter nonsense*/}
               <Calendar pets={account.pets} />
             </Pressable>
           </View>
@@ -53,7 +53,7 @@ const Home = ({ navigation, route }: HomeProps) => {
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} account={account} />
 
       {/* Pop-up to view a reminder */}
-      <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={emptyPet} />
+      <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} setRem={() => {}} setMed={() => {}} pet={emptyPet} med={emptyMed}/>
     </View>
   );
 };

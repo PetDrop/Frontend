@@ -17,13 +17,14 @@ interface Props {
 }
 
 const PetInfo = ({ navigation, route }: Props) => {
-  const [popupShowing, setPopupShowing] = useState<Medication>();
+  const [popupShowing, setPopupShowing] = useState(false);
   const [petBeingEdited, setPetBeingEdited] = useState<Pet>(emptyPet); // the pet the user is adding a medication to
   const [med, setMed] = useState<Medication>();
   const [rem, setRem] = useState<Reminder>();
 
   const WriteToDB = async () => {
-    let response, reminder;
+    let response;
+    let reminder = emptyReminder;
     // write rem to db if user decided to make one
     if (rem !== undefined) {
       reminder = rem;
@@ -36,7 +37,7 @@ const PetInfo = ({ navigation, route }: Props) => {
     }
     if (med !== undefined) { // completely redundant but IDE stupid
       // write med to db
-      med.reminder = reminder ? reminder : med.reminder;
+      med.reminder = reminder;
       response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify(med));
       let medication: Medication;
       if (response.ok) {
@@ -76,14 +77,21 @@ const PetInfo = ({ navigation, route }: Props) => {
           <View key={pet.id}>
             <PetCard key={pet.id} pet={pet} onPressFunction={() => {
               setPetBeingEdited(pet);
-              setPopupShowing(emptyMed);
+              setPopupShowing(true);
             }} />
           </View>
         ))}
         <AddNewPetButton navigation={navigation} account={account} />
       </ScrollView>
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo} account={account} />
-      <MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} setMedication={setMed} setReminder={setRem} pet={petBeingEdited} />
+      <MedicationPopup
+        isActive={popupShowing}
+        showingFunction={setPopupShowing}
+        setMedication={setMed}
+        setReminder={setRem}
+        pet={petBeingEdited}
+        med={emptyMed}
+      />
     </View>
   );
 };
