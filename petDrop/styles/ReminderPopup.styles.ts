@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
         color: Color.colorFloralwhite,
         textAlign: "left",
         fontFamily: FontFamily.koulenRegular,
+        width : width * 0.4
       },
       closePopup: {
         top: height * 0.014,

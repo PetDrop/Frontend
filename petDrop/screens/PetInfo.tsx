@@ -9,6 +9,7 @@ import { NavigationProp } from "@react-navigation/native";
 import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
 import { useState } from "react";
 import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
+import { ADD_MEDICATION, ADD_REMINDER, httpRequest, UPDATE_ACCOUNT, UPDATE_PET } from "../data/endpoints";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -18,6 +19,50 @@ interface Props {
 const PetInfo = ({ navigation, route }: Props) => {
   const [popupShowing, setPopupShowing] = useState<Medication>();
   const [petBeingEdited, setPetBeingEdited] = useState<Pet>(emptyPet); // the pet the user is adding a medication to
+  const [med, setMed] = useState<Medication>();
+  const [rem, setRem] = useState<Reminder>();
+
+  const WriteToDB = async () => {
+    let response, reminder;
+    // write rem to db if user decided to make one
+    if (rem !== undefined) {
+      reminder = rem;
+      response = await httpRequest(ADD_REMINDER, 'POST', JSON.stringify(reminder));
+      if (!response.ok) {
+        console.log(`http POST request failed with error code: ${response.status}`);
+        alert('Failed to create reminder - medication save aborted');
+        return;
+      }
+    }
+    if (med !== undefined) { // completely redundant but IDE stupid
+      // write med to db
+      med.reminder = reminder ? reminder : med.reminder;
+      response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify(med));
+      let medication: Medication;
+      if (response.ok) {
+        medication = await response.json();
+        // update pet with new med in db
+        petBeingEdited.medications.push(medication);
+        response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(petBeingEdited));
+        if (response.ok) {
+          alert('Medication submitted successfully');
+        }
+        else {
+          console.log(`http PUT request failed with error code: ${response.status}`);
+          alert('Medication failed to save');
+        }
+      } else {
+        console.log(`http POST request failed with error code: ${response.status}`);
+        alert('Failed to create medication');
+      }
+    }
+    setMed(undefined);
+    setRem(undefined);
+  }
+
+  if (med !== undefined) {
+    WriteToDB();
+  }
 
   // store the user's account info to avoid typing "route.params.account" repeatedly
   const account: Account = route.params.account;
@@ -30,15 +75,15 @@ const PetInfo = ({ navigation, route }: Props) => {
         {account.pets.map((pet: Pet) => (
           <View key={pet.id}>
             <PetCard key={pet.id} pet={pet} onPressFunction={() => {
-              setPopupShowing(emptyMed);
               setPetBeingEdited(pet);
+              setPopupShowing(emptyMed);
             }} />
           </View>
         ))}
         <AddNewPetButton navigation={navigation} account={account} />
       </ScrollView>
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo} account={account} />
-      <MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={petBeingEdited} />
+      <MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} setMedication={setMed} setReminder={setRem} pet={petBeingEdited} />
     </View>
   );
 };

@@ -6,12 +6,13 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useReducer, useState } from "react";
 import { emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
 import Selection from './ItemSwitch';
-import { ADD_REMINDER, httpRequest, UPDATE_REMINDER } from "../data/endpoints";
 
 type ReminderPopupType = {
   isActive: Reminder | undefined; // use reminder as a boolean to require one less prop
-  pet: Pet;
   showingFunction: Function;
+  setReminder: Function;
+  pet: Pet;
+  med: Medication;
 };
 
 const updateNotifications = (state: string[], action: { notif: string }) => {
@@ -21,40 +22,33 @@ const updateNotifications = (state: string[], action: { notif: string }) => {
   return state.concat(action.notif);
 }
 
-const ReminderPopup = ({ isActive, showingFunction, pet }: ReminderPopupType) => {
+const ReminderPopup = ({ isActive, showingFunction, setReminder, pet, med }: ReminderPopupType) => {
   const [notifications, setNotifications] = useReducer(updateNotifications, []);
   const [isTimePickerVisible, setTImePickerVisibility] = useState(false);
-  const [selectedMedId, setSelectedMedId] = useState<string | undefined>();
+  const [selectedMedId, setSelectedMedId] = useState('');
 
   const ObjectID = require('bson-objectid');
-  const id: string = ObjectID();
+  const id: string = isActive && isActive.id !== '' ? isActive.id : ObjectID();
 
-  const med: Medication | undefined = pet.medications?.find((med) => med.id === selectedMedId);
+  let temp = pet.medications.find((med: Medication) => med.id === selectedMedId);
+  const medication = temp ? temp : med;
 
   const close = () => {
-    showingFunction(undefined);     
+    showingFunction(undefined);
     setNotifications({ notif: 'clear' });
-    setSelectedMedId(undefined);
+    setSelectedMedId('');
   }
 
-  const saveReminder = async (method: 'POST' | 'PUT') => {
+  const saveReminder = async () => {
     // create reminder with the intended info from this popup, depending on conditions
     let rem: Reminder = emptyReminder;
+    rem.id = id;
     // ternary operator spaghetti equates to 'set it as value passed as prop, else value chosen by user, else nothing'
     // either value passed or value chosen will be defined, so the last option is to avoid getting errors
-    // rem.medication = isActive && isActive.medication.name !== '' ? isActive.medication : med ? med : emptyMed;
-    // rem.pet = isActive ? isActive.pet : emptyPet; // no chosen value
     rem.notifications = isActive && isActive.notifications.length > 0 ? isActive.notifications : notifications ? notifications : [];
-    // create the reminder
-    const url: string = method === 'POST' ? ADD_REMINDER : UPDATE_REMINDER;
-    const response = await httpRequest(url, method, JSON.stringify(rem));
-    if (response.ok) {
-      close();
-      alert('Reminder saved');
-    } else {
-      console.log(`http ${method} request failed with error code: ${response.status}`);
-      alert('Failed to save reminder');
-    }
+    // set reminder to be created when the popup is closed
+    setReminder(rem);
+    close();
   };
 
   const timeCards: Array<React.JSX.Element> = [];
@@ -81,7 +75,7 @@ const ReminderPopup = ({ isActive, showingFunction, pet }: ReminderPopupType) =>
 
             {/* popup header */}
             <Text style={styles.header}>
-              {isActive.notifications.length > 0 ? 'REMINDER INFO' : 'CREATE REMINDER'}
+              {med.reminder.id !== '' ? 'REMINDER INFO' : 'CREATE REMINDER'}
             </Text>
 
             {/* close popup button */}
@@ -99,42 +93,37 @@ const ReminderPopup = ({ isActive, showingFunction, pet }: ReminderPopupType) =>
           <View style={styles.popupBody}>
 
             <View style={styles.selectionContainer}>
-              <Text style={[styles.text, styles.selectionText]}>{`FOR PET: ${pet.name ? pet.name : 'NONE SELECTED'}`}</Text>
+              <Text style={[styles.text, styles.selectionText]}>{`FOR PET: ${pet.name}`}</Text>
             </View>
 
             <View style={styles.selectionContainer}>
-              <Text style={[styles.text, styles.selectionText]}>{`FOR MEDICATION: ${med ? med.name : 'NONE SELECTED'}`}</Text>
-              {med ?
-                <View style={styles.itemSwitchContainer}>
-                  {med.name === '' ?
-                    <Selection
-                      data={pet.medications}
-                      selectedItemId={selectedMedId ? selectedMedId : ''}
-                      onSwitch={setSelectedMedId}
-                      switchItem="Medication"
-                    />
-                    :
-                    <></>
-                  }
-                </View>
-                : <></>}
+              <Text style={[styles.text, styles.selectionText]}>{`FOR MEDICATION: ${medication.name !== '' ? medication.name : 'NONE SELECTED'}`}</Text>
+              <View style={styles.itemSwitchContainer}>
+                {medication.name === '' ?
+                  <Selection
+                    data={pet.medications}
+                    selectedItemId={selectedMedId}
+                    onSwitch={setSelectedMedId}
+                    switchItem="Medication"
+                  />
+                  :
+                  <></>
+                }
+              </View>
             </View>
 
             <View style={styles.timeCardContainer}>
               {timeCards}
             </View>
 
-            {isActive.notifications.length === 0 ?
-              <View style={styles.addNotifButton}>
-                {notifications.length < 5 ?
-                  <Button title="Add Notification" onPress={() => { setTImePickerVisibility(true) }} />
-                  :
-                  <Text>Max Notifications Reached</Text>
-                }
-              </View>
-              :
-              <></>
-            }
+            <View style={styles.addNotifButton}>
+              {notifications.length < 5 ?
+                <Button title="Add Notification" onPress={() => { setTImePickerVisibility(true) }} />
+                :
+                <Text>Max Notifications Reached</Text>
+              }
+            </View>
+
             <DateTimePickerModal
               isVisible={isTimePickerVisible}
               mode="time"
@@ -149,15 +138,11 @@ const ReminderPopup = ({ isActive, showingFunction, pet }: ReminderPopupType) =>
           </View>
 
           {/* save button */}
-          {isActive.id === '' ?
-            <Pressable onPress={() => {isActive.id === '' ? saveReminder("POST") : saveReminder("PUT")}}>
-              <View style={styles.saveButtonOval}>
-                <Text style={styles.saveButtonText}>SAVE</Text>
-              </View>
-            </Pressable>
-            :
-            <></>
-          }
+          <Pressable onPress={saveReminder}>
+            <View style={styles.saveButtonOval}>
+              <Text style={styles.saveButtonText}>SAVE</Text>
+            </View>
+          </Pressable>
         </View>
       </View>
     );

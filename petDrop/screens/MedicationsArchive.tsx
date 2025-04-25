@@ -9,7 +9,8 @@ import { ScreenEnum, logoImage } from '../GlobalStyles';
 import { Image } from 'expo-image';
 import AddMedicationButton from '../components/CustomButton';
 import MedicationPopup from '../components/MedicationPopup/MedicationPopup';
-import { Account, emptyMed, emptyPet, Medication, Pet, Reminder } from '../data/dataTypes';
+import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from '../data/dataTypes';
+import { httpRequest, ADD_MEDICATION, UPDATE_PET, ADD_REMINDER, UPDATE_ACCOUNT } from '../data/endpoints';
 
 type MedicationsArchiveProps = {
 	navigation: any;
@@ -19,16 +20,67 @@ type MedicationsArchiveProps = {
 const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	const [selectedPetId, setSelectedPetId] = useState('');
 	const [popupShowing, setPopupShowing] = useState<Medication>();
+	const [med, setMed] = useState<Medication>();
+	const [rem, setRem] = useState<Reminder>();
 
 	// store the user's account info to avoid typing "route.params.account" repeatedly
 	const account: Account = route.params.account;
 
+	const WriteToDB = async () => {
+		let response, reminder;
+		// write rem to db if user decided to make one
+		if (rem !== undefined) {
+			reminder = rem;
+			response = await httpRequest(ADD_REMINDER, 'POST', JSON.stringify(reminder));
+			if (!response.ok) {
+				console.log(`http POST request failed with error code: ${response.status}`);
+				alert('Failed to create reminder - medication save aborted');
+				return;
+			}
+		}
+		if (med !== undefined) { // completely redundant but IDE stupid
+			// write med to db
+			med.reminder = reminder ? reminder : emptyReminder; // completely redundant but IDE stupid again
+			response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify(med));
+			let medication: Medication;
+			if (response.ok) {
+				medication = await response.json();
+				// update pet with new med in db
+				const pet = account.pets.find((pet) => pet.id === selectedPetId);
+				pet?.medications.push(medication);
+				response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(pet));
+				if (response.ok) {
+					alert('Medication submitted successfully');
+				}
+				else {
+					console.log(`http PUT request failed with error code: ${response.status}`);
+					alert('Medication failed to save');
+				}
+			} else {
+				console.log(`http POST request failed with error code: ${response.status}`);
+				alert('Failed to create medication');
+			}
+		}
+		setMed(undefined);
+		setRem(undefined);
+	}
+
+	if (med !== undefined) {
+		WriteToDB();
+	}
+
+	useEffect(() => {
+		setSelectedPetId(account.pets[0].id);
+	}, []);
+
+	// create MedicationCards here to avoid errors with undefined values if user has no pets and/or reminders
 	let selectedPet: Pet | undefined = account.pets.find((pet) => pet.id === selectedPetId);
-	selectedPet = selectedPet ? selectedPet : emptyPet; // if no selected pet, put it as emptypet to avoid undefined errors
+	selectedPet = selectedPet ? selectedPet : emptyPet;
 	let selectedReminders: Reminder[] = [];
 	selectedPet.medications.forEach((med: Medication) => {
 		selectedReminders.push(med.reminder);
 	});
+
 
 	return (
 		<View style={styles.container}>
@@ -48,8 +100,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 						switchItem='Pet'
 					/>
 				</View>
-
-				{selectedPet.medications.map((medication: Medication, index: any) => (
+				{selectedPet.medications.map((medication: Medication, index: number) => (
 					<MedicationCard
 						key={index}
 						reminderProp={medication.reminder}
@@ -67,7 +118,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				currentScreen={ScreenEnum.MedicationsArchive}
 				account={account}
 			/>
-			<MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={selectedPet} />
+			<MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} setMedication={setMed} setReminder={setRem} pet={selectedPet} />
 		</View>
 	);
 };

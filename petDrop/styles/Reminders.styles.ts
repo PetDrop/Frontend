@@ -19,6 +19,11 @@ export const styles = StyleSheet.create({
 		textAlign: 'left',
         marginLeft: width * 0.05,
 	},
+	headerContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+	},
 	reminderTitle: {
 		fontSize: 22,
 		fontFamily: FontFamily.koulenRegular,

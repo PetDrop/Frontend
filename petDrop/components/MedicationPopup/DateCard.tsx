@@ -20,11 +20,11 @@ const DateCard = ({ date, updateDates }: DateCardType) => {
             <View style={{flexDirection: 'row'}}>
             <TextInput
                 style={styles.occurrancesInput}
-                value={`${occurrances === 0 ? '' : occurrances}`}
+                value={`${isNaN(occurrances) ? '' : occurrances}`}
                 onChangeText={(e) => {
                     let num: number = Number.parseInt(e);
-                    num = isNaN(num) ? 1 : num;
                     setOccurrances(num);
+                    num = isNaN(num) ? 1 : num;
                     updateDates(date, num);
                 }}
             />
