@@ -21,9 +21,10 @@ interface Props {
 
 const Reminders = ({ navigation, route }: Props) => {
   const [selectedPetId, setSelectedPetId] = useState('');
-  const [popupShowing, setPopupShowing] = useState(false);
+  const [createPopupShowing, setCreatePopupShowing] = useState(false);
+  const [editPopupShowing, setEditPopupShowing] = useState(false);
   const [rem, setRem] = useState<Reminder>();
-  const [med, setMed] = useState<Medication>();
+  const [med, setMed] = useState<Medication>(emptyMed);
 
   // store the user's account info to avoid typing "route.params.account" repeatedly
   const account: Account = route.params.account;
@@ -32,7 +33,7 @@ const Reminders = ({ navigation, route }: Props) => {
     // write rem to db
     let response = await httpRequest(ADD_REMINDER, 'POST', JSON.stringify(rem));
     if (response.ok) {
-      if (med !== undefined) {
+      if (med.name !== '') {
         med.reminder = await response.json();
         response = await httpRequest(UPDATE_MEDICATION, 'PUT', JSON.stringify(med));
         if (response.ok) {
@@ -47,7 +48,7 @@ const Reminders = ({ navigation, route }: Props) => {
       console.log(`http POST request failed with error code: ${response.status}`);
     }
     setRem(undefined);
-    setMed(undefined);
+    setMed(emptyMed);
   }
 
   if (rem !== undefined) {
@@ -57,6 +58,14 @@ const Reminders = ({ navigation, route }: Props) => {
   useEffect(() => {
     setSelectedPetId(account.pets[0].id);
   }, []);
+
+  const editReminder = (med: Medication) => {
+    setMed(med);
+    setEditPopupShowing(true);
+  }
+
+  const medToPass: Medication = createPopupShowing ? emptyMed : med;
+  const funcToPass: Function = createPopupShowing ? setCreatePopupShowing : setEditPopupShowing;
 
   // create reminderCards here to avoid errors with undefined values if user has no pets and/or reminders
   let selectedPet: Pet | undefined = account.pets.find((pet) => pet.id === selectedPetId);
@@ -85,6 +94,7 @@ const Reminders = ({ navigation, route }: Props) => {
             <ReminderCard
               key={index}
               med={med}
+              showingFunction={editReminder}
             />
             :
             <></>
@@ -94,7 +104,7 @@ const Reminders = ({ navigation, route }: Props) => {
         <View style={styles.addReminderButton}>
           <AddReminderButton
             onPressFunction={() => {
-              setPopupShowing(true);
+              setCreatePopupShowing(true);
             }}
             innerText={'+ ADD'}
           />
@@ -104,14 +114,14 @@ const Reminders = ({ navigation, route }: Props) => {
       {/* Bottom Navigation */}
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} account={account} />
 
-      {/* popup for adding reminder */}
+      {/* popup for adding/editing reminder */}
       <ReminderPopup
-        isActive={popupShowing}
-        showingFunction={setPopupShowing}
+        isActive={createPopupShowing || editPopupShowing}
+        showingFunction={funcToPass}
         setRem={setRem}
         setMed={setMed}
         pet={selectedPet}
-        med={emptyMed}
+        med={medToPass}
       />
     </View>
   );
