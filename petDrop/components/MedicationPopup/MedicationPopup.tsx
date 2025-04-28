@@ -10,24 +10,25 @@ import { Color } from "../../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
 import DateCard from "./DateCard";
 import ReminderPopup from "../ReminderPopup";
-import { httpRequest, UPDATE_MEDICATION } from "../../data/endpoints";
+import { state } from "../../screens/MedicationsArchive";
 
 type MedicationPopupType = {
   isActive: boolean;
-  showingFunction: Function;
+  setPopupState: Function;
   setMedication: Function;
   setReminder: Function;
   pet: Pet;
   med: Medication;
 };
 
-const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder, pet, med }: MedicationPopupType) => {
+const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, pet, med }: MedicationPopupType) => {
   const [popupShowing, setPopupShowing] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [dateMap, setDateMap] = useState(new Map<Date, number>());
   const [description, setDescription] = useState(med.description);
   const [medName, setMedName] = useState(med.name);
   const [color, setColor] = useState(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
+  const [propsChanged, setPropsChanged] = useState(true);
 
   const ObjectID = require('bson-objectid');
   const id = med.id !== '' ? med.id : ObjectID();
@@ -43,7 +44,7 @@ const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder
       dates.push(writableDate.toDateString());
       writableDate.setTime(writableDate.getTime() + MS_IN_WEEK);
     }
-  })
+  });
 
   // function for updating dates state
   function updateDates(date: Date | undefined, recurring: number) {
@@ -54,20 +55,48 @@ const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder
     }
   }
 
+  const createDateMap = (dates: string[]): Map<Date, number> => {
+    let newDateMap: Map<Date, number> = new Map<Date, number>();
+    dates.forEach((date: string) => {
+      const newDate = new Date(Date.parse(date));
+      if (newDateMap.has(newDate)) {
+        // temp var recurring is needed because of 'possibly undefined' errors (redundant because has() being true means get() is defined)
+        let recurring = newDateMap.get(newDate);
+        recurring = recurring ? recurring : 0;
+        newDateMap.set(newDate, recurring + 1);
+      } else {
+        newDateMap.set(newDate, 1);
+      }
+    });
+    return newDateMap;
+  }
+
+  if (isActive && propsChanged) {
+    setPropsChanged(false);
+    setDescription(med.description);
+    const medDateMap = createDateMap(med.dates);
+    setDateMap(medDateMap);
+    setMedName(med.name);
+    setColor(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
+  }
+
   const close = () => {
-    showingFunction(false);
     setDescription('');
     updateDates(undefined, 0); // undefined clears the map
-    setDescription(med.description);
-    setMedName(med.name);
+    setMedName('');
     setColor(`#${Math.round(Math.random() * 899998 + 100000)}`);
+    setPropsChanged(true);
+    setPopupState(state.NO_ACTION);
   }
 
   const saveMedication = async () => {
     const newMed: Medication = { id: id, name: medName, color: color, description: description, dates: dates, reminder: med.reminder, range: 4 };
     // add medication to the list that will be created when the popup is closed
     setMedication(newMed);
+    // if med didn't exist -> it was created, otherwise if med.reminder existed -> neither was created, otherwise reminder was created
+    const newState = med.id === '' ? state.MED_CREATED : med.reminder.id !== '' ? state.MED_AND_REM_EDITED : state.MED_EDITED;
     close();
+    setPopupState(newState);
   };
 
   const dateCards: Array<React.JSX.Element> = [];
@@ -101,7 +130,7 @@ const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder
                 return (
                   <View style={styles.dropdownDefault}>
                     <Text style={styles.text}>
-                      {selectedItem ? selectedItem : 'Select Medication'}
+                      {selectedItem ? selectedItem : med.name ? med.name : 'Select Medication'}
                     </Text>
                     <DropdownArrow style={styles.downArrow} width={19} height={12} />
                   </View>
@@ -162,7 +191,7 @@ const MedicationPopup = ({ isActive, showingFunction, setMedication, setReminder
           {/* add reminder button */}
           <Pressable onPress={() => { setPopupShowing(true) }}>
             <View style={styles.reminderButtonOval}>
-              <Text style={[styles.reminderButtonText, styles.text]}>{`${med.reminder.id !== '' ? 'VIEW' : 'ADD'} REMINDER`}</Text>
+              <Text style={[styles.reminderButtonText, styles.text]}>{`${med.reminder.notifications.length > 0 ? 'VIEW' : 'ADD'} REMINDER`}</Text>
             </View>
           </Pressable>
 

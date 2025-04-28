@@ -90,14 +90,14 @@ const Reminders = ({ navigation, route }: Props) => {
 
         {/* Reminder Cards */}
         {selectedPet.medications.map((med: Medication, index: number) =>
-          med.reminder.id !== '' ?
+          med.reminder.notifications.length > 0 ?
             <ReminderCard
               key={index}
               med={med}
               showingFunction={editReminder}
             />
             :
-            <></>
+            <View key={index}></View>
         )}
 
         {/* Add Reminder Button */}
