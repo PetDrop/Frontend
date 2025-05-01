@@ -5,7 +5,7 @@ import PetCard from "../components/Pets/PetCard";
 import AddNewPetButton from "../components/Pets/AddNewPetButton";
 import styles from "../styles/Pets.styles";
 import { ScreenEnum, logoImage } from "../GlobalStyles";
-import { NavigationProp } from "@react-navigation/native";
+import { NavigationProp, Route } from "@react-navigation/native";
 import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
 import { useEffect, useState } from "react";
 import MedicationPopup from "../components/MedicationPopup/MedicationPopup";

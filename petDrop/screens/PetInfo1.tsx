@@ -5,7 +5,7 @@ import TopBottomBar from "../components/TopBottomBar";
 import { logoImage, ScreenEnum } from "../GlobalStyles";
 import { NavigationProp } from "@react-navigation/core";
 import styles from '../styles/PetInfo1.styles';
-import { Account, Pet } from "../data/dataTypes";
+import { Account, emptyPet, Pet } from "../data/dataTypes";
 import { useEffect, useState } from "react";
 import AddPetImage from "../components/AddImage";
 import SubmitButton from "../components/CustomButton";
@@ -79,18 +79,14 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
         if (response.ok) {
           if (petBeingEdited) {
             const updatedPet: Pet = await response.json();
-            account.pets.forEach((pet: Pet) => {
-              if (pet.id === updatedPet.id) {
-                pet = updatedPet;
-              }
-            })
+            account.pets[account.pets.findIndex((pet: Pet) => pet.id === updatedPet.id)] = updatedPet;
           } else {
             const newPet: Pet = await response.json();
             account.pets.push(newPet);
           }
           response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
           if (response.ok) {
-            alert('submission successful. You have now been redirected to the Pet Info page where you can view it, as well as add medications and reminders for it.');
+            alert('Submission successful. You have now been redirected to the Pet Info page where you can view it, as well as add medications and reminders for it.');
             navigation.navigate('PetInfo', { account: account });
           } else {
             console.log('unable to add pet to account');
