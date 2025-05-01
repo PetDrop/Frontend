@@ -12,7 +12,12 @@ const PetInfo1AddButtons = ({ inputFields, inputFieldsSetter }: PetInfo1AddButto
   return (
     <View style={styles.newPetButtonGroupParent}>
       {Array.from(inputFields.keys()).map((key: string, index: number) => {
-        return <NewPetAddButton innerText={key} inputFieldsSetter={inputFieldsSetter} key={index} />
+        let initialValue = inputFields.get(key);
+        // console.log(initialValue);
+        if (initialValue === undefined) {
+          initialValue = '';
+        }
+        return <NewPetAddButton innerText={key} initialValue={initialValue} inputFieldsSetter={inputFieldsSetter} key={index} />
       })}
     </View>
   );
