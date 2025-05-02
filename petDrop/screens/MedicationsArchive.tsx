@@ -5,19 +5,22 @@ import TopBottomBar from '../components/TopBottomBar';
 import MedicationCard from '../components/Medications/MedicationCard';
 import PetSwitch from '../components/ItemSwitch';
 import styles from '../styles/Medications.styles';
-import { ScreenEnum, logoImage } from '../GlobalStyles';
+import { Color, ScreenEnum, logoImage } from '../GlobalStyles';
 import { Image } from 'expo-image';
 import AddMedicationButton from '../components/CustomButton';
 import MedicationPopup from '../components/MedicationPopup/MedicationPopup';
 import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from '../data/dataTypes';
-import { httpRequest, ADD_MEDICATION, UPDATE_PET, ADD_REMINDER, UPDATE_ACCOUNT, UPDATE_REMINDER, UPDATE_MEDICATION } from '../data/endpoints';
+import { httpRequest, ADD_MEDICATION, UPDATE_PET, ADD_REMINDER, UPDATE_ACCOUNT, UPDATE_REMINDER, UPDATE_MEDICATION, DELETE_REMINDER_BY_ID, DELETE_MEDICATION_BY_ID } from '../data/endpoints';
 
-export enum state {
-	'NO_ACTION' = 0,
-	'SHOW_POPUP' = 1, // med popup showing
-	'MED_CREATED' = 2, // med popup saved when creating med
-	'MED_EDITED' = 3, // med popup saved when editing med (reminder either created or untouched)
-	'MED_AND_REM_EDITED' = 4, // med popup saved when editing med and its reminder
+export enum medState {
+	'NO_ACTION' = 0, // no popups showing and no action needing to be done
+	'MED_CREATED' = 1, // med was created, so rem was either created or not (check if undefined)
+	'MED_EDITED_REM_NOTHING' = 2, // med was edited but no action done with rem
+	'MED_EDITED_REM_CREATED' = 3, // med was edited and rem was created
+	'MED_EDITED_REM_EDITED' = 4, // med was edited and rem was edited
+	'MED_EDITED_REM_DELETED' = 5, // med was edited and rem was deleted
+	'MED_DELETED' = 6, // med was deleted, so rem will be too if it exists
+	'SHOW_POPUP' = 7, // popup(s) showing and no actions performed yet
 };
 
 type MedicationsArchiveProps = {
@@ -29,7 +32,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	const [selectedPetId, setSelectedPetId] = useState('');
 	const [med, setMed] = useState<Medication>(emptyMed);
 	const [rem, setRem] = useState<Reminder>();
-	const [popupState, setPopupState] = useState(state.NO_ACTION);
+	const [popupState, setPopupState] = useState(medState.NO_ACTION);
 
 	// store the user's account info to avoid typing "route.params.account" repeatedly
 	const account: Account = route.params.account;
@@ -41,79 +44,107 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	}, []);
 
 	const WriteToDB = async () => {
+		let medUrl: string = '', medMethod: string = '', medBody: string = '', remUrl: string = '', remMethod: string = '', remBody: string = '';
+		switch (popupState) {
+			case medState.MED_CREATED:
+				if (rem) {
+					remUrl = ADD_REMINDER;
+					remMethod = 'POST';
+					remBody = JSON.stringify(rem);
+					med.reminder = rem;
+				}
+				medUrl = ADD_MEDICATION;
+				medMethod = 'POST';
+				medBody = JSON.stringify(med);
+				break;
+			case medState.MED_EDITED_REM_NOTHING:
+				medUrl = UPDATE_MEDICATION;
+				medMethod = 'PUT';
+				medBody = JSON.stringify(med);
+				break;
+			case medState.MED_EDITED_REM_CREATED:
+				if (rem) { // redundant
+					remUrl = ADD_REMINDER;
+					remMethod = 'POST';
+					remBody = JSON.stringify(rem);
+					med.reminder = rem;
+				}
+				medUrl = UPDATE_MEDICATION;
+				medMethod = 'PUT';
+				medBody = JSON.stringify(med);
+				break;
+			case medState.MED_EDITED_REM_EDITED:
+				if (rem) { // redundant
+					remUrl = UPDATE_REMINDER;
+					remMethod = 'PUT';
+					remBody = JSON.stringify(rem);
+					med.reminder = rem;
+				}
+				medUrl = UPDATE_MEDICATION;
+				medMethod = 'PUT';
+				medBody = JSON.stringify(med);
+				break;
+			case medState.MED_EDITED_REM_DELETED:
+				if (rem) { // redundant
+					remUrl = DELETE_REMINDER_BY_ID + rem.id;
+					remMethod = 'DELETE';
+					med.reminder = emptyReminder;
+				}
+				medUrl = UPDATE_MEDICATION;
+				medMethod = 'PUT';
+				medBody = JSON.stringify(med);
+				break;
+			case medState.MED_DELETED:
+				if (med.reminder.id !== '') {
+					remUrl = DELETE_REMINDER_BY_ID + med.reminder.id;
+					remMethod = 'DELETE';
+				}
+				medUrl = DELETE_MEDICATION_BY_ID + med.id;
+				medMethod = 'DELETE';
+				break;
+		}
 		let response;
-		let reminder: Reminder = { id: ObjectID(), notifications: [] };
-		// write rem to db if user created/edited it
-		reminder = rem ? rem : reminder;
-		if (rem || med.reminder.id === '') {
-			const url: string = popupState === state.MED_AND_REM_EDITED ? UPDATE_REMINDER : ADD_REMINDER;
-			const method: string = popupState === state.MED_AND_REM_EDITED ? 'PUT' : 'POST'; // only way rem can be edited is if med was too
-			response = await httpRequest(url, method, JSON.stringify(reminder));
-			if (!response.ok) {
-				console.log(`http ${method} request failed with error code: ${response.status}`);
-				if (rem !== undefined) {
-					alert('Failed to save reminder - medication save aborted');
-				} else {
-					alert('Failed to save medication');
-				}
-				return;
-			}
-		}
-		if (med.name !== '') {
-			// write med to db
-			if (rem || med.reminder.id === '') {
-				med.reminder = reminder;
-			}
-			const url: string = popupState === state.MED_CREATED ? ADD_MEDICATION : UPDATE_MEDICATION;
-			const method: string = popupState === state.MED_CREATED ? 'POST' : 'PUT'; // if med wasn't created then it needs to be updated
-			response = await httpRequest(url, method, JSON.stringify(med));
-			let medication: Medication;
+		if (remUrl === '') {
+			response = await handleMed(medUrl, medMethod, medBody);
 			if (response.ok) {
-				if (popupState === state.MED_CREATED) {
-					// update pet with new med in db
-					medication = await response.json();
-					const pet = account.pets.find((pet) => pet.id === selectedPetId);
-					pet?.medications.push(medication);
-					response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(pet));
-					if (response.ok) {
-						alert('Medication saved successfully');
-					}
-					else {
-						console.log(`http PUT request failed with error code: ${response.status}`);
-						alert('Medication failed to save');
-					}
-				} else {
-					// update pet on frontend with updated med
-					const pet = account.pets.find((pet) => pet.id === selectedPetId);
-					pet?.medications.forEach((medication: Medication) => {
-						if (medication.id === med.id) {
-							// doing "medication = med;" wasn't working for some reason
-							medication.name = med.name;
-							medication.dates = med.dates;
-							medication.description = med.description;
-							medication.reminder = med.reminder;
-							medication.color = med.color;
-						}
-					})
-					alert('Medication saved successfully');
+				alert('the deed is done');
+			}
+		} else {
+			response = await httpRequest(remUrl, remMethod, remBody);
+			if (response.ok) {
+				response = await handleMed(medUrl, medMethod, medBody);
+				if (response.ok) {
+					alert('the deed is done.');
 				}
-			} else {
-				console.log(`http ${method} request failed with error code: ${response.status}`);
-				alert('Failed to create medication');
 			}
 		}
-		setMed(emptyMed);
 		setRem(undefined);
-		setPopupState(state.NO_ACTION);
+		setPopupState(medState.NO_ACTION);
 	}
 
-	if (popupState !== state.SHOW_POPUP && popupState !== state.NO_ACTION) {
+	const handleMed = async (medUrl: string, medMethod: string, medBody: string): Promise<Response> => {
+		let response = await httpRequest(medUrl, medMethod, medBody);
+		if (response.ok) {
+			if (popupState === medState.MED_CREATED && selectedPet) {
+				selectedPet.medications.push(med);
+				response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(selectedPet));
+			} else if (popupState >= medState.MED_EDITED_REM_NOTHING && popupState <= medState.MED_EDITED_REM_DELETED && selectedPet) {
+				selectedPet.medications[selectedPet.medications.findIndex((medication: Medication) => medication.id === med.id)] = med;
+			} else if (selectedPet) {
+				selectedPet.medications.splice(selectedPet.medications.findIndex((medication: Medication) => medication.id === med.id), 1);
+				response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(selectedPet));
+			}
+		}
+		return response;
+	}
+
+	if (popupState !== medState.SHOW_POPUP && popupState !== medState.NO_ACTION) {
 		WriteToDB();
 	}
 
 	const editMedication = (med: Medication) => {
 		setMed(med);
-		setPopupState(state.SHOW_POPUP);
+		setPopupState(medState.SHOW_POPUP);
 	}
 
 	let selectedPet: Pet | undefined = account.pets.find((pet) => pet.id === selectedPetId);
@@ -155,9 +186,10 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 					<AddMedicationButton
 						onPressFunction={() => {
 							setMed(emptyMed);
-							setPopupState(state.SHOW_POPUP);
+							setPopupState(medState.SHOW_POPUP);
 						}}
 						innerText={'+ ADD'}
+						color={Color.colorCornflowerblue}
 					/>
 				</View>
 			</ScrollView>
@@ -167,7 +199,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				account={account}
 			/>
 			<MedicationPopup
-				isActive={popupState === state.SHOW_POPUP}
+				isActive={popupState === medState.SHOW_POPUP}
 				setPopupState={setPopupState}
 				setMedication={setMed}
 				setReminder={setRem}

@@ -2,14 +2,15 @@ import * as React from "react";
 import { Text, View, Image, KeyboardAvoidingView, ScrollView } from "react-native";
 import AddButtons from "../components/AddPets/PetInfo1AddButtons";
 import TopBottomBar from "../components/TopBottomBar";
-import { logoImage, ScreenEnum } from "../GlobalStyles";
+import { Color, logoImage, ScreenEnum } from "../GlobalStyles";
 import { NavigationProp } from "@react-navigation/core";
 import styles from '../styles/PetInfo1.styles';
 import { Account, emptyPet, Pet } from "../data/dataTypes";
 import { useEffect, useState } from "react";
 import AddPetImage from "../components/AddImage";
 import SubmitButton from "../components/CustomButton";
-import { ADD_PET, httpRequest, UPDATE_ACCOUNT, UPDATE_PET } from "../data/endpoints";
+import DeleteButton from "../components/CustomButton";
+import { ADD_PET, DELETE_PET_BY_ID, httpRequest, UPDATE_ACCOUNT, UPDATE_PET } from "../data/endpoints";
 import * as ImagePicker from 'expo-image-picker';
 
 type PetInfo1Type = {
@@ -102,6 +103,25 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
     }
   };
 
+  const Delete = async () => {
+    // TODO: ask for confirmation
+    let response = await httpRequest(DELETE_PET_BY_ID + petBeingEdited.id, 'DELETE', '');
+    if (response.ok) {
+      account.pets.splice(account.pets.indexOf(petBeingEdited), 1);
+      response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
+      if (response.ok) {
+        alert(`Pet: ${petBeingEdited.name} has been successfully deleted.`);
+        navigation.navigate('PetInfo', { account: account });
+      } else {
+        console.log(`http PUT request failed with error code: ${response.status}`);
+        alert(`Failed to update account after deleting pet: ${petBeingEdited.id}`);
+      }
+    } else {
+      console.log(`http DELETE request failed with error code: ${response.status}`);
+      alert(`Failed to delete pet: ${petBeingEdited.id}`);
+    }
+  }
+
   const addImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
@@ -130,9 +150,16 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
         <Text style={[styles.petInfo1Name, styles.nameTypo]}>Pet Info</Text>
         <AddButtons inputFields={inputFields} inputFieldsSetter={updateInputFields} />
 
+        {/* delete button */}
+        {petBeingEdited && (
+          <View style={styles.deleteButtonContainer}>
+            <DeleteButton onPressFunction={Delete} innerText={'Delete'} color={Color.colorFirebrick} />
+          </View>
+        )}
+
         {/* submit button */}
         <View style={styles.submitButtonContainer}>
-          <SubmitButton onPressFunction={Submit} innerText={'Submit'} />
+          <SubmitButton onPressFunction={Submit} innerText={'Submit'} color={Color.colorCornflowerblue} />
         </View>
 
       </ScrollView>

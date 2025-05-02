@@ -5,6 +5,7 @@ import styles from '../../styles/Pets.styles';
 import AddMedicationButton from '../../components/CustomButton';
 import { Account, Pet } from '../../data/dataTypes';
 import { NavigationProp } from '@react-navigation/core';
+import { Color } from '../../GlobalStyles';
 
 type PetCardProps = {
 	pet: Pet;
@@ -29,7 +30,7 @@ const PetCard = ({ pet, account, onPressFunction, navigation }: PetCardProps) =>
 					<Text style={styles.petDetails}>Vet: {pet.vet}</Text>
 					<Text style={styles.petDetails}>{pet.vetPhone}</Text>
 				</View>
-				<Pressable onPress={() => {navigation.navigate('PetInfo1', { account: account, pet: pet })}}>
+				<Pressable onPress={() => { navigation.navigate('PetInfo1', { account: account, pet: pet }) }}>
 					<EditIcon style={styles.editIcon} />
 				</Pressable>
 			</View>
@@ -48,7 +49,7 @@ const PetCard = ({ pet, account, onPressFunction, navigation }: PetCardProps) =>
 				))}
 			</View>
 			<View style={styles.addMedicationButton}>
-				<AddMedicationButton onPressFunction={onPressFunction} innerText={'+ ADD'} />
+				<AddMedicationButton onPressFunction={onPressFunction} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
 			</View>
 			<View style={styles.separatorBar} />
 		</View>

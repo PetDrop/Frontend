@@ -75,6 +75,11 @@ const styles = StyleSheet.create({
 		fontFamily: FontFamily.koulenRegular,
 		color: Color.colorCornflowerblue,
 	},
+    deleteButtonContainer: {
+        marginTop: height * 0.875,
+        marginLeft: width * 0.05,
+        position: 'absolute',
+    },
     submitButtonContainer: {
         marginTop: height * 0.875,
         marginLeft: width * 0.65,

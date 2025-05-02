@@ -10,7 +10,7 @@ import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder }
 import { useEffect, useState } from "react";
 import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
 import { ADD_MEDICATION, ADD_REMINDER, httpRequest, UPDATE_ACCOUNT, UPDATE_PET } from "../data/endpoints";
-import { state } from "./MedicationsArchive";
+import { medState } from "./MedicationsArchive";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -18,7 +18,7 @@ interface Props {
 }
 
 const PetInfo = ({ navigation, route }: Props) => {
-  const [popupState, setPopupState] = useState(state.NO_ACTION);
+  const [popupState, setPopupState] = useState(medState.NO_ACTION);
   const [petBeingEdited, setPetBeingEdited] = useState<Pet>(emptyPet); // the pet the user is adding a medication to
   const [med, setMed] = useState<Medication>();
   const [rem, setRem] = useState<Reminder>();
@@ -82,7 +82,7 @@ const PetInfo = ({ navigation, route }: Props) => {
               account={account}
               onPressFunction={() => {
                 setPetBeingEdited(pet);
-                setPopupState(state.SHOW_POPUP);
+                setPopupState(medState.SHOW_POPUP);
               }}
               navigation={navigation} />
           </View>
@@ -91,7 +91,7 @@ const PetInfo = ({ navigation, route }: Props) => {
       </ScrollView>
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo} account={account} />
       <MedicationPopup
-        isActive={popupState === state.SHOW_POPUP}
+        isActive={popupState === medState.SHOW_POPUP}
         setPopupState={setPopupState}
         setMedication={setMed}
         setReminder={setRem}

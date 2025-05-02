@@ -6,10 +6,13 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useReducer, useState } from "react";
 import { emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
 import Selection from './ItemSwitch';
+import { remState } from "../screens/Reminders";
+import DeleteButton from '../components/CustomButton';
+import { Color } from "../GlobalStyles";
 
 type ReminderPopupType = {
   isActive: boolean;
-  showingFunction: Function;
+  setPopupState: Function;
   setRem: Function;
   setMed: Function;
   pet: Pet;
@@ -27,7 +30,7 @@ const updateNotifications = (state: string[], action: { notif: string, notifProp
   }
 }
 
-const ReminderPopup = ({ isActive, showingFunction, setRem, setMed, pet, med }: ReminderPopupType) => {
+const ReminderPopup = ({ isActive, setPopupState, setRem, setMed, pet, med }: ReminderPopupType) => {
   const [notifications, setNotifications] = useReducer(updateNotifications, med.reminder.notifications);
   const [isTimePickerVisible, setTImePickerVisibility] = useState(false);
   const [selectedMedId, setSelectedMedId] = useState(med.id);
@@ -36,8 +39,8 @@ const ReminderPopup = ({ isActive, showingFunction, setRem, setMed, pet, med }: 
   const ObjectID = require('bson-objectid');
   const id: string = med.reminder.id !== '' ? med.reminder.id : ObjectID();
 
-  let temp = pet.medications.find((med: Medication) => med.id === selectedMedId);
-  const medication = temp ? temp : med;
+  let slectedMed = pet.medications.find((med: Medication) => med.id === selectedMedId);
+  const medication = slectedMed ? slectedMed : med;
 
   if (isActive && notifChanged) {
     setNotifChanged(false);
@@ -45,19 +48,25 @@ const ReminderPopup = ({ isActive, showingFunction, setRem, setMed, pet, med }: 
   }
 
   const close = () => {
-    showingFunction(false);
     setNotifications({ notif: 'clear', notifProp: [] });
     setSelectedMedId('');
+    setPopupState(remState.NO_ACTION);
     setNotifChanged(true);
   }
 
-  const saveReminder = async () => {
+  const closePopup = (deleted: boolean) => {
+    // TODO: ask for confirmation if deleted
     let rem: Reminder = { id: id, notifications: notifications };
     // set medication for reminder to be added to (if the screen this popup is on is unable to do so)
     setMed(medication);
     // set reminder to be created/edited when the popup is closed
     setRem(rem);
     close();
+    if (deleted) {
+      setPopupState(remState.REM_DELETED);
+    } else {
+      setPopupState(med.reminder.id === '' ? remState.REM_CREATED : remState.REM_EDITED);
+    }
   };
 
   const timeCards: Array<React.JSX.Element> = [];
@@ -108,15 +117,13 @@ const ReminderPopup = ({ isActive, showingFunction, setRem, setMed, pet, med }: 
             <View style={styles.selectionContainer}>
               <Text style={[styles.text, styles.selectionText]}>{`FOR MEDICATION: ${medication.name !== '' ? medication.name : 'NONE SELECTED'}`}</Text>
               <View style={styles.itemSwitchContainer}>
-                {medication.name === '' ?
+                {medication.name === '' &&
                   <Selection
                     data={pet.medications.filter((med: Medication) => med.reminder.id === '')} // only show meds with no reminder
                     selectedItemId={selectedMedId}
                     onSwitch={setSelectedMedId}
                     switchItem="Medication"
                   />
-                  :
-                  <></>
                 }
               </View>
             </View>
@@ -147,10 +154,15 @@ const ReminderPopup = ({ isActive, showingFunction, setRem, setMed, pet, med }: 
             />
           </View>
 
+          {/* delete button */}
+          {med.reminder.id !== '' && (
+            <DeleteButton onPressFunction={() => { closePopup(true) }} innerText={'delete'} color={Color.colorFirebrick} />
+          )}
+
           {/* save button */}
           <Pressable onPress={() => {
             if (medication.name !== '') {
-              saveReminder();
+              closePopup(false);
             } else {
               alert('Must select a medication to add the reminder to.');
             }

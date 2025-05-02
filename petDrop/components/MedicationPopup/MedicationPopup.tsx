@@ -10,7 +10,9 @@ import { Color } from "../../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
 import DateCard from "./DateCard";
 import ReminderPopup from "../ReminderPopup";
-import { state } from "../../screens/MedicationsArchive";
+import DeleteButton from '../CustomButton';
+import { medState } from "../../screens/MedicationsArchive";
+import { remState } from "../../screens/Reminders";
 
 type MedicationPopupType = {
   isActive: boolean;
@@ -22,13 +24,13 @@ type MedicationPopupType = {
 };
 
 const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, pet, med }: MedicationPopupType) => {
-  const [popupShowing, setPopupShowing] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [dateMap, setDateMap] = useState(new Map<Date, number>());
   const [description, setDescription] = useState(med.description);
   const [medName, setMedName] = useState(med.name);
   const [color, setColor] = useState(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
   const [propsChanged, setPropsChanged] = useState(true);
+  const [remPopupState, setRemPopupState] = useState(remState.NO_ACTION);
 
   const ObjectID = require('bson-objectid');
   const id = med.id !== '' ? med.id : ObjectID();
@@ -86,15 +88,23 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     setMedName('');
     setColor(`#${Math.round(Math.random() * 899998 + 100000)}`);
     setPropsChanged(true);
-    setPopupState(state.NO_ACTION);
+    setPopupState(medState.NO_ACTION);
   }
 
-  const saveMedication = async () => {
+  const closePopup = (deleted: boolean) => {
+    // TODO: ask for confirmation if deleted
     const newMed: Medication = { id: id, name: medName, color: color, description: description, dates: dates, reminder: med.reminder, range: 4 };
     // add medication to the list that will be created when the popup is closed
     setMedication(newMed);
-    // if med didn't exist -> it was created, otherwise if med.reminder existed -> neither was created, otherwise reminder was created
-    const newState = med.id === '' ? state.MED_CREATED : med.reminder.id !== '' ? state.MED_AND_REM_EDITED : state.MED_EDITED;
+    let newState;
+    if (med.id === '') {
+      newState = medState.MED_CREATED;
+    } else if (deleted) {
+      newState = medState.MED_DELETED;
+    } else {
+      // use the numbers behind states to avoid a switch statement
+      newState = medState.MED_EDITED_REM_NOTHING + remPopupState;
+    }
     close();
     setPopupState(newState);
   };
@@ -189,15 +199,19 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
           </ScrollView>
 
           {/* add reminder button */}
-          <Pressable onPress={() => { setPopupShowing(true) }}>
+          <Pressable onPress={() => { setRemPopupState(remState.SHOW_POPUP) }}>
             <View style={styles.reminderButtonOval}>
               <Text style={[styles.reminderButtonText, styles.text]}>{`${med.reminder.notifications.length > 0 ? 'VIEW' : 'ADD'} REMINDER`}</Text>
             </View>
           </Pressable>
 
+          {/* delete button */}
+          {med.id !== '' && (
+            <DeleteButton onPressFunction={() => { closePopup(true) }} innerText={'delete'} color={Color.colorFirebrick} />
+          )}
 
           {/* save button */}
-          <Pressable onPress={saveMedication}>
+          <Pressable onPress={() => { closePopup(false) }}>
             <View style={styles.saveButtonOval}>
               <Text style={[styles.saveButtonText, styles.text]}>SAVE</Text>
             </View>
@@ -206,10 +220,10 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
         </View>
 
         <ReminderPopup
-          isActive={popupShowing}
-          showingFunction={setPopupShowing}
+          isActive={remPopupState === remState.SHOW_POPUP}
+          setPopupState={setRemPopupState}
           setRem={setReminder}
-          setMed={() => {}}
+          setMed={() => { }}
           pet={pet}
           med={{
             id: med.id,
