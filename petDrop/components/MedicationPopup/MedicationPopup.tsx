@@ -3,7 +3,7 @@ import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingV
 import { Image } from "expo-image";
 import DropdownArrow from "../../assets/dropdown_arrow.svg";
 import styles from '../../styles/MedicationPopup.styles';
-import { emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../../data/dataTypes";
+import { Medication, Pet } from "../../data/dataTypes";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useState } from "react";
 import { Color } from "../../GlobalStyles";
@@ -34,19 +34,6 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
 
   const ObjectID = require('bson-objectid');
   const id = med.id !== '' ? med.id : ObjectID();
-
-  // # of milliseconds in a week used when adding recurring dates
-  const MS_IN_WEEK: number = 604800000;
-
-  // create list of dates from dateMap
-  const dates: string[] = [];
-  dateMap.forEach((occurances: number, date: Date) => {
-    let writableDate: Date = new Date(date); // make copy of the value so it doesn't update the dateMap
-    for (let i = 0; i < occurances; i++) {
-      dates.push(writableDate.toDateString());
-      writableDate.setTime(writableDate.getTime() + MS_IN_WEEK);
-    }
-  });
 
   // function for updating dates state
   function updateDates(date: Date | undefined, recurring: number) {
@@ -91,7 +78,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     setPopupState(medState.NO_ACTION);
   }
 
-  const closePopup = (deleted: boolean) => {
+  const closeWithAction = (deleted: boolean) => {
     // TODO: ask for confirmation if deleted
     const newMed: Medication = { id: id, name: medName, color: color, description: description, dates: dates, reminder: med.reminder, range: 4 };
     // add medication to the list that will be created when the popup is closed
@@ -108,6 +95,19 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     close();
     setPopupState(newState);
   };
+
+  // # of milliseconds in a week used when adding recurring dates
+  const MS_IN_WEEK: number = 604800000;
+
+  // create list of dates from dateMap
+  const dates: string[] = [];
+  dateMap.forEach((occurances: number, date: Date) => {
+    let writableDate: Date = new Date(date); // make copy of the value so it doesn't update the dateMap
+    for (let i = 0; i < occurances; i++) {
+      dates.push(writableDate.toDateString());
+      writableDate.setTime(writableDate.getTime() + MS_IN_WEEK);
+    }
+  });
 
   const dateCards: Array<React.JSX.Element> = [];
   Array.from(dateMap.keys()).forEach((date: Date, index: number) => {
@@ -207,11 +207,11 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
 
           {/* delete button */}
           {med.id !== '' && (
-            <DeleteButton onPressFunction={() => { closePopup(true) }} innerText={'delete'} color={Color.colorFirebrick} />
+            <DeleteButton onPressFunction={() => { closeWithAction(true) }} innerText={'delete'} color={Color.colorFirebrick} />
           )}
 
           {/* save button */}
-          <Pressable onPress={() => { closePopup(false) }}>
+          <Pressable onPress={() => { closeWithAction(false) }}>
             <View style={styles.saveButtonOval}>
               <Text style={[styles.saveButtonText, styles.text]}>SAVE</Text>
             </View>

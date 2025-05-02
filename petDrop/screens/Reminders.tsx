@@ -36,6 +36,15 @@ const Reminders = ({ navigation, route }: Props) => {
   // store the user's account info to avoid typing "route.params.account" repeatedly
   const account: Account = route.params.account;
 
+  useEffect(() => {
+    setSelectedPetId(account.pets[0].id);
+  }, []);
+
+  const editReminder = (med: Medication) => {
+    setMed(med);
+    setPopupState(remState.SHOW_POPUP);
+  }
+
   const WriteToDB = async () => {
     let url: string = '', method: string = '', body: string = '';
     switch (popupState) {
@@ -78,17 +87,19 @@ const Reminders = ({ navigation, route }: Props) => {
     WriteToDB();
   }
 
-  useEffect(() => {
-    setSelectedPetId(account.pets[0].id);
-  }, []);
-
-  const editReminder = (med: Medication) => {
-    setMed(med);
-    setPopupState(remState.SHOW_POPUP);
-  }
-
+  let reminderCards: React.JSX.Element[];
   let selectedPet: Pet | undefined = account.pets.find((pet) => pet.id === selectedPetId);
   selectedPet = selectedPet ? selectedPet : emptyPet;
+  reminderCards = selectedPet.medications.map((med: Medication, index: number) =>
+    med.reminder.notifications.length > 0 ?
+      <ReminderCard
+        key={index}
+        med={med}
+        showingFunction={editReminder}
+      />
+      :
+      <View key={index}></View>
+  );
 
   return (
     <View style={styles.container}>
@@ -108,16 +119,7 @@ const Reminders = ({ navigation, route }: Props) => {
         </View>
 
         {/* Reminder Cards */}
-        {selectedPet.medications.map((med: Medication, index: number) =>
-          med.reminder.notifications.length > 0 ?
-            <ReminderCard
-              key={index}
-              med={med}
-              showingFunction={editReminder}
-            />
-            :
-            <View key={index}></View>
-        )}
+        {reminderCards}
 
         {/* Add Reminder Button */}
         <View style={styles.addReminderButton}>

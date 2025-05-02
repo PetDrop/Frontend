@@ -10,7 +10,7 @@ import { Image } from 'expo-image';
 import AddMedicationButton from '../components/CustomButton';
 import MedicationPopup from '../components/MedicationPopup/MedicationPopup';
 import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from '../data/dataTypes';
-import { httpRequest, ADD_MEDICATION, UPDATE_PET, ADD_REMINDER, UPDATE_ACCOUNT, UPDATE_REMINDER, UPDATE_MEDICATION, DELETE_REMINDER_BY_ID, DELETE_MEDICATION_BY_ID } from '../data/endpoints';
+import { httpRequest, ADD_MEDICATION, UPDATE_PET, ADD_REMINDER, UPDATE_REMINDER, UPDATE_MEDICATION, DELETE_REMINDER_BY_ID, DELETE_MEDICATION_BY_ID } from '../data/endpoints';
 
 export enum medState {
 	'NO_ACTION' = 0, // no popups showing and no action needing to be done
@@ -42,6 +42,11 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	useEffect(() => {
 		setSelectedPetId(account.pets[0].id);
 	}, []);
+
+	const editMedication = (med: Medication) => {
+		setMed(med);
+		setPopupState(medState.SHOW_POPUP);
+	}
 
 	const WriteToDB = async () => {
 		let medUrl: string = '', medMethod: string = '', medBody: string = '', remUrl: string = '', remMethod: string = '', remBody: string = '';
@@ -95,10 +100,6 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				medBody = JSON.stringify(med);
 				break;
 			case medState.MED_DELETED:
-				if (med.reminder.id !== '') {
-					remUrl = DELETE_REMINDER_BY_ID + med.reminder.id;
-					remMethod = 'DELETE';
-				}
 				medUrl = DELETE_MEDICATION_BY_ID + med.id;
 				medMethod = 'DELETE';
 				break;
@@ -142,28 +143,33 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 		WriteToDB();
 	}
 
-	const editMedication = (med: Medication) => {
-		setMed(med);
-		setPopupState(medState.SHOW_POPUP);
-	}
-
+	let medicationCards: React.JSX.Element[];
 	let selectedPet: Pet | undefined = account.pets.find((pet) => pet.id === selectedPetId);
 	selectedPet = selectedPet ? selectedPet : emptyPet;
 	let selectedReminders: Reminder[] = [];
 	selectedPet.medications.forEach((med: Medication) => {
 		selectedReminders.push(med.reminder);
 	});
-
+	medicationCards = selectedPet.medications.map((medication: Medication, index: number) => (
+		<MedicationCard
+			key={index}
+			medProp={medication}
+			petProp={selectedPet}
+			showingFunction={editMedication}
+		/>
+	));
 
 	return (
 		<View style={styles.container}>
 			<ScrollView
 				contentContainerStyle={styles.scrollContainer}
 				showsVerticalScrollIndicator={false}>
+
 				<Image
 					source={require('../assets/petdrop_slogan.png')}
 					style={logoImage}
 				/>
+
 				<View style={styles.headerContainer}>
 					<Text style={styles.pageTitle}>Medications</Text>
 					<PetSwitch
@@ -173,14 +179,8 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 						switchItem='Pet'
 					/>
 				</View>
-				{selectedPet.medications.map((medication: Medication, index: number) => (
-					<MedicationCard
-						key={index}
-						medProp={medication}
-						petProp={selectedPet}
-						showingFunction={editMedication}
-					/>
-				))}
+
+				{medicationCards}
 
 				<View style={styles.addMedicationButton}>
 					<AddMedicationButton
@@ -193,11 +193,13 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 					/>
 				</View>
 			</ScrollView>
+
 			<TopBottomBar
 				navigation={navigation}
 				currentScreen={ScreenEnum.MedicationsArchive}
 				account={account}
 			/>
+
 			<MedicationPopup
 				isActive={popupState === medState.SHOW_POPUP}
 				setPopupState={setPopupState}
