@@ -11,9 +11,7 @@ type CalendarProps = {
 const Calendar = ({ pets }: CalendarProps) => {
 	const { width, height } = Dimensions.get('window');
 
-	const getMedicationBars = (
-		date: string
-	): { color: string; range: number }[] => {
+	const getMedicationBars = (date: string): { color: string; range: number }[] => {
 		let medBars: { color: string; range: number }[] = [];
 		pets.forEach((pet) => {
 			pet.medications.forEach((med) => {

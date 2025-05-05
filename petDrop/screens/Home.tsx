@@ -1,13 +1,12 @@
 import * as React from "react";
 import { Dimensions, Text, View, ScrollView, Pressable } from "react-native";
-import EditIcon from "../assets/edit_icon.svg";
-import Calendar from "../components/Home/Calendar";
 import Header from "../components/Home/Header";
+import { Calendar, DateData } from 'react-native-calendars';
 import MedicationsList from "../components/Home/MedicationsList";
 import UserGreeting from "../components/Home/UserGreeting";
 import TopBottomBar from "../components/TopBottomBar";
-import { ScreenEnum } from "../GlobalStyles";
-import { styles } from "../styles/Home.styles";
+import { Color, ScreenEnum } from "../GlobalStyles";
+import { styles, calendarTheme } from "../styles/Home.styles";
 import ReminderPopup from "../components/ReminderPopup";
 import { Account, emptyMed, emptyPet, emptyReminder, Reminder } from "../data/dataTypes";
 import { useState } from "react";
@@ -36,13 +35,14 @@ const Home = ({ navigation, route }: HomeProps) => {
 
         {/* Calendar Section */}
         <View style={styles.calendarContainer}>
-          <Text style={styles.monthText}>September.</Text>
-          <EditIcon style={styles.editIcon} width={width * 0.07} height={height * 0.1} />
-          <View style={styles.calendarBody}>
-            <Pressable onPress={() => { let rem = emptyReminder; rem.id = '1'; setPopupShowing(true) }}>{/* fix this utter nonsense*/}
-              <Calendar pets={account.pets} />
-            </Pressable>
-          </View>
+          <Calendar
+            markingType='multi-period'
+            style={styles.calendar}
+            theme={calendarTheme}
+            onDayPress={(day: DateData) => { console.log(day)}}
+            markedDates={{
+            }}
+          />
         </View>
 
         {/* Medications List */}
@@ -52,8 +52,6 @@ const Home = ({ navigation, route }: HomeProps) => {
       {/* Bottom Navigation */}
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} account={account} />
 
-      {/* Pop-up to view a reminder */}
-      <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} setRem={() => {}} setMed={() => {}} pet={emptyPet} med={emptyMed}/>
     </View>
   );
 };

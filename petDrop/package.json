@@ -33,6 +33,7 @@
     "react": "18.3.1",
     "react-native": "0.76.6",
     "react-native-async-storage": "^0.0.1",
+    "react-native-calendars": "^1.1312.0",
     "react-native-file-access": "^3.1.1",
     "react-native-fs": "^2.20.0",
     "react-native-fs-turbo": "^0.3.2",

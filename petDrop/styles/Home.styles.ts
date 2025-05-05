@@ -3,6 +3,16 @@ import { Border, Color, FontFamily, FontSize } from '../GlobalStyles';
 
 const { width, height } = Dimensions.get('window');
 
+export const calendarTheme = {
+	textSectionTitleColor: Color.colorCornflowerblue,
+	selectedDayBackgroundColor: '#00adf5',
+	selectedDayTextColor: '#ffffff',
+	todayTextColor: Color.colorDarkslateblue,
+	dayTextColor: Color.colorCornflowerblue,
+	textDisabledColor: Color.colorLightskyblue,
+	textDayFontWeight: '800',
+}
+
 export const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -22,27 +32,9 @@ export const styles = StyleSheet.create({
 		marginTop: height * 0.02,
 		height: height * 0.425,
 	},
-	calendarBody: {
-		backgroundColor: Color.colorCornflowerblue, // Darker blue for the main calendar
-		alignSelf: 'center',
-		paddingVertical: 15,
-		paddingHorizontal: 10,
-		borderBottomLeftRadius: 30,
-		borderBottomRightRadius: 30,
-		width: width * 0.9,
-		height: height * 0.365,
-	},
-	monthText: {
-		fontSize: 32,
-		fontFamily: FontFamily.jsMathCmbx10,
-		color: Color.colorFloralwhite,
-		textAlign: 'left',
-		marginBottom: -width * 0.175,
-		marginLeft: width * 0.02,
-	},
-	editIcon: {
-		top: height * 0.015,
-		left: width * 0.73,
+	calendar: {
+		backgroundColor: Color.colorLightskyblue,
+		color: Color.colorCornflowerblue,
 	},
 	weekdaysRow: {
 		flexDirection: 'row',
