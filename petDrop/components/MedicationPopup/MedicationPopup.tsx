@@ -3,7 +3,7 @@ import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingV
 import { Image } from "expo-image";
 import DropdownArrow from "../../assets/dropdown_arrow.svg";
 import styles from '../../styles/MedicationPopup.styles';
-import { Medication, Pet } from "../../data/dataTypes";
+import { emptyReminder, Medication, Pet, Reminder } from "../../data/dataTypes";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useState } from "react";
 import { Color } from "../../GlobalStyles";
@@ -31,12 +31,23 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   const [color, setColor] = useState(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
   const [propsChanged, setPropsChanged] = useState(true);
   const [remPopupState, setRemPopupState] = useState(remState.NO_ACTION);
+  const [rem, setRem] = useState(med.reminder);
 
   const ObjectID = require('bson-objectid');
   const id = med.id !== '' ? med.id : ObjectID();
 
+  const updateRem = (rem: Reminder, deleted: boolean) => {
+    if (deleted) {
+      setRem(emptyReminder);
+      setReminder({ id: ObjectID(), notifications: [] })
+    } else {
+      setRem(rem);
+      setReminder(rem);
+    }
+  }
+
   // function for updating dates state
-  function updateDates(date: Date | undefined, recurring: number) {
+  const updateDates = (date: Date | undefined, recurring: number) => {
     if (date === undefined) {
       setDateMap(new Map<Date, number>());
     } else {
@@ -80,7 +91,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
 
   const closeWithAction = (deleted: boolean) => {
     // TODO: ask for confirmation if deleted
-    const newMed: Medication = { id: id, name: medName, color: color, description: description, dates: dates, reminder: med.reminder, range: 4 };
+    const newMed: Medication = { id: id, name: medName, color: color, description: description, dates: dates, reminder: rem, range: 4 };
     // add medication to the list that will be created when the popup is closed
     setMedication(newMed);
     let newState;
@@ -189,7 +200,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
 
             <TextInput
               style={[styles.textInput]}
-              placeholder="Enter any info you'll need later (time(s) to administer the medication, notes, instructions, etc.)"
+              placeholder="Enter any info you'll need later (notes, instructions, etc.)"
               placeholderTextColor={Color.colorCornflowerblue}
               value={description}
               onChangeText={setDescription}
@@ -201,14 +212,9 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
           {/* add reminder button */}
           <Pressable onPress={() => { setRemPopupState(remState.SHOW_POPUP) }}>
             <View style={styles.reminderButtonOval}>
-              <Text style={[styles.reminderButtonText, styles.text]}>{`${med.reminder.notifications.length > 0 ? 'VIEW' : 'ADD'} REMINDER`}</Text>
+              <Text style={[styles.reminderButtonText, styles.text]}>{`${rem.notifications.length > 0 ? 'VIEW' : 'ADD'} REMINDER`}</Text>
             </View>
           </Pressable>
-
-          {/* delete button */}
-          {med.id !== '' && (
-            <DeleteButton onPressFunction={() => { closeWithAction(true) }} innerText={'delete'} color={Color.colorFirebrick} />
-          )}
 
           {/* save button */}
           <Pressable onPress={() => { closeWithAction(false) }}>
@@ -217,12 +223,19 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
             </View>
           </Pressable>
 
+          {/* delete button */}
+          {med.id !== '' && (
+            <View style={styles.deleteButtonContainer}>
+              <DeleteButton onPressFunction={() => { closeWithAction(true) }} innerText={'delete'} color={Color.colorFirebrick} />
+            </View>
+          )}
+
         </View>
 
         <ReminderPopup
           isActive={remPopupState === remState.SHOW_POPUP}
           setPopupState={setRemPopupState}
-          setRem={setReminder}
+          setRem={updateRem}
           setMed={() => { }}
           pet={pet}
           med={{
@@ -232,7 +245,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
             description: description,
             name: medName === '' ? 'MED BEING ADDED' : medName,
             range: med.range,
-            reminder: med.reminder
+            reminder: rem
           }} />
       </KeyboardAvoidingView>
     );

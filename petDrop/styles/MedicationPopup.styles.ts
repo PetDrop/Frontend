@@ -111,6 +111,10 @@ const styles = StyleSheet.create({
     saveButtonText: {
         top: height * -0.005,
     },
+    deleteButtonContainer: {
+        top: height * -0.19,
+        left: width * 0.6
+    },
     text: {
         color: Color.colorFloralwhite,
         fontSize: FontSize.size_5xl,

@@ -60,7 +60,7 @@ const ReminderPopup = ({ isActive, setPopupState, setRem, setMed, pet, med }: Re
     // set medication for reminder to be added to (if the screen this popup is on is unable to do so)
     setMed(medication);
     // set reminder to be created/edited when the popup is closed
-    setRem(rem);
+    setRem(rem, deleted);
     close();
     if (deleted) {
       setPopupState(remState.REM_DELETED);
@@ -154,23 +154,27 @@ const ReminderPopup = ({ isActive, setPopupState, setRem, setMed, pet, med }: Re
             />
           </View>
 
-          {/* delete button */}
-          {med.reminder.id !== '' && (
-            <DeleteButton onPressFunction={() => { closePopup(true) }} innerText={'delete'} color={Color.colorFirebrick} />
-          )}
-
-          {/* save button */}
-          <Pressable onPress={() => {
-            if (medication.name !== '') {
-              closePopup(false);
-            } else {
-              alert('Must select a medication to add the reminder to.');
-            }
-          }}>
-            <View style={styles.saveButtonOval}>
-              <Text style={styles.saveButtonText}>SAVE</Text>
+          <View style={{ flexDirection: 'row' }}>
+            {/* delete button */}
+            <View style={styles.deleteButtonContainer}>
+              {med.reminder.id !== '' && (
+                <DeleteButton onPressFunction={() => { closePopup(true) }} innerText={'delete'} color={Color.colorFirebrick} />
+              )}
             </View>
-          </Pressable>
+
+            {/* save button */}
+            <Pressable onPress={() => {
+              if (medication.name !== '') {
+                closePopup(false);
+              } else {
+                alert('Must select a medication to add the reminder to.');
+              }
+            }}>
+              <View style={styles.saveButtonOval}>
+                <Text style={styles.saveButtonText}>SAVE</Text>
+              </View>
+            </Pressable>
+          </View>
         </View>
       </View>
     );

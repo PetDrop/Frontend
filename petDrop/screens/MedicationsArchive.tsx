@@ -100,12 +100,20 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				medBody = JSON.stringify(med);
 				break;
 			case medState.MED_DELETED:
+				if (rem) { // redundant
+					remUrl = DELETE_REMINDER_BY_ID + rem.id;
+					remMethod = 'DELETE';
+					med.reminder = emptyReminder;
+				}
 				medUrl = DELETE_MEDICATION_BY_ID + med.id;
 				medMethod = 'DELETE';
 				break;
 		}
 		let response;
 		if (remUrl === '') {
+			console.log(medUrl);
+			console.log(medMethod);
+			console.log(medBody);
 			response = await handleMed(medUrl, medMethod, medBody);
 			if (response.ok) {
 				alert('the deed is done');
@@ -125,6 +133,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 
 	const handleMed = async (medUrl: string, medMethod: string, medBody: string): Promise<Response> => {
 		let response = await httpRequest(medUrl, medMethod, medBody);
+		console.log(response.status);
 		if (response.ok) {
 			if (popupState === medState.MED_CREATED && selectedPet) {
 				selectedPet.medications.push(med);
