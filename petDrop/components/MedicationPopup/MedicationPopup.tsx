@@ -11,8 +11,8 @@ import Selection from 'react-native-select-dropdown';
 import DateCard from "./DateCard";
 import ReminderPopup from "../ReminderPopup";
 import DeleteButton from '../CustomButton';
-import { medState } from "../../screens/MedicationsArchive";
-import { remState } from "../../screens/Reminders";
+import { medState } from "../../data/states";
+import { remState } from "../../data/states";
 
 type MedicationPopupType = {
   isActive: boolean;
@@ -115,7 +115,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   dateMap.forEach((occurances: number, date: Date) => {
     let writableDate: Date = new Date(date); // make copy of the value so it doesn't update the dateMap
     for (let i = 0; i < occurances; i++) {
-      dates.push(writableDate.toDateString());
+      dates.push(writableDate.toISOString().slice(0, 10));
       writableDate.setTime(writableDate.getTime() + MS_IN_WEEK);
     }
   });

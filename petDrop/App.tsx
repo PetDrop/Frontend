@@ -1,4 +1,16 @@
-const Stack = createNativeStackNavigator();
+type RootStackParamList = {
+  Login: undefined;
+  Signup: undefined;
+  Profile: undefined;
+  Home: undefined;
+  PetInfo: undefined;
+  PetInfo1: undefined;
+  Reminders: undefined;
+  MedicationsArchive: undefined;
+  LoadingScreen: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as React from "react";
@@ -14,6 +26,7 @@ import Profile from "./screens/Profile";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useState } from "react";
 import Signup from "./screens/Signup";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const App = () => {
   const [hideSplashScreen, setHideSplashScreen] = useState(true);
@@ -28,7 +41,7 @@ const App = () => {
   }
 
   return (
-    <>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
         {hideSplashScreen ? (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -81,7 +94,7 @@ const App = () => {
           </Stack.Navigator>
         ) : null}
       </NavigationContainer>
-    </>
+    </GestureHandlerRootView>
   );
 };
 export default App;

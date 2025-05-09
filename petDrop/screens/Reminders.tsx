@@ -13,14 +13,7 @@ import { useEffect, useState } from "react";
 import ReminderPopup from "../components/ReminderPopup";
 import PetSwitch from '../components/ItemSwitch';
 import { httpRequest, ADD_REMINDER, UPDATE_ACCOUNT, UPDATE_MEDICATION, UPDATE_REMINDER, DELETE_REMINDER_BY_ID } from "../data/endpoints";
-
-export enum remState {
-  'NO_ACTION' = 0, // popup not showing and no action needing to be done
-  'REM_CREATED' = 1, // need to update med
-  'REM_EDITED' = 2, // no update to med needed
-  'REM_DELETED' = 3, // need to update med
-  'SHOW_POPUP' = 4, // popup showing but no action done yet
-}
+import { remState } from "../data/states";
 
 interface Props {
   navigation: NavigationProp<any>;

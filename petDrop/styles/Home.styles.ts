@@ -1,9 +1,10 @@
 import { Dimensions, StyleSheet } from 'react-native';
 import { Border, Color, FontFamily, FontSize } from '../GlobalStyles';
+import { Theme } from 'react-native-calendars/src/types';
 
 const { width, height } = Dimensions.get('window');
 
-export const calendarTheme = {
+export const calendarTheme: Theme = {
 	textSectionTitleColor: Color.colorCornflowerblue,
 	selectedDayBackgroundColor: '#00adf5',
 	selectedDayTextColor: '#ffffff',
@@ -30,7 +31,6 @@ export const styles = StyleSheet.create({
 		paddingVertical: height * 0.02,
 		paddingHorizontal: width * 0.05,
 		marginTop: height * 0.02,
-		height: height * 0.425,
 	},
 	calendar: {
 		backgroundColor: Color.colorLightskyblue,
