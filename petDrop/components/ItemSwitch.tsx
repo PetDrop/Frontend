@@ -9,11 +9,10 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native';
-import { petImages } from '../GlobalStyles';
 import styles from '../styles/Medications.styles';
 
 interface ItemSwitchProps {
-	selectedItemId: string;
+	selectedItem: { id: string, name: string, image?: string };
 	data: Array<{ id: string, name: string, image?: string }>,
 	onSwitch: (item: any) => void;
 	switchItem: 'Item' | 'Medication' | string;
@@ -21,14 +20,13 @@ interface ItemSwitchProps {
 
 
 const ItemSwitch: React.FC<ItemSwitchProps> = ({
-	selectedItemId,
+	selectedItem,
 	data,
 	onSwitch,
 	switchItem
 }) => {
 	const [modalVisible, setModalVisible] = useState(false);
 
-	let selectedItem = data.find((item) => item.id === selectedItemId);
 	if (selectedItem === undefined) {
 		selectedItem = { id: "", name: "", image: "" };
 	}
@@ -41,7 +39,7 @@ const ItemSwitch: React.FC<ItemSwitchProps> = ({
 		image =
 			<View>
 				<View style={styles.imageOutline}>
-				<Image src={imageString} style={styles.itemImage} />
+					<Image src={imageString} style={styles.itemImage} />
 				</View>
 			</View>;
 	}
@@ -71,7 +69,7 @@ const ItemSwitch: React.FC<ItemSwitchProps> = ({
 										styles.selectedItemOption,
 									]}
 									onPress={() => {
-										onSwitch(item.id);
+										onSwitch(item);
 										setModalVisible(false);
 									}}>
 									<Text style={styles.itemOptionText}>

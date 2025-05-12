@@ -19,7 +19,7 @@ type MedicationsArchiveProps = {
 }
 
 const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
-	const [selectedPetId, setSelectedPetId] = useState('');
+	const [selectedPet, setSelectedPet] = useState<Pet>(emptyPet);
 	const [med, setMed] = useState<Medication>(emptyMed);
 	const [rem, setRem] = useState<Reminder>();
 	const [popupState, setPopupState] = useState(medState.NO_ACTION);
@@ -30,7 +30,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	const ObjectID = require('bson-objectid');
 
 	useEffect(() => {
-		setSelectedPetId(account.pets[0].id);
+		setSelectedPet(account.pets[0] ? account.pets[0] : emptyPet);
 	}, []);
 
 	const editMedication = (med: Medication) => {
@@ -58,39 +58,33 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				medBody = JSON.stringify(med);
 				break;
 			case medState.MED_EDITED_REM_CREATED:
-				if (rem) { // redundant
-					remUrl = ADD_REMINDER;
-					remMethod = 'POST';
-					remBody = JSON.stringify(rem);
-					med.reminder = rem;
-				}
+				remUrl = ADD_REMINDER;
+				remMethod = 'POST';
+				remBody = JSON.stringify(rem);
+				med.reminder = rem!; // rem can't be null if it got created
 				medUrl = UPDATE_MEDICATION;
 				medMethod = 'PUT';
 				medBody = JSON.stringify(med);
 				break;
 			case medState.MED_EDITED_REM_EDITED:
-				if (rem) { // redundant
-					remUrl = UPDATE_REMINDER;
-					remMethod = 'PUT';
-					remBody = JSON.stringify(rem);
-					med.reminder = rem;
-				}
+				remUrl = UPDATE_REMINDER;
+				remMethod = 'PUT';
+				remBody = JSON.stringify(rem);
+				med.reminder = rem!; // rem can't be null if it got edited
 				medUrl = UPDATE_MEDICATION;
 				medMethod = 'PUT';
 				medBody = JSON.stringify(med);
 				break;
 			case medState.MED_EDITED_REM_DELETED:
-				if (rem) { // redundant
-					remUrl = DELETE_REMINDER_BY_ID + rem.id;
-					remMethod = 'DELETE';
-					med.reminder = emptyReminder;
-				}
+				remUrl = DELETE_REMINDER_BY_ID + rem!.id; // rem can't be null if it got deleted
+				remMethod = 'DELETE';
+				med.reminder = emptyReminder;
 				medUrl = UPDATE_MEDICATION;
 				medMethod = 'PUT';
 				medBody = JSON.stringify(med);
 				break;
 			case medState.MED_DELETED:
-				if (rem) { // redundant
+				if (rem) {
 					remUrl = DELETE_REMINDER_BY_ID + rem.id;
 					remMethod = 'DELETE';
 					med.reminder = emptyReminder;
@@ -143,8 +137,6 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	}
 
 	let medicationCards: React.JSX.Element[];
-	let selectedPet: Pet | undefined = account.pets.find((pet) => pet.id === selectedPetId);
-	selectedPet = selectedPet ? selectedPet : emptyPet;
 	let selectedReminders: Reminder[] = [];
 	selectedPet.medications.forEach((med: Medication) => {
 		selectedReminders.push(med.reminder);
@@ -173,8 +165,8 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 					<Text style={styles.pageTitle}>Medications</Text>
 					<PetSwitch
 						data={account.pets}
-						selectedItemId={selectedPetId}
-						onSwitch={setSelectedPetId}
+						selectedItem={selectedPet}
+						onSwitch={setSelectedPet}
 						switchItem='Pet'
 					/>
 				</View>
@@ -206,6 +198,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				setReminder={setRem}
 				pet={selectedPet}
 				med={med}
+				readonly={false}
 			/>
 		</View>
 	);

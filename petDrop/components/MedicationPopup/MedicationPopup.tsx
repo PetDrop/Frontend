@@ -21,9 +21,10 @@ type MedicationPopupType = {
   setReminder: Function;
   pet: Pet;
   med: Medication;
+  readonly: boolean;
 };
 
-const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, pet, med }: MedicationPopupType) => {
+const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, pet, med, readonly }: MedicationPopupType) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [dateMap, setDateMap] = useState(new Map<Date, number>());
   const [description, setDescription] = useState(med.description);
@@ -60,9 +61,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     dates.forEach((date: string) => {
       const newDate = new Date(Date.parse(date));
       if (newDateMap.has(newDate)) {
-        // temp var recurring is needed because of 'possibly undefined' errors (redundant because has() being true means get() is defined)
-        let recurring = newDateMap.get(newDate);
-        recurring = recurring ? recurring : 0;
+        let recurring = newDateMap.get(newDate)!;
         newDateMap.set(newDate, recurring + 1);
       } else {
         newDateMap.set(newDate, 1);
@@ -184,7 +183,9 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
               {dateCards}
             </View>
 
-            <Button title="Add Date" onPress={() => { setDatePickerVisibility(true) }} />
+            {!readonly && (
+              <Button title="Add Date" onPress={() => { setDatePickerVisibility(true) }} />
+            )}
             <DateTimePickerModal
               date={new Date(Date.now())}
               isVisible={isDatePickerVisible}
@@ -205,26 +206,31 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
               value={description}
               onChangeText={setDescription}
               multiline={true}
+              editable={!readonly}
             />
 
           </ScrollView>
 
-          {/* add reminder button */}
-          <Pressable onPress={() => { setRemPopupState(remState.SHOW_POPUP) }}>
-            <View style={styles.reminderButtonOval}>
-              <Text style={[styles.reminderButtonText, styles.text]}>{`${rem.notifications.length > 0 ? 'VIEW' : 'ADD'} REMINDER`}</Text>
-            </View>
-          </Pressable>
+          {/* view/add reminder button */}
+          {((readonly && med.reminder.id !== '') || (!readonly)) && (
+            <Pressable onPress={() => { setRemPopupState(remState.SHOW_POPUP) }}>
+              <View style={styles.reminderButtonOval}>
+                <Text style={[styles.reminderButtonText, styles.text]}>{`${rem.id !== '' ? 'VIEW' : 'ADD'} REMINDER`}</Text>
+              </View>
+            </Pressable>
+          )}
 
           {/* save button */}
-          <Pressable onPress={() => { closeWithAction(false) }}>
-            <View style={styles.saveButtonOval}>
-              <Text style={[styles.saveButtonText, styles.text]}>SAVE</Text>
-            </View>
-          </Pressable>
+          {!readonly && (
+            <Pressable onPress={() => { closeWithAction(false) }}>
+              <View style={styles.saveButtonOval}>
+                <Text style={[styles.saveButtonText, styles.text]}>SAVE</Text>
+              </View>
+            </Pressable>
+          )}
 
           {/* delete button */}
-          {med.id !== '' && (
+          {(med.id !== '' && !readonly) && (
             <View style={styles.deleteButtonContainer}>
               <DeleteButton onPressFunction={() => { closeWithAction(true) }} innerText={'delete'} color={Color.colorFirebrick} />
             </View>
@@ -246,7 +252,9 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
             name: medName === '' ? 'MED BEING ADDED' : medName,
             range: med.range,
             reminder: rem
-          }} />
+          }}
+          readonly={readonly}
+        />
       </KeyboardAvoidingView>
     );
   }
