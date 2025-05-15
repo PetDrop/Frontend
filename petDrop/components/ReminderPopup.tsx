@@ -20,19 +20,9 @@ type ReminderPopupType = {
   readonly: boolean;
 };
 
-const updateNotifications = (state: string[], action: { notif: string, notifProp: string[] }) => {
-  switch (action.notif) {
-    case 'clear':
-      return [];
-    case 'reset':
-      return action.notifProp.slice();
-    default:
-      return state.concat(action.notif);
-  }
-}
 
 const ReminderPopup = ({ isActive, setPopupState, setRem, setMed, pet, med, readonly }: ReminderPopupType) => {
-  const [notifications, setNotifications] = useReducer(updateNotifications, med.reminder.notifications);
+  const [notifications, setNotifications] = useState(med.reminder.notifications);
   const [isTimePickerVisible, setTImePickerVisibility] = useState(false);
   const [selectedMed, setSelectedMed] = useState(med);
   const [notifChanged, setNotifChanged] = useState(true);
@@ -42,14 +32,27 @@ const ReminderPopup = ({ isActive, setPopupState, setRem, setMed, pet, med, read
 
   const medication = selectedMed ? selectedMed : med;
 
+  // method for setting notifications state
+  const updateNotifications = (notif: string) => {
+    switch (notif) {
+      case 'clear':
+        setNotifications(new Array<string>());
+        break;
+      case 'reset':
+        setNotifications(med.reminder.notifications);
+        break;
+      default:
+        setNotifications(notifications.concat(notif));
+    }
+  }
+
   if (isActive && notifChanged) {
     setNotifChanged(false);
-    setNotifications({ notif: 'reset', notifProp: med.reminder.notifications });
+    updateNotifications('reset');
   }
 
   const close = () => {
-    setNotifications({ notif: 'clear', notifProp: [] });
-    // setSelectedMed(emptyMed);
+    updateNotifications('clear');
     setPopupState(remState.NO_ACTION);
     setNotifChanged(true);
   }
@@ -148,7 +151,7 @@ const ReminderPopup = ({ isActive, setPopupState, setRem, setMed, pet, med, read
               mode="time"
               onConfirm={(time) => {
                 if (!notifications.includes(time.toTimeString().split(' ')[0])) {
-                  setNotifications({ notif: time.toTimeString().split(' ')[0], notifProp: [] });
+                  updateNotifications(time.toTimeString().split(' ')[0]);
                 }
                 setTImePickerVisibility(false);
               }}

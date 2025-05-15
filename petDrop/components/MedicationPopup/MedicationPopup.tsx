@@ -32,7 +32,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   const [color, setColor] = useState(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
   const [propsChanged, setPropsChanged] = useState(true);
   const [remPopupState, setRemPopupState] = useState(remState.NO_ACTION);
-  const [rem, setRem] = useState(med.reminder);
+  const [rem, setRem] = useState(med.reminder ? med.reminder : emptyReminder);
 
   const ObjectID = require('bson-objectid');
   const id = med.id !== '' ? med.id : ObjectID();
@@ -77,6 +77,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     setDateMap(medDateMap);
     setMedName(med.name);
     setColor(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
+    setRem(med.reminder);
   }
 
   const close = () => {
@@ -86,6 +87,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     setColor(`#${Math.round(Math.random() * 899998 + 100000)}`);
     setPropsChanged(true);
     setPopupState(medState.NO_ACTION);
+    setRem(emptyReminder);
   }
 
   const closeWithAction = (deleted: boolean) => {
@@ -143,27 +145,33 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
             <View style={[styles.colorIndicator, { backgroundColor: color }]} />
 
             {/* medication selection */}
-            <Selection
-              data={['med 1', 'med 2', 'med 3']}
-              onSelect={(selectedItem: string) => { setMedName(selectedItem) }}
-              renderButton={(selectedItem: string) => {
-                return (
-                  <View style={styles.dropdownDefault}>
-                    <Text style={styles.text}>
-                      {selectedItem ? selectedItem : med.name ? med.name : 'Select Medication'}
-                    </Text>
-                    <DropdownArrow style={styles.downArrow} width={19} height={12} />
-                  </View>
-                )
-              }}
-              renderItem={(selectedItem: string) => {
-                return (
-                  <View style={styles.dropdownItem}>
-                    <Text style={styles.text}>{selectedItem}</Text>
-                  </View>
-                )
-              }}
-            />
+            {!readonly ?
+              <Selection
+                data={['med 1', 'med 2', 'med 3']}
+                onSelect={(selectedItem: string) => { setMedName(selectedItem) }}
+                renderButton={(selectedItem: string) => {
+                  return (
+                    <View style={styles.dropdownDefault}>
+                      <Text style={styles.text}>
+                        {selectedItem ? selectedItem : med.name ? med.name : 'Select Medication'}
+                      </Text>
+                      <DropdownArrow style={styles.downArrow} width={19} height={12} />
+                    </View>
+                  )
+                }}
+                renderItem={(selectedItem: string) => {
+                  return (
+                    <View style={styles.dropdownItem}>
+                      <Text style={styles.text}>{selectedItem}</Text>
+                    </View>
+                  )
+                }}
+              />
+              :
+              <View style={styles.dropdownDefault}>
+                <Text style={styles.text}>{medName}</Text>
+              </View>
+            }
 
             {/* close x button */}
             <Pressable onPress={() => { close() }} style={styles.closePopupContainer}>
@@ -212,7 +220,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
           </ScrollView>
 
           {/* view/add reminder button */}
-          {((readonly && med.reminder.id !== '') || (!readonly)) && (
+          {((readonly && rem.id !== '') || (!readonly)) && (
             <Pressable onPress={() => { setRemPopupState(remState.SHOW_POPUP) }}>
               <View style={styles.reminderButtonOval}>
                 <Text style={[styles.reminderButtonText, styles.text]}>{`${rem.id !== '' ? 'VIEW' : 'ADD'} REMINDER`}</Text>

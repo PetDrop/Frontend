@@ -115,8 +115,6 @@ const Home = ({ navigation, route }: HomeProps) => {
     setSwitchDisplay(undefined);
   }
 
-  console.log(infoToDisplay);
-
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -160,7 +158,7 @@ const Home = ({ navigation, route }: HomeProps) => {
         )}
 
         {/* Medications List */}
-        <MedicationsList pets={account.pets} />
+        <MedicationsList petMedObjects={medMap} onPress={showMed}/>
 
         <MedicationPopup
           isActive={infoToDisplay ? true : false}
