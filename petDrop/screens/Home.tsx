@@ -148,29 +148,29 @@ const Home = ({ navigation, route }: HomeProps) => {
           />
         </View>
 
-        {switchDisplay && (
-          <MedSwitch
-            data={switchDisplay}
-            switchItem={'Medication'}
-            selectedItem={infoToDisplay ? infoToDisplay.med : emptyMed}
-            onSwitch={findPet}
-          />
-        )}
-
         {/* Medications List */}
-        <MedicationsList petMedObjects={medMap} onPress={showMed}/>
-
-        <MedicationPopup
-          isActive={infoToDisplay ? true : false}
-          setPopupState={setPopupState}
-          med={infoToDisplay ? infoToDisplay.med : emptyMed}
-          pet={infoToDisplay ? infoToDisplay.pet : emptyPet}
-          setMedication={() => { }}
-          setReminder={() => { }}
-          readonly={true}
-        />
+        <MedicationsList petMedObjects={medMap} onPress={showMed} />
 
       </ScrollView>
+
+      {switchDisplay && (
+        <MedSwitch
+          data={switchDisplay}
+          switchItem={'Medication'}
+          selectedItem={infoToDisplay ? infoToDisplay.med : emptyMed}
+          onSwitch={findPet}
+        />
+      )}
+
+      <MedicationPopup
+        isActive={infoToDisplay ? true : false}
+        setPopupState={setPopupState}
+        med={infoToDisplay ? infoToDisplay.med : emptyMed}
+        pet={infoToDisplay ? infoToDisplay.pet : emptyPet}
+        setMedication={() => { }}
+        setReminder={() => { }}
+        readonly={true}
+      />
       {/* Bottom Navigation */}
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} account={account} />
 

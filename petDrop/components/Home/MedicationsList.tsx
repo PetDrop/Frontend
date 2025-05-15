@@ -15,11 +15,11 @@ const MedicationsList = ({ petMedObjects, onPress }: MedicationsListProps) => {
 	const petMeds: {pet: Pet, med: Medication}[] = [];
 	Array.from(petMedObjects.values()).forEach((petMedArray) => {
 		petMedArray.forEach((petMed) => {
-			if (!petMeds.includes(petMed)) {
+			if (!petMeds.some((existingPetMed) => existingPetMed.med.id === petMed.med.id)) {
 				petMeds.push(petMed);
 			}
 		})
-	})
+	});
 
 	return (
 		<View style={styles.medicationsContainer}>
@@ -30,9 +30,8 @@ const MedicationsList = ({ petMedObjects, onPress }: MedicationsListProps) => {
 
 			{/* Medications List */}
 			{petMeds.map(({ pet, med }, index) => (
-				<Pressable onPress={() => {onPress({ pet, med })}}>
+				<Pressable onPress={() => {onPress({ pet, med })}} key={`${pet.name}-${index}`}>
 					<View
-						key={`${pet.name}-${index}`}
 						style={styles.medicationItem}>
 						<View
 							style={[

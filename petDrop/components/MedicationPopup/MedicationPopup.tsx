@@ -77,7 +77,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     setDateMap(medDateMap);
     setMedName(med.name);
     setColor(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
-    setRem(med.reminder);
+    setRem(med.reminder ? med.reminder : emptyReminder);
   }
 
   const close = () => {
