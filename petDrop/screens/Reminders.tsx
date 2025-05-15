@@ -102,6 +102,7 @@ const Reminders = ({ navigation, route }: Props) => {
         <View style={styles.headerContainer}>
           <Text style={styles.pageTitle}>Reminders</Text>
           <PetSwitch
+            text={'switch'}
             data={account.pets}
             selectedItem={selectedPet}
             onSwitch={setSelectedPet}

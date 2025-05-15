@@ -97,6 +97,7 @@ const PetInfo = ({ navigation, route }: Props) => {
         setReminder={setRem}
         pet={petBeingEdited}
         med={emptyMed}
+        readonly={false}
       />
     </View>
   );

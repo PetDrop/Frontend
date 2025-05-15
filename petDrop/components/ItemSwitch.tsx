@@ -12,6 +12,7 @@ import {
 import styles from '../styles/Medications.styles';
 
 interface ItemSwitchProps {
+	text: string;
 	selectedItem: { id: string, name: string, image?: string };
 	data: Array<{ id: string, name: string, image?: string }>,
 	onSwitch: (item: any) => void;
@@ -19,12 +20,7 @@ interface ItemSwitchProps {
 }
 
 
-const ItemSwitch: React.FC<ItemSwitchProps> = ({
-	selectedItem,
-	data,
-	onSwitch,
-	switchItem
-}) => {
+const ItemSwitch: React.FC<ItemSwitchProps> = ({ text, selectedItem, data, onSwitch, switchItem }) => {
 	const [modalVisible, setModalVisible] = useState(false);
 
 	if (selectedItem === undefined) {
@@ -51,7 +47,7 @@ const ItemSwitch: React.FC<ItemSwitchProps> = ({
 				style={styles.switchButton}
 				onPress={() => setModalVisible(true)}>
 				{image}
-				<Text style={styles.switchText}>SWITCH</Text>
+				<Text style={styles.switchText}>{text}</Text>
 			</Pressable>
 
 			<Modal visible={modalVisible} transparent animationType="fade">

@@ -141,7 +141,13 @@ export const styles = StyleSheet.create({
     scrollContainer: {
          paddingBottom: height * 0.2,
 		paddingTop: height * 0.05,
-    }
+    },
+
+	/** Select Med Popup **/
+	medSwitchContainer: {
+		top: 400,
+		left: 70,
+	},
 });
 
 export default styles;
