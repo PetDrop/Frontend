@@ -26,7 +26,7 @@ const ReminderCard = ({ med, showingFunction }: ReminderCardProps) => {
 					DATES: {med.dates.join(', ')}
 				</Text>
 				<Text style={styles.reminderDetails}>
-					NOTIFICATIONS: {med.reminder.notifications}
+					NOTIFICATIONS: {med.reminder.notifications.join(', ')}
 				</Text>
 				<Text style={styles.reminderDetails}>
 					MESSAGE: "{med.description}"

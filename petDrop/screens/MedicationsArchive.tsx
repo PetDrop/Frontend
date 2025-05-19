@@ -28,8 +28,6 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	// store the user's account info to avoid typing "route.params.account" repeatedly
 	const account: Account = route.params.account;
 
-	const ObjectID = require('bson-objectid');
-
 	useEffect(() => {
 		setSelectedPet(account.pets[0] ? account.pets[0] : emptyPet);
 	}, []);
@@ -41,6 +39,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 
 	const WriteToDB = async () => {
 		let medUrl: string = '', medMethod: string = '', medBody: string = '', remUrl: string = '', remMethod: string = '', remBody: string = '';
+		let log: string = '';
 		switch (popupState) {
 			case medState.MED_CREATED:
 				if (rem) {
@@ -52,11 +51,13 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				medUrl = ADD_MEDICATION;
 				medMethod = 'POST';
 				medBody = JSON.stringify(med);
+				log = 'Successfully created medication'
 				break;
 			case medState.MED_EDITED_REM_NOTHING:
 				medUrl = UPDATE_MEDICATION;
 				medMethod = 'PUT';
 				medBody = JSON.stringify(med);
+				log = 'Successfully edited medication'
 				break;
 			case medState.MED_EDITED_REM_CREATED:
 				remUrl = ADD_REMINDER;
@@ -66,6 +67,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				medUrl = UPDATE_MEDICATION;
 				medMethod = 'PUT';
 				medBody = JSON.stringify(med);
+				log = 'Successfully edited medication and created reminder'
 				break;
 			case medState.MED_EDITED_REM_EDITED:
 				remUrl = UPDATE_REMINDER;
@@ -75,6 +77,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				medUrl = UPDATE_MEDICATION;
 				medMethod = 'PUT';
 				medBody = JSON.stringify(med);
+				log = 'Successfully edited medication and reminder'
 				break;
 			case medState.MED_EDITED_REM_DELETED:
 				remUrl = DELETE_REMINDER_BY_ID + rem!.id; // rem can't be null if it got deleted
@@ -83,6 +86,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				medUrl = UPDATE_MEDICATION;
 				medMethod = 'PUT';
 				medBody = JSON.stringify(med);
+				log = 'Successfully edited medication and deleted reminder'
 				break;
 			case medState.MED_DELETED:
 				if (rem) {
@@ -92,23 +96,21 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				}
 				medUrl = DELETE_MEDICATION_BY_ID + med.id;
 				medMethod = 'DELETE';
+				log = 'Successfully deleted medication'
 				break;
 		}
 		let response;
 		if (remUrl === '') {
-			console.log(medUrl);
-			console.log(medMethod);
-			console.log(medBody);
 			response = await handleMed(medUrl, medMethod, medBody);
 			if (response.ok) {
-				alert('the deed is done');
+				alert(log);
 			}
 		} else {
 			response = await httpRequest(remUrl, remMethod, remBody);
 			if (response.ok) {
 				response = await handleMed(medUrl, medMethod, medBody);
 				if (response.ok) {
-					alert('the deed is done.');
+					alert(log);
 				}
 			}
 		}
@@ -118,7 +120,6 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 
 	const handleMed = async (medUrl: string, medMethod: string, medBody: string): Promise<Response> => {
 		let response = await httpRequest(medUrl, medMethod, medBody);
-		console.log(response.status);
 		if (response.ok) {
 			if (popupState === medState.MED_CREATED && selectedPet) {
 				selectedPet.medications.push(med);

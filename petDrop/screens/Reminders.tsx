@@ -59,8 +59,9 @@ const Reminders = ({ navigation, route }: Props) => {
     }
     let response = await httpRequest(url, method, body);
     if (response.ok) {
+      const reminder = popupState === remState.REM_DELETED ? emptyReminder : rem;
+        med.reminder = reminder;
       if (popupState !== remState.REM_EDITED) {
-        med.reminder = rem;
         response = await httpRequest(UPDATE_MEDICATION, 'PUT', JSON.stringify(med));
         if (response.ok) {
           alert(`Successfully ${popupState === remState.REM_DELETED ? 'deleted' : 'submitted'} reminder`);

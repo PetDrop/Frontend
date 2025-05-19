@@ -6,9 +6,10 @@ import { useState } from 'react';
 type DateCardType = {
     date: Date;
     updateDates: Function;
+    readonly: boolean;
 }
 
-const DateCard = ({ date, updateDates }: DateCardType) => {
+const DateCard = ({ date, updateDates, readonly }: DateCardType) => {
     const [occurrances, setOccurrances] = useState(1);
     return (
         <View style={styles.container}>
@@ -27,8 +28,9 @@ const DateCard = ({ date, updateDates }: DateCardType) => {
                     num = isNaN(num) ? 1 : num;
                     updateDates(date, num);
                 }}
+                editable={!readonly}
             />
-            <Text style={styles.occurrancesText}>weeks</Text>
+            <Text style={styles.occurrancesText}>week(s)</Text>
             </View>
             </View>
         </View>

@@ -124,7 +124,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   const dateCards: Array<React.JSX.Element> = [];
   Array.from(dateMap.keys()).forEach((date: Date, index: number) => {
     dateCards.push(
-      <DateCard date={date} updateDates={updateDates} key={index} />
+      <DateCard date={date} updateDates={updateDates} readonly={readonly} key={index} />
     )
   })
 
@@ -147,7 +147,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
             {/* medication selection */}
             {!readonly ?
               <Selection
-                data={['med 1', 'med 2', 'med 3']}
+                data={['sponsor med 1', 'sponsor med 2', 'sponsor med 3']}
                 onSelect={(selectedItem: string) => { setMedName(selectedItem) }}
                 renderButton={(selectedItem: string) => {
                   return (

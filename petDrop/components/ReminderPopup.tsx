@@ -126,6 +126,7 @@ const ReminderPopup = ({ isActive, setPopupState, setRem, setMed, pet, med, read
                     selectedItem={selectedMed}
                     onSwitch={setSelectedMed}
                     switchItem="Medication"
+                    text={'switch'}
                   />
                 }
               </View>
@@ -150,8 +151,8 @@ const ReminderPopup = ({ isActive, setPopupState, setRem, setMed, pet, med, read
               isVisible={isTimePickerVisible}
               mode="time"
               onConfirm={(time) => {
-                if (!notifications.includes(time.toTimeString().split(' ')[0])) {
-                  updateNotifications(time.toTimeString().split(' ')[0]);
+                if (!notifications.includes(time.toTimeString().split(' ')[0].slice(0, 5))) {
+                  updateNotifications(time.toTimeString().split(' ')[0].slice(0, 5));
                 }
                 setTImePickerVisibility(false);
               }}
