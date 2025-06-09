@@ -87,10 +87,7 @@ const TopBottomBar = ({ navigation, currentScreen }: TopBottomBarProps) => {
 					/>
 				}
 				label="MEDS"
-				isActive={
-					currentScreen === ScreenEnum.MedicationsArchive ||
-					currentScreen === ScreenEnum.MedicationsArchive1
-				}
+				isActive={currentScreen === ScreenEnum.MedicationsArchive}
 				onPress={() => navigation.navigate('MedicationsArchive')}
 			/>
 

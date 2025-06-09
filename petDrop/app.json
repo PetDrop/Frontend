@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/loading_icon.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -38,8 +39,5 @@
     "plugins": [
       "expo-font"
     ]
-    },
-    "plugins": [
-      "expo-font"
-    ]
+    }
   }

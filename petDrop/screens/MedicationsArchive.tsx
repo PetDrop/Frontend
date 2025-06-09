@@ -1,6 +1,6 @@
 import * as React from 'react';
 import  { useState } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import TopBottomBar from '../components/TopBottomBar';
 import MedicationCard from '../components/Medications/MedicationCard';
 import MedicationSwitch from '../components/Medications/PetSwtich';
@@ -9,11 +9,12 @@ import styles from '../styles/Medications.styles';
 import { ScreenEnum, logoImage } from '../GlobalStyles';
 import { Image } from 'expo-image';
 import AddMedicationButton from '../components/AddButton';
-
 import { NavigationProp } from '@react-navigation/native';
+import MedicationPopup from '../components/MedicationPopup';
 
 const MedicationsArchive = ({navigation}: { navigation: NavigationProp<any> }) => {
 	const [selectedPet, setSelectedPet] = useState(mockData.pets[0]);
+	const [popupShowing, setPopupShowing] = useState(false);
 
 	return (
 		<View style={styles.container}>
@@ -39,12 +40,13 @@ const MedicationsArchive = ({navigation}: { navigation: NavigationProp<any> }) =
 						petName={selectedPet.name}
 					/>
 				))}
-				<AddMedicationButton/>
+				<AddMedicationButton onPressFunction={() => {setPopupShowing(true)}}/>
 			</ScrollView>
 			<TopBottomBar
 				navigation={navigation}
 				currentScreen={ScreenEnum.MedicationsArchive}
 			/>
+			<MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing}/>
 		</View>
 	);
 };

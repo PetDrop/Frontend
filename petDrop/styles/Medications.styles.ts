@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
 	scrollContainer: {
 		paddingBottom: height * 0.2,
 		paddingTop: height * 0.05,
-		minHeight: height * 1.1
+		minHeight: height * 1.1,
 	},
 	pageTitle: {
 		fontSize: FontSize.size_17xl,
