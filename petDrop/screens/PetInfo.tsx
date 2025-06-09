@@ -78,7 +78,6 @@ const PetInfo = ({ navigation, route }: Props) => {
               setPopupShowing(true);
               setPetBeingEdited(pet);
             }} />
-            <Image style={styles.petImage} src={pet.image} />
           </View>
         ))}
         <AddNewPetButton navigation={navigation} account={account} />

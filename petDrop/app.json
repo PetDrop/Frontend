@@ -18,14 +18,12 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": 
+      {
+        "NSPhotoLibraryUsageDescription": "This app uses the photo gallery for selecting images."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -37,7 +35,13 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app requires access to your photos for you to select an image."
+        }
+      ]
     ]
-    }
   }
+}

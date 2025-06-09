@@ -158,26 +158,18 @@ const styles = StyleSheet.create({
 		color: Color.colorFloralwhite,
 	},
 
-	/** Circular Item Image in Switch */
-	itemCircle: {
-		width: width * 0.125, // Adjusted smaller size
-		height: width * 0.125, // Keep it circular
-		borderRadius: width * 0.075, // Make it a perfect circle
-		marginLeft: width * - 0.02,
-	},
+	/** Item Image in Switch */
 	itemImage: {
-		width: width * 0.085,
+		width: width * 0.1,
 		height: width * 0.1,
-		top: height * 0.009,
-		borderRadius: Border.br_3xs,
-		position: 'absolute',
 	},
-	whiteCircle: {
-		width: width * 0.115, // Adjusted smaller size
-		height: width * 0.115, // Keep it circular
-		borderRadius: width * 0.075, // Make it a perfect circle
-		marginLeft: width * - 0.0125,
-		position: 'absolute',
+	imageOutline: {
+		width: width * 0.12,
+		height: width * 0.12,
+		borderWidth: 4,
+		borderColor: Color.colorLightskyblue,
+		borderRadius: Border.br_10xs_5,
+		backgroundColor: Color.colorFloralwhite,
 	},
 });
 

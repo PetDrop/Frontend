@@ -30,10 +30,10 @@ export const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 	},
 	petImage: {
-		width: width * 0.2,
+		width: width * 0.25,
 		height: width * 0.25,
-		borderRadius: Border.br_3xs,
-		top: height * 0.03,
+		top: height * 0.02,
+		left: width * -0.03
 	},
 	petInfo: {
 		flex: 1,
@@ -92,12 +92,15 @@ export const styles = StyleSheet.create({
 		fontFamily: FontFamily.koulenRegular,
 		color: Color.colorFloralwhite,
 	},
-	circleBackground: {
+	imageOutline: {
 		position: 'absolute',
 		width: width * 0.3, // Adjust size as needed
 		height: width * 0.3,
-		left: width * -0.06,
-		top: height * 0.01,
+		left: width * -0.055,
+		top: height * 0.0085,
+		borderWidth: 10,
+		borderColor: Color.colorLightskyblue,
+		borderRadius: Border.br_12xl,
 	},
 
 	separatorBar: {
@@ -107,7 +110,7 @@ export const styles = StyleSheet.create({
 		alignSelf: 'center',
 		marginTop: height * 0.03, // Space above bar
 		borderRadius: Border.br_10xs,
-		marginBottom: height * -0.06, // Space below bar
+		marginBottom: height * 0.03, // Space below bar
 	},
 	addMedicationButton: {
 		marginTop: height * 0.02,

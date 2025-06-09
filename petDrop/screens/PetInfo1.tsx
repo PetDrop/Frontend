@@ -10,6 +10,7 @@ import { useState } from "react";
 import AddPetImage from "../components/AddImage";
 import SubmitButton from "../components/SubmitButton";
 import { ADD_PET, httpRequest, UPDATE_ACCOUNT } from "../data/endpoints";
+import * as ImagePicker from 'expo-image-picker';
 
 type PetInfo1Type = {
   navigation: NavigationProp<any>;
@@ -17,6 +18,7 @@ type PetInfo1Type = {
 }
 
 const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
+  const [image, setImage] = useState('');
   const [inputFields, setInputFields] = useState(new Map<string, string>([
     ['pet name', ''],
     ['pet age', ''],
@@ -44,7 +46,7 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
         let age: number = Number.parseInt(ageString ? ageString : '0');
         let response = await httpRequest(ADD_PET, 'POST', JSON.stringify({
           name: inputFields.get('pet name'),
-          image: '',
+          image: image,
           age: age,
           breed: inputFields.get('pet breed'),
           address: inputFields.get('pet address'),
@@ -73,6 +75,15 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
     }
   };
 
+  const addImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+    });
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  }
+
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.outermostView}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -86,7 +97,7 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
         <Text style={[styles.petInfo1AddPet, styles.addPetTypo]}>Add Pet</Text>
 
         {/* Add Image Circle w/ Plus Sign */}
-        <AddPetImage onPressFunction={() => { }} containerStyle={styles.addImageContainer} />
+        <AddPetImage onPressFunction={addImage} containerStyle={styles.addImageContainer} uri={image}/>
 
         {/* Pet Info Input Section */}
         <Text style={[styles.petInfo1Name, styles.nameTypo]}>Pet Info</Text>

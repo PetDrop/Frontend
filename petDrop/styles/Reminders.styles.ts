@@ -24,6 +24,10 @@ export const styles = StyleSheet.create({
 		fontFamily: FontFamily.koulenRegular,
 		color: Color.colorFloralwhite,
 	},
+	petSwitchContainer: {
+		top: height * -0.06,
+		height: height * 0.015,
+	},
 	reminderContent: {
 		fontSize: FontSize.size_smi,
 		fontFamily: FontFamily.koulenRegular,

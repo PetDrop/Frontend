@@ -8,6 +8,8 @@ import AddButton from "../components/AddButton";
 import SubmitButton from '../components/SubmitButton';
 import { GET_ACCOUNT_BY_EMAIL, httpRequest, UPDATE_ACCOUNT } from "../data/endpoints";
 import { Account } from "../data/dataTypes";
+import { useReducer, useState } from "react";
+import * as ImagePicker from 'expo-image-picker';
 
 function updateEmergencyContacts(state: string[], action: { index: number, text: string }) {
   let newState;
@@ -31,10 +33,11 @@ type ProfileType = {
 };
 
 const Profile = ({ navigation, route }: ProfileType) => {
-  const [address, setAddress] = React.useState('');
-  const [phone, setPhone] = React.useState('');
-  const [numEmergencyContacts, setNumEmergencyContacts] = React.useState(1);
-  const [emergencyContacts, setEmergencyContacts] = React.useReducer(updateEmergencyContacts, ['']);
+  const [image, setImage] = useState('');
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
+  const [numEmergencyContacts, setNumEmergencyContacts] = useState(1);
+  const [emergencyContacts, setEmergencyContacts] = useReducer(updateEmergencyContacts, ['']);
 
   /* handles submit button being pressed
     checks to make sure required fields have values
@@ -103,6 +106,15 @@ const Profile = ({ navigation, route }: ProfileType) => {
       />
   }
 
+  const addImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+    });
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  }
+
   return (
     <KeyboardAvoidingView behavior='padding' style={styles.container}>
 
@@ -117,7 +129,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
         <Text style={styles.title}>Profile</Text>
 
         {/* cirlce with plus sign for adding profile picture */}
-        <AddImage onPressFunction={() => {}} containerStyle={styles.addPictureContainer}/>
+        <AddImage onPressFunction={addImage} containerStyle={styles.addPictureContainer} uri={image}/>
 
         {/* user's name */}
         <Text style={styles.nameHeading}>Name</Text>
