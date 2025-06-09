@@ -58,7 +58,6 @@ const styles = StyleSheet.create({
       },
       selectionContainer: {
         flexDirection: 'row',
-        // backgroundColor: Color.colorCornflowerblue,
         borderRadius: Border.br_17,
         alignItems: 'center',
         marginTop: height * 0.02,

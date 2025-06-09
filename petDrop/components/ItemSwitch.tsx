@@ -9,26 +9,20 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native';
-import { petImages } from '../GlobalStyles';
 import styles from '../styles/Medications.styles';
 
 interface ItemSwitchProps {
-	selectedItemId: string;
+	text: string;
+	selectedItem: { id: string, name: string, image?: string };
 	data: Array<{ id: string, name: string, image?: string }>,
 	onSwitch: (item: any) => void;
 	switchItem: 'Item' | 'Medication' | string;
 }
 
 
-const ItemSwitch: React.FC<ItemSwitchProps> = ({
-	selectedItemId,
-	data,
-	onSwitch,
-	switchItem
-}) => {
+const ItemSwitch: React.FC<ItemSwitchProps> = ({ text, selectedItem, data, onSwitch, switchItem }) => {
 	const [modalVisible, setModalVisible] = useState(false);
 
-	let selectedItem = data.find((item) => item.id === selectedItemId);
 	if (selectedItem === undefined) {
 		selectedItem = { id: "", name: "", image: "" };
 	}
@@ -53,7 +47,7 @@ const ItemSwitch: React.FC<ItemSwitchProps> = ({
 				style={styles.switchButton}
 				onPress={() => setModalVisible(true)}>
 				{image}
-				<Text style={styles.switchText}>SWITCH</Text>
+				<Text style={styles.switchText}>{text}</Text>
 			</Pressable>
 
 			<Modal visible={modalVisible} transparent animationType="fade">
@@ -71,7 +65,7 @@ const ItemSwitch: React.FC<ItemSwitchProps> = ({
 										styles.selectedItemOption,
 									]}
 									onPress={() => {
-										onSwitch(item.id);
+										onSwitch(item);
 										setModalVisible(false);
 									}}>
 									<Text style={styles.itemOptionText}>

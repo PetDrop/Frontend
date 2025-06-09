@@ -10,7 +10,7 @@ import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder }
 import { useEffect, useState } from "react";
 import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
 import { ADD_MEDICATION, ADD_REMINDER, httpRequest, UPDATE_ACCOUNT, UPDATE_PET } from "../data/endpoints";
-import { medState } from "./MedicationsArchive";
+import { medState } from "../data/states";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -97,6 +97,7 @@ const PetInfo = ({ navigation, route }: Props) => {
         setReminder={setRem}
         pet={petBeingEdited}
         med={emptyMed}
+        readonly={false}
       />
     </View>
   );

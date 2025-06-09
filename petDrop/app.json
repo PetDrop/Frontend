@@ -4,7 +4,7 @@
     "slug": "petdrop_project",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/loading_icon.png",
+    "icon": "https://docs.expo.dev/static/images/tutorial/icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {

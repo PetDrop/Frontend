@@ -11,8 +11,8 @@ import Selection from 'react-native-select-dropdown';
 import DateCard from "./DateCard";
 import ReminderPopup from "../ReminderPopup";
 import DeleteButton from '../CustomButton';
-import { medState } from "../../screens/MedicationsArchive";
-import { remState } from "../../screens/Reminders";
+import { medState } from "../../data/states";
+import { remState } from "../../data/states";
 
 type MedicationPopupType = {
   isActive: boolean;
@@ -21,9 +21,10 @@ type MedicationPopupType = {
   setReminder: Function;
   pet: Pet;
   med: Medication;
+  readonly: boolean;
 };
 
-const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, pet, med }: MedicationPopupType) => {
+const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, pet, med, readonly }: MedicationPopupType) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [dateMap, setDateMap] = useState(new Map<Date, number>());
   const [description, setDescription] = useState(med.description);
@@ -31,7 +32,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   const [color, setColor] = useState(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
   const [propsChanged, setPropsChanged] = useState(true);
   const [remPopupState, setRemPopupState] = useState(remState.NO_ACTION);
-  const [rem, setRem] = useState(med.reminder);
+  const [rem, setRem] = useState(med.reminder ? med.reminder : emptyReminder);
 
   const ObjectID = require('bson-objectid');
   const id = med.id !== '' ? med.id : ObjectID();
@@ -60,9 +61,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     dates.forEach((date: string) => {
       const newDate = new Date(Date.parse(date));
       if (newDateMap.has(newDate)) {
-        // temp var recurring is needed because of 'possibly undefined' errors (redundant because has() being true means get() is defined)
-        let recurring = newDateMap.get(newDate);
-        recurring = recurring ? recurring : 0;
+        let recurring = newDateMap.get(newDate)!;
         newDateMap.set(newDate, recurring + 1);
       } else {
         newDateMap.set(newDate, 1);
@@ -78,6 +77,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     setDateMap(medDateMap);
     setMedName(med.name);
     setColor(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
+    setRem(med.reminder ? med.reminder : emptyReminder);
   }
 
   const close = () => {
@@ -87,6 +87,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     setColor(`#${Math.round(Math.random() * 899998 + 100000)}`);
     setPropsChanged(true);
     setPopupState(medState.NO_ACTION);
+    setRem(emptyReminder);
   }
 
   const closeWithAction = (deleted: boolean) => {
@@ -115,7 +116,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   dateMap.forEach((occurances: number, date: Date) => {
     let writableDate: Date = new Date(date); // make copy of the value so it doesn't update the dateMap
     for (let i = 0; i < occurances; i++) {
-      dates.push(writableDate.toDateString());
+      dates.push(writableDate.toISOString().slice(0, 10));
       writableDate.setTime(writableDate.getTime() + MS_IN_WEEK);
     }
   });
@@ -123,7 +124,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   const dateCards: Array<React.JSX.Element> = [];
   Array.from(dateMap.keys()).forEach((date: Date, index: number) => {
     dateCards.push(
-      <DateCard date={date} updateDates={updateDates} key={index} />
+      <DateCard date={date} updateDates={updateDates} readonly={readonly} key={index} />
     )
   })
 
@@ -144,27 +145,33 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
             <View style={[styles.colorIndicator, { backgroundColor: color }]} />
 
             {/* medication selection */}
-            <Selection
-              data={['med 1', 'med 2', 'med 3']}
-              onSelect={(selectedItem: string) => { setMedName(selectedItem) }}
-              renderButton={(selectedItem: string) => {
-                return (
-                  <View style={styles.dropdownDefault}>
-                    <Text style={styles.text}>
-                      {selectedItem ? selectedItem : med.name ? med.name : 'Select Medication'}
-                    </Text>
-                    <DropdownArrow style={styles.downArrow} width={19} height={12} />
-                  </View>
-                )
-              }}
-              renderItem={(selectedItem: string) => {
-                return (
-                  <View style={styles.dropdownItem}>
-                    <Text style={styles.text}>{selectedItem}</Text>
-                  </View>
-                )
-              }}
-            />
+            {!readonly ?
+              <Selection
+                data={['sponsor med 1', 'sponsor med 2', 'sponsor med 3']}
+                onSelect={(selectedItem: string) => { setMedName(selectedItem) }}
+                renderButton={(selectedItem: string) => {
+                  return (
+                    <View style={styles.dropdownDefault}>
+                      <Text style={styles.text}>
+                        {selectedItem ? selectedItem : med.name ? med.name : 'Select Medication'}
+                      </Text>
+                      <DropdownArrow style={styles.downArrow} width={19} height={12} />
+                    </View>
+                  )
+                }}
+                renderItem={(selectedItem: string) => {
+                  return (
+                    <View style={styles.dropdownItem}>
+                      <Text style={styles.text}>{selectedItem}</Text>
+                    </View>
+                  )
+                }}
+              />
+              :
+              <View style={styles.dropdownDefault}>
+                <Text style={styles.text}>{medName}</Text>
+              </View>
+            }
 
             {/* close x button */}
             <Pressable onPress={() => { close() }} style={styles.closePopupContainer}>
@@ -184,7 +191,9 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
               {dateCards}
             </View>
 
-            <Button title="Add Date" onPress={() => { setDatePickerVisibility(true) }} />
+            {!readonly && (
+              <Button title="Add Date" onPress={() => { setDatePickerVisibility(true) }} />
+            )}
             <DateTimePickerModal
               date={new Date(Date.now())}
               isVisible={isDatePickerVisible}
@@ -205,26 +214,31 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
               value={description}
               onChangeText={setDescription}
               multiline={true}
+              editable={!readonly}
             />
 
           </ScrollView>
 
-          {/* add reminder button */}
-          <Pressable onPress={() => { setRemPopupState(remState.SHOW_POPUP) }}>
-            <View style={styles.reminderButtonOval}>
-              <Text style={[styles.reminderButtonText, styles.text]}>{`${rem.notifications.length > 0 ? 'VIEW' : 'ADD'} REMINDER`}</Text>
-            </View>
-          </Pressable>
+          {/* view/add reminder button */}
+          {((readonly && rem.id !== '') || (!readonly)) && (
+            <Pressable onPress={() => { setRemPopupState(remState.SHOW_POPUP) }}>
+              <View style={styles.reminderButtonOval}>
+                <Text style={[styles.reminderButtonText, styles.text]}>{`${rem.id !== '' ? 'VIEW' : 'ADD'} REMINDER`}</Text>
+              </View>
+            </Pressable>
+          )}
 
           {/* save button */}
-          <Pressable onPress={() => { closeWithAction(false) }}>
-            <View style={styles.saveButtonOval}>
-              <Text style={[styles.saveButtonText, styles.text]}>SAVE</Text>
-            </View>
-          </Pressable>
+          {!readonly && (
+            <Pressable onPress={() => { closeWithAction(false) }}>
+              <View style={styles.saveButtonOval}>
+                <Text style={[styles.saveButtonText, styles.text]}>SAVE</Text>
+              </View>
+            </Pressable>
+          )}
 
           {/* delete button */}
-          {med.id !== '' && (
+          {(med.id !== '' && !readonly) && (
             <View style={styles.deleteButtonContainer}>
               <DeleteButton onPressFunction={() => { closeWithAction(true) }} innerText={'delete'} color={Color.colorFirebrick} />
             </View>
@@ -246,7 +260,9 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
             name: medName === '' ? 'MED BEING ADDED' : medName,
             range: med.range,
             reminder: rem
-          }} />
+          }}
+          readonly={readonly}
+        />
       </KeyboardAvoidingView>
     );
   }

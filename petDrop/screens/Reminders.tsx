@@ -13,14 +13,7 @@ import { useEffect, useState } from "react";
 import ReminderPopup from "../components/ReminderPopup";
 import PetSwitch from '../components/ItemSwitch';
 import { httpRequest, ADD_REMINDER, UPDATE_ACCOUNT, UPDATE_MEDICATION, UPDATE_REMINDER, DELETE_REMINDER_BY_ID } from "../data/endpoints";
-
-export enum remState {
-  'NO_ACTION' = 0, // popup not showing and no action needing to be done
-  'REM_CREATED' = 1, // need to update med
-  'REM_EDITED' = 2, // no update to med needed
-  'REM_DELETED' = 3, // need to update med
-  'SHOW_POPUP' = 4, // popup showing but no action done yet
-}
+import { remState } from "../data/states";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -28,7 +21,7 @@ interface Props {
 }
 
 const Reminders = ({ navigation, route }: Props) => {
-  const [selectedPetId, setSelectedPetId] = useState('');
+  const [selectedPet, setSelectedPet] = useState(emptyPet);
   const [popupState, setPopupState] = useState(remState.NO_ACTION);
   const [rem, setRem] = useState<Reminder>(emptyReminder);
   const [med, setMed] = useState<Medication>(emptyMed);
@@ -37,7 +30,7 @@ const Reminders = ({ navigation, route }: Props) => {
   const account: Account = route.params.account;
 
   useEffect(() => {
-    setSelectedPetId(account.pets[0].id);
+    setSelectedPet(account.pets[0] ? account.pets[0] : emptyPet);
   }, []);
 
   const editReminder = (med: Medication) => {
@@ -66,8 +59,9 @@ const Reminders = ({ navigation, route }: Props) => {
     }
     let response = await httpRequest(url, method, body);
     if (response.ok) {
+      const reminder = popupState === remState.REM_DELETED ? emptyReminder : rem;
+        med.reminder = reminder;
       if (popupState !== remState.REM_EDITED) {
-        med.reminder = rem;
         response = await httpRequest(UPDATE_MEDICATION, 'PUT', JSON.stringify(med));
         if (response.ok) {
           alert(`Successfully ${popupState === remState.REM_DELETED ? 'deleted' : 'submitted'} reminder`);
@@ -88,10 +82,8 @@ const Reminders = ({ navigation, route }: Props) => {
   }
 
   let reminderCards: React.JSX.Element[];
-  let selectedPet: Pet | undefined = account.pets.find((pet) => pet.id === selectedPetId);
-  selectedPet = selectedPet ? selectedPet : emptyPet;
   reminderCards = selectedPet.medications.map((med: Medication, index: number) =>
-    med.reminder.notifications.length > 0 ?
+    med.reminder?.notifications.length > 0 ?
       <ReminderCard
         key={index}
         med={med}
@@ -111,9 +103,10 @@ const Reminders = ({ navigation, route }: Props) => {
         <View style={styles.headerContainer}>
           <Text style={styles.pageTitle}>Reminders</Text>
           <PetSwitch
+            text={'switch'}
             data={account.pets}
-            selectedItemId={selectedPetId}
-            onSwitch={setSelectedPetId}
+            selectedItem={selectedPet}
+            onSwitch={setSelectedPet}
             switchItem="Pet"
           />
         </View>
@@ -144,6 +137,7 @@ const Reminders = ({ navigation, route }: Props) => {
         setMed={setMed}
         pet={selectedPet}
         med={med}
+        readonly={false}
       />
     </View>
   );

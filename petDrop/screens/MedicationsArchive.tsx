@@ -10,18 +10,9 @@ import { Image } from 'expo-image';
 import AddMedicationButton from '../components/CustomButton';
 import MedicationPopup from '../components/MedicationPopup/MedicationPopup';
 import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from '../data/dataTypes';
-import { httpRequest, ADD_MEDICATION, UPDATE_PET, ADD_REMINDER, UPDATE_REMINDER, UPDATE_MEDICATION, DELETE_REMINDER_BY_ID, DELETE_MEDICATION_BY_ID } from '../data/endpoints';
-
-export enum medState {
-	'NO_ACTION' = 0, // no popups showing and no action needing to be done
-	'MED_CREATED' = 1, // med was created, so rem was either created or not (check if undefined)
-	'MED_EDITED_REM_NOTHING' = 2, // med was edited but no action done with rem
-	'MED_EDITED_REM_CREATED' = 3, // med was edited and rem was created
-	'MED_EDITED_REM_EDITED' = 4, // med was edited and rem was edited
-	'MED_EDITED_REM_DELETED' = 5, // med was edited and rem was deleted
-	'MED_DELETED' = 6, // med was deleted, so rem will be too if it exists
-	'SHOW_POPUP' = 7, // popup(s) showing and no actions performed yet
-};
+import { httpRequest, ADD_MEDICATION, UPDATE_PET, ADD_REMINDER, UPDATE_REMINDER, 
+	UPDATE_MEDICATION, DELETE_REMINDER_BY_ID, DELETE_MEDICATION_BY_ID } from '../data/endpoints';
+import { medState } from '../data/states';
 
 type MedicationsArchiveProps = {
 	navigation: any;
@@ -29,7 +20,7 @@ type MedicationsArchiveProps = {
 }
 
 const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
-	const [selectedPetId, setSelectedPetId] = useState('');
+	const [selectedPet, setSelectedPet] = useState<Pet>(emptyPet);
 	const [med, setMed] = useState<Medication>(emptyMed);
 	const [rem, setRem] = useState<Reminder>();
 	const [popupState, setPopupState] = useState(medState.NO_ACTION);
@@ -37,10 +28,8 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	// store the user's account info to avoid typing "route.params.account" repeatedly
 	const account: Account = route.params.account;
 
-	const ObjectID = require('bson-objectid');
-
 	useEffect(() => {
-		setSelectedPetId(account.pets[0].id);
+		setSelectedPet(account.pets[0] ? account.pets[0] : emptyPet);
 	}, []);
 
 	const editMedication = (med: Medication) => {
@@ -50,6 +39,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 
 	const WriteToDB = async () => {
 		let medUrl: string = '', medMethod: string = '', medBody: string = '', remUrl: string = '', remMethod: string = '', remBody: string = '';
+		let log: string = '';
 		switch (popupState) {
 			case medState.MED_CREATED:
 				if (rem) {
@@ -61,69 +51,66 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				medUrl = ADD_MEDICATION;
 				medMethod = 'POST';
 				medBody = JSON.stringify(med);
+				log = 'Successfully created medication'
 				break;
 			case medState.MED_EDITED_REM_NOTHING:
 				medUrl = UPDATE_MEDICATION;
 				medMethod = 'PUT';
 				medBody = JSON.stringify(med);
+				log = 'Successfully edited medication'
 				break;
 			case medState.MED_EDITED_REM_CREATED:
-				if (rem) { // redundant
-					remUrl = ADD_REMINDER;
-					remMethod = 'POST';
-					remBody = JSON.stringify(rem);
-					med.reminder = rem;
-				}
+				remUrl = ADD_REMINDER;
+				remMethod = 'POST';
+				remBody = JSON.stringify(rem);
+				med.reminder = rem!; // rem can't be null if it got created
 				medUrl = UPDATE_MEDICATION;
 				medMethod = 'PUT';
 				medBody = JSON.stringify(med);
+				log = 'Successfully edited medication and created reminder'
 				break;
 			case medState.MED_EDITED_REM_EDITED:
-				if (rem) { // redundant
-					remUrl = UPDATE_REMINDER;
-					remMethod = 'PUT';
-					remBody = JSON.stringify(rem);
-					med.reminder = rem;
-				}
+				remUrl = UPDATE_REMINDER;
+				remMethod = 'PUT';
+				remBody = JSON.stringify(rem);
+				med.reminder = rem!; // rem can't be null if it got edited
 				medUrl = UPDATE_MEDICATION;
 				medMethod = 'PUT';
 				medBody = JSON.stringify(med);
+				log = 'Successfully edited medication and reminder'
 				break;
 			case medState.MED_EDITED_REM_DELETED:
-				if (rem) { // redundant
-					remUrl = DELETE_REMINDER_BY_ID + rem.id;
-					remMethod = 'DELETE';
-					med.reminder = emptyReminder;
-				}
+				remUrl = DELETE_REMINDER_BY_ID + rem!.id; // rem can't be null if it got deleted
+				remMethod = 'DELETE';
+				med.reminder = emptyReminder;
 				medUrl = UPDATE_MEDICATION;
 				medMethod = 'PUT';
 				medBody = JSON.stringify(med);
+				log = 'Successfully edited medication and deleted reminder'
 				break;
 			case medState.MED_DELETED:
-				if (rem) { // redundant
+				if (rem) {
 					remUrl = DELETE_REMINDER_BY_ID + rem.id;
 					remMethod = 'DELETE';
 					med.reminder = emptyReminder;
 				}
 				medUrl = DELETE_MEDICATION_BY_ID + med.id;
 				medMethod = 'DELETE';
+				log = 'Successfully deleted medication'
 				break;
 		}
 		let response;
 		if (remUrl === '') {
-			console.log(medUrl);
-			console.log(medMethod);
-			console.log(medBody);
 			response = await handleMed(medUrl, medMethod, medBody);
 			if (response.ok) {
-				alert('the deed is done');
+				alert(log);
 			}
 		} else {
 			response = await httpRequest(remUrl, remMethod, remBody);
 			if (response.ok) {
 				response = await handleMed(medUrl, medMethod, medBody);
 				if (response.ok) {
-					alert('the deed is done.');
+					alert(log);
 				}
 			}
 		}
@@ -133,7 +120,6 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 
 	const handleMed = async (medUrl: string, medMethod: string, medBody: string): Promise<Response> => {
 		let response = await httpRequest(medUrl, medMethod, medBody);
-		console.log(response.status);
 		if (response.ok) {
 			if (popupState === medState.MED_CREATED && selectedPet) {
 				selectedPet.medications.push(med);
@@ -153,8 +139,6 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	}
 
 	let medicationCards: React.JSX.Element[];
-	let selectedPet: Pet | undefined = account.pets.find((pet) => pet.id === selectedPetId);
-	selectedPet = selectedPet ? selectedPet : emptyPet;
 	let selectedReminders: Reminder[] = [];
 	selectedPet.medications.forEach((med: Medication) => {
 		selectedReminders.push(med.reminder);
@@ -182,9 +166,10 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				<View style={styles.headerContainer}>
 					<Text style={styles.pageTitle}>Medications</Text>
 					<PetSwitch
+						text={'switch'}
 						data={account.pets}
-						selectedItemId={selectedPetId}
-						onSwitch={setSelectedPetId}
+						selectedItem={selectedPet}
+						onSwitch={setSelectedPet}
 						switchItem='Pet'
 					/>
 				</View>
@@ -216,6 +201,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				setReminder={setRem}
 				pet={selectedPet}
 				med={med}
+				readonly={false}
 			/>
 		</View>
 	);

@@ -1,27 +1,37 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { styles } from '../../styles/Home.styles';
-import { Pet } from '../../data/dataTypes';
+import { Medication, Pet } from '../../data/dataTypes';
 
 type MedicationsListProps = {
-	pets: Pet[];
+	petMedObjects: Map<string, { pet: Pet, med: Medication }[]>;
+	onPress: Function;
 }
 
-const MedicationsList = (props: MedicationsListProps) => {
+const MedicationsList = ({ petMedObjects, onPress }: MedicationsListProps) => {
+	// take the unique objects containing a pet and med from the map
+	// so that you can map them to items in the medications list 
+	const petMeds: {pet: Pet, med: Medication}[] = [];
+	Array.from(petMedObjects.values()).forEach((petMedArray) => {
+		petMedArray.forEach((petMed) => {
+			if (!petMeds.some((existingPetMed) => existingPetMed.med.id === petMed.med.id)) {
+				petMeds.push(petMed);
+			}
+		})
+	});
 
 	return (
 		<View style={styles.medicationsContainer}>
 			{/* Header */}
 			<View style={styles.medicationsHeader}>
-				<Text style={styles.medicationsHeaderText}>Reminders</Text>
+				<Text style={styles.medicationsHeaderText}>Medications</Text>
 			</View>
 
 			{/* Medications List */}
-			{props.pets.map((pet) =>
-				pet.medications.map((med, index) => (
+			{petMeds.map(({ pet, med }, index) => (
+				<Pressable onPress={() => {onPress({ pet, med })}} key={`${pet.name}-${index}`}>
 					<View
-						key={`${pet.name}-${index}`}
 						style={styles.medicationItem}>
 						<View
 							style={[
@@ -33,8 +43,8 @@ const MedicationsList = (props: MedicationsListProps) => {
 							{med.name.toUpperCase()}
 						</Text>
 					</View>
-				))
-			)}
+				</Pressable>
+			))}
 		</View>
 	);
 };
