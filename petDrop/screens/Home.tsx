@@ -9,41 +9,49 @@ import TopBottomBar from "../components/TopBottomBar";
 import { ScreenEnum } from "../GlobalStyles";
 import { styles } from "../styles/Home.styles";
 import ReminderPopup from "../components/ReminderPopup";
+import { useEffect } from "react";
+import { GET_ACCOUNT_BY_USERNAME } from "../data/endpoints";
+import { Account, Pet } from "../data/dataTypes";
 
 const { width, height } = Dimensions.get("window");
 
 type HomeProps = {
   navigation: any;
+  route: any;
 };
 
-const Home = ({ navigation }: HomeProps) => {
+const Home = ({ navigation, route }: HomeProps) => {
   const [popupShowing, setPopupShowing] = React.useState(false);
+
+  // store the user's account info to avoid typing "route.params.account" repeatedly
+  let account: Account = route.params.account;
 
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-      {/* Header */}
-      <Header />
-      
-      {/* User Greeting */}
-      <UserGreeting name="Jane" />
-      
-      {/* Calendar Section */}
-      <View style={styles.calendarContainer}>
-        <Text style={styles.monthText}>September.</Text>
+        {/* Header */}
+        <Header />
+
+        {/* User Greeting */}
+        <UserGreeting name={account.username} />
+
+        {/* Calendar Section */}
+        <View style={styles.calendarContainer}>
+          <Text style={styles.monthText}>September.</Text>
           <EditIcon style={styles.editIcon} width={width * 0.07} height={height * 0.1} />
-        <View style={styles.calendarBody}>
-          <Pressable onPress={() => {setPopupShowing(true)}}>
-            <Calendar />
-          </Pressable>
+          <View style={styles.calendarBody}>
+            <Pressable onPress={() => { setPopupShowing(true) }}>
+              <Calendar pets={account.pets}/>
+            </Pressable>
+          </View>
         </View>
-      </View>
-      
-      {/* Medications List */}
-      <MedicationsList />
+
+        {/* Medications List */}
+        <MedicationsList pets={account.pets}/>
+
       </ScrollView>
       {/* Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} account={account}/>
       <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} />
     </View>
   );

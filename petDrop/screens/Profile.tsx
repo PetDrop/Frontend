@@ -7,6 +7,7 @@ import AddPicture from '../components/Profile/AddPicture';
 import AddButton from "../components/AddButton";
 import SubmitButton from '../components/Profile/SubmitButton';
 import { GET_ACCOUNT_BY_EMAIL, UPDATE_ACCOUNT } from "../data/endpoints";
+import { Account } from "../data/dataTypes";
 
 function updateEmergencyContacts(state: string[], action: { index: number, text: string }) {
   let newState;
@@ -29,7 +30,7 @@ type ProfileType = {
   route: any;
 };
 
-const Profile = (props: ProfileType) => {
+const Profile = ({ navigation, route }: ProfileType) => {
   const [address, setAddress] = React.useState('');
   const [phone, setPhone] = React.useState('');
   const [numEmergencyContacts, setNumEmergencyContacts] = React.useState(1);
@@ -58,46 +59,32 @@ const Profile = (props: ProfileType) => {
   * that is then written to the db
   */
   const WriteToDB = async (contacts: string[]) => {
-    const email = props.route.params.email;
-    let id, username, password;
+    const oldAccount = route.params.account;
+    // create updated account object with new info, to be put in the db
+    const updatedAccount: Account = {
+      id: oldAccount.id,
+      username: oldAccount.username,
+      email: oldAccount.email,
+      password: oldAccount.password,
+      phone: phone,
+      address: address,
+      emergencyContacts: contacts,
+      pets: [],
+      reminders: []
+    };
+    // then update the account in the db with the new info
     try {
-      // first get the account to be updated from the db
-      // in order to pass the prior info along
-      let response = await fetch(GET_ACCOUNT_BY_EMAIL + `${email}`, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
-      if (response.ok) {
-        const account = await response.json();
-        id = account.id;
-        username = account.username
-        password = account.password
-      } else {
-        console.log('unable to retrieve account from database: status code ' + response.status);
-        alert('submission failed');
-      }
-      // then update the account with the new info
-      response = await fetch(UPDATE_ACCOUNT, {
+      const response = await fetch(UPDATE_ACCOUNT, {
         method: 'PUT',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          id: id,
-          username: username,
-          email: email,
-          password: password,
-          phone: phone,
-          address: address,
-          emergencyContacts: contacts
-        }),
+        body: JSON.stringify(updatedAccount),
       });
       if (response.ok) {
-        props.navigation.navigate('Home');
+        // navigate to home screen and pass the account there
+        navigation.navigate('Home', { account: updatedAccount });
       } else {
         console.log('unable to write account to database: status code ' + response.status);
         alert('submission failed');

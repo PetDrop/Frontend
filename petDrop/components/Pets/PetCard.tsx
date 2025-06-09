@@ -5,17 +5,7 @@ import styles from '../../styles/Pets.styles';
 import { Pressable } from 'react-native';
 import { petImages } from '../../GlobalStyles';
 import AddMedicationButton from '../../components/AddButton';
-
-interface Pet {
-	image: string;
-	name: string;
-	age: number;
-	breed: string;
-	address: string;
-	vet: string;
-	vetPhone: string;
-	medications: { name: string; color: string }[];
-}
+import { Pet } from '../../data/dataTypes';
 
 const PetCard = ({ pet }: { pet: Pet }) => {
 	return (
@@ -50,7 +40,7 @@ const PetCard = ({ pet }: { pet: Pet }) => {
 				))}
 			</View>
 			<View style={styles.addMedicationButton}>
-				<AddMedicationButton/>
+				<AddMedicationButton onPressFunction={() => {}}/>
 			</View>
             <View style={styles.separatorBar} />
 		</View>

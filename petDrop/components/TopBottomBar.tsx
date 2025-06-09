@@ -7,12 +7,14 @@ import RemindersButton from '../assets/reminders_button.svg';
 import ShareButtonRightArrow from '../assets/share_button_right_arrow.svg';
 import { ScreenEnum } from '../GlobalStyles';
 import styles from '../styles/TopBottomBar.styles';
+import { Account } from '../data/dataTypes';
 
 const { width, height } = Dimensions.get('window');
 
 type TopBottomBarProps = {
 	navigation: any;
 	currentScreen: number;
+	account: Account;
 };
 
 // Reusable NavButton Component
@@ -27,7 +29,7 @@ const NavButton = ({ icon, label, isActive, onPress }: any) => {
 	);
 };
 
-const TopBottomBar = ({ navigation, currentScreen }: TopBottomBarProps) => {
+const TopBottomBar = ({ navigation, currentScreen, account }: TopBottomBarProps) => {
 	return (
     <>
     <View style={styles.topBar}>
@@ -44,7 +46,7 @@ const TopBottomBar = ({ navigation, currentScreen }: TopBottomBarProps) => {
 				}
 				label="HOME"
 				isActive={currentScreen === ScreenEnum.Home}
-				onPress={() => navigation.navigate('Home')}
+				onPress={() => navigation.navigate('Home', {account: account})}
 			/>
 
 			{/* PETS Button */}
@@ -61,7 +63,7 @@ const TopBottomBar = ({ navigation, currentScreen }: TopBottomBarProps) => {
 					currentScreen === ScreenEnum.PetInfo ||
 					currentScreen === ScreenEnum.PetInfo1
 				}
-				onPress={() => navigation.navigate('PetInfo')}
+				onPress={() => navigation.navigate('PetInfo', {account: account})}
 			/>
 
 			{/* REMINDERS Button */}
@@ -75,7 +77,7 @@ const TopBottomBar = ({ navigation, currentScreen }: TopBottomBarProps) => {
 				}
 				label="REMINDERS"
 				isActive={currentScreen === ScreenEnum.Reminders}
-				onPress={() => navigation.navigate('Reminders')}
+				onPress={() => navigation.navigate('Reminders', {account: account})}
 			/>
 
 			{/* MEDS Button */}
@@ -88,7 +90,7 @@ const TopBottomBar = ({ navigation, currentScreen }: TopBottomBarProps) => {
 				}
 				label="MEDS"
 				isActive={currentScreen === ScreenEnum.MedicationsArchive}
-				onPress={() => navigation.navigate('MedicationsArchive')}
+				onPress={() => navigation.navigate('MedicationsArchive', {account: account})}
 			/>
 
 			{/* SHARE Button */}

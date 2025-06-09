@@ -76,8 +76,8 @@ export const styles = StyleSheet.create({
 	},
 
 	medIcon: {
-		width: width * 0.07,
-		height: width * 0.06,
+		width: width * 0.08,
+		height: width * 0.07,
 	},
 
 	shareIcon: {
@@ -88,8 +88,7 @@ export const styles = StyleSheet.create({
 
     topBar: {
     position: 'absolute',
-    top: 0,
-    width: '100%',
+    width: width,
     height: height * 0.085,
     backgroundColor: Color.colorLightskyblue,
 },
