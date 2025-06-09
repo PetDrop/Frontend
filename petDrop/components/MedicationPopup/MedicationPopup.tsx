@@ -3,7 +3,7 @@ import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingV
 import { Image } from "expo-image";
 import DropdownArrow from "../../assets/dropdown_arrow.svg";
 import styles from '../../styles/MedicationPopup.styles';
-import { emptyReminder, Medication, Pet, Reminder } from "../../data/dataTypes";
+import { DateObj, emptyReminder, Medication, Pet, Reminder } from "../../data/dataTypes";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useState } from "react";
 import { Color } from "../../GlobalStyles";
@@ -26,7 +26,7 @@ type MedicationPopupType = {
 
 const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, pet, med, readonly }: MedicationPopupType) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [dateMap, setDateMap] = useState(new Map<Date, number>());
+  const [dates, setDates] = useState<DateObj[]>([]);
   const [description, setDescription] = useState(med.description);
   const [medName, setMedName] = useState(med.name);
   const [color, setColor] = useState(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
@@ -48,33 +48,27 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   }
 
   // function for updating dates state
-  const updateDates = (date: Date | undefined, recurring: number) => {
-    if (date === undefined) {
-      setDateMap(new Map<Date, number>());
+  const updateDates = (startDate: Date | undefined, endDate: Date | undefined, recurring: number) => {
+    if (startDate === undefined) {
+      setDates([]);
     } else {
-      setDateMap((prevState) => new Map(prevState.set(date, recurring)));
+      let newDateObj: DateObj = {
+        startDate: startDate.toISOString().slice(0, 10),
+        endDate: endDate ? endDate.toISOString().slice(0, 10) : '',
+        recurrances: recurring
+      };
+      setDates((prevState) => {
+        let oldDateObj = prevState.find((dateObj => dateObj.startDate === startDate.toISOString().slice(0, 10)));
+        oldDateObj ? oldDateObj.recurrances = recurring : prevState.push(newDateObj);
+        return [...prevState];
+      });
     }
-  }
-
-  const createDateMap = (dates: string[]): Map<Date, number> => {
-    let newDateMap: Map<Date, number> = new Map<Date, number>();
-    dates.forEach((date: string) => {
-      const newDate = new Date(Date.parse(date));
-      if (newDateMap.has(newDate)) {
-        let recurring = newDateMap.get(newDate)!;
-        newDateMap.set(newDate, recurring + 1);
-      } else {
-        newDateMap.set(newDate, 1);
-      }
-    });
-    return newDateMap;
   }
 
   if (isActive && propsChanged) {
     setPropsChanged(false);
     setDescription(med.description);
-    const medDateMap = createDateMap(med.dates);
-    setDateMap(medDateMap);
+    setDates(med.dates);
     setMedName(med.name);
     setColor(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
     setRem(med.reminder ? med.reminder : emptyReminder);
@@ -82,7 +76,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
 
   const close = () => {
     setDescription('');
-    updateDates(undefined, 0); // undefined clears the map
+    updateDates(undefined, undefined, 0); // undefined clears the map
     setMedName('');
     setColor(`#${Math.round(Math.random() * 899998 + 100000)}`);
     setPropsChanged(true);
@@ -111,20 +105,10 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   // # of milliseconds in a week used when adding recurring dates
   const MS_IN_WEEK: number = 604800000;
 
-  // create list of dates from dateMap
-  const dates: string[] = [];
-  dateMap.forEach((occurances: number, date: Date) => {
-    let writableDate: Date = new Date(date); // make copy of the value so it doesn't update the dateMap
-    for (let i = 0; i < occurances; i++) {
-      dates.push(writableDate.toISOString().slice(0, 10));
-      writableDate.setTime(writableDate.getTime() + MS_IN_WEEK);
-    }
-  });
-
   const dateCards: Array<React.JSX.Element> = [];
-  Array.from(dateMap.keys()).forEach((date: Date, index: number) => {
+  dates.forEach((dateObj: DateObj, index: number) => {
     dateCards.push(
-      <DateCard date={date} updateDates={updateDates} readonly={readonly} key={index} />
+      <DateCard dateObj={dateObj} updateDates={updateDates} readonly={readonly} key={index} />
     )
   })
 
@@ -199,8 +183,8 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
               isVisible={isDatePickerVisible}
               mode="date"
               onConfirm={(date) => {
-                if (!Array.from(dateMap.keys()).includes(date)) {
-                  updateDates(date, 1);
+                if (!dates.some((dateObj: DateObj) => dateObj.startDate === date.toISOString().slice(0, 10))) {
+                  updateDates(date, undefined, 1);
                 }
                 setDatePickerVisibility(false);
               }}
