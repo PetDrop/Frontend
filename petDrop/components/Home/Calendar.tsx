@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { Dimensions, Text, View } from 'react-native';
 import styles from '../../styles/Home.styles';
 import { Pet } from '../../data/dataTypes';
-import mockData from '../../data/mockData.json';
 
 type CalendarProps = {
 	pets: Pet[];

@@ -4,50 +4,69 @@ import { Image } from "expo-image";
 import styles from '../styles/ReminderPopup.styles';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useReducer, useState } from "react";
-import { emptyMed, emptyPet, Medication, Pet, Reminder } from "../data/dataTypes";
+import { emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
 import Selection from './ItemSwitch';
+import { remState } from "../screens/Reminders";
+import DeleteButton from '../components/CustomButton';
+import { Color } from "../GlobalStyles";
 
 type ReminderPopupType = {
-  isActive: Reminder | undefined; // use reminder as a boolean to require one less prop
-  showingFunction: Function;
-  setReminder: Function;
-  pets: Pet[];
+  isActive: boolean;
+  setPopupState: Function;
+  setRem: Function;
+  setMed: Function;
+  pet: Pet;
+  med: Medication;
 };
 
-const updateNotifications = (state: string[], action: { notif: string }) => {
-  if (action.notif === 'clear') {
-    return [];
+const updateNotifications = (state: string[], action: { notif: string, notifProp: string[] }) => {
+  switch (action.notif) {
+    case 'clear':
+      return [];
+    case 'reset':
+      return action.notifProp.slice();
+    default:
+      return state.concat(action.notif);
   }
-  return state.concat(action.notif);
 }
 
-const ReminderPopup = ({ isActive, showingFunction, setReminder, pets }: ReminderPopupType) => {
-  const [notifications, setNotifications] = useReducer(updateNotifications, []);
+const ReminderPopup = ({ isActive, setPopupState, setRem, setMed, pet, med }: ReminderPopupType) => {
+  const [notifications, setNotifications] = useReducer(updateNotifications, med.reminder.notifications);
   const [isTimePickerVisible, setTImePickerVisibility] = useState(false);
-  const [selectedMedId, setSelectedMedId] = useState<string | undefined>();
+  const [selectedMedId, setSelectedMedId] = useState(med.id);
+  const [notifChanged, setNotifChanged] = useState(true);
 
   const ObjectID = require('bson-objectid');
-  const id: string = ObjectID();
+  const id: string = med.reminder.id !== '' ? med.reminder.id : ObjectID();
 
-  const med: Medication | undefined = isActive?.pet?.medications?.find((med) => med.id === selectedMedId);
+  let slectedMed = pet.medications.find((med: Medication) => med.id === selectedMedId);
+  const medication = slectedMed ? slectedMed : med;
 
-  const close = () => {
-    showingFunction(undefined);     
-    setNotifications({ notif: 'clear' });
-    setSelectedMedId(undefined);
+  if (isActive && notifChanged) {
+    setNotifChanged(false);
+    setNotifications({ notif: 'reset', notifProp: med.reminder.notifications });
   }
 
-  const saveReminder = async () => {
-    // create reminder with the intended info from this popup, depending on conditions
-    let rem: Reminder = { id: id, medication: emptyMed, pet: emptyPet, notifications: [] };
-    // ternary operator spaghetti equates to 'set it as value passed as prop, else value chosen by user, else nothing'
-    // either value passed or value chosen will be defined, so the last option is to avoid getting errors
-    rem.medication = isActive && isActive.medication.name !== '' ? isActive.medication : med ? med : emptyMed;
-    rem.pet = isActive ? isActive.pet : emptyPet; // no chosen value
-    rem.notifications = isActive && isActive.notifications.length > 0 ? isActive.notifications : notifications ? notifications : [];
-    // set reminder to be created when the popup is closed
-    setReminder(rem);
+  const close = () => {
+    setNotifications({ notif: 'clear', notifProp: [] });
+    setSelectedMedId('');
+    setPopupState(remState.NO_ACTION);
+    setNotifChanged(true);
+  }
+
+  const closePopup = (deleted: boolean) => {
+    // TODO: ask for confirmation if deleted
+    let rem: Reminder = { id: id, notifications: notifications };
+    // set medication for reminder to be added to (if the screen this popup is on is unable to do so)
+    setMed(medication);
+    // set reminder to be created/edited when the popup is closed
+    setRem(rem, deleted);
     close();
+    if (deleted) {
+      setPopupState(remState.REM_DELETED);
+    } else {
+      setPopupState(med.reminder.id === '' ? remState.REM_CREATED : remState.REM_EDITED);
+    }
   };
 
   const timeCards: Array<React.JSX.Element> = [];
@@ -74,7 +93,7 @@ const ReminderPopup = ({ isActive, showingFunction, setReminder, pets }: Reminde
 
             {/* popup header */}
             <Text style={styles.header}>
-              {isActive.notifications.length > 0 ? 'REMINDER INFO' : 'CREATE REMINDER'}
+              {med.reminder.id !== '' ? 'REMINDER INFO' : 'CREATE REMINDER'}
             </Text>
 
             {/* close popup button */}
@@ -92,48 +111,42 @@ const ReminderPopup = ({ isActive, showingFunction, setReminder, pets }: Reminde
           <View style={styles.popupBody}>
 
             <View style={styles.selectionContainer}>
-              <Text style={[styles.text, styles.selectionText]}>{`FOR PET: ${isActive.pet.name ? isActive.pet.name : 'NONE SELECTED'}`}</Text>
+              <Text style={[styles.text, styles.selectionText]}>{`FOR PET: ${pet.name}`}</Text>
             </View>
 
             <View style={styles.selectionContainer}>
-              <Text style={[styles.text, styles.selectionText]}>{`FOR MEDICATION: ${isActive.medication.name !== '' ? isActive.medication.name : med ? med.name : 'NONE SELECTED'}`}</Text>
-              {isActive.medication.name === '' ?
-                <View style={styles.itemSwitchContainer}>
-                  {isActive.medication.name === '' ?
-                    <Selection
-                      data={isActive.pet.medications}
-                      selectedItemId={selectedMedId ? selectedMedId : ''}
-                      onSwitch={setSelectedMedId}
-                      switchItem="Medication"
-                    />
-                    :
-                    <></>
-                  }
-                </View>
-                : <></>}
+              <Text style={[styles.text, styles.selectionText]}>{`FOR MEDICATION: ${medication.name !== '' ? medication.name : 'NONE SELECTED'}`}</Text>
+              <View style={styles.itemSwitchContainer}>
+                {medication.name === '' &&
+                  <Selection
+                    data={pet.medications.filter((med: Medication) => med.reminder.id === '')} // only show meds with no reminder
+                    selectedItemId={selectedMedId}
+                    onSwitch={setSelectedMedId}
+                    switchItem="Medication"
+                  />
+                }
+              </View>
             </View>
 
             <View style={styles.timeCardContainer}>
               {timeCards}
             </View>
 
-            {isActive.notifications.length === 0 ?
-              <View style={styles.addNotifButton}>
-                {notifications.length < 5 ?
-                  <Button title="Add Notification" onPress={() => { setTImePickerVisibility(true) }} />
-                  :
-                  <Text>Max Notifications Reached</Text>
-                }
-              </View>
-              :
-              <></>
-            }
+            <View style={styles.addNotifButton}>
+              {notifications.length < 5 ?
+                <Button title="Add Notification" onPress={() => { setTImePickerVisibility(true) }} />
+                :
+                <Text>Max Notifications Reached</Text>
+              }
+            </View>
+
             <DateTimePickerModal
+              date={new Date(Date.now())}
               isVisible={isTimePickerVisible}
               mode="time"
               onConfirm={(time) => {
                 if (!notifications.includes(time.toTimeString().split(' ')[0])) {
-                  setNotifications({ notif: time.toTimeString().split(' ')[0] });
+                  setNotifications({ notif: time.toTimeString().split(' ')[0], notifProp: [] });
                 }
                 setTImePickerVisibility(false);
               }}
@@ -141,16 +154,27 @@ const ReminderPopup = ({ isActive, showingFunction, setReminder, pets }: Reminde
             />
           </View>
 
-          {/* save button */}
-          {isActive.id === '' ?
-            <Pressable onPress={saveReminder}>
+          <View style={{ flexDirection: 'row' }}>
+            {/* delete button */}
+            <View style={styles.deleteButtonContainer}>
+              {med.reminder.id !== '' && (
+                <DeleteButton onPressFunction={() => { closePopup(true) }} innerText={'delete'} color={Color.colorFirebrick} />
+              )}
+            </View>
+
+            {/* save button */}
+            <Pressable onPress={() => {
+              if (medication.name !== '') {
+                closePopup(false);
+              } else {
+                alert('Must select a medication to add the reminder to.');
+              }
+            }}>
               <View style={styles.saveButtonOval}>
                 <Text style={styles.saveButtonText}>SAVE</Text>
               </View>
             </Pressable>
-            :
-            <></>
-          }
+          </View>
         </View>
       </View>
     );

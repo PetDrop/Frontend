@@ -5,11 +5,12 @@ import PetCard from "../components/Pets/PetCard";
 import AddNewPetButton from "../components/Pets/AddNewPetButton";
 import styles from "../styles/Pets.styles";
 import { ScreenEnum, logoImage } from "../GlobalStyles";
-import { NavigationProp } from "@react-navigation/native";
-import { Account, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
-import { useState } from "react";
-import MedicationPopup from "../components/MedicationPopup";
+import { NavigationProp, Route } from "@react-navigation/native";
+import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
+import { useEffect, useState } from "react";
+import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
 import { ADD_MEDICATION, ADD_REMINDER, httpRequest, UPDATE_ACCOUNT, UPDATE_PET } from "../data/endpoints";
+import { medState } from "./MedicationsArchive";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -17,43 +18,47 @@ interface Props {
 }
 
 const PetInfo = ({ navigation, route }: Props) => {
-  const [popupShowing, setPopupShowing] = useState(false);
-  const [petBeingEdited, setPetBeingEdited] = useState<Pet>(); // the pet the user is adding a medication to
+  const [popupState, setPopupState] = useState(medState.NO_ACTION);
+  const [petBeingEdited, setPetBeingEdited] = useState<Pet>(emptyPet); // the pet the user is adding a medication to
   const [med, setMed] = useState<Medication>();
   const [rem, setRem] = useState<Reminder>();
 
+  // store the user's account info to avoid typing "route.params.account" repeatedly
+  const account: Account = route.params.account;
+
   const WriteToDB = async () => {
-    // write med to db
-    let response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify(med));
-    let medication: Medication;
-    if (response.ok) {
-      console.log('med created');
-      medication = await response.json();
-      // update pet with new med in db
-      petBeingEdited?.medications.push(medication);
-      response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(petBeingEdited));
+    let response;
+    let reminder = emptyReminder;
+    // write rem to db if user decided to make one
+    if (rem !== undefined) {
+      reminder = rem;
+      response = await httpRequest(ADD_REMINDER, 'POST', JSON.stringify(reminder));
+      if (!response.ok) {
+        console.log(`http POST request failed with error code: ${response.status}`);
+        alert('Failed to create reminder - medication save aborted');
+        return;
+      }
+    }
+    if (med !== undefined) { // completely redundant but IDE stupid
+      // write med to db
+      med.reminder = reminder;
+      response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify(med));
+      let medication: Medication;
       if (response.ok) {
-        console.log('med added to pet');
-      }
-      // write rem to db if user decided to make one
-      if (rem !== undefined) {
-        let reminder: Reminder = rem;
-        reminder.medication = medication;
-        response = await httpRequest(ADD_REMINDER, 'POST', JSON.stringify(reminder));
+        medication = await response.json();
+        // update pet with new med in db
+        petBeingEdited.medications.push(medication);
+        response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(petBeingEdited));
         if (response.ok) {
-          console.log('rem created');
+          alert('Medication submitted successfully');
         }
-        // add rem to account
-        reminder = await response.json();
-        account.reminders.push(reminder);
-        response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
-        if (response.ok) {
-          console.log('rem added to account');
-          alert('Medication and reminder submitted successfully');
+        else {
+          console.log(`http PUT request failed with error code: ${response.status}`);
+          alert('Medication failed to save');
         }
-      }
-      else {
-        alert('Medication submitted successfully');
+      } else {
+        console.log(`http POST request failed with error code: ${response.status}`);
+        alert('Failed to create medication');
       }
     }
     setMed(undefined);
@@ -64,9 +69,6 @@ const PetInfo = ({ navigation, route }: Props) => {
     WriteToDB();
   }
 
-  // store the user's account info to avoid typing "route.params.account" repeatedly
-  const account: Account = route.params.account;
-
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -74,16 +76,28 @@ const PetInfo = ({ navigation, route }: Props) => {
         <Text style={styles.pageTitle}>Pets</Text>
         {account.pets.map((pet: Pet) => (
           <View key={pet.id}>
-            <PetCard key={pet.id} pet={pet} onPressFunction={() => {
-              setPopupShowing(true);
-              setPetBeingEdited(pet);
-            }} />
+            <PetCard
+              key={pet.id}
+              pet={pet}
+              account={account}
+              onPressFunction={() => {
+                setPetBeingEdited(pet);
+                setPopupState(medState.SHOW_POPUP);
+              }}
+              navigation={navigation} />
           </View>
         ))}
         <AddNewPetButton navigation={navigation} account={account} />
       </ScrollView>
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo} account={account} />
-      <MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} setMedication={setMed} setReminder={setRem} pet={petBeingEdited} pets={account.pets} />
+      <MedicationPopup
+        isActive={popupState === medState.SHOW_POPUP}
+        setPopupState={setPopupState}
+        setMedication={setMed}
+        setReminder={setRem}
+        pet={petBeingEdited}
+        med={emptyMed}
+      />
     </View>
   );
 };

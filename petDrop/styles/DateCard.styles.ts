@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
         borderColor: Color.colorCornflowerblue,
         width: width * 0.45,
         marginLeft: width * 0.03,
+        justifyContent: 'center'
     },
     dateText: {
         color: Color.colorCornflowerblue,
@@ -22,17 +23,15 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontFamily: FontFamily.koulenRegular,
     },
-    checkbox: {
-        width: width * 0.05, 
+    occurrancesInput: {
+        width: width * 0.06, 
         height: height * 0.024, 
         borderWidth: 2, 
         borderColor: Color.colorCornflowerblue,
         marginLeft: width * 0.02,
-        marginTop: height * 0.02,
     },
-    checkboxText: {
+    occurrancesText: {
         marginLeft: width * 0.02,
-        marginTop: height * 0.02,
         fontSize: FontSize.size_xl,
         fontFamily: FontFamily.juaRegular,
         color: Color.colorCornflowerblue,

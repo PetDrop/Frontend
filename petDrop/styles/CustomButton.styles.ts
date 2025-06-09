@@ -11,7 +11,6 @@ const styles = StyleSheet.create({
     customButton: {
         borderRadius: Border.br_17,
         height: height * 0.05,
-        backgroundColor: Color.colorCornflowerblue,
     },
     customText: {
         marginTop: height * -0.005,

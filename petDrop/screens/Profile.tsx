@@ -69,7 +69,6 @@ const Profile = ({ navigation, route }: ProfileType) => {
       password: password,
       sharedUsers: contacts,
       pets: account.pets,
-      reminders: account.reminders
     };
     // then update the account in the db with the new info
     try {
@@ -125,7 +124,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
         <Text style={styles.title}>{`${account.username}'s Profile`}</Text>
 
         {/* profile picture */}
-        <AddImage onPressFunction={addImage} containerStyle={styles.addPictureContainer} uri={image}/>
+        <AddImage onPressFunction={addImage} containerStyle={styles.addPictureContainer} uri={image} />
 
 
         {/* text inputs */}
@@ -154,12 +153,12 @@ const Profile = ({ navigation, route }: ProfileType) => {
 
         {/* add shared user button */}
         <View style={styles.addButtonContainer}>
-          <AddButton onPressFunction={() => { setNumSharedUsers(numSharedUsers + 1) }} innerText={'+ ADD'}/>
+          <AddButton onPressFunction={() => { setNumSharedUsers(numSharedUsers + 1) }} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
         </View>
 
         {/* save changes button */}
         <View style={styles.saveChangesButtonContainer}>
-          <SaveChangesButton onPressFunction={UpdateAccount} innerText={'Save Changes'} />
+          <SaveChangesButton onPressFunction={UpdateAccount} innerText={'Save Changes'} color={Color.colorCornflowerblue} />
         </View>
 
       </ScrollView>

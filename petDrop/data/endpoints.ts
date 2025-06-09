@@ -25,6 +25,7 @@ export const UPDATE_PET_VETPHONE = 'http://localhost:8080/updatepet/vetphone/';
 export const UPDATE_PET_MEDICATIONS = 'http://localhost:8080/updatepet/medications/';
 export const GET_ALL_PETS = 'http://localhost:8080/getallpets';
 export const GET_PET_BY_ID = 'http://localhost:8080/getpetbyid/';
+export const DELETE_PET_BY_ID = 'http://localhost:8080/deletepetbyid/';
 // MEDICATIONS
 export const ADD_MEDICATION = 'http://localhost:8080/addmedication';
 export const UPDATE_MEDICATION = 'http://localhost:8080/updatemedication';
@@ -35,6 +36,7 @@ export const UPDATE_MEDICATION_DATES = 'http://localhost:8080/updatemedication/d
 export const UPDATE_MEDICATION_RANGE = 'http://localhost:8080/updatemedication/range/';
 export const GET_ALL_MEDICATIONS = 'http://localhost:8080/getallmedications';
 export const GET_MEDICATION_BY_ID = 'http://localhost:8080/getmedicationbyid/';
+export const DELETE_MEDICATION_BY_ID = 'http://localhost:8080/deletemedicationbyid/';
 // REMINDERS
 export const ADD_REMINDER = 'http://localhost:8080/addreminder';
 export const UPDATE_REMINDER = 'http://localhost:8080/updatereminder';
@@ -42,6 +44,7 @@ export const UPDATE_REMINDER_MEDICATION = 'http://localhost:8080/updatereminder/
 export const UPDATE_REMINDER_PET = 'http://localhost:8080/updatereminder/pet/';
 export const GET_ALL_REMINDERS = 'http://localhost:8080/getallreminders';
 export const GET_REMINDER_BY_ID = 'http://localhost:8080/getreminderbyid/';
+export const DELETE_REMINDER_BY_ID = 'http://localhost:8080/deletereminderbyid/';
 
 // http function with parameters for url and request body
 export const httpRequest = async (url: string, method: string, body: string): Promise<Response> => {

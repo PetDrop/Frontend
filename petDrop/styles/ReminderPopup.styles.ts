@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
         color: Color.colorFloralwhite,
         textAlign: "left",
         fontFamily: FontFamily.koulenRegular,
+        width : width * 0.4
       },
       closePopup: {
         top: height * 0.014,
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
           borderRadius: Border.br_17,
           height: height * 0.04,
           top: height * -0.05,
-          left: width * 0.692,
+          left: width * 0.5,
           width: width * 0.19,
           backgroundColor: Color.colorCornflowerblue
       },
@@ -96,6 +97,11 @@ const styles = StyleSheet.create({
           fontSize: FontSize.size_5xl,
           textAlign: "center",
           fontFamily: FontFamily.koulenRegular,
+      },
+      deleteButtonContainer: {
+        top: height * -0.06,
+        left: width * 0.05,
+        width: width * 0.2,
       },
       text: {
           color: Color.colorCornflowerblue,

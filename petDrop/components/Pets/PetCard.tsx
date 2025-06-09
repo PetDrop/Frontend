@@ -1,21 +1,25 @@
 import * as React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, Pressable } from 'react-native';
 import EditIcon from '../../assets/edit_icon.svg';
 import styles from '../../styles/Pets.styles';
 import AddMedicationButton from '../../components/CustomButton';
-import { Pet } from '../../data/dataTypes';
+import { Account, Pet } from '../../data/dataTypes';
+import { NavigationProp } from '@react-navigation/core';
+import { Color } from '../../GlobalStyles';
 
 type PetCardProps = {
-	pet: Pet,
-	onPressFunction: () => void
+	pet: Pet;
+	account: Account;
+	onPressFunction: () => void;
+	navigation: NavigationProp<any>;
 }
 
-const PetCard = ({ pet, onPressFunction }: PetCardProps) => {
+const PetCard = ({ pet, account, onPressFunction, navigation }: PetCardProps) => {
 	return (
 		<View style={styles.petCard}>
 			<View style={styles.petHeader}>
 				<Image src={pet.image} style={styles.petImage} />
-                <View style={styles.imageOutline} />
+				<View style={styles.imageOutline} />
 				<View style={styles.petInfo}>
 					<Text style={styles.petName}>{pet.name}</Text>
 					<Text style={styles.petDetails}>Age: {pet.age}</Text>
@@ -26,7 +30,9 @@ const PetCard = ({ pet, onPressFunction }: PetCardProps) => {
 					<Text style={styles.petDetails}>Vet: {pet.vet}</Text>
 					<Text style={styles.petDetails}>{pet.vetPhone}</Text>
 				</View>
-				<EditIcon style={styles.editIcon} />
+				<Pressable onPress={() => { navigation.navigate('PetInfo1', { account: account, pet: pet }) }}>
+					<EditIcon style={styles.editIcon} />
+				</Pressable>
 			</View>
 			<Text style={styles.medicationsTitle}>Medications:</Text>
 			<View style={styles.medicationsContainer}>
@@ -43,9 +49,9 @@ const PetCard = ({ pet, onPressFunction }: PetCardProps) => {
 				))}
 			</View>
 			<View style={styles.addMedicationButton}>
-				<AddMedicationButton onPressFunction={onPressFunction} innerText={'+ ADD'}/>
+				<AddMedicationButton onPressFunction={onPressFunction} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
 			</View>
-            <View style={styles.separatorBar} />
+			<View style={styles.separatorBar} />
 		</View>
 	);
 };

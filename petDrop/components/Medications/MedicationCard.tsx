@@ -5,17 +5,16 @@ import styles from '../../styles/Medications.styles';
 import { Medication, Pet, Reminder } from '../../data/dataTypes';
 
 interface MedicationCardProps {
-	reminderProp: Reminder;
 	medProp: Medication;
 	petProp: Pet;
+	showingFunction: Function;
 }
 
-const MedicationCard = ({ reminderProp, medProp, petProp }: MedicationCardProps) => {
-	const reminder: Reminder = reminderProp;
+const MedicationCard = ({ medProp, petProp, showingFunction }: MedicationCardProps) => {
 	const medication: Medication = medProp;
 
 	// Format notifications as a string, e.g., "6AM, 6PM"
-	const remindersText: string = reminder?.notifications?.join(', ') || 'No reminders';
+	const remindersText: string = medProp.reminder?.notifications?.join(', ') || 'No reminders';
 
 	return (
 		<View style={styles.medicationCardContainer}>
@@ -25,7 +24,7 @@ const MedicationCard = ({ reminderProp, medProp, petProp }: MedicationCardProps)
 					<View style={[styles.medicationColor, { backgroundColor: medication.color }]}></View>
 					<Text style={styles.medicationTitle}>{medication.name}</Text>
 				</View>
-				<Pressable>
+				<Pressable onPress={() => {showingFunction(medication)}}>
 					<EditIcon style={styles.editIcon} />
 				</Pressable>
 			</View>
