@@ -16,13 +16,13 @@ import {
 } from 'react-native';
 import { Border, Color, FontFamily } from '../GlobalStyles';
 import BlueCircleBig from '../assets/blue_circle_big.svg';
-import { ADD_ACCOUNT } from '../data/endpoints';
+import { ADD_ACCOUNT, httpRequest } from '../data/endpoints';
 import { Account } from '../data/dataTypes';
 
 const { width, height } = Dimensions.get('window');
-    
+
 type SignupType = {
-	navigation: any;
+    navigation: any;
 };
 
 const Signup = (props: SignupType) => {
@@ -54,165 +54,160 @@ const Signup = (props: SignupType) => {
         navigates on success, alerts on failure */
     const WriteToDB = async () => {
         try {
-            const response = await fetch(ADD_ACCOUNT, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username: username,
-                    email: email,
-                    password: password,
-                    phone: '',
-                    address: '',
-                    emergencyContacts: []
-                }),
-            });
+            const response = await httpRequest(ADD_ACCOUNT, 'POST', JSON.stringify({
+                username: username,
+                email: email,
+                password: password,
+                phone: '',
+                address: '',
+                emergencyContacts: [],
+                pets: [],
+                reminders: []
+            }));
             if (response.ok) {
                 // if account successfully created, navigate to profile page for additional info, and pass the account along
                 const account: Account = await response.json();
-                props.navigation.navigate('Profile', {account: account});
+                props.navigation.navigate('Profile', { account: account });
             } else {
                 console.log('unable to write account to database: status code ' + response.status);
                 alert('submission failed');
             }
         } catch (error) {
             console.error(error);
-            
+
         }
     }
 
-	return (
-		<KeyboardAvoidingView
-			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-			style={styles.container}>
-			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-				<ScrollView 
-					contentContainerStyle={styles.scrollContainer} 
-					keyboardShouldPersistTaps="handled">
-            <View>
-                <Image
-				style={styles.dogImage}
-				source={require('../assets/blue_dog_big.png')}
-			/>
-			{/* Blue Circle */}
-			<BlueCircleBig
-				style={styles.blueCircle}
-				width={width * 0.3744}
-				height={height * 0.173}
-			/>
+    return (
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.container}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <ScrollView
+                    contentContainerStyle={styles.scrollContainer}
+                    keyboardShouldPersistTaps="handled">
+                    <View>
+                        <Image
+                            style={styles.dogImage}
+                            source={require('../assets/blue_dog_big.png')}
+                        />
+                        {/* Blue Circle */}
+                        <BlueCircleBig
+                            style={styles.blueCircle}
+                            width={width * 0.3744}
+                            height={height * 0.173}
+                        />
 
-            <Text style={styles.signupText}>Sign Up</Text>
-            </View>
+                        <Text style={styles.signupText}>Sign Up</Text>
+                    </View>
 
-            <View style={styles.blueContainer}>
-                <Text style={styles.inputLabel}>Username:</Text>
-                <TextInput
-                    style={styles.inputField}
-                    placeholder="Choose a username"
-                    placeholderTextColor="#A9A9A9"
-                    value={username}
-                    onChangeText={setUsername}
-                />
+                    <View style={styles.blueContainer}>
+                        <Text style={styles.inputLabel}>Username:</Text>
+                        <TextInput
+                            style={styles.inputField}
+                            placeholder="Choose a username"
+                            placeholderTextColor="#A9A9A9"
+                            value={username}
+                            onChangeText={setUsername}
+                        />
 
-                <Text style={styles.inputLabel}>E-Mail:</Text>
-                <TextInput
-                    style={styles.inputField}
-                    placeholder="Enter your email"
-                    placeholderTextColor="#A9A9A9"
-                    value={email}
-                    onChangeText={setEmail}
-                />
-                <Text style={styles.inputLabel}>Password:</Text>
-                <TextInput
-                    style={styles.inputField}
-                    placeholder="Enter your password"
-                    placeholderTextColor="#A9A9A9"
-                    secureTextEntry={true}
-                    value={password}
-                    onChangeText={setPassword}
-                />
+                        <Text style={styles.inputLabel}>E-Mail:</Text>
+                        <TextInput
+                            style={styles.inputField}
+                            placeholder="Enter your email"
+                            placeholderTextColor="#A9A9A9"
+                            value={email}
+                            onChangeText={setEmail}
+                        />
+                        <Text style={styles.inputLabel}>Password:</Text>
+                        <TextInput
+                            style={styles.inputField}
+                            placeholder="Enter your password"
+                            placeholderTextColor="#A9A9A9"
+                            secureTextEntry={true}
+                            value={password}
+                            onChangeText={setPassword}
+                        />
 
-                <Text style={styles.inputLabel}>Re-enter Password:</Text>
-                <TextInput
-                    style={styles.inputField}
-                    placeholder="Re-enter your password"
-                    placeholderTextColor="#A9A9A9"
-                    secureTextEntry={true}
-                    value={confirmPassword}
-                    onChangeText={setConfirmPassword}
-                />
+                        <Text style={styles.inputLabel}>Re-enter Password:</Text>
+                        <TextInput
+                            style={styles.inputField}
+                            placeholder="Re-enter your password"
+                            placeholderTextColor="#A9A9A9"
+                            secureTextEntry={true}
+                            value={confirmPassword}
+                            onChangeText={setConfirmPassword}
+                        />
 
-                <View style={styles.Checkboxes}>
-                    <Pressable style={styles.checkboxContainer} onPress={() => setRememberMe(!rememberMe)}>
-                        <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]} />
-                        <Text style={styles.checkboxText}>Remember Me</Text>
-                    </Pressable>
+                        <View style={styles.Checkboxes}>
+                            <Pressable style={styles.checkboxContainer} onPress={() => setRememberMe(!rememberMe)}>
+                                <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]} />
+                                <Text style={styles.checkboxText}>Remember Me</Text>
+                            </Pressable>
 
-                    <Pressable style={styles.checkboxContainer} onPress={() => setTermsOfService(!termsOfService)}>
-                        <View style={[styles.checkbox, termsOfService && styles.checkboxChecked]} />
-                        <Text style={styles.checkboxText}>Accept Terms of Service</Text>
-                    </Pressable>
+                            <Pressable style={styles.checkboxContainer} onPress={() => setTermsOfService(!termsOfService)}>
+                                <View style={[styles.checkbox, termsOfService && styles.checkboxChecked]} />
+                                <Text style={styles.checkboxText}>Accept Terms of Service</Text>
+                            </Pressable>
 
-                    <Pressable style={styles.checkboxContainer} onPress={() => setPrivacyPolicy(!privacyPolicy)}>
-                        <View style={[styles.checkbox, privacyPolicy && styles.checkboxChecked]} />
-                        <Text style={styles.checkboxText}>Accept Privacy Policy</Text>
-                    </Pressable>
+                            <Pressable style={styles.checkboxContainer} onPress={() => setPrivacyPolicy(!privacyPolicy)}>
+                                <View style={[styles.checkbox, privacyPolicy && styles.checkboxChecked]} />
+                                <Text style={styles.checkboxText}>Accept Privacy Policy</Text>
+                            </Pressable>
 
-                    <Pressable style={styles.checkboxContainer} onPress={() => setDataUsage(!dataUsage)}>
-                        <View style={[styles.checkbox, dataUsage && styles.checkboxChecked]} />
-                        <Text style={styles.checkboxText}>Consent to PetDrop using your data</Text>
-                    </Pressable>
-                </View>
-            </View>
-            <View style={styles.buttonRow}>
-                <Pressable style={styles.button} onPress={() => props.navigation.navigate('Login')}>
-                    <Text style={styles.buttonText}>Login</Text>
-                </Pressable>
+                            <Pressable style={styles.checkboxContainer} onPress={() => setDataUsage(!dataUsage)}>
+                                <View style={[styles.checkbox, dataUsage && styles.checkboxChecked]} />
+                                <Text style={styles.checkboxText}>Consent to PetDrop using your data</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                    <View style={styles.buttonRow}>
+                        <Pressable style={styles.button} onPress={() => props.navigation.navigate('Login')}>
+                            <Text style={styles.buttonText}>Login</Text>
+                        </Pressable>
 
-                <Pressable style={styles.button} onPress={Submit}>
-                    <Text style={styles.buttonText}>Submit</Text>
-                </Pressable>
-            </View>
-            <Image
-                style={styles.sloganImage}
-                source={require('../assets/petdrop_slogan.png')}
-            />
-            </ScrollView>
-			</TouchableWithoutFeedback>
-		</KeyboardAvoidingView>
-	);
+                        <Pressable style={styles.button} onPress={Submit}>
+                            <Text style={styles.buttonText}>Submit</Text>
+                        </Pressable>
+                    </View>
+                    <Image
+                        style={styles.sloganImage}
+                        source={require('../assets/petdrop_slogan.png')}
+                    />
+                </ScrollView>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+    );
 };
 
 const styles = StyleSheet.create({
-	container: {
-	flex: 1,
-	backgroundColor: Color.colorFloralwhite,
-},
+    container: {
+        flex: 1,
+        backgroundColor: Color.colorFloralwhite,
+    },
 
-scrollContainer: {
-	flexGrow: 1, // Allows scrolling when content exceeds screen height
-	alignItems: 'center',
-	paddingBottom: height * 0.025, // Ensures extra space at the bottom
-},
-	blueCircle: {
+    scrollContainer: {
+        flexGrow: 1, // Allows scrolling when content exceeds screen height
+        alignItems: 'center',
+        paddingBottom: height * 0.025, // Ensures extra space at the bottom
+    },
+    blueCircle: {
         justifyContent: 'center',
-	},
-	dogImage: {
-		top: height * 0.17,
+    },
+    dogImage: {
+        top: height * 0.17,
         left: width * 0.070,
         justifyContent: 'center',
-		width: width * 0.2462,
-		height: height * 0.1517,
-	},
+        width: width * 0.2462,
+        height: height * 0.1517,
+    },
     signupText: {
-		fontSize: 45, // Match the login page font size
-		color: Color.colorCornflowerblue, // Match the theme
-		fontFamily: FontFamily.jsMathCmbx10,
-		textAlign: 'center',
+        fontSize: 45, // Match the login page font size
+        color: Color.colorCornflowerblue, // Match the theme
+        fontFamily: FontFamily.jsMathCmbx10,
+        textAlign: 'center',
         marginTop: height * 0.02, // Space between dog image and text
-	},
+    },
     blueContainer: {
         width: width * 0.9, // Slightly smaller than full width
         minHeight: height * 0.3, // Enough space for input fields later
@@ -272,34 +267,34 @@ scrollContainer: {
     },
     // BUTTON ROW STYLES
     buttonRow: {
-    flexDirection: 'row', // Align buttons horizontally
-    justifyContent: 'space-between', // Space between buttons
-    width: width * 0.75, // Keeps buttons from being too wide
-    marginTop: height * 0.03, // Space below blue container
-},
+        flexDirection: 'row', // Align buttons horizontally
+        justifyContent: 'space-between', // Space between buttons
+        width: width * 0.75, // Keeps buttons from being too wide
+        marginTop: height * 0.03, // Space below blue container
+    },
 
-button: {
-    width: width * 0.35, // Rectangular shape
-    height: height * 0.06, // Not too large
-    backgroundColor: Color.colorLightskyblue, // Matching theme
-    borderRadius: Border.br_sm,
-    justifyContent: 'center',
-    alignItems: 'center',
-},
+    button: {
+        width: width * 0.35, // Rectangular shape
+        height: height * 0.06, // Not too large
+        backgroundColor: Color.colorLightskyblue, // Matching theme
+        borderRadius: Border.br_sm,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 
-buttonText: {
-    fontSize: 18,
-    color: 'black',
-    fontFamily: FontFamily.koulenRegular,
-},
-sloganImage: {
-    width: width * 0.5, // Proportional width
-    height: height * 0.1, // Proportional height
-    resizeMode: 'contain', // Ensures the image scales correctly
-    marginTop: height * 0.02, // Space below the buttons
-    alignSelf: 'flex-start', 
-    marginLeft: width * 0.05, 
-},
+    buttonText: {
+        fontSize: 18,
+        color: 'black',
+        fontFamily: FontFamily.koulenRegular,
+    },
+    sloganImage: {
+        width: width * 0.5, // Proportional width
+        height: height * 0.1, // Proportional height
+        resizeMode: 'contain', // Ensures the image scales correctly
+        marginTop: height * 0.02, // Space below the buttons
+        alignSelf: 'flex-start',
+        marginLeft: width * 0.05,
+    },
 });
 
 export default Signup;

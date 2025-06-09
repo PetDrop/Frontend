@@ -3,10 +3,10 @@ import { View, Text, ScrollView, TextInput, KeyboardAvoidingView } from "react-n
 import { Color } from "../GlobalStyles";
 import { styles } from '../styles/ProfilePage.styles';
 import Header from "../components/Home/Header";
-import AddPicture from '../components/Profile/AddPicture';
+import AddImage from "../components/AddImage";
 import AddButton from "../components/AddButton";
-import SubmitButton from '../components/Profile/SubmitButton';
-import { GET_ACCOUNT_BY_EMAIL, UPDATE_ACCOUNT } from "../data/endpoints";
+import SubmitButton from '../components/SubmitButton';
+import { GET_ACCOUNT_BY_EMAIL, httpRequest, UPDATE_ACCOUNT } from "../data/endpoints";
 import { Account } from "../data/dataTypes";
 
 function updateEmergencyContacts(state: string[], action: { index: number, text: string }) {
@@ -74,14 +74,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
     };
     // then update the account in the db with the new info
     try {
-      const response = await fetch(UPDATE_ACCOUNT, {
-        method: 'PUT',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedAccount),
-      });
+      const response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(updatedAccount));
       if (response.ok) {
         // navigate to home screen and pass the account there
         navigation.navigate('Home', { account: updatedAccount });
@@ -124,7 +117,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
         <Text style={styles.title}>Profile</Text>
 
         {/* cirlce with plus sign for adding profile picture */}
-        <AddPicture />
+        <AddImage onPressFunction={() => {}} containerStyle={styles.addPictureContainer}/>
 
         {/* user's name */}
         <Text style={styles.nameHeading}>Name</Text>

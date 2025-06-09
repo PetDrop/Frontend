@@ -31,18 +31,8 @@ export const styles = StyleSheet.create({
 		padding: height * 0.015,
 	},
 	addReminderButton: {
-		backgroundColor: Color.colorCornflowerblue,
-		borderRadius: Border.br_xl,
-		alignItems: 'center',
-		justifyContent: 'center',
-		paddingVertical: height * 0.02,
-		marginHorizontal: width * 0.1,
-		marginTop: height * 0.03,
-	},
-	addReminderText: {
-		fontSize: FontSize.size_5xl,
-		fontFamily: FontFamily.koulenRegular,
-		color: Color.colorFloralwhite,
+		marginTop: height * 0.01,
+		marginLeft: width * 0.1,
 	},
 	cardContainer: {
 		backgroundColor: Color.colorLightskyblue,
@@ -88,24 +78,6 @@ export const styles = StyleSheet.create({
         marginLeft: width * 0.05,
         marginRight: width * 0.03,
     },
-    addButton: {
-		backgroundColor: Color.colorCornflowerblue,
-		borderRadius: Border.br_xl,
-		alignItems: 'center',
-		justifyContent: 'center',
-		marginTop: height * 0.02,
-        width: width * 0.2,
-        marginLeft: width * 0.1,
-	},
-	buttonContent: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	buttonText: {
-		fontSize: FontSize.size_5xl,
-		fontFamily: FontFamily.koulenRegular,
-		color: Color.colorFloralwhite,
-	},
 });
 
 export default styles;

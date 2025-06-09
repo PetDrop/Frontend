@@ -9,9 +9,9 @@ const styles = StyleSheet.create({
         borderRadius: Border.br_xl,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: height * 0.02,
+        // marginTop: height * 0.02,
         width: width * 0.2,
-        marginLeft: width * 0.1,
+        // marginLeft: width * 0.1,
     },
     buttonContent: {
         flexDirection: 'row',

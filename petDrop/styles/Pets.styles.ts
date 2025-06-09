@@ -110,7 +110,7 @@ export const styles = StyleSheet.create({
 		marginBottom: height * -0.06, // Space below bar
 	},
 	addMedicationButton: {
-		left: width * -0.1,
+		marginTop: height * 0.02,
     },
 });
 

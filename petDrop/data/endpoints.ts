@@ -8,6 +8,8 @@ export const UPDATE_ACCOUNT_PASSWORD = 'http://localhost:8080/updateaccount/pass
 export const UPDATE_ACCOUNT_PHONE = 'http://localhost:8080/updateaccount/phone/';
 export const UPDATE_ACCOUNT_ADDRESS = 'http://localhost:8080/updateaccount/address/';
 export const UPDATE_ACCOUNT_EMERGENCY_CONTACTS = 'http://localhost:8080/updateaccount/emergencycontacts/';
+export const UPDATE_ACCOUNT_PETS = 'http://localhost:8080/updateaccount/pets/';
+export const UPDATE_ACCOUNT_REMINDERS = 'http://localhost:8080/updateaccount/reminders/';
 export const GET_ALL_ACCOUNTS = 'http://localhost:8080/getallaccounts';
 export const GET_ACCOUNT_BY_USERNAME = 'http://localhost:8080/getaccountbyusername/';
 export const GET_ACCOUNT_BY_EMAIL = 'http://localhost:8080/getaccountbyemail/';
@@ -21,6 +23,9 @@ export const UPDATE_PET_IMAGE = 'http://localhost:8080/updatepet/image/';
 export const UPDATE_PET_AGE = 'http://localhost:8080/updatepet/age/';
 export const UPDATE_PET_BREED = 'http://localhost:8080/updatepet/breed/';
 export const UPDATE_PET_ADDRESS = 'http://localhost:8080/updatepet/address/';
+export const UPDATE_PET_VET = 'http://localhost:8080/updatepet/vet/';
+export const UPDATE_PET_VETPHONE = 'http://localhost:8080/updatepet/vetphone/';
+export const UPDATE_PET_MEDICATIONS = 'http://localhost:8080/updatepet/medications/';
 export const GET_ALL_PETS = 'http://localhost:8080/getallpets';
 export const GET_PET_BY_ID = 'http://localhost:8080/getpetbyid/';
 // MEDICATIONS
@@ -40,3 +45,15 @@ export const UPDATE_REMINDER_MEDICATION = 'http://localhost:8080/updatereminder/
 export const UPDATE_REMINDER_PET = 'http://localhost:8080/updatereminder/pet/';
 export const GET_ALL_REMINDERS = 'http://localhost:8080/getallreminders';
 export const GET_REMINDER_BY_ID = 'http://localhost:8080/getreminderbyid/';
+
+// http function with parameters for url and request body
+export const httpRequest = async (url: string, method: string, body: string): Promise<Response> => {
+    return await fetch(url, {
+        method: method,
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: body,
+    });
+}

@@ -1,14 +1,17 @@
 import * as React from "react";
-import { Dimensions, Text, View } from "react-native";
-import BlueCircleBig from "../assets/blue_circle_big.svg";
+import { Text, View, Image, KeyboardAvoidingView, ScrollView } from "react-native";
 import AddButtons from "../components/AddPets/PetInfo1AddButtons";
 import TopBottomBar from "../components/TopBottomBar";
-import { ScreenEnum } from "../GlobalStyles";
+import { logoImage, ScreenEnum } from "../GlobalStyles";
 import { NavigationProp } from "@react-navigation/core";
 import styles from '../styles/PetInfo1.styles';
-import { Account } from "../data/dataTypes";
-
-const { width, height } = Dimensions.get('window');
+import { Account, Medication } from "../data/dataTypes";
+import { useReducer, useState } from "react";
+import MedicationPopup from "../components/MedicationPopup";
+import AddMedicationButton from "../components/AddButton";
+import AddPetImage from "../components/AddImage";
+import SubmitButton from "../components/SubmitButton";
+import { ADD_PET, httpRequest } from "../data/endpoints";
 
 type PetInfo1Type = {
   navigation: NavigationProp<any>;
@@ -16,34 +19,105 @@ type PetInfo1Type = {
 }
 
 const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
+  const [popupShowing, setPopupShowing] = useState(false);
+  const [medications, setMedications] = useReducer(updateMedications, []);
+  const [inputFields, setInputFields] = useState(new Map<string, string>([
+    ['pet name', ''],
+    ['pet age', ''],
+    ['pet breed', ''],
+    ['pet address', ''],
+    ['pet vet', ''],
+    ['vet phone', ''],
+  ]));
+
+  // function for updating medications state
+  function updateMedications(state: Medication[], action: { med: Medication }) {
+    return state.concat([action.med]);
+  }
+
+  // function for updating inputfields state
+  function updateInputFields(key: string, value: string) {
+    setInputFields((prevState) => new Map(prevState.set(key, value)));
+  }
+
   // store the user's account info to avoid typing "route.params.account" repeatedly
   const account: Account = route.params.account;
 
+  const Submit = async () => {
+    if (!Array.from(inputFields.values()).every((value: string) => value !== '')) {
+      console.log('at least one input field has no entered value');
+      alert('You must input all info for your pet. Tap the blue buttons along the right side of the screen to get text boxes to type in.');
+    } else {
+      try {
+        const response = await httpRequest(ADD_PET, 'POST', JSON.stringify({
+          name: inputFields.get('pet name'),
+          image: '',
+          age: 0,
+          breed: inputFields.get('pet breed'),
+          address: inputFields.get('pet address'),
+          vet: inputFields.get('pet vet'),
+          vetPhone: inputFields.get('vet phone'),
+          medications: medications
+        }));
+        if (response.ok) {
+          alert('submission successful');
+          navigation.navigate('PetInfo', { account: account });
+        } else {
+          console.log('unable to write pet to database: status code ' + response.status);
+          alert('submission failed');
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   return (
-    <View style={styles.outermostView}>
-      <BlueCircleBig style={styles.petInfo1SubtractIcon} width={(width * 0.3744)} height={(height * 0.173)} />
-      <Text style={[styles.petInfo1Name, styles.nameTypo]}>Name</Text>
-      <Text style={[styles.petInfo1Medications, styles.addPetTypo]}>Medications:</Text>
-      <View style={[styles.petInfo1RectangleParent, styles.petInfo1GroupChildLayout]}>
-        <View style={[styles.petInfo1GroupChild, styles.petInfo1GroupChildLayout]} />
-        <Text style={[styles.petInfo1Add, styles.petInfo1AddTypo]}>ADD</Text>
-        <View style={styles.petInfo1RectangleGroup}>
-          <View style={[styles.petInfo1GroupItem, styles.petInfo1GroupLayout]} />
-          <View style={[styles.petInfo1GroupInner, styles.petInfo1GroupLayout]} />
+    <KeyboardAvoidingView behavior="padding" style={styles.outermostView}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+
+        {/* Logo Image */}
+        <View style={styles.logoImageContainer}>
+          <Image source={require("../assets/petdrop_slogan.png")} style={logoImage} />
         </View>
-      </View>
-      <Text style={[styles.petInfo1LogoText, styles.nameTypo]}>petdrop.</Text>
-      <Text style={styles.petInfo1LogoSubtext}>
-        NEVER MISS A DROP.
-      </Text>
-      <View style={styles.petInfo1RectangleContainer}>
-        <View style={[styles.petInfo1RectangleView, styles.groupChild1Layout]} />
-        <View style={[styles.petInfo1GroupChild1, styles.groupChild1Layout]} />
-      </View>
-      <Text style={[styles.petInfo1AddPet, styles.addPetTypo]}>Add Pet</Text>
-      <AddButtons />
-      <TopBottomBar navigation = {navigation} currentScreen={ScreenEnum.PetInfo1} account={account}/>
-    </View>
+
+        {/* Page Title */}
+        <Text style={[styles.petInfo1AddPet, styles.addPetTypo]}>Add Pet</Text>
+
+        {/* Add Image Circle w/ Plus Sign */}
+        <AddPetImage onPressFunction={() => { }} containerStyle={styles.addImageContainer} />
+
+        {/* Add Medications Section */}
+        <Text style={[styles.petInfo1Medications, styles.addPetTypo]}>Medications</Text>
+        <View style={styles.medicationList}>
+          {medications.map((med, index) => (
+            <View key={index} style={styles.medicationItem}>
+              <View style={[styles.medicationIndicator, { backgroundColor: med.color }]} />
+              <Text style={styles.medicationText}>{med.name}</Text>
+            </View>
+          ))}
+        </View>
+        <View style={styles.addMedicationButton}>
+          <AddMedicationButton onPressFunction={() => { setPopupShowing(true) }} />
+        </View>
+
+        {/* Pet Info Input Section */}
+        <Text style={[styles.petInfo1Name, styles.nameTypo]}>Pet Info</Text>
+        <AddButtons inputFields={inputFields} inputFieldsSetter={updateInputFields} />
+
+        {/* submit button */}
+        <View style={styles.submitButtonContainer}>
+          <SubmitButton onPressFunction={Submit} />
+        </View>
+
+      </ScrollView>
+
+      {/* Top Banner and Bottom Navigation */}
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo1} account={account} />
+
+      {/* Pop-up for Adding Medications */}
+      <MedicationPopup isActive={popupShowing} showingFunction={setPopupShowing} pet={undefined} updateMedications={setMedications} />
+    </KeyboardAvoidingView>
   );
 };
 

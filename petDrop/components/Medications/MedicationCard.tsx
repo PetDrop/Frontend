@@ -5,15 +5,16 @@ import styles from '../../styles/Medications.styles';
 import { Medication, Reminder } from '../../data/dataTypes';
 
 interface MedicationCardProps {
-	reminderProp: Reminder[]
+	reminderProp: Reminder[];
+	medProp: Medication;
 }
 
-const MedicationCard = ({ reminderProp }: MedicationCardProps) => {
+const MedicationCard = ({ reminderProp, medProp }: MedicationCardProps) => {
 	const reminder: Reminder = reminderProp[0];
-	const medication: Medication = reminder.medication;
+	const medication: Medication = medProp;
 
 	// Format notifications as a string, e.g., "6AM, 6PM"
-	const remindersText: string = reminder?.notifications?.join(' ') || 'No reminders';
+	const remindersText: string = reminder?.notifications?.join(', ') || 'No reminders';
 
 	return (
 		<View style={styles.medicationCardContainer}>
@@ -30,7 +31,7 @@ const MedicationCard = ({ reminderProp }: MedicationCardProps) => {
 
 			{/* Medication Body */}
 			<View style={styles.medicationBody}>
-				<Text style={styles.medicationText}>PET: {reminder.pet.name}</Text>
+				<Text style={styles.medicationText}>PET: {reminder?.pet.name}</Text>
 				<Text style={styles.medicationText}>
 					DATES: {medication.dates.join(', ')}
 				</Text>
