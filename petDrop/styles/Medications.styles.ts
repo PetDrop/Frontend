@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
 	},
 
 	/** Medication Switch **/
-	petSwitchContainer: {
+	itemSwitchContainer: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		backgroundColor: Color.colorGainsboro_100,
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
 		marginLeft: width * 0.1,
 	},
 
-	/** Pet Switch Modal */
+	/** Item Switch Modal */
 	modalOverlay: {
 		position: 'absolute',
 		top: 0,
@@ -131,15 +131,15 @@ const styles = StyleSheet.create({
 		color: Color.colorCornflowerblue,
 		marginBottom: height * 0.02,
 	},
-	petOption: {
+	itemOption: {
 		paddingVertical: height * 0.015,
 		width: '100%',
 		alignItems: 'center',
 	},
-	selectedPetOption: {
+	selectedItemOption: {
 		backgroundColor: Color.colorLightskyblue,
 	},
-	petOptionText: {
+	itemOptionText: {
 		fontSize: FontSize.size_xl,
 		fontFamily: FontFamily.koulenRegular,
 		color: Color.colorCornflowerblue,
@@ -158,14 +158,14 @@ const styles = StyleSheet.create({
 		color: Color.colorFloralwhite,
 	},
 
-	/** Circular Pet Image in Switch */
-	petCircle: {
+	/** Circular Item Image in Switch */
+	itemCircle: {
 		width: width * 0.125, // Adjusted smaller size
 		height: width * 0.125, // Keep it circular
 		borderRadius: width * 0.075, // Make it a perfect circle
 		marginLeft: width * - 0.02,
 	},
-	petImage: {
+	itemImage: {
 		width: width * 0.085,
 		height: width * 0.1,
 		top: height * 0.009,

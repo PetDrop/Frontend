@@ -8,11 +8,11 @@ import { logoImage, ScreenEnum } from "../GlobalStyles";
 import styles from "../styles/Reminders.styles";
 
 import { NavigationProp } from "@react-navigation/native";
-import { Account, Reminder } from "../data/dataTypes";
-import { ADD_REMINDER, httpRequest, UPDATE_ACCOUNT } from "../data/endpoints";
-import { useState } from "react";
-
-const { width, height } = Dimensions.get("window");
+import { Account, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
+import { useEffect, useState } from "react";
+import ReminderPopup from "../components/ReminderPopup";
+import PetSwitch from '../components/ItemSwitch';
+import { httpRequest, ADD_REMINDER, UPDATE_ACCOUNT } from "../data/endpoints";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -20,36 +20,51 @@ interface Props {
 }
 
 const Reminders = ({ navigation, route }: Props) => {
-  const [popupShowing, setPopupShowing] = useState(false);
+  const [selectedPetId, setSelectedPetId] = useState('');
+  const [popupShowing, setPopupShowing] = useState<Reminder>();
+  const [rem, setRem] = useState<Reminder>();
 
   // store the user's account info to avoid typing "route.params.account" repeatedly
   const account: Account = route.params.account;
 
-  const addReminder = async () => {
-    try {
-      let response = await httpRequest(ADD_REMINDER, 'POST', JSON.stringify({
-        medication: account.pets[0].medications[0],
-        pet: account.pets[0],
-        notifications: ['1AM', '11PM']
-      }));
+  const WriteToDB = async () => {
+    // write rem to db
+    let response = await httpRequest(ADD_REMINDER, 'POST', JSON.stringify(rem));
+    if (response.ok) {
+      console.log('rem created');
+      // add rem to account and update it in the db
+      const reminder = await response.json();
+      account.reminders.push(reminder);
+      response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
       if (response.ok) {
-        account.reminders.push(await response.json());
-        response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
-        if (response.ok) {
-          alert('Reminder submitted successfully');
-          setPopupShowing(!popupShowing);
-        } else {
-          console.log('unable to add reminder to account: status code ' + response.status);
-          alert('failed to add reminder to account');
-        }
-      } else {
-        console.log('unable to write reminder to database: status code ' + response.status);
-        alert('submission failed');
+        console.log('rem added to account');
+        alert('Reminder submitted successfully');
       }
-    } catch (error) {
-      console.error(error);
     }
-  };
+    setRem(undefined);
+  }
+
+  if (rem !== undefined) {
+    WriteToDB();
+  }
+
+  useEffect(() => {
+    setSelectedPetId(account.pets[0].id);
+  }, []);
+
+  // create reminderCards here to avoid errors with undefined values if user has no pets and/or reminders
+  let reminderCards: React.JSX.Element[] = [];
+  let selectedPet: Pet | undefined = account.pets.find((pet) => pet.id === selectedPetId);
+  let selectedReminders: Reminder[] = account.reminders.filter((reminder) => reminder.pet.id === selectedPetId);
+
+  if (selectedPet !== undefined) { // should always be true once the user registers a pet
+    reminderCards = selectedReminders.map((reminder: Reminder, index: any) => (
+      <ReminderCard
+        key={index}
+        reminder={reminder}
+      />
+    ))
+  }
 
   return (
     <View style={styles.container}>
@@ -59,20 +74,33 @@ const Reminders = ({ navigation, route }: Props) => {
 
         {/* Page Title */}
         <Text style={styles.pageTitle}>Reminders</Text>
+        <PetSwitch
+          data={account.pets}
+          selectedItemId={selectedPetId}
+          onSwitch={setSelectedPetId}
+          switchItem="Pet"
+        />
 
         {/* Reminder Cards */}
-        {account.reminders.map((reminder: Reminder) => (
-          <ReminderCard key={reminder.id} reminder={reminder} />
-        ))}
+        {reminderCards}
 
         {/* Add Reminder Button */}
         <View style={styles.addReminderButton}>
-          <AddReminderButton onPressFunction={addReminder} />
+          <AddReminderButton
+            onPressFunction={() => {
+              let reminder = emptyReminder;
+              reminder.pet = selectedPet ? selectedPet : emptyPet;
+              setPopupShowing(reminder);
+            }}
+          />
         </View>
       </ScrollView>
 
       {/* Bottom Navigation */}
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} account={account} />
+
+      {/* popup for adding reminder */}
+      <ReminderPopup isActive={popupShowing} showingFunction={setPopupShowing} setReminder={setRem} pets={account.pets} />
     </View>
   );
 };

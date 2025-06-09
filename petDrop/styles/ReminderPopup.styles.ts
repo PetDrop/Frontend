@@ -11,8 +11,8 @@ const styles = StyleSheet.create({
           width: width,
       },
       reminderPopup: {
-        top: height * -0.75,
-        height: height * 0.498,
+        top: height * -0.85,
+        height: height * 0.75,
         width: width * 0.923,
         left: width * 0.038,
       },
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
         width: width * 0.067,
         height: height * 0.031,
       },
-      medicationName: {
+      header: {
         top: height * 0.019,
         left: width * 0.077,
         fontSize: FontSize.size_5xl,
@@ -47,11 +47,61 @@ const styles = StyleSheet.create({
         height: height * 0.053,
       },
       popupBody: {
+        height: height * 0.65,
         backgroundColor: Color.colorFloralwhite,
-        height: height * 0.41,
         width: width * 0.923,
         borderBottomLeftRadius: Border.br_12xl,
         borderBottomRightRadius: Border.br_12xl,
+        borderColor: Color.colorCornflowerblue,
+        borderWidth: 3,
+      },
+      selectionContainer: {
+        flexDirection: 'row',
+        // backgroundColor: Color.colorCornflowerblue,
+        borderRadius: Border.br_17,
+        alignItems: 'center',
+        marginTop: height * 0.02,
+        height: height * 0.125,
+      },
+      selectionText: {
+        width: width * 0.4
+      },
+      itemSwitchContainer: {
+      },
+      timeCard: {
+        borderRadius: Border.br_17,
+        borderWidth: 2,
+        borderColor: Color.colorCornflowerblue,
+        width: width * 0.3,
+        marginBottom: height * 0.01,
+      },
+      timeCardContainer: {
+        alignItems: 'center',
+        marginTop: height * 0.02,
+      },
+      addNotifButton: {
+        alignItems: 'center'
+      },
+      saveButtonOval: {
+          borderRadius: Border.br_17,
+          height: height * 0.04,
+          top: height * -0.05,
+          left: width * 0.692,
+          width: width * 0.19,
+          backgroundColor: Color.colorCornflowerblue
+      },
+      saveButtonText: {
+          top: height * -0.005,
+          color: Color.colorFloralwhite,
+          fontSize: FontSize.size_5xl,
+          textAlign: "center",
+          fontFamily: FontFamily.koulenRegular,
+      },
+      text: {
+          color: Color.colorCornflowerblue,
+          fontSize: FontSize.size_5xl,
+          textAlign: "center",
+          fontFamily: FontFamily.koulenRegular,
       },
 });
 

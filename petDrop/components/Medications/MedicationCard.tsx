@@ -2,15 +2,16 @@ import * as React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import EditIcon from '../../assets/edit_icon.svg';
 import styles from '../../styles/Medications.styles';
-import { Medication, Reminder } from '../../data/dataTypes';
+import { Medication, Pet, Reminder } from '../../data/dataTypes';
 
 interface MedicationCardProps {
-	reminderProp: Reminder[];
+	reminderProp: Reminder;
 	medProp: Medication;
+	petProp: Pet;
 }
 
-const MedicationCard = ({ reminderProp, medProp }: MedicationCardProps) => {
-	const reminder: Reminder = reminderProp[0];
+const MedicationCard = ({ reminderProp, medProp, petProp }: MedicationCardProps) => {
+	const reminder: Reminder = reminderProp;
 	const medication: Medication = medProp;
 
 	// Format notifications as a string, e.g., "6AM, 6PM"
@@ -31,7 +32,7 @@ const MedicationCard = ({ reminderProp, medProp }: MedicationCardProps) => {
 
 			{/* Medication Body */}
 			<View style={styles.medicationBody}>
-				<Text style={styles.medicationText}>PET: {reminder?.pet.name}</Text>
+				<Text style={styles.medicationText}>PET: {petProp?.name}</Text>
 				<Text style={styles.medicationText}>
 					DATES: {medication.dates.join(', ')}
 				</Text>
