@@ -3,9 +3,7 @@ export interface Account {
     username: string,
     email: string,
     password: string,
-    phone: string,
-    address: string,
-    emergencyContacts: string[],
+    sharedUsers: string[],
     pets: Pet[],
     reminders: Reminder[]
 }

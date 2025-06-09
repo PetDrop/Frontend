@@ -58,16 +58,14 @@ const Signup = (props: SignupType) => {
                 username: username,
                 email: email,
                 password: password,
-                phone: '',
-                address: '',
-                emergencyContacts: [],
+                sharedUsers: [],
                 pets: [],
                 reminders: []
             }));
             if (response.ok) {
                 // if account successfully created, navigate to profile page for additional info, and pass the account along
                 const account: Account = await response.json();
-                props.navigation.navigate('Profile', { account: account });
+                props.navigation.navigate('Home', { account: account });
             } else {
                 console.log('unable to write account to database: status code ' + response.status);
                 alert('submission failed');

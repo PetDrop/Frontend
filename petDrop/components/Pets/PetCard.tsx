@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View, Text, Image } from 'react-native';
 import EditIcon from '../../assets/edit_icon.svg';
 import styles from '../../styles/Pets.styles';
-import AddMedicationButton from '../../components/AddButton';
+import AddMedicationButton from '../../components/CustomButton';
 import { Pet } from '../../data/dataTypes';
 
 type PetCardProps = {
@@ -43,7 +43,7 @@ const PetCard = ({ pet, onPressFunction }: PetCardProps) => {
 				))}
 			</View>
 			<View style={styles.addMedicationButton}>
-				<AddMedicationButton onPressFunction={onPressFunction}/>
+				<AddMedicationButton onPressFunction={onPressFunction} innerText={'+ ADD'}/>
 			</View>
             <View style={styles.separatorBar} />
 		</View>
