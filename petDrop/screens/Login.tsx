@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import { Border, Color, FontFamily } from '../GlobalStyles';
 import BlueCircleBig from '../assets/blue_circle_big.svg';
+import { GET_ACCOUNT_BY_EMAIL } from '../data/endpoints';
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,6 +28,37 @@ const Login = (props: LoginType) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
+
+    /* handles submit button being pressed
+        checks to make sure email and password are entered
+        and that they match an account 
+    */
+    const Submit = async () => {
+        if (username === '' || password === '') {
+            alert('Must enter an email and password');
+            return;
+        }
+        try {
+            // try to find account with the email entered
+            const response = await fetch(GET_ACCOUNT_BY_EMAIL + username);
+            if (response.ok) {
+                // if account found check its password against the one entered
+                const account = await response.json();
+                if (account.password === password) {
+                    props.navigation.navigate('Home');
+                } else {
+                    console.log('incorrect password for email: ' + username);
+                    alert('Incorrect email or password');
+                }
+            } else {
+                // http request failed - most likely means no account with entered email exists
+                console.log('could not find account with email: ' + username + '\n status code: ' + response.status);
+                alert('Incorrect email or password');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
         <KeyboardAvoidingView
@@ -90,7 +122,7 @@ const Login = (props: LoginType) => {
                             <Text style={styles.buttonText}>Sign Up</Text>
                         </Pressable>
 
-                        <Pressable style={styles.button} onPress={() => props.navigation.navigate('Home')}>
+                        <Pressable style={styles.button} onPress={Submit}>
                             <Text style={styles.buttonText}>Submit</Text>
                         </Pressable>
                     </View>
