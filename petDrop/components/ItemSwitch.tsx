@@ -41,7 +41,7 @@ const ItemSwitch: React.FC<ItemSwitchProps> = ({
 		image =
 			<View>
 				<View style={styles.imageOutline}>
-				<Image src={imageString} style={styles.itemImage} />
+					<Image src={imageString} style={styles.itemImage} />
 				</View>
 			</View>;
 	}

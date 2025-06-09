@@ -168,7 +168,8 @@ const styles = StyleSheet.create({
 		height: width * 0.12,
 		borderWidth: 4,
 		borderColor: Color.colorLightskyblue,
-		borderRadius: Border.br_10xs_5
+		borderRadius: Border.br_10xs_5,
+		backgroundColor: Color.colorFloralwhite,
 	},
 });
 
