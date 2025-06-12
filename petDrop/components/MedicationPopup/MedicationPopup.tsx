@@ -50,7 +50,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   // function for updating dates state
   const updateDates = (startDate: Date | undefined, endDate: Date | undefined, recurring: number) => {
     if (startDate === undefined) {
-      setDates([]);
+      setDates(new Array<DateObj>());
     } else {
       let newDateObj: DateObj = {
         startDate: startDate.toISOString().slice(0, 10),
@@ -68,7 +68,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   if (isActive && propsChanged) {
     setPropsChanged(false);
     setDescription(med.description);
-    setDates(med.dates);
+    setDates(med.dates.map(date => ({ ...date }))); // deep copy med.dates so you don't mutate med when calling setDates elsewhere
     setMedName(med.name);
     setColor(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
     setRem(med.reminder ? med.reminder : emptyReminder);
@@ -76,7 +76,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
 
   const close = () => {
     setDescription('');
-    updateDates(undefined, undefined, 0); // undefined clears the map
+    updateDates(undefined, undefined, 0); // undefined clears the array
     setMedName('');
     setColor(`#${Math.round(Math.random() * 899998 + 100000)}`);
     setPropsChanged(true);
@@ -101,9 +101,6 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     close();
     setPopupState(newState);
   };
-
-  // # of milliseconds in a week used when adding recurring dates
-  const MS_IN_WEEK: number = 604800000;
 
   const dateCards: Array<React.JSX.Element> = [];
   dates.forEach((dateObj: DateObj, index: number) => {
@@ -131,7 +128,13 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
             {/* medication selection */}
             {!readonly ?
               <Selection
-                data={['sponsor med 1', 'sponsor med 2', 'sponsor med 3']}
+                data={
+                  ['sponsor med 1', 'sponsor med 2', 'sponsor med 3'].map((medName) => {
+                    if (!pet.medications.some((med) => med.name == medName)) {
+                      return medName;
+                    }
+                  })
+                }
                 onSelect={(selectedItem: string) => { setMedName(selectedItem) }}
                 renderButton={(selectedItem: string) => {
                   return (
