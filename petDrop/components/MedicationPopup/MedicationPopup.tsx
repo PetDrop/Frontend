@@ -9,10 +9,10 @@ import { useState } from "react";
 import { Color } from "../../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
 import DateCard from "./DateCard";
+import PeriodCard from "./PeriodCard";
 import ReminderPopup from "../ReminderPopup";
 import DeleteButton from '../CustomButton';
-import { medState } from "../../data/states";
-import { remState } from "../../data/states";
+import { medState, remState, datePicker } from "../../data/enums";
 
 type MedicationPopupType = {
   isActive: boolean;
@@ -25,7 +25,7 @@ type MedicationPopupType = {
 };
 
 const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, pet, med, readonly }: MedicationPopupType) => {
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [datePickerMode, setDatePickerMode] = useState(datePicker.DISABLED);
   const [dates, setDates] = useState<DateObj[]>([]);
   const [description, setDescription] = useState(med.description);
   const [medName, setMedName] = useState(med.name);
@@ -33,6 +33,8 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   const [propsChanged, setPropsChanged] = useState(true);
   const [remPopupState, setRemPopupState] = useState(remState.NO_ACTION);
   const [rem, setRem] = useState(med.reminder ? med.reminder : emptyReminder);
+  const [creatingPeriod, setCreatingPeriod] = useState(false);
+  const [curPeriod, setCurPeriod] = useState<{ start: Date | undefined, end: Date | undefined }>({ start: undefined, end: undefined });
 
   const ObjectID = require('bson-objectid');
   const id = med.id !== '' ? med.id : ObjectID();
@@ -47,19 +49,57 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     }
   }
 
+  const addDate = (date: Date) => {
+    switch (datePickerMode) {
+      case datePicker.SINGLE:
+        if (!dates.some((dateObj: DateObj) => dateObj.startDate === date.toISOString().slice(0, 10))) {
+          updateDates(date.toISOString().slice(0, 10), undefined, 1);
+        }
+        break;
+      case datePicker.START_DATE:
+        if (!dates.some((dateObj: DateObj) => dateObj.startDate === date.toISOString().slice(0, 10) && dateObj.recurrances === 0)) {
+          curPeriod.start = date;
+          if (curPeriod.end) {
+            updateDates(date.toISOString().slice(0, 10), curPeriod.end.toISOString().slice(0, 10), 0);
+          }
+        }
+        break;
+      case datePicker.END_DATE:
+        if (!dates.some((dateObj: DateObj) => dateObj.endDate === date.toISOString().slice(0, 10) && dateObj.recurrances === 0)) {
+          curPeriod.end = date;
+          if (curPeriod.start) {
+            updateDates(curPeriod.start.toISOString().slice(0, 10), date.toISOString().slice(0, 10), 0);
+          }
+        }
+        break;
+    }
+    setDatePickerMode(datePicker.DISABLED);
+  }
+
   // function for updating dates state
-  const updateDates = (startDate: Date | undefined, endDate: Date | undefined, recurring: number) => {
+  const updateDates = (startDate: string | undefined, endDate: string | undefined, recurring: number) => {
     if (startDate === undefined) {
       setDates(new Array<DateObj>());
     } else {
       let newDateObj: DateObj = {
-        startDate: startDate.toISOString().slice(0, 10),
-        endDate: endDate ? endDate.toISOString().slice(0, 10) : '',
+        startDate: startDate,
+        endDate: endDate ? endDate : '',
         recurrances: recurring
       };
       setDates((prevState) => {
-        let oldDateObj = prevState.find((dateObj => dateObj.startDate === startDate.toISOString().slice(0, 10)));
-        oldDateObj ? oldDateObj.recurrances = recurring : prevState.push(newDateObj);
+        if (startDate && endDate) {
+          // let oldDateObj = prevState.find((dateObj => dateObj.startDate === startDate && dateObj.recurrances === 0));
+          // if (!oldDateObj) {
+          //   oldDateObj = prevState.find((dateObj => dateObj.endDate === endDate && dateObj.recurrances === 0));
+          // }
+          // oldDateObj = newDateObj;
+          prevState.push(newDateObj);
+          setCurPeriod({ start: undefined, end: undefined });
+          setCreatingPeriod(false);
+        } else {
+          let oldDateObj = prevState.find((dateObj => dateObj.startDate === startDate));
+          oldDateObj ? oldDateObj.recurrances = recurring : prevState.push(newDateObj);
+        }
         return [...prevState];
       });
     }
@@ -107,7 +147,12 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     dateCards.push(
       <DateCard dateObj={dateObj} updateDates={updateDates} readonly={readonly} key={index} />
     )
-  })
+  });
+  if (creatingPeriod) {
+    dateCards.push(
+      <PeriodCard startDate={curPeriod.start} endDate={curPeriod.end} modalFunction={setDatePickerMode} key={'creatingPeriodCard'} />
+    )
+  }
 
   if (isActive) {
     return (
@@ -179,19 +224,19 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
             </View>
 
             {!readonly && (
-              <Button title="Add Date" onPress={() => { setDatePickerVisibility(true) }} />
+              <Button title="Add Date" onPress={() => { setDatePickerMode(datePicker.SINGLE) }} />
             )}
+
+            {(!creatingPeriod && !readonly) && (
+              <Button title="Add Date Period" onPress={() => { setCreatingPeriod(true) }} />
+            )}
+
             <DateTimePickerModal
               date={new Date(Date.now())}
-              isVisible={isDatePickerVisible}
+              isVisible={datePickerMode !== datePicker.DISABLED}
               mode="date"
-              onConfirm={(date) => {
-                if (!dates.some((dateObj: DateObj) => dateObj.startDate === date.toISOString().slice(0, 10))) {
-                  updateDates(date, undefined, 1);
-                }
-                setDatePickerVisibility(false);
-              }}
-              onCancel={() => { setDatePickerVisibility(false) }}
+              onConfirm={(date) => addDate(date)}
+              onCancel={() => { setDatePickerMode(datePicker.DISABLED) }}
             />
 
             <TextInput

@@ -6,7 +6,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useReducer, useState } from "react";
 import { emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
 import Selection from './ItemSwitch';
-import { remState } from "../data/states";
+import { remState } from "../data/enums";
 import DeleteButton from '../components/CustomButton';
 import { Color } from "../GlobalStyles";
 

@@ -14,7 +14,7 @@ import { MarkedDates } from "react-native-calendars/src/types";
 import { useFocusEffect } from "@react-navigation/native";
 import MedSwitch from '../components/ItemSwitch';
 import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
-import { medState } from "../data/states";
+import { medState } from "../data/enums";
 import SelectMedPopup from "../components/SelectMedPopup";
 
 const { width, height } = Dimensions.get("window");
