@@ -37,7 +37,7 @@ const DateCard = ({ dateObj, updateDates, readonly }: DateCardType) => {
                                 let num: number = Number.parseInt(e);
                                 setOccurrances(num);
                                 num = isNaN(num) ? 1 : num;
-                                updateDates(new Date(dateObj.startDate), undefined, num);
+                                updateDates(dateObj.startDate, undefined, num);
                             }}
                             editable={!readonly}
                         />

@@ -88,11 +88,6 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
       };
       setDates((prevState) => {
         if (startDate && endDate) {
-          // let oldDateObj = prevState.find((dateObj => dateObj.startDate === startDate && dateObj.recurrances === 0));
-          // if (!oldDateObj) {
-          //   oldDateObj = prevState.find((dateObj => dateObj.endDate === endDate && dateObj.recurrances === 0));
-          // }
-          // oldDateObj = newDateObj;
           prevState.push(newDateObj);
           setCurPeriod({ start: undefined, end: undefined });
           setCreatingPeriod(false);

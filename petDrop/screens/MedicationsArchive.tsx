@@ -146,8 +146,8 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	medicationCards = selectedPet.medications.map((medication: Medication, index: number) => (
 		<MedicationCard
 			key={index}
-			medProp={medication}
-			petProp={selectedPet}
+			medication={medication}
+			pet={selectedPet}
 			showingFunction={editMedication}
 		/>
 	));
