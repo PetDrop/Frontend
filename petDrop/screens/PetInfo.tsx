@@ -39,27 +39,25 @@ const PetInfo = ({ navigation, route }: Props) => {
         return;
       }
     }
-    if (med !== undefined) { // completely redundant but IDE stupid
-      // write med to db
-      med.reminder = reminder;
-      response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify(med));
-      let medication: Medication;
+    // write med to db
+    med!.reminder = reminder;
+    response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify(med));
+    let medication: Medication;
+    if (response.ok) {
+      medication = await response.json();
+      // update pet with new med in db
+      petBeingEdited.medications.push(medication);
+      response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(petBeingEdited));
       if (response.ok) {
-        medication = await response.json();
-        // update pet with new med in db
-        petBeingEdited.medications.push(medication);
-        response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(petBeingEdited));
-        if (response.ok) {
-          alert('Medication submitted successfully');
-        }
-        else {
-          console.log(`http PUT request failed with error code: ${response.status}`);
-          alert('Medication failed to save');
-        }
-      } else {
-        console.log(`http POST request failed with error code: ${response.status}`);
-        alert('Failed to create medication');
+        alert('Medication submitted successfully');
       }
+      else {
+        console.log(`http PUT request failed with error code: ${response.status}`);
+        alert('Medication failed to save');
+      }
+    } else {
+      console.log(`http POST request failed with error code: ${response.status}`);
+      alert('Failed to create medication');
     }
     setMed(undefined);
     setRem(undefined);
@@ -83,6 +81,20 @@ const PetInfo = ({ navigation, route }: Props) => {
               onPressFunction={() => {
                 setPetBeingEdited(pet);
                 setPopupState(medState.SHOW_POPUP);
+              }}
+              navigation={navigation} />
+          </View>
+        ))}
+        {account.sharedPets.map((pet: Pet) => (
+          <View key={pet.id}>
+            <PetCard
+              key={pet.id}
+              pet={pet}
+              account={account}
+              onPressFunction={() => {
+                // TODO: check if pet is editable
+                // setPetBeingEdited(pet);
+                // setPopupState(medState.SHOW_POPUP);
               }}
               navigation={navigation} />
           </View>

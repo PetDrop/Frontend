@@ -29,7 +29,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	const account: Account = route.params.account;
 
 	useEffect(() => {
-		setSelectedPet(account.pets[0] ? account.pets[0] : emptyPet);
+		setSelectedPet(account.pets[0] || account.sharedPets[0] || emptyPet);
 	}, []);
 
 	const editMedication = (med: Medication) => {
@@ -167,7 +167,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 					<Text style={styles.pageTitle}>Medications</Text>
 					<PetSwitch
 						text={'switch'}
-						data={account.pets}
+						data={[...account.pets, ...account.sharedPets]}
 						selectedItem={selectedPet}
 						onSwitch={setSelectedPet}
 						switchItem='Pet'

@@ -78,6 +78,7 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
           medications: petBeingEdited ? petBeingEdited.medications : []
         }));
         if (response.ok) {
+          // TODO: allow for editing of shared pets
           if (petBeingEdited) {
             const updatedPet: Pet = await response.json();
             account.pets[account.pets.findIndex((pet: Pet) => pet.id === updatedPet.id)] = updatedPet;

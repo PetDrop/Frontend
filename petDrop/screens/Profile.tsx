@@ -41,33 +41,42 @@ const Profile = ({ navigation, route }: ProfileType) => {
   const [password, setPassword] = useState(account.password);
   const [numSharedUsers, setNumSharedUsers] = useState(Math.max(account.sharedUsers.length, 1));
   const [sharedUsers, setSharedUsers] = useReducer(updateSharedUsers, account.sharedUsers);
+  const [numUsersSharedWith, setNumUsersSharedWith] = useState(Math.max(account.usersSharedWith.length, 1));
+  const [usersSharedWith, setUsersSharedWith] = useReducer(updateSharedUsers, account.usersSharedWith);
 
   /* handles submit button being pressed
     checks to make sure required fields have values
-    and removes empty values from sharedUsers - 
-    passes the result into call to write to db
+    and removes empty values from sharedUsers and usersSharedWith - 
+    passes the results into call to write to db
   */
   const UpdateAccount = () => {
-    let contacts: string[] = [];
+    let sharedUserContacts: string[] = [];
     sharedUsers.forEach(contact => {
       if (contact !== '') {
-        contacts.push(contact);
+        sharedUserContacts.push(contact);
       }
     });
-    WriteToDB(contacts);
+    let userSharedWithContacts: string[] = [];
+    usersSharedWith.forEach(contact => {
+      if (contact !== '') {
+        userSharedWithContacts.push(contact);
+      }
+    });
+    WriteToDB(sharedUserContacts, userSharedWithContacts);
   }
 
   /* puts all state info into an object 
   * that is then written to the db
   */
-  const WriteToDB = async (contacts: string[]) => {
+  const WriteToDB = async (sharedUserContacts: string[], usersSharedWithContacts: string[]) => {
     // create updated account object with new info, to be put in the db
-    const updatedAccount: Account = {
+    const updatedAccount = {
       id: account.id,
       username: username,
       email: email,
       password: password,
-      sharedUsers: contacts,
+      sharedUsers: sharedUserContacts,
+      usersSharedWith: usersSharedWithContacts,
       pets: account.pets,
     };
     // then update the account in the db with the new info
@@ -97,6 +106,22 @@ const Profile = ({ navigation, route }: ProfileType) => {
         value={sharedUsers[i]}
         onChangeText={(text) => {
           setSharedUsers({ index: i, text });
+        }}
+      />
+  }
+
+  /* list of "userSharedWith" text inputs */
+  let userSharedWithInputs = Array<React.JSX.Element>(numUsersSharedWith);
+  for (let i: number = 0; i < numUsersSharedWith; i++) {
+    userSharedWithInputs[i] =
+      <TextInput
+        key={`userSharedWith${i + 1}`}
+        style={[styles.textInput]}
+        placeholder="ENTER USER SHARED WITH (TEMP NAME)"
+        placeholderTextColor={Color.colorCornflowerblue}
+        value={usersSharedWith[i]}
+        onChangeText={(text) => {
+          setUsersSharedWith({ index: i, text });
         }}
       />
   }
@@ -154,6 +179,15 @@ const Profile = ({ navigation, route }: ProfileType) => {
         {/* add shared user button */}
         <View style={styles.addButtonContainer}>
           <AddButton onPressFunction={() => { setNumSharedUsers(numSharedUsers + 1) }} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
+        </View>
+
+        {/* users shared with */}
+        <Text style={styles.inputHeading}>Users Shared With (temporary name)</Text>
+        {userSharedWithInputs}
+
+        {/* add user shared with button */}
+        <View style={styles.addButtonContainer}>
+          <AddButton onPressFunction={() => { setNumUsersSharedWith(numUsersSharedWith + 1) }} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
         </View>
 
         {/* save changes button */}

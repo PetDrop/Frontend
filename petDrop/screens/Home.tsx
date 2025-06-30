@@ -1,23 +1,20 @@
 import * as React from "react";
-import { Dimensions, Text, View, ScrollView, Pressable } from "react-native";
+import { View, ScrollView } from "react-native";
 import Header from "../components/Home/Header";
 import { Calendar, DateData } from 'react-native-calendars';
 import MedicationsList from "../components/Home/MedicationsList";
 import UserGreeting from "../components/Home/UserGreeting";
 import TopBottomBar from "../components/TopBottomBar";
-import { Color, ScreenEnum } from "../GlobalStyles";
+import { ScreenEnum } from "../GlobalStyles";
 import { styles, calendarTheme } from "../styles/Home.styles";
-import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
-import { useCallback, useEffect, useState } from "react";
-import { MarkingProps } from "react-native-calendars/src/calendar/day/marking";
+import { Account, emptyMed, emptyPet, Medication, Pet } from "../data/dataTypes";
+import { useCallback, useState } from "react";
 import { MarkedDates } from "react-native-calendars/src/types";
 import { useFocusEffect } from "@react-navigation/native";
 import MedSwitch from '../components/ItemSwitch';
 import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
 import { medState } from "../data/enums";
 import SelectMedPopup from "../components/SelectMedPopup";
-
-const { width, height } = Dimensions.get("window");
 
 type HomeProps = {
   navigation: any;
@@ -34,41 +31,46 @@ const Home = ({ navigation, route }: HomeProps) => {
   // store the user's account info to avoid typing "route.params.account" repeatedly
   let account: Account = route.params.account;
 
+  // populates a map of all meds to their pet and dates
+  const populateAllDatesMap = (pet: Pet, allDatesMap: Map<Medication, { pet: Pet, dates: string[] }>) => {
+    pet.medications.forEach(med => {
+      med.dates.forEach(dateObj => {
+        const dates: string[] = [];
+        if (dateObj.endDate.length > 0) {
+          let numDays = (new Date(dateObj.endDate).getTime() - new Date(dateObj.startDate).getTime()) / 86400000;
+          dates.push(dateObj.startDate);
+          for (let i = 0; i < numDays; i++) {
+            let dayToAdd = new Date(dateObj.startDate);
+            dayToAdd.setTime(dayToAdd.getTime() + 86400000 * (i + 1));
+            dates.push(dayToAdd.toISOString().slice(0, 10));
+          }
+        } else {
+          dates.push(dateObj.startDate);
+          for (let i = 1; i < dateObj.recurrances; i++) {
+            let dayToAdd = new Date(dateObj.startDate);
+            dayToAdd.setTime(dayToAdd.getTime() + 604800000 * i)
+            dates.push(dayToAdd.toISOString().slice(0, 10));
+          }
+        }
+        if (allDatesMap.has(med)) {
+          const newDates = allDatesMap.get(med)!.dates.concat(dates);
+          allDatesMap.set(med, { pet, dates: newDates });
+        } else {
+          allDatesMap.set(med, { pet, dates });
+        }
+      })
+    })
+  }
+
   let markedDatesMap: Map<string, Array<{ color: string, startingDay?: boolean, endingDay?: boolean }>> = new Map();
   useFocusEffect(
     useCallback(() => {
       // maps all meds to an object containing their pets and a list of all their dates
       const allDatesMap = new Map<Medication, { pet: Pet, dates: string[] }>();
 
-      account.pets.forEach(pet => {
-        pet.medications.forEach(med => {
-          med.dates.forEach(dateObj => {
-            const dates: string[] = [];
-            if (dateObj.endDate.length > 0) {
-              let numDays = (new Date(dateObj.endDate).getTime() - new Date(dateObj.startDate).getTime()) / 86400000;
-              dates.push(dateObj.startDate);
-              for (let i = 0; i < numDays; i++) {
-                let dayToAdd = new Date(dateObj.startDate);
-                dayToAdd.setTime(dayToAdd.getTime() + 86400000 * (i + 1));
-                dates.push(dayToAdd.toISOString().slice(0, 10));
-              }
-            } else {
-              dates.push(dateObj.startDate);
-              for (let i = 1; i < dateObj.recurrances; i++) {
-                let dayToAdd = new Date(dateObj.startDate);
-                dayToAdd.setTime(dayToAdd.getTime() + 604800000 * i)
-                dates.push(dayToAdd.toISOString().slice(0, 10));
-              }
-            }
-            if (allDatesMap.has(med)) {
-              const newDates = allDatesMap.get(med)!.dates.concat(dates);
-              allDatesMap.set(med, { pet, dates: newDates });
-            } else {
-              allDatesMap.set(med, { pet, dates });
-            }
-          })
-        })
-      })
+      [...account.pets, ...account.sharedPets].forEach(pet => {
+        populateAllDatesMap(pet, allDatesMap);
+      });
 
       // maps all dates of meds to the meds on those dates
       const tempMedMap = new Map<string, { pet: Pet, med: Medication }[]>();
@@ -87,7 +89,7 @@ const Home = ({ navigation, route }: HomeProps) => {
 
       // assign row number to each med while also counting the total number of them
       let rowIndex = 0;
-      account.pets.forEach(pet => {
+      [...account.pets, ...account.sharedPets].forEach(pet => {
         pet.medications.forEach(med => {
           if (!medRowMap.has(med.name)) {
             medRowMap.set(med.name, rowIndex++);
@@ -133,9 +135,16 @@ const Home = ({ navigation, route }: HomeProps) => {
   );
 
   const findPet = (med: Medication) => {
+    // check current user's pets first
     let pet = account.pets.find((pet) =>
       pet.medications.some((medication) => medication.id === med.id)
-    )!;
+    );
+    // if pet not found, check sharedPets
+    if (!pet) {
+      pet = account.sharedPets.find((pet) =>
+        pet.medications.some((medication) => medication.id === med.id)
+      )!;
+    }
     showMed({ pet, med });
     setSwitchDisplay(undefined);
   }
