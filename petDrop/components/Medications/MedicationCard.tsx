@@ -2,19 +2,33 @@ import * as React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import EditIcon from '../../assets/edit_icon.svg';
 import styles from '../../styles/Medications.styles';
-import { Medication, Pet, Reminder } from '../../data/dataTypes';
+import { DateObj, Medication, Pet, Reminder } from '../../data/dataTypes';
 
 interface MedicationCardProps {
-	medProp: Medication;
-	petProp: Pet;
+	medication: Medication;
+	pet: Pet;
 	showingFunction: Function;
 }
 
-const MedicationCard = ({ medProp, petProp, showingFunction }: MedicationCardProps) => {
-	const medication: Medication = medProp;
+const MedicationCard = ({ medication, pet, showingFunction }: MedicationCardProps) => {
 
 	// Format notifications as a string, e.g., "6AM, 6PM"
-	const remindersText: string = medProp.reminder?.notifications?.join(', ') || 'No reminders';
+	const remindersText: string = medication.reminder?.notifications?.join(', ') || 'No reminders';
+
+	// turn DateObjs into strings that are then joined to be displayed
+	let dates: string[] = medication.dates.map((date: DateObj) => {
+		if (date.endDate.length === 0) { // recurring single date
+			if (date.recurrances > 1) {
+				// say how many times it recurs
+				return `${date.startDate} x${date.recurrances}`;
+			} else {
+				return date.startDate;
+			}
+		} else { // date range
+			return `${date.startDate} to ${date.endDate}`;
+		}
+	});
+	const datesText: string = dates.join(', ');
 
 	return (
 		<View style={styles.medicationCardContainer}>
@@ -31,9 +45,9 @@ const MedicationCard = ({ medProp, petProp, showingFunction }: MedicationCardPro
 
 			{/* Medication Body */}
 			<View style={styles.medicationBody}>
-				<Text style={styles.medicationText}>PET: {petProp?.name}</Text>
+				<Text style={styles.medicationText}>PET: {pet.name}</Text>
 				<Text style={styles.medicationText}>
-					DATES: {medication.dates.join(', ')}
+					DATES: {datesText}
 				</Text>
 				<Text style={styles.medicationText}>
 					NOTIFICATIONS: {remindersText}

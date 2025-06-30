@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import ReminderPopup from "../components/ReminderPopup";
 import PetSwitch from '../components/ItemSwitch';
 import { httpRequest, ADD_REMINDER, UPDATE_ACCOUNT, UPDATE_MEDICATION, UPDATE_REMINDER, DELETE_REMINDER_BY_ID } from "../data/endpoints";
-import { remState } from "../data/states";
+import { remState } from "../data/enums";
 
 interface Props {
   navigation: NavigationProp<any>;

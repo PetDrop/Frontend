@@ -12,7 +12,7 @@ import MedicationPopup from '../components/MedicationPopup/MedicationPopup';
 import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from '../data/dataTypes';
 import { httpRequest, ADD_MEDICATION, UPDATE_PET, ADD_REMINDER, UPDATE_REMINDER, 
 	UPDATE_MEDICATION, DELETE_REMINDER_BY_ID, DELETE_MEDICATION_BY_ID } from '../data/endpoints';
-import { medState } from '../data/states';
+import { medState } from '../data/enums';
 
 type MedicationsArchiveProps = {
 	navigation: any;
@@ -146,8 +146,8 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	medicationCards = selectedPet.medications.map((medication: Medication, index: number) => (
 		<MedicationCard
 			key={index}
-			medProp={medication}
-			petProp={selectedPet}
+			medication={medication}
+			pet={selectedPet}
 			showingFunction={editMedication}
 		/>
 	));

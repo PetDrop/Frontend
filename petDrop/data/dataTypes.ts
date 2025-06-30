@@ -24,7 +24,7 @@ export interface Medication {
     name: string,
     color: string,
     description: string,
-    dates: string[],
+    dates: DateObj[],
     reminder: Reminder,
     range: number
 }
@@ -32,6 +32,12 @@ export interface Medication {
 export interface Reminder {
     id: string,
     notifications: string[]
+}
+
+export interface DateObj {
+    startDate: string,
+    endDate: string, // possibly "undefined", but use empty string instead of undefined value
+    recurrances: number
 }
 
 // global default values to avoid having to repeatedly create these in various files
