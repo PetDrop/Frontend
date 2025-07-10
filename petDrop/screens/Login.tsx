@@ -30,13 +30,34 @@ const Login = (props: LoginType) => {
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
 
+
+    // populates an accounts sharedPets with all the pets shared with them
+    const addSharedInfo = async (account: Account) => {
+        // initialize sharedPets since it's undefined in db
+        account.sharedPets = [];
+        // check each account they requested info from
+        account.sharedUsers.forEach(async (sharedUser) => {
+            const response = await httpRequest(GET_ACCOUNT_BY_USERNAME + sharedUser, 'GET', '');
+            if (response.ok) {
+                // if account found check if they volunteered their info
+                const sharedAccount: Account = await response.json();
+                if (sharedAccount.usersSharedWith.includes(account.username)) {
+                    account.sharedPets = account.sharedPets.concat(sharedAccount.pets);
+                    console.log(account.sharedPets);
+                }
+            } else {
+                console.log('could not find account with username: ' + sharedUser + '\n status code: ' + response.status);
+            }
+        })
+    }
+
     /* handles submit button being pressed
         checks to make sure email and password are entered
         and that they match an account 
     */
     const Submit = async () => {
         if (username === '' || password === '') {
-            alert('Must enter an email and password');
+            alert('Must enter a username and password');
             return;
         }
         try {
@@ -46,16 +67,18 @@ const Login = (props: LoginType) => {
                 // if account found check its password against the one entered
                 const account: Account = await response.json();
                 if (account.password === password) {
-                    // if info is correct, navigate home and pass the account there
+                    // if info is correct, populate the account with shared info
+                    await addSharedInfo(account);
+                    // navigate home and pass the account there
                     props.navigation.navigate('Home', {account: account});
                 } else {
-                    console.log('incorrect password for email: ' + username);
-                    alert('Incorrect email or password');
+                    console.log('incorrect password for username: ' + username);
+                    alert('Incorrect username or password');
                 }
             } else {
                 // http request failed - most likely means no account with entered email exists
-                console.log('could not find account with email: ' + username + '\n status code: ' + response.status);
-                alert('Incorrect email or password');
+                console.log('could not find account with username: ' + username + '\n status code: ' + response.status);
+                alert('Incorrect username or password');
             }
         } catch (error) {
             console.error(error);

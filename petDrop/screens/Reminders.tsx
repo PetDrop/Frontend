@@ -30,7 +30,7 @@ const Reminders = ({ navigation, route }: Props) => {
   const account: Account = route.params.account;
 
   useEffect(() => {
-    setSelectedPet(account.pets[0] ? account.pets[0] : emptyPet);
+    setSelectedPet(account.pets[0] || account.sharedPets[0] || emptyPet);
   }, []);
 
   const editReminder = (med: Medication) => {
@@ -104,7 +104,7 @@ const Reminders = ({ navigation, route }: Props) => {
           <Text style={styles.pageTitle}>Reminders</Text>
           <PetSwitch
             text={'switch'}
-            data={account.pets}
+            data={[...account.pets, ...account.sharedPets]}
             selectedItem={selectedPet}
             onSwitch={setSelectedPet}
             switchItem="Pet"

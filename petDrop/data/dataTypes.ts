@@ -4,7 +4,9 @@ export interface Account {
     email: string,
     password: string,
     sharedUsers: string[],
+    usersSharedWith: string[],
     pets: Pet[],
+    sharedPets: Pet[]
 }
 
 export interface Pet {
