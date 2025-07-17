@@ -72,7 +72,8 @@ export enum ScreenEnum {
   PetInfo1 = 4, //new pet page
   Reminders = 5,
   MedicationsArchive = 6,
-  LoadingScreen = 7,
+  Instructions = 7,
+  LoadingScreen = 8,
 };
 
 export const petImages: { [key: string]: any } = {

@@ -31,6 +31,13 @@ export interface Medication {
     range: number
 }
 
+export interface SponsorMedication {
+    id: string,
+    name: string,
+    instructions: string[],
+    videoLink: string
+}
+
 export interface Reminder {
     id: string,
     notifications: string[]
