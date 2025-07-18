@@ -53,3 +53,4 @@ export interface DateObj {
 export const emptyPet: Pet = {id: '', name: '', image: '', age: 0, breed: '', address: '', vet: '', vetPhone: '', medications: []};
 export const emptyReminder: Reminder = {id: '', notifications: []};
 export const emptyMed: Medication = {id: '', name: '', color: '', description: '', dates: [], reminder: emptyReminder, range: 0};
+export const emptySponsorMed: SponsorMedication = {id: '', name: '', instructions: [], videoLink: ''};

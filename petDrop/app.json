@@ -20,8 +20,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "infoPlist": 
-      {
+      "infoPlist": {
         "NSPhotoLibraryUsageDescription": "This app uses the photo gallery for selecting images."
       }
     },
@@ -41,7 +40,8 @@
         {
           "photosPermission": "The app requires access to your photos for you to select an image."
         }
-      ]
+      ],
+      "expo-video"
     ]
   }
 }

@@ -134,6 +134,7 @@ const Home = ({ navigation, route }: HomeProps) => {
     }, [])
   );
 
+  // find the pet that has med
   const findPet = (med: Medication) => {
     // check current user's pets first
     let pet = account.pets.find((pet) =>
@@ -200,6 +201,7 @@ const Home = ({ navigation, route }: HomeProps) => {
       {/* Bottom Navigation */}
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} account={account} />
 
+      {/* popup that displays all meds on a certain date */}
       {switchDisplay && (
         <View style={{ position: 'absolute' }}>
           <SelectMedPopup close={() => { setSwitchDisplay(undefined) }} />

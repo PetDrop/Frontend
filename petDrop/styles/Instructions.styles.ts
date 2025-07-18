@@ -24,6 +24,13 @@ export const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 	},
+	video: {
+		width: 350,
+		height: 275,
+	  },
+	  controlsContainer: {
+		padding: 10,
+	  },
 });
 
 export default styles;
