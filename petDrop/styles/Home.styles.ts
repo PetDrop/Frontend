@@ -5,7 +5,7 @@ import { Theme } from 'react-native-calendars/src/types';
 const { width, height } = Dimensions.get('window');
 
 export const calendarTheme: Theme = {
-	textSectionTitleColor: Color.colorCornflowerblue,
+	textSectionTitleColor: Color.colorDarkslateblue,
 	selectedDayBackgroundColor: '#00adf5',
 	selectedDayTextColor: '#ffffff',
 	todayTextColor: Color.colorDarkslateblue,
@@ -34,42 +34,6 @@ export const styles = StyleSheet.create({
 	},
 	calendar: {
 		backgroundColor: Color.colorLightskyblue,
-		color: Color.colorCornflowerblue,
-	},
-	weekdaysRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		marginBottom: height * 0.01,
-		paddingHorizontal: width * 0.05,
-	},
-	weekdayText: {
-		fontSize: 18,
-		fontFamily: FontFamily.jsMathCmbx10,
-		color: Color.colorFloralwhite,
-	},
-	daysGrid: {
-		flexDirection: 'row',
-		flexWrap: 'wrap',
-		justifyContent: 'space-between',
-	},
-	dayContainer: {
-		width: width * 0.12,
-		height: width * 0.12,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	dayText: {
-		fontSize: 15,
-		color: Color.colorFloralwhite,
-		fontFamily: FontFamily.jsMathCmbx10,
-	},
-	medMarker: {
-		position: 'absolute',
-		height: height * 0.007, // Slightly thicker
-		width: width * 0.8, // Prevent overflow past calendar bounds
-		borderRadius: Border.br_10xs,
-		backgroundColor: Color.colorFirebrick, // Keep the medication indicator color
-		alignSelf: 'center', // Keeps it centered in the grid
 	},
 
 	/** Medications List **/

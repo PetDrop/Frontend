@@ -93,7 +93,7 @@ const TopBottomBar = ({ navigation, currentScreen, account }: TopBottomBarProps)
 				onPress={() => navigation.navigate('MedicationsArchive', {account: account})}
 			/>
 
-			{/* SHARE Button */}
+			{/* PROFILE Button */}
 			<NavButton
 				icon={
 					<ShareButtonRightArrow

@@ -37,6 +37,10 @@ export const UPDATE_MEDICATION_RANGE = 'http://localhost:8080/updatemedication/r
 export const GET_ALL_MEDICATIONS = 'http://localhost:8080/getallmedications';
 export const GET_MEDICATION_BY_ID = 'http://localhost:8080/getmedicationbyid/';
 export const DELETE_MEDICATION_BY_ID = 'http://localhost:8080/deletemedicationbyid/';
+// SPONSOR MEDICATIONS
+export const GET_ALL_SPONSOR_MEDICATIONS = 'http://localhost:8080/getallsponsormedications';
+export const GET_SPONSOR_MEDICATION_BY_ID = 'http://localhost:8080/getsponsormedicationbyid/';
+export const GET_SPONSOR_MEDICATION_BY_NAME = 'http://localhost:8080/getsponsormedicationbyname/';
 // REMINDERS
 export const ADD_REMINDER = 'http://localhost:8080/addreminder';
 export const UPDATE_REMINDER = 'http://localhost:8080/updatereminder';

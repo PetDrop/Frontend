@@ -6,7 +6,8 @@ export interface Account {
     sharedUsers: string[],
     usersSharedWith: string[],
     pets: Pet[],
-    sharedPets: Pet[]
+    sharedPets: Pet[],
+    image: string
 }
 
 export interface Pet {
@@ -31,6 +32,13 @@ export interface Medication {
     range: number
 }
 
+export interface SponsorMedication {
+    id: string,
+    name: string,
+    instructions: string[],
+    videoLink: string
+}
+
 export interface Reminder {
     id: string,
     notifications: string[]
@@ -46,3 +54,4 @@ export interface DateObj {
 export const emptyPet: Pet = {id: '', name: '', image: '', age: 0, breed: '', address: '', vet: '', vetPhone: '', medications: []};
 export const emptyReminder: Reminder = {id: '', notifications: []};
 export const emptyMed: Medication = {id: '', name: '', color: '', description: '', dates: [], reminder: emptyReminder, range: 0};
+export const emptySponsorMed: SponsorMedication = {id: '', name: '', instructions: [], videoLink: ''};

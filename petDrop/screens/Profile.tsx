@@ -35,7 +35,7 @@ type ProfileType = {
 const Profile = ({ navigation, route }: ProfileType) => {
   const account: Account = route.params.account;
 
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState(account.image);
   const [username, setUsername] = useState(account.username);
   const [email, setEmail] = useState(account.email);
   const [password, setPassword] = useState(account.password);
@@ -78,6 +78,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
       sharedUsers: sharedUserContacts,
       usersSharedWith: usersSharedWithContacts,
       pets: account.pets,
+      image: image
     };
     // then update the account in the db with the new info
     try {
@@ -101,7 +102,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
       <TextInput
         key={`sharedUser${i + 1}`}
         style={[styles.textInput]}
-        placeholder="ENTER SHARED USER"
+        placeholder="ENTER USER'S NAME"
         placeholderTextColor={Color.colorCornflowerblue}
         value={sharedUsers[i]}
         onChangeText={(text) => {
@@ -117,7 +118,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
       <TextInput
         key={`userSharedWith${i + 1}`}
         style={[styles.textInput]}
-        placeholder="ENTER USER SHARED WITH (TEMP NAME)"
+        placeholder="ENTER USER'S NAME"
         placeholderTextColor={Color.colorCornflowerblue}
         value={usersSharedWith[i]}
         onChangeText={(text) => {
@@ -173,7 +174,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
         />
 
         {/* shared users */}
-        <Text style={styles.inputHeading}>Shared Users</Text>
+        <Text style={styles.inputHeading}>Request Info From Users</Text>
         {sharedUserInputs}
 
         {/* add shared user button */}
@@ -182,7 +183,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
         </View>
 
         {/* users shared with */}
-        <Text style={styles.inputHeading}>Users Shared With (temporary name)</Text>
+        <Text style={styles.inputHeading}>Share Info With Users</Text>
         {userSharedWithInputs}
 
         {/* add user shared with button */}
@@ -192,7 +193,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
 
         {/* save changes button */}
         <View style={styles.saveChangesButtonContainer}>
-          <SaveChangesButton onPressFunction={UpdateAccount} innerText={'Save Changes'} color={Color.colorCornflowerblue} />
+          <SaveChangesButton onPressFunction={UpdateAccount} innerText={'Save'} color={Color.colorCornflowerblue} />
         </View>
 
       </ScrollView>
