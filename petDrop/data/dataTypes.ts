@@ -6,7 +6,8 @@ export interface Account {
     sharedUsers: string[],
     usersSharedWith: string[],
     pets: Pet[],
-    sharedPets: Pet[]
+    sharedPets: Pet[],
+    image: string
 }
 
 export interface Pet {

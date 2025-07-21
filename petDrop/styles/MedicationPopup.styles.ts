@@ -89,30 +89,35 @@ const styles = StyleSheet.create({
         paddingLeft: width * 0.0256,
         paddingTop: height * 0.01,
     },
-    reminderButtonOval: {
+    instructionButtonOval: {
         borderRadius: Border.br_17,
         height: height * 0.04,
-        top: height * -0.05,
+        top: height * -0.11,
         left: width * 0.06,
         width: width * 0.4,
         backgroundColor: Color.colorCornflowerblue,
     },
-    reminderButtonText: {
+    reminderButtonOval: {
+        borderRadius: Border.br_17,
+        height: height * 0.04,
+        top: height * -0.09,
+        left: width * 0.06,
+        width: width * 0.4,
+        backgroundColor: Color.colorCornflowerblue,
+    },
+    buttonText: {
         top: height * -0.005,
     },
     saveButtonOval: {
         borderRadius: Border.br_17,
         height: height * 0.04,
-        top: height * -0.09,
+        top: height * -0.13,
         left: width * 0.692,
         width: width * 0.19,
         backgroundColor: Color.colorCornflowerblue,
     },
-    saveButtonText: {
-        top: height * -0.005,
-    },
     deleteButtonContainer: {
-        top: height * -0.19,
+        top: height * -0.23,
         left: width * 0.6
     },
     text: {

@@ -3,9 +3,9 @@ import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingV
 import { Image } from "expo-image";
 import DropdownArrow from "../../assets/dropdown_arrow.svg";
 import styles from '../../styles/MedicationPopup.styles';
-import { DateObj, emptyReminder, Medication, Pet, Reminder } from "../../data/dataTypes";
+import { Account, DateObj, emptyReminder, Medication, Pet, Reminder, SponsorMedication } from "../../data/dataTypes";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Color } from "../../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
 import DateCard from "./DateCard";
@@ -13,6 +13,8 @@ import PeriodCard from "./PeriodCard";
 import ReminderPopup from "../ReminderPopup";
 import DeleteButton from '../CustomButton';
 import { medState, remState, datePicker } from "../../data/enums";
+import { GET_ALL_SPONSOR_MEDICATIONS, httpRequest } from "../../data/endpoints";
+import { NavigationProp } from "@react-navigation/core";
 
 type MedicationPopupType = {
   isActive: boolean;
@@ -22,9 +24,11 @@ type MedicationPopupType = {
   pet: Pet;
   med: Medication;
   readonly: boolean;
+  navigation: NavigationProp<any>;
+  account: Account;
 };
 
-const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, pet, med, readonly }: MedicationPopupType) => {
+const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, pet, med, readonly, navigation, account }: MedicationPopupType) => {
   const [datePickerMode, setDatePickerMode] = useState(datePicker.DISABLED);
   const [dates, setDates] = useState<DateObj[]>([]);
   const [description, setDescription] = useState(med.description);
@@ -35,10 +39,26 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   const [rem, setRem] = useState(med.reminder ? med.reminder : emptyReminder);
   const [creatingPeriod, setCreatingPeriod] = useState(false);
   const [curPeriod, setCurPeriod] = useState<{ start: Date | undefined, end: Date | undefined }>({ start: undefined, end: undefined });
+  const [sponsorMeds, setSponsorMeds] = useState<SponsorMedication[]>([]);
 
+  // fetch all the sponsor meds to populate the dropdown with
+  const getSponsorMedications = async () => {
+    const response = await httpRequest(GET_ALL_SPONSOR_MEDICATIONS, 'GET', '');
+    if (response.ok) {
+      setSponsorMeds(await response.json());
+    }
+  }
+
+  // fetch the sponsor meds upon rendering for the first time
+  useEffect(() => {
+    getSponsorMedications();
+  }, []);
+
+  // this is the id that will be used for a med if changes are made by the popup
   const ObjectID = require('bson-objectid');
   const id = med.id !== '' ? med.id : ObjectID();
 
+  // handles changes to the rem for the current med
   const updateRem = (rem: Reminder, deleted: boolean) => {
     if (deleted) {
       setRem(emptyReminder);
@@ -49,6 +69,31 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     }
   }
 
+  // function for updating dates state
+  const updateDates = (startDate: string | undefined, endDate: string | undefined, recurring: number) => {
+    if (startDate === undefined) {
+      setDates(new Array<DateObj>());
+    } else {
+      let newDateObj: DateObj = {
+        startDate: startDate,
+        endDate: endDate ? endDate : '',
+        recurrances: recurring
+      };
+      setDates((prevState) => {
+        if (startDate && endDate) {
+          prevState.push(newDateObj);
+          setCurPeriod({ start: undefined, end: undefined });
+          setCreatingPeriod(false);
+        } else {
+          let oldDateObj = prevState.find((dateObj => dateObj.startDate === startDate));
+          oldDateObj ? oldDateObj.recurrances = recurring : prevState.push(newDateObj);
+        }
+        return [...prevState];
+      });
+    }
+  }
+
+  // intermediate function to handle whether a single date is added, or the start/end of a period
   const addDate = (date: Date) => {
     switch (datePickerMode) {
       case datePicker.SINGLE:
@@ -76,30 +121,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     setDatePickerMode(datePicker.DISABLED);
   }
 
-  // function for updating dates state
-  const updateDates = (startDate: string | undefined, endDate: string | undefined, recurring: number) => {
-    if (startDate === undefined) {
-      setDates(new Array<DateObj>());
-    } else {
-      let newDateObj: DateObj = {
-        startDate: startDate,
-        endDate: endDate ? endDate : '',
-        recurrances: recurring
-      };
-      setDates((prevState) => {
-        if (startDate && endDate) {
-          prevState.push(newDateObj);
-          setCurPeriod({ start: undefined, end: undefined });
-          setCreatingPeriod(false);
-        } else {
-          let oldDateObj = prevState.find((dateObj => dateObj.startDate === startDate));
-          oldDateObj ? oldDateObj.recurrances = recurring : prevState.push(newDateObj);
-        }
-        return [...prevState];
-      });
-    }
-  }
-
+  // rerenders the popup when it's opened if it's possible something changed
   if (isActive && propsChanged) {
     setPropsChanged(false);
     setDescription(med.description);
@@ -109,6 +131,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     setRem(med.reminder ? med.reminder : emptyReminder);
   }
 
+  // resets all states - done if 'x' is hit or after saving the changes if closed with action
   const close = () => {
     setDescription('');
     updateDates(undefined, undefined, 0); // undefined clears the array
@@ -119,6 +142,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     setRem(emptyReminder);
   }
 
+  // this is called if there are any changes made via the popup that need to be saved
   const closeWithAction = (deleted: boolean) => {
     // TODO: ask for confirmation if deleted
     const newMed: Medication = { id: id, name: medName, color: color, description: description, dates: dates, reminder: rem, range: 4 };
@@ -137,6 +161,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     setPopupState(newState);
   };
 
+  // these are the date (and period) cards that will be rendered in the popup
   const dateCards: Array<React.JSX.Element> = [];
   dates.forEach((dateObj: DateObj, index: number) => {
     dateCards.push(
@@ -169,9 +194,9 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
             {!readonly ?
               <Selection
                 data={
-                  ['sponsor med 1', 'sponsor med 2', 'sponsor med 3'].map((medName) => {
-                    if (!pet.medications.some((med) => med.name == medName)) {
-                      return medName;
+                  sponsorMeds.map((sponsorMed) => {
+                    if (!pet.medications.some((med) => med.name == sponsorMed.name)) {
+                      return sponsorMed.name;
                     }
                   })
                 }
@@ -246,11 +271,20 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
 
           </ScrollView>
 
+          {/* view instructions button */}
+          {med.id !== '' && (
+            <Pressable onPress={() => {navigation.navigate('Instructions', {account: account, medName: medName})}}>
+              <View style={styles.instructionButtonOval}>
+                <Text style={[styles.buttonText, styles.text]}>Instructions</Text>
+              </View>
+            </Pressable>
+          )}
+
           {/* view/add reminder button */}
           {((readonly && rem.id !== '') || (!readonly)) && (
             <Pressable onPress={() => { setRemPopupState(remState.SHOW_POPUP) }}>
               <View style={styles.reminderButtonOval}>
-                <Text style={[styles.reminderButtonText, styles.text]}>{`${rem.id !== '' ? 'VIEW' : 'ADD'} REMINDER`}</Text>
+                <Text style={[styles.buttonText, styles.text]}>{`${rem.id !== '' ? 'VIEW' : 'ADD'} REMINDER`}</Text>
               </View>
             </Pressable>
           )}
@@ -259,7 +293,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
           {!readonly && (
             <Pressable onPress={() => { closeWithAction(false) }}>
               <View style={styles.saveButtonOval}>
-                <Text style={[styles.saveButtonText, styles.text]}>SAVE</Text>
+                <Text style={[styles.buttonText, styles.text]}>SAVE</Text>
               </View>
             </Pressable>
           )}

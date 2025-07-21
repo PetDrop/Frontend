@@ -37,9 +37,9 @@ const Instructions = ({ navigation, route }: Props) => {
   let instructionsText: React.JSX.Element = <View></View>;
   if (med.instructions.length > 0) {
     instructionsText =
-      <View>
+      <View style={styles.instructionsContainer}>
         {med.instructions.map((instruction: string, index: number) =>
-          <Text key={`instruction${index}`}>{instruction}</Text>
+          <Text style={styles.instructionText} key={`instruction${index}`}>{instruction}</Text>
         )}
       </View>
   }
@@ -51,15 +51,15 @@ const Instructions = ({ navigation, route }: Props) => {
         <Image source={require("../assets/petdrop_slogan.png")} style={logoImage} />
 
         {/* Page Title */}
-        <View style={styles.headerContainer}>
-          <Text style={styles.pageTitle}>{`How to Administer \n${med.name}`}</Text>
-        </View>
+        <Text style={styles.pageTitle}>{`How to Administer \n${med.name}`}</Text>
 
         {/* Med Instructions */}
         {instructionsText}
 
         {/* Med Video */}
-        {VideoScreen(med.videoLink)}
+        <View style={styles.video}>
+          {VideoScreen(med.videoLink)}
+        </View>
 
       </ScrollView>
 

@@ -7,9 +7,9 @@ import TopBottomBar from "../components/TopBottomBar";
 import { Color, logoImage, ScreenEnum } from "../GlobalStyles";
 import styles from "../styles/Reminders.styles";
 
-import { NavigationProp } from "@react-navigation/native";
+import { NavigationProp, useFocusEffect } from "@react-navigation/native";
 import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ReminderPopup from "../components/ReminderPopup";
 import PetSwitch from '../components/ItemSwitch';
 import { httpRequest, ADD_REMINDER, UPDATE_ACCOUNT, UPDATE_MEDICATION, UPDATE_REMINDER, DELETE_REMINDER_BY_ID } from "../data/endpoints";
@@ -29,9 +29,11 @@ const Reminders = ({ navigation, route }: Props) => {
   // store the user's account info to avoid typing "route.params.account" repeatedly
   const account: Account = route.params.account;
 
-  useEffect(() => {
-    setSelectedPet(account.pets[0] || account.sharedPets[0] || emptyPet);
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      setSelectedPet(account.pets[0] || account.sharedPets[0] || emptyPet);
+    }, [])
+  );
 
   const editReminder = (med: Medication) => {
     setMed(med);
@@ -60,7 +62,7 @@ const Reminders = ({ navigation, route }: Props) => {
     let response = await httpRequest(url, method, body);
     if (response.ok) {
       const reminder = popupState === remState.REM_DELETED ? emptyReminder : rem;
-        med.reminder = reminder;
+      med.reminder = reminder;
       if (popupState !== remState.REM_EDITED) {
         response = await httpRequest(UPDATE_MEDICATION, 'PUT', JSON.stringify(med));
         if (response.ok) {
@@ -115,15 +117,17 @@ const Reminders = ({ navigation, route }: Props) => {
         {reminderCards}
 
         {/* Add Reminder Button */}
-        <View style={styles.addReminderButton}>
-          <AddReminderButton
-            onPressFunction={() => {
-              setPopupState(remState.SHOW_POPUP);
-            }}
-            innerText={'+ ADD'}
-            color={Color.colorCornflowerblue}
-          />
-        </View>
+        {selectedPet.id !== '' && (
+          <View style={styles.addReminderButton}>
+            <AddReminderButton
+              onPressFunction={() => {
+                setPopupState(remState.SHOW_POPUP);
+              }}
+              innerText={'+ ADD'}
+              color={Color.colorCornflowerblue}
+            />
+          </View>
+        )}
       </ScrollView>
 
       {/* Bottom Navigation */}

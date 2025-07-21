@@ -225,6 +225,8 @@ const Home = ({ navigation, route }: HomeProps) => {
         setMedication={() => { }}
         setReminder={() => { }}
         readonly={true}
+        navigation={navigation}
+        account={account}
       />
 
     </View>

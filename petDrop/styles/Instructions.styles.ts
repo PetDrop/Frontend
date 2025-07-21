@@ -16,20 +16,23 @@ export const styles = StyleSheet.create({
 		fontSize: FontSize.size_17xl,
 		fontFamily: FontFamily.jsMathCmbx10,
 		color: Color.colorCornflowerblue,
-		textAlign: 'left',
+		textAlign: 'center',
         marginLeft: width * 0.05,
 	},
-	headerContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
+	instructionsContainer: {
+		paddingTop: height * 0.02,
+		paddingBottom: height * 0.02,
+	},
+	instructionText: {
+		fontSize: FontSize.size_lg,
+		fontFamily: FontFamily.jsMathCmbx10,
+		fontWeight: 'bold',
+		color: Color.colorCornflowerblue,
+		marginLeft: width * 0.05,
+
 	},
 	video: {
-		width: 350,
-		height: 275,
-	  },
-	  controlsContainer: {
-		padding: 10,
+		alignContent: 'center'
 	  },
 });
 
