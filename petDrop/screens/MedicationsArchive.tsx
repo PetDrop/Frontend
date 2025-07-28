@@ -16,6 +16,7 @@ import {
 } from '../data/endpoints';
 import { medState } from '../data/enums';
 import { useFocusEffect } from '@react-navigation/native';
+import Header from '../components/Header';
 
 type MedicationsArchiveProps = {
 	navigation: any;
@@ -163,10 +164,7 @@ return (
 			contentContainerStyle={styles.scrollContainer}
 			showsVerticalScrollIndicator={false}>
 
-			<Image
-				source={require('../assets/petdrop_slogan.png')}
-				style={logoImage}
-			/>
+			<Header />
 
 			<View style={styles.headerContainer}>
 				<Text style={styles.pageTitle}>Medications</Text>

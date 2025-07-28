@@ -2,7 +2,7 @@ import * as React from "react";
 import { View, Text, ScrollView, TextInput, KeyboardAvoidingView } from "react-native";
 import { Color } from "../GlobalStyles";
 import { styles } from '../styles/ProfilePage.styles';
-import Header from "../components/Home/Header";
+import Header from "../components/Header";
 import AddImage from "../components/AddImage";
 import AddButton from "../components/CustomButton";
 import SaveChangesButton from '../components/CustomButton';
@@ -10,6 +10,7 @@ import { GET_ACCOUNT_BY_EMAIL, httpRequest, UPDATE_ACCOUNT } from "../data/endpo
 import { Account } from "../data/dataTypes";
 import { useReducer, useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
+import HamburgerMenu from "../components/HamburgerMenu";
 
 function updateSharedUsers(state: string[], action: { index: number, text: string }) {
   let newState;
@@ -140,7 +141,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
     <KeyboardAvoidingView behavior='padding' style={styles.container}>
 
       {/* top banner */}
-      <View style={styles.banner} />
+      <View style={styles.banner}></View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* header */}

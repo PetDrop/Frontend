@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
 import { ADD_MEDICATION, ADD_REMINDER, httpRequest, UPDATE_ACCOUNT, UPDATE_PET } from "../data/endpoints";
 import { medState } from "../data/enums";
+import Header from "../components/Header";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -70,7 +71,7 @@ const PetInfo = ({ navigation, route }: Props) => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Image source={require("../assets/petdrop_slogan.png")} style={logoImage} />
+        <Header />
         <Text style={styles.pageTitle}>Pets</Text>
         {account.pets.map((pet: Pet) => (
           <View key={pet.id}>
@@ -85,17 +86,13 @@ const PetInfo = ({ navigation, route }: Props) => {
               navigation={navigation} />
           </View>
         ))}
-        {account.sharedPets.map((pet: Pet) => (
+        {account.sharedPets?.map((pet: Pet) => (
           <View key={pet.id}>
             <PetCard
               key={pet.id}
               pet={pet}
               account={account}
-              onPressFunction={() => {
-                // TODO: check if pet is editable
-                // setPetBeingEdited(pet);
-                // setPopupState(medState.SHOW_POPUP);
-              }}
+              onPressFunction={() => {}}
               navigation={navigation} />
           </View>
         ))}
@@ -110,6 +107,8 @@ const PetInfo = ({ navigation, route }: Props) => {
         pet={petBeingEdited}
         med={emptyMed}
         readonly={false}
+        navigation={navigation}
+        account={account}
       />
     </View>
   );

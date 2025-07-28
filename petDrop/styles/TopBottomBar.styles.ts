@@ -38,19 +38,19 @@ export const styles = StyleSheet.create({
 	},
 
 	buttonText: {
-        fontSize: 15,
-        fontFamily: FontFamily.koulenRegular,
-        color: Color.colorFloralwhite,
-        textAlign: "center", // Ensures text stays centered
-        width: width * 0.18, // Wider to fit longer words
-        marginTop: height * 0.0025,
-    },
+		fontSize: 15,
+		fontFamily: FontFamily.koulenRegular,
+		color: Color.colorFloralwhite,
+		textAlign: "center", // Ensures text stays centered
+		width: width * 0.18, // Wider to fit longer words
+		marginTop: height * 0.0025,
+	},
 
-    textWrapper: {
-        alignItems: "center", // Center inside the button
-        justifyContent: "center",
-        width: "100%", // Ensures full width usage
-    },
+	textWrapper: {
+		alignItems: "center", // Center inside the button
+		justifyContent: "center",
+		width: "100%", // Ensures full width usage
+	},
 
 	navIcon: {
 		width: width * 0.08,
@@ -65,14 +65,14 @@ export const styles = StyleSheet.create({
 		bottom: 0,
 	},
 
-    iconContainer: {
-    
-    },
+	iconContainer: {
+
+	},
 
 	polygonIcon: {
 		width: width * 0.06,
 		height: height * 0.02,
-        top: height * 0.005,
+		top: height * 0.005,
 	},
 
 	medIcon: {
@@ -86,12 +86,12 @@ export const styles = StyleSheet.create({
 		tintColor: Color.colorFloralwhite,
 	},
 
-    topBar: {
-    position: 'absolute',
-    width: width,
-    height: height * 0.085,
-    backgroundColor: Color.colorLightskyblue,
-},
+	topBar: {
+		position: 'absolute',
+		width: width,
+		height: height * 0.085,
+		backgroundColor: Color.colorLightskyblue,
+	},
 });
 
 export default styles;

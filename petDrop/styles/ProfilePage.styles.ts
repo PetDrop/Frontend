@@ -73,7 +73,7 @@ export const styles = StyleSheet.create({
 
     // submit button
     saveChangesButtonContainer: {
-        marginLeft: width * 0.5,
+        marginLeft: width * 0.66,
         marginTop: height * 0.04,
     },
     saveChangesButton: {

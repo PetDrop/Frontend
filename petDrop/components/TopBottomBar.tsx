@@ -8,6 +8,7 @@ import ShareButtonRightArrow from '../assets/share_button_right_arrow.svg';
 import { ScreenEnum } from '../GlobalStyles';
 import styles from '../styles/TopBottomBar.styles';
 import { Account } from '../data/dataTypes';
+import HamburgerMenu from './HamburgerMenu';
 
 const { width, height } = Dimensions.get('window');
 
@@ -33,7 +34,6 @@ const TopBottomBar = ({ navigation, currentScreen, account }: TopBottomBarProps)
 	return (
     <>
     <View style={styles.topBar}>
-      {/* Placeholder for future elements like a menu button or title */}
     </View>
 		<View style={styles.bottomBar}>
 			{/* HOME Button */}

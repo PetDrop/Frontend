@@ -14,6 +14,7 @@ import ReminderPopup from "../components/ReminderPopup";
 import PetSwitch from '../components/ItemSwitch';
 import { httpRequest, ADD_REMINDER, UPDATE_ACCOUNT, UPDATE_MEDICATION, UPDATE_REMINDER, DELETE_REMINDER_BY_ID } from "../data/endpoints";
 import { remState } from "../data/enums";
+import Header from "../components/Header";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -98,8 +99,8 @@ const Reminders = ({ navigation, route }: Props) => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Logo */}
-        <Image source={require("../assets/petdrop_slogan.png")} style={logoImage} />
+        {/* Header */}
+        <Header />
 
         {/* Page Title */}
         <View style={styles.headerContainer}>
