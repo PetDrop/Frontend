@@ -9,6 +9,7 @@ type RootStackParamList = {
   MedicationsArchive: undefined;
   Instructions: undefined;
   LoadingScreen: undefined;
+  Sponsors: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -24,6 +25,7 @@ import PetInfo1 from "./screens/PetInfo1";
 import Reminders from "./screens/Reminders";
 import Profile from "./screens/Profile";
 import Instructions from "./screens/Instructions";
+import Sponsors from "./screens/Sponsors";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useState } from "react";
@@ -91,6 +93,11 @@ const App = () => {
             <Stack.Screen
               name="Instructions"
               component={Instructions}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Sponsors"
+              component={Sponsors}
               options={{ headerShown: false }}
             />
             <Stack.Screen
