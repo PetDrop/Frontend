@@ -1,10 +1,17 @@
 import * as React from 'react';
-import { Image, Pressable, TouchableOpacity, View } from 'react-native';
+import { Image, View } from 'react-native';
 import { styles } from '../styles/Header.styles';
 import { logoImage } from '../GlobalStyles';
 import HamburgerMenu from './HamburgerMenu';
+import { NavigationProp } from '@react-navigation/native';
+import { Account } from '../data/dataTypes';
 
-const Header = () => {
+type HeaderProps = {
+	navigation: NavigationProp<any>;
+	account: Account;
+}
+
+const Header = ({ navigation, account }: HeaderProps) => {
 	return (
 		<View style={styles.headerContainer}>
 			{/* PetDrop Logo */}
@@ -13,7 +20,7 @@ const Header = () => {
 				style={logoImage}
 			/>
 
-			<HamburgerMenu />
+			<HamburgerMenu navigation={navigation} account={account} />
 		</View>
 	);
 };

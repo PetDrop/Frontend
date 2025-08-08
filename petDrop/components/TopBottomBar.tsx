@@ -8,7 +8,6 @@ import ShareButtonRightArrow from '../assets/share_button_right_arrow.svg';
 import { ScreenEnum } from '../GlobalStyles';
 import styles from '../styles/TopBottomBar.styles';
 import { Account } from '../data/dataTypes';
-import HamburgerMenu from './HamburgerMenu';
 
 const { width, height } = Dimensions.get('window');
 

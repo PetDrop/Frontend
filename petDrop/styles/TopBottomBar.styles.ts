@@ -61,7 +61,7 @@ export const styles = StyleSheet.create({
 		width: width * 0.05,
 		height: height * 0.02,
 		backgroundColor: Color.colorCornflowerblue,
-		borderRadius: Border.br_10xs,
+		borderRadius: Border.br_3,
 		bottom: 0,
 	},
 

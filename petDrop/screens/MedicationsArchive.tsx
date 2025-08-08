@@ -164,7 +164,7 @@ return (
 			contentContainerStyle={styles.scrollContainer}
 			showsVerticalScrollIndicator={false}>
 
-			<Header />
+			<Header navigation={navigation} account={account} />
 
 			<View style={styles.headerContainer}>
 				<Text style={styles.pageTitle}>Medications</Text>

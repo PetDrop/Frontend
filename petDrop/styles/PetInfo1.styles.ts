@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
 	medicationIndicator: {
 		width: width * 0.03,
 		height: width * 0.03,
-		borderRadius: Border.br_10xs,
+		borderRadius: Border.br_3,
 		marginRight: width * 0.02,
 	},
 	medicationText: {

@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
 	/** CALENDAR */
 	calendarContainer: {
 		backgroundColor: Color.colorLightskyblue,
-		borderRadius: Border.br_12xl,
+		borderRadius: Border.br_31,
 		width: width * 0.9,
 		alignSelf: 'center',
 		paddingVertical: height * 0.02,

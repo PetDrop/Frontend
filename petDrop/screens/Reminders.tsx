@@ -100,7 +100,7 @@ const Reminders = ({ navigation, route }: Props) => {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Header */}
-        <Header />
+        <Header navigation={navigation} account={account} />
 
         {/* Page Title */}
         <View style={styles.headerContainer}>

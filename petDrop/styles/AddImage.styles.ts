@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
         height: (height * 0.173),
         borderWidth: 10,
         borderColor: Color.colorLightskyblue,
-        borderRadius: Border.br_12xl,
+        borderRadius: Border.br_31,
     },
     plusSign: {
         marginTop: height * 0.05,
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
         top: (height * 0.0154),
         height: (height * 0.0083),
         backgroundColor: Color.colorCornflowerblue,
-        borderRadius: Border.br_8xs_9,
+        borderRadius: Border.br_5,
         width: (width * 0.0846),
         position: "absolute",
     },

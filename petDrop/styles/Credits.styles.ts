@@ -14,12 +14,12 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontFamily: FontFamily.juaRegular,
         color: Color.colorCornflowerblue,
-        marginTop: height * 0.11,
+        marginTop: height * 0.13,
     },
     card: {
         width: width * 0.8,
         height: height * 0.6,
-        marginTop: height * 0.025,
+        marginTop: height * 0.035,
         marginHorizontal: width * 0.1,
         borderRadius: Border.br_14,
         backgroundColor: Color.colorGainsboro_200,
@@ -46,7 +46,7 @@ export const styles = StyleSheet.create({
     pagination: {
       flexDirection: 'row',
       justifyContent: 'center',
-      top: height * -0.15,
+      top: height * -0.16,
     },
     dot: {
       height: height * 0.01,

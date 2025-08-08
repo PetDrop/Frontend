@@ -10,7 +10,6 @@ import { GET_ACCOUNT_BY_EMAIL, httpRequest, UPDATE_ACCOUNT } from "../data/endpo
 import { Account } from "../data/dataTypes";
 import { useReducer, useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
-import HamburgerMenu from "../components/HamburgerMenu";
 
 function updateSharedUsers(state: string[], action: { index: number, text: string }) {
   let newState;
@@ -145,7 +144,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* header */}
-        <Header />
+        <Header navigation={navigation} account={account} />
 
         {/* profile title */}
         <Text style={styles.title}>{`${account.username}'s Profile`}</Text>

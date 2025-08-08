@@ -164,7 +164,7 @@ const Home = ({ navigation, route }: HomeProps) => {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Header */}
-        <Header />
+        <Header navigation={navigation} account={account} />
 
         {/* User Greeting */}
         <UserGreeting name={account.username} />

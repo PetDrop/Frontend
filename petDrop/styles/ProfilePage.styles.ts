@@ -48,9 +48,9 @@ export const styles = StyleSheet.create({
     // text inputs
     textInput: {
         height: height * 0.06,
-        borderWidth: Border.br_9xs,
+        borderWidth: Border.br_4,
         borderColor: Color.colorCornflowerblue,
-        borderRadius: Border.br_sm,
+        borderRadius: Border.br_14,
         width: width * 0.75,
         marginBottom: height * 0.03,
         marginLeft: width * 0.1282,

@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   newPetAddButtonGroupItem: {
     top: (height * 0.02),
     height: (height * 0.005),
-    borderRadius: Border.br_10xs,
+    borderRadius: Border.br_3,
     width: (width * 0.05),
     position: "absolute",
     backgroundColor: Color.colorFloralwhite,
@@ -41,9 +41,9 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: height * 0.06,
-    borderWidth: Border.br_9xs,
+    borderWidth: Border.br_4,
     borderColor: Color.colorCornflowerblue,
-    borderRadius: Border.br_sm,
+    borderRadius: Border.br_14,
     width: width * 0.5,
     marginBottom: height * 0.02,
     fontWeight: 700,

@@ -1,39 +1,45 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Image, NativeScrollEvent, NativeSyntheticEvent, Dimensions } from 'react-native';
 import TopBottomBar from '../components/TopBottomBar';
-import { styles } from '../styles/Sponsors.styles';
+import { styles } from '../styles/Credits.styles';
 import { NavigationProp } from '@react-navigation/native';
 import { ScreenEnum } from '../GlobalStyles';
 
 const { width } = Dimensions.get('window');
 
-const sponsors = [
+const authors = [
     {
         id: '1',
-        name: 'Sponsor One',
+        name: 'Jesus Diaz Bujan',
         image: require('../assets/blue_dog_big.png'),
-        description: 'Sponsor One is a company dedicated to doing pet related stuff and things that benefit the pet community, whatever that is. All I know is that I should make this description with a decent length so I can test to see how much space it really takes up, or rather, could theoretically take up.',
+        description: 'Dr. Bujan description',
     },
     {
         id: '2',
-        name: 'Sponsor Two',
+        name: 'Emily Peshke',
         image: require('../assets/blue_dog_big.png'),
-        description: 'same thing as 1',
+        description: 'Emily Peshke description',
     },
     {
         id: '3',
-        name: 'Sponsor Three',
+        name: 'Jesse Williams',
         image: require('../assets/blue_dog_big.png'),
-        description: 'same thing as 1 and 2',
+        description: 'Jesse Williams description',
+    },
+    {
+        id: '4',
+        name: 'Blake Bryan',
+        image: require('../assets/blue_dog_big.png'),
+        description: 'Blake Bryan description',
     },
 ];
 
-type SponsorsProps = {
+type CreditsProps = {
     navigation: NavigationProp<any>;
     route: any;
 }
 
-const Sponsors = ({ navigation, route } : SponsorsProps) => {
+const Credits = ({ navigation, route } : CreditsProps) => {
     // active pagination dot
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -46,9 +52,9 @@ const Sponsors = ({ navigation, route } : SponsorsProps) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>{`Thank You To \nOur Sponsors!`}</Text>
+            <Text style={styles.header}>{`Credits`}</Text>
 
-            {/* horizontal scrollview for sponsors */}
+            {/* horizontal scrollview for authors */}
             <ScrollView
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
@@ -56,19 +62,19 @@ const Sponsors = ({ navigation, route } : SponsorsProps) => {
                 snapToInterval={width}
                 decelerationRate="fast"
             >
-                {/* sponsor cards */}
-                {sponsors.map((sponsor) => (
-                    <View key={sponsor.id} style={styles.card}>
-                        <Text style={styles.name}>{sponsor.name}</Text>
-                        <Image source={sponsor.image} style={styles.image} resizeMode="contain" />
-                        <Text style={styles.description}>{sponsor.description}</Text>
+                {/* author cards */}
+                {authors.map((author) => (
+                    <View key={author.id} style={styles.card}>
+                        <Text style={styles.name}>{author.name}</Text>
+                        <Image source={author.image} style={styles.image} resizeMode="contain" />
+                        <Text style={styles.description}>{author.description}</Text>
                     </View>
                 ))}
             </ScrollView>
 
             {/* pagination for sponsor cards */}
             <View style={styles.pagination}>
-                {sponsors.map((_, index) => (
+                {authors.map((_, index) => (
                     <View
                         key={index}
                         style={[
@@ -79,9 +85,9 @@ const Sponsors = ({ navigation, route } : SponsorsProps) => {
                 ))}
             </View>
 
-            <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Sponsors} account={route.params.account} />
+            <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Credits} account={route.params.account} />
         </View >
     );
 };
 
-export default Sponsors;
+export default Credits;

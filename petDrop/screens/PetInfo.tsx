@@ -71,7 +71,7 @@ const PetInfo = ({ navigation, route }: Props) => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Header />
+        <Header navigation={navigation} account={account} />
         <Text style={styles.pageTitle}>Pets</Text>
         {account.pets.map((pet: Pet) => (
           <View key={pet.id}>

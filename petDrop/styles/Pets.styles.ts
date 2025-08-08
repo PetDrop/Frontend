@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
 		marginBottom: height * 0.02,
 	},
 	petCard: {
-		borderRadius: Border.br_3xs,
+		borderRadius: Border.br_10,
 		marginHorizontal: width * 0.05, // Keep horizontal margin, reduce vertical
 		paddingHorizontal: width * 0.05, // Keep padding for content
 	},
@@ -72,7 +72,7 @@ export const styles = StyleSheet.create({
 	medicationIndicator: {
 		width: width * 0.03,
 		height: width * 0.03,
-		borderRadius: Border.br_10xs,
+		borderRadius: Border.br_3,
 		marginRight: width * 0.02,
 	},
 	medicationText: {
@@ -82,7 +82,7 @@ export const styles = StyleSheet.create({
 	},
 	addPetButton: {
 		backgroundColor: Color.colorCornflowerblue,
-		borderRadius: Border.br_xl,
+		borderRadius: Border.br_20,
 		alignItems: 'center',
 		justifyContent: 'center',
 		marginHorizontal: width * 0.1,
@@ -100,7 +100,7 @@ export const styles = StyleSheet.create({
 		top: height * 0.0085,
 		borderWidth: 10,
 		borderColor: Color.colorLightskyblue,
-		borderRadius: Border.br_12xl,
+		borderRadius: Border.br_31,
 	},
 
 	separatorBar: {
@@ -109,7 +109,7 @@ export const styles = StyleSheet.create({
 		width: width * 0.95, // Spans most of the screen
 		alignSelf: 'center',
 		marginTop: height * 0.03, // Space above bar
-		borderRadius: Border.br_10xs,
+		borderRadius: Border.br_3,
 		marginBottom: height * 0.03, // Space below bar
 	},
 	addMedicationButton: {
