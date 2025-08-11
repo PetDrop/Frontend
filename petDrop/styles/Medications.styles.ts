@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
 	modalContainer: {
 		width: width * 0.75,
 		backgroundColor: Color.colorFloralwhite,
-		borderRadius: Border.br_xl,
+		borderRadius: Border.br_20,
 		padding: width * 0.05,
 		alignItems: 'center',
 	},
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
 	closeButton: {
 		marginTop: height * 0.02,
 		backgroundColor: Color.colorCornflowerblue,
-		borderRadius: Border.br_xl,
+		borderRadius: Border.br_20,
 		paddingVertical: height * 0.015,
 		width: '80%',
 		alignItems: 'center',
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
 		height: width * 0.12,
 		borderWidth: 4,
 		borderColor: Color.colorLightskyblue,
-		borderRadius: Border.br_10xs_5,
+		borderRadius: Border.br_3,
 		backgroundColor: Color.colorFloralwhite,
 	},
 });

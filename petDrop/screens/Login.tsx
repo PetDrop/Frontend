@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     blueContainer: {
         width: width * 0.9,
         backgroundColor: Color.colorLightskyblue,
-        borderRadius: Border.br_12xl,
+        borderRadius: Border.br_31,
         marginTop: height * 0.01,
         alignSelf: 'stretch',
         flexGrow: 0.4,
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     inputField: {
         width: width * 0.775,
         height: height * 0.06,
-        borderRadius: Border.br_sm,
+        borderRadius: Border.br_14,
         backgroundColor: Color.colorFloralwhite,
         paddingHorizontal: 10,
         fontSize: 16,
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
         width: width * 0.35,
         height: height * 0.06,
         backgroundColor: Color.colorLightskyblue,
-        borderRadius: Border.br_sm,
+        borderRadius: Border.br_14,
         justifyContent: 'center',
         alignItems: 'center',
     },
