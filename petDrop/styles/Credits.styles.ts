@@ -37,6 +37,11 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     },
+    title: {
+        marginHorizontal: width * 0.05,
+        fontSize: FontSize.size_30,
+        textAlign: 'center',
+    },
     description: {
         marginHorizontal: width * 0.05,
         fontSize: FontSize.size_xl,

@@ -11,24 +11,28 @@ const authors = [
     {
         id: '1',
         name: 'Jesus Diaz Bujan',
+        title: 'App Creator',
         image: require('../assets/blue_dog_big.png'),
         description: 'Dr. Bujan description',
     },
     {
         id: '2',
         name: 'Emily Peshke',
+        title: 'App Designer',
         image: require('../assets/blue_dog_big.png'),
         description: 'Emily Peshke description',
     },
     {
         id: '3',
         name: 'Jesse Williams',
+        title: 'App Developer',
         image: require('../assets/blue_dog_big.png'),
         description: 'Jesse Williams description',
     },
     {
         id: '4',
         name: 'Blake Bryan',
+        title: 'App Developer',
         image: require('../assets/blue_dog_big.png'),
         description: 'Blake Bryan description',
     },
@@ -66,6 +70,7 @@ const Credits = ({ navigation, route } : CreditsProps) => {
                 {authors.map((author) => (
                     <View key={author.id} style={styles.card}>
                         <Text style={styles.name}>{author.name}</Text>
+                        <Text style={styles.title}>{author.title}</Text>
                         <Image source={author.image} style={styles.image} resizeMode="contain" />
                         <Text style={styles.description}>{author.description}</Text>
                     </View>
