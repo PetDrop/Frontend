@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Animated, Dimensions, } from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from "react-native-vector-icons/Feather";
 import { styles } from '../styles/HamburgerMenu.styles';
 import { Color } from '../GlobalStyles';
 import { NavigationProp } from '@react-navigation/native';
