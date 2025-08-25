@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
         width: width * 0.9, // Slightly smaller than full width
         minHeight: height * 0.3, // Enough space for input fields later
         backgroundColor: Color.colorLightskyblue, // Match the theme
-        borderRadius: Border.br_12xl, // Rounded edges
+        borderRadius: Border.br_31, // Rounded edges
         marginTop: height * 0.01, // Space between dog image and input fields
         alignSelf: 'stretch', // Ensures it takes the full width of parent
         flexGrow: 0.4, // Allows it to expand dynamically
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     inputField: {
         width: width * 0.775,
         height: height * 0.06,
-        borderRadius: Border.br_sm,
+        borderRadius: Border.br_14,
         backgroundColor: Color.colorFloralwhite,
         paddingHorizontal: 10,
         fontSize: 16,
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
         width: width * 0.35, // Rectangular shape
         height: height * 0.06, // Not too large
         backgroundColor: Color.colorLightskyblue, // Matching theme
-        borderRadius: Border.br_sm,
+        borderRadius: Border.br_14,
         justifyContent: 'center',
         alignItems: 'center',
     },

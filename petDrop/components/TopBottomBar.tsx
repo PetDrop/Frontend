@@ -33,7 +33,6 @@ const TopBottomBar = ({ navigation, currentScreen, account }: TopBottomBarProps)
 	return (
     <>
     <View style={styles.topBar}>
-      {/* Placeholder for future elements like a menu button or title */}
     </View>
 		<View style={styles.bottomBar}>
 			{/* HOME Button */}

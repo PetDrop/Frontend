@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
         left: width * 0.038,
     },
     topBanner: {
-        borderTopLeftRadius: Border.br_12xl,
-        borderTopRightRadius: Border.br_12xl,
+        borderTopLeftRadius: Border.br_31,
+        borderTopRightRadius: Border.br_31,
         backgroundColor: Color.colorCornflowerblue,
         height: height * 0.079,
         width: width * 0.923,
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     colorIndicator: {
         top: height * 0.024,
         left: width * 0.046,
-        borderRadius: Border.br_7xs,
+        borderRadius: Border.br_6,
         width: width * 0.067,
         height: height * 0.031,
     },
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     downArrow: {
         top: height * 0.0175,
         left: width * 0.025,
-        borderRadius: Border.br_12xs,
+        borderRadius: Border.br_1,
     },
     dropdownItem: {
         backgroundColor: Color.colorCornflowerblue,
@@ -66,8 +66,8 @@ const styles = StyleSheet.create({
         height: height * 0.9,
         backgroundColor: Color.colorFloralwhite,
         width: width * 0.923,
-        borderBottomLeftRadius: Border.br_12xl,
-        borderBottomRightRadius: Border.br_12xl,
+        borderBottomLeftRadius: Border.br_31,
+        borderBottomRightRadius: Border.br_31,
         borderColor: Color.colorCornflowerblue,
         borderWidth: 3,
     },
@@ -76,9 +76,9 @@ const styles = StyleSheet.create({
     },
     textInput: {
         height: height * 0.12,
-        borderWidth: Border.br_9xs,
+        borderWidth: Border.br_4,
         borderColor: Color.colorCornflowerblue,
-        borderRadius: Border.br_sm,
+        borderRadius: Border.br_14,
         width: width * 0.75,
         marginTop: height * 0.05,
         marginLeft: width * 0.075,

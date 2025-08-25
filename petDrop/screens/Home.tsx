@@ -1,6 +1,6 @@
 import * as React from "react";
 import { View, ScrollView } from "react-native";
-import Header from "../components/Home/Header";
+import Header from "../components/Header";
 import { Calendar, DateData } from 'react-native-calendars';
 import MedicationsList from "../components/Home/MedicationsList";
 import UserGreeting from "../components/Home/UserGreeting";
@@ -164,7 +164,7 @@ const Home = ({ navigation, route }: HomeProps) => {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Header */}
-        <Header />
+        <Header navigation={navigation} account={account} />
 
         {/* User Greeting */}
         <UserGreeting name={account.username} />

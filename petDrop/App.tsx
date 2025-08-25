@@ -8,6 +8,8 @@ type RootStackParamList = {
   Reminders: undefined;
   MedicationsArchive: undefined;
   Instructions: undefined;
+  Sponsors: undefined;
+  Credits: undefined;
   LoadingScreen: undefined;
 };
 
@@ -24,6 +26,8 @@ import PetInfo1 from "./screens/PetInfo1";
 import Reminders from "./screens/Reminders";
 import Profile from "./screens/Profile";
 import Instructions from "./screens/Instructions";
+import Sponsors from "./screens/Sponsors";
+import Credits from "./screens/Credits";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Signup from "./screens/Signup";
@@ -166,6 +170,16 @@ const App = () => {
             <Stack.Screen
               name="Instructions"
               component={Instructions}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Sponsors"
+              component={Sponsors}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Credits"
+              component={Credits}
               options={{ headerShown: false }}
             />
             <Stack.Screen

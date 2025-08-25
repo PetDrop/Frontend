@@ -22,10 +22,15 @@ export const styles = StyleSheet.create({
 		overflow: 'hidden',
 		backgroundColor: Color.colorFloralwhite,
 	},
+    scrollContainer: {
+        paddingBottom: height * 0.2,
+        paddingTop: height * 0.05,
+    },
+
 	/** CALENDAR */
 	calendarContainer: {
 		backgroundColor: Color.colorLightskyblue,
-		borderRadius: Border.br_12xl,
+		borderRadius: Border.br_31,
 		width: width * 0.9,
 		alignSelf: 'center',
 		paddingVertical: height * 0.02,
@@ -91,21 +96,6 @@ export const styles = StyleSheet.create({
 		color: Color.colorCornflowerblue,
 		marginLeft: width * 0.02,
 	},
-
-	/** Header **/
-	headerContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-	},
-	menuIcon: {
-		width: 30,
-		height: 30,
-	},
-    scrollContainer: {
-         paddingBottom: height * 0.2,
-		paddingTop: height * 0.05,
-    },
 
 	/** Select Med Popup **/
 	medSwitchContainer: {

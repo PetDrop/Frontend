@@ -47,21 +47,17 @@ export const Color = {
 };
 /* border radiuses */
 export const Border = {
-  br_12xs: 1,
-  br_11xs: 2,
-  br_10xs: 3,
-  br_10xs_5: 3,
-  br_9xs: 4,
-  br_8xs_9: 5,
-  br_7xs: 6,
-  br_3xs: 10,
-  br_sm: 14,
-  br_mini: 15,
+  br_1: 1,
+  br_3: 3,
+  br_4: 4,
+  br_5: 5,
+  br_6: 6,
+  br_10: 10,
+  br_14: 14,
   br_17: 17,
-  br_xl: 20,
-  br_2xl: 21,
+  br_20: 20,
   br_30: 30,
-  br_12xl: 31,
+  br_31: 31,
 };
 /* screen enum */
 export enum ScreenEnum {
@@ -73,7 +69,9 @@ export enum ScreenEnum {
   Reminders = 5,
   MedicationsArchive = 6,
   Instructions = 7,
-  LoadingScreen = 8,
+  Sponsors = 8,
+  Credits = 9,
+  LoadingScreen = 10,
 };
 
 export const petImages: { [key: string]: any } = {
