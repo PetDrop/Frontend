@@ -22,8 +22,10 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "This app uses the photo gallery for selecting images.",
-        "NSUserNotificationUsageDescription": "This app uses notifications to remind you when to administer medications."
-      }
+        "NSUserNotificationUsageDescription": "This app uses notifications to remind you when to administer medications.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "io.expo.client.PetDrop"
     },
     "android": {
       "adaptiveIcon": {
@@ -31,7 +33,8 @@
         "backgroundColor": "#FFFFFF"
       },
       "permissions": [
-        "NOTIFICATIONS"
+        "android.permission.NOTIFICATIONS",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "web": {
@@ -47,6 +50,11 @@
       ],
       "expo-video",
       "expo-notifications"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "7f54ba26-10cb-44f0-8509-427001c10f1d"
+      }
+    }
   }
 }

@@ -1,3 +1,5 @@
+import * as Notifications from 'expo-notifications';
+
 // replace 'localhost' with the ip address of your computer to hit these on expo go
 // ACCOUNT
 export const ADD_ACCOUNT = 'http://localhost:8080/addaccount';
@@ -60,4 +62,26 @@ export const httpRequest = async (url: string, method: string, body: string): Pr
         },
         body: body,
     });
+}
+
+// function for scheduling a notification
+export const scheduleNotification = async (petName: string, medName: string, trigger: Notifications.SchedulableNotificationTriggerInput): Promise<string> => {
+    return await Notifications.scheduleNotificationAsync({
+        content: {
+            title: 'Medication Reminder',
+            body: `It's time to give ${petName} their ${medName}`,
+        },
+        trigger
+    });
+};
+
+// function for finding a scheduled notification with a particular id
+export const findNotification = async (id: string): Promise<Notifications.NotificationRequest | undefined> => {
+    const notifications = await Notifications.getAllScheduledNotificationsAsync();
+    return notifications.find((value) => value.identifier == id);
+};
+
+// cancel a shceduled notification with a particular id
+export const cancelNotification = async (id: string) => {
+    await Notifications.cancelScheduledNotificationAsync(id);
 }
