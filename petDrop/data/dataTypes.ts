@@ -28,7 +28,7 @@ export interface Medication {
     color: string,
     description: string,
     dates: DateObj[],
-    reminder: Reminder,
+    reminders: Reminder[],
     range: number
 }
 
@@ -41,7 +41,13 @@ export interface SponsorMedication {
 
 export interface Reminder {
     id: string,
-    notifications: string[]
+    expoPushToken: string,
+    title: string,
+    body: string,
+    data: Map<string, object>,
+    notification: Date;
+    repeatInterval: string;
+    remainingRepeats: number
 }
 
 export interface DateObj {
@@ -52,6 +58,6 @@ export interface DateObj {
 
 // global default values to avoid having to repeatedly create these in various files
 export const emptyPet: Pet = {id: '', name: '', image: '', age: 0, breed: '', address: '', vet: '', vetPhone: '', medications: []};
-export const emptyReminder: Reminder = {id: '', notifications: []};
-export const emptyMed: Medication = {id: '', name: '', color: '', description: '', dates: [], reminder: emptyReminder, range: 0};
+export const emptyMed: Medication = {id: '', name: '', color: '', description: '', dates: [], reminders: [], range: 0};
+export const emptyReminder: Reminder = {id: '', expoPushToken: '', title: '', body: '', data: new Map<string, object>(), notification: new Date(), repeatInterval: '', remainingRepeats: 0};
 export const emptySponsorMed: SponsorMedication = {id: '', name: '', instructions: [], videoLink: ''};
