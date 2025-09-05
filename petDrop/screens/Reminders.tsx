@@ -27,6 +27,8 @@ const Reminders = ({ navigation, route }: Props) => {
   const [rem, setRem] = useState<Reminder>(emptyReminder);
   const [med, setMed] = useState<Medication>(emptyMed);
 
+  const pushToken: string = route.params.pushToken;
+
   // store the user's account info to avoid typing "route.params.account" repeatedly
   const account: Account = route.params.account;
 
@@ -132,7 +134,7 @@ const Reminders = ({ navigation, route }: Props) => {
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} account={account} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} account={account} pushToken={pushToken} />
 
       {/* popup for adding/editing reminder */}
       <ReminderPopup

@@ -26,9 +26,10 @@ type MedicationPopupType = {
   readonly: boolean;
   navigation: NavigationProp<any>;
   account: Account;
+  pushToken: string;
 };
 
-const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, pet, med, readonly, navigation, account }: MedicationPopupType) => {
+const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, pet, med, readonly, navigation, account, pushToken }: MedicationPopupType) => {
   const [datePickerMode, setDatePickerMode] = useState(datePicker.DISABLED);
   const [dates, setDates] = useState<DateObj[]>([]);
   const [description, setDescription] = useState(med.description);
@@ -40,7 +41,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   const [creatingPeriod, setCreatingPeriod] = useState(false);
   const [curPeriod, setCurPeriod] = useState<{ start: Date | undefined, end: Date | undefined }>({ start: undefined, end: undefined });
   const [sponsorMeds, setSponsorMeds] = useState<SponsorMedication[]>([]);
-
+	
   // fetch all the sponsor meds to populate the dropdown with
   const getSponsorMedications = async () => {
     const response = await httpRequest(GET_ALL_SPONSOR_MEDICATIONS, 'GET', '');
@@ -273,7 +274,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
 
           {/* view instructions button */}
           {med.id !== '' && (
-            <Pressable onPress={() => {navigation.navigate('Instructions', {account: account, medName: medName})}}>
+            <Pressable onPress={() => {navigation.navigate('Instructions', {account: account, medName: medName, pushToken: pushToken})}}>
               <View style={styles.instructionButtonOval}>
                 <Text style={[styles.buttonText, styles.text]}>Instructions</Text>
               </View>

@@ -11,11 +11,12 @@ const { width } = Dimensions.get('window');
 type HambugerMenuProps = {
     navigation: NavigationProp<any>;
     account: Account;
+    pushToken: string;
 }
 
-const HamburgerMenu = ({ navigation, account }: HambugerMenuProps) => {
+const HamburgerMenu = ({ navigation, account, pushToken }: HambugerMenuProps) => {
     const [isOpen, setIsOpen] = useState(false);
-
+    
     const translateX = useState(new Animated.Value(width))[0];
 
     const toggleMenu = () => {
@@ -29,8 +30,8 @@ const HamburgerMenu = ({ navigation, account }: HambugerMenuProps) => {
     };
 
     const menuItems = [
-        { label: 'Sponsors', onPress: () => { navigation.navigate('Sponsors', { account: account }) } },
-        { label: 'Credits', onPress: () => { navigation.navigate('Credits', { account: account }) } }
+        { label: 'Sponsors', onPress: () => { navigation.navigate('Sponsors', { account: account, pushToken: pushToken }) } },
+        { label: 'Credits', onPress: () => { navigation.navigate('Credits', { account: account, pushToken: pushToken }) } }
     ].map((item, index) => (
         <TouchableOpacity key={index} style={styles.menuItem} onPress={() => {
             item.onPress();

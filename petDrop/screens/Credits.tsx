@@ -47,6 +47,8 @@ const Credits = ({ navigation, route } : CreditsProps) => {
     // active pagination dot
     const [activeIndex, setActiveIndex] = useState(0);
 
+    const pushToken: string = route.params.pushToken;
+
     // used to determine which pagination dot should be active
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const scrollX = event.nativeEvent.contentOffset.x;
@@ -90,7 +92,7 @@ const Credits = ({ navigation, route } : CreditsProps) => {
                 ))}
             </View>
 
-            <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Credits} account={route.params.account} />
+            <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Credits} account={route.params.account} pushToken={pushToken} />
         </View >
     );
 };

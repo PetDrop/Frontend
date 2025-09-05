@@ -18,11 +18,13 @@ import { Border, Color, FontFamily } from '../GlobalStyles';
 import BlueCircleBig from '../assets/blue_circle_big.svg';
 import { GET_ACCOUNT_BY_EMAIL, GET_ACCOUNT_BY_USERNAME, httpRequest } from '../data/endpoints';
 import { Account } from '../data/dataTypes';
+import { NavigationProp } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
 type LoginType = {
-	navigation: any;
+	navigation: NavigationProp<any>;
+    route: any;
 };
 
 const Login = (props: LoginType) => {
@@ -30,6 +32,7 @@ const Login = (props: LoginType) => {
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
 
+    const pushToken: string = props.route.params.pushToken;
 
     // populates an accounts sharedPets with all the pets shared with them
     const addSharedInfo = async (account: Account) => {
@@ -143,7 +146,7 @@ const Login = (props: LoginType) => {
 
                     {/* Buttons Row */}
                     <View style={styles.buttonRow}>
-                        <Pressable style={styles.button} onPress={() => props.navigation.navigate('Signup')}>
+                        <Pressable style={styles.button} onPress={() => props.navigation.navigate('Signup', {pushToken: pushToken})}>
                             <Text style={styles.buttonText}>Sign Up</Text>
                         </Pressable>
 

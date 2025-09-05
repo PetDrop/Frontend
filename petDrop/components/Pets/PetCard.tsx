@@ -12,9 +12,10 @@ type PetCardProps = {
 	account: Account;
 	onPressFunction: () => void;
 	navigation: NavigationProp<any>;
+	pushToken: string;
 }
 
-const PetCard = ({ pet, account, onPressFunction, navigation }: PetCardProps) => {
+const PetCard = ({ pet, account, onPressFunction, navigation, pushToken }: PetCardProps) => {
 	return (
 		<View style={styles.petCard}>
 			<View style={styles.petHeader}>
@@ -30,7 +31,7 @@ const PetCard = ({ pet, account, onPressFunction, navigation }: PetCardProps) =>
 					<Text style={styles.petDetails}>Vet: {pet.vet}</Text>
 					<Text style={styles.petDetails}>{pet.vetPhone}</Text>
 				</View>
-				<Pressable onPress={() => { navigation.navigate('PetInfo1', { account: account, pet: pet }) }}>
+				<Pressable onPress={() => { navigation.navigate('PetInfo1', { account: account, pet: pet, pushToken: pushToken }) }}>
 					<EditIcon style={styles.editIcon} />
 				</Pressable>
 			</View>

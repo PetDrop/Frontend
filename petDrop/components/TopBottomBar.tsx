@@ -8,13 +8,15 @@ import ShareButtonRightArrow from '../assets/share_button_right_arrow.svg';
 import { ScreenEnum } from '../GlobalStyles';
 import styles from '../styles/TopBottomBar.styles';
 import { Account } from '../data/dataTypes';
+import { NavigationProp } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
 type TopBottomBarProps = {
-	navigation: any;
+	navigation: NavigationProp<any>;
 	currentScreen: number;
 	account: Account;
+	pushToken: string;
 };
 
 // Reusable NavButton Component
@@ -29,7 +31,7 @@ const NavButton = ({ icon, label, isActive, onPress }: any) => {
 	);
 };
 
-const TopBottomBar = ({ navigation, currentScreen, account }: TopBottomBarProps) => {
+const TopBottomBar = ({ navigation, currentScreen, account, pushToken }: TopBottomBarProps) => {
 	return (
     <>
     <View style={styles.topBar}>
@@ -45,7 +47,7 @@ const TopBottomBar = ({ navigation, currentScreen, account }: TopBottomBarProps)
 				}
 				label="HOME"
 				isActive={currentScreen === ScreenEnum.Home}
-				onPress={() => navigation.navigate('Home', {account: account})}
+				onPress={() => navigation.navigate('Home', {account: account, pushToken: pushToken})}
 			/>
 
 			{/* PETS Button */}
@@ -62,7 +64,7 @@ const TopBottomBar = ({ navigation, currentScreen, account }: TopBottomBarProps)
 					currentScreen === ScreenEnum.PetInfo ||
 					currentScreen === ScreenEnum.PetInfo1
 				}
-				onPress={() => navigation.navigate('PetInfo', {account: account})}
+				onPress={() => navigation.navigate('PetInfo', {account: account, pushToken: pushToken})}
 			/>
 
 			{/* REMINDERS Button */}
@@ -76,7 +78,7 @@ const TopBottomBar = ({ navigation, currentScreen, account }: TopBottomBarProps)
 				}
 				label="REMINDERS"
 				isActive={currentScreen === ScreenEnum.Reminders}
-				onPress={() => navigation.navigate('Reminders', {account: account})}
+				onPress={() => navigation.navigate('Reminders', {account: account, pushToken: pushToken})}
 			/>
 
 			{/* MEDS Button */}
@@ -89,7 +91,7 @@ const TopBottomBar = ({ navigation, currentScreen, account }: TopBottomBarProps)
 				}
 				label="MEDS"
 				isActive={currentScreen === ScreenEnum.MedicationsArchive}
-				onPress={() => navigation.navigate('MedicationsArchive', {account: account})}
+				onPress={() => navigation.navigate('MedicationsArchive', {account: account, pushToken: pushToken})}
 			/>
 
 			{/* PROFILE Button */}
@@ -103,7 +105,7 @@ const TopBottomBar = ({ navigation, currentScreen, account }: TopBottomBarProps)
 				}
 				label="PROFILE"
 				isActive={false}
-				onPress={() => navigation.navigate('Profile', {account: account})}
+				onPress={() => navigation.navigate('Profile', {account: account, pushToken: pushToken})}
 			/>
 		</View>
     </>

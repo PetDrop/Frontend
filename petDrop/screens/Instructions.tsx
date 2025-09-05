@@ -18,6 +18,8 @@ interface Props {
 const Instructions = ({ navigation, route }: Props) => {
   const [med, setMed] = useState<SponsorMedication>(emptySponsorMed);
 
+  const pushToken: string = route.params.pushToken;
+
   // store the user's account info to avoid typing "route.params.account" repeatedly
   const account: Account = route.params.account;
 
@@ -64,7 +66,7 @@ const Instructions = ({ navigation, route }: Props) => {
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Instructions} account={account} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Instructions} account={account} pushToken={pushToken}/>
 
     </View>
   );

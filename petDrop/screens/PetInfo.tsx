@@ -24,6 +24,8 @@ const PetInfo = ({ navigation, route }: Props) => {
   const [med, setMed] = useState<Medication>();
   const [rem, setRem] = useState<Reminder>();
 
+  const pushToken: string = route.params.pushToken;
+
   // store the user's account info to avoid typing "route.params.account" repeatedly
   const account: Account = route.params.account;
 
@@ -83,7 +85,8 @@ const PetInfo = ({ navigation, route }: Props) => {
                 setPetBeingEdited(pet);
                 setPopupState(medState.SHOW_POPUP);
               }}
-              navigation={navigation} />
+              navigation={navigation}
+              pushToken={pushToken} />
           </View>
         ))}
         {account.sharedPets?.map((pet: Pet) => (
@@ -93,12 +96,13 @@ const PetInfo = ({ navigation, route }: Props) => {
               pet={pet}
               account={account}
               onPressFunction={() => {}}
-              navigation={navigation} />
+              navigation={navigation}
+              pushToken={pushToken} />
           </View>
         ))}
-        <AddNewPetButton navigation={navigation} account={account} />
+        <AddNewPetButton navigation={navigation} account={account} pushToken={pushToken}/>
       </ScrollView>
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo} account={account} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo} account={account} pushToken={pushToken} />
       <MedicationPopup
         isActive={popupState === medState.SHOW_POPUP}
         setPopupState={setPopupState}
@@ -109,6 +113,7 @@ const PetInfo = ({ navigation, route }: Props) => {
         readonly={false}
         navigation={navigation}
         account={account}
+        pushToken={pushToken}
       />
     </View>
   );

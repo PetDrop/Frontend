@@ -3,7 +3,7 @@ import { Text, View, Image, KeyboardAvoidingView, ScrollView } from "react-nativ
 import AddButtons from "../components/AddPets/PetInfo1AddButtons";
 import TopBottomBar from "../components/TopBottomBar";
 import { Color, logoImage, ScreenEnum } from "../GlobalStyles";
-import { NavigationProp } from "@react-navigation/core";
+import { NavigationProp } from "@react-navigation/native";
 import styles from '../styles/PetInfo1.styles';
 import { Account, emptyPet, Pet } from "../data/dataTypes";
 import { useEffect, useState } from "react";
@@ -28,6 +28,8 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
     ['pet vet', ''],
     ['vet phone', ''],
   ]));
+
+  const pushToken: string = route.params.pushToken;
 
   const ObjectID = require('bson-objectid');
 
@@ -89,7 +91,7 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
           response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
           if (response.ok) {
             alert('Submission successful. You have now been redirected to the Pet Info page where you can view it, as well as add medications and reminders for it.');
-            navigation.navigate('PetInfo', { account: account });
+            navigation.navigate('PetInfo', { account: account, pushToken: pushToken });
           } else {
             console.log('unable to add pet to account');
             alert('submission failed');
@@ -112,7 +114,7 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
       response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
       if (response.ok) {
         alert(`Pet: ${petBeingEdited.name} has been successfully deleted.`);
-        navigation.navigate('PetInfo', { account: account });
+        navigation.navigate('PetInfo', { account: account, pushToken: pushToken });
       } else {
         console.log(`http PUT request failed with error code: ${response.status}`);
         alert(`Failed to update account after deleting pet: ${petBeingEdited.id}`);
@@ -166,7 +168,7 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
       </ScrollView>
 
       {/* Top Banner and Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo1} account={account} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo1} account={account} pushToken={pushToken}/>
 
     </KeyboardAvoidingView>
   );

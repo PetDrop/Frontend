@@ -10,6 +10,7 @@ import { GET_ACCOUNT_BY_EMAIL, httpRequest, UPDATE_ACCOUNT } from "../data/endpo
 import { Account } from "../data/dataTypes";
 import { useReducer, useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
+import { NavigationProp } from "@react-navigation/native";
 
 function updateSharedUsers(state: string[], action: { index: number, text: string }) {
   let newState;
@@ -28,7 +29,7 @@ function updateSharedUsers(state: string[], action: { index: number, text: strin
 }
 
 type ProfileType = {
-  navigation: any;
+  navigation: NavigationProp<any>;
   route: any;
 };
 
@@ -43,6 +44,8 @@ const Profile = ({ navigation, route }: ProfileType) => {
   const [sharedUsers, setSharedUsers] = useReducer(updateSharedUsers, account.sharedUsers);
   const [numUsersSharedWith, setNumUsersSharedWith] = useState(Math.max(account.usersSharedWith.length, 1));
   const [usersSharedWith, setUsersSharedWith] = useReducer(updateSharedUsers, account.usersSharedWith);
+  
+  const pushToken: string = route.params.pushToken;
 
   /* handles submit button being pressed
     checks to make sure required fields have values
@@ -85,7 +88,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
       const response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(updatedAccount));
       if (response.ok) {
         // navigate to home screen and pass the account there
-        navigation.navigate('Home', { account: updatedAccount });
+        navigation.navigate('Home', { account: updatedAccount, pushToken: pushToken });
       } else {
         console.log('unable to write account to database: status code ' + response.status);
         alert('submission failed');

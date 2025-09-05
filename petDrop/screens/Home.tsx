@@ -10,14 +10,14 @@ import { styles, calendarTheme } from "../styles/Home.styles";
 import { Account, emptyMed, emptyPet, Medication, Pet } from "../data/dataTypes";
 import { useCallback, useState } from "react";
 import { MarkedDates } from "react-native-calendars/src/types";
-import { useFocusEffect } from "@react-navigation/native";
+import { NavigationProp, useFocusEffect } from "@react-navigation/native";
 import MedSwitch from '../components/ItemSwitch';
 import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
 import { medState } from "../data/enums";
 import SelectMedPopup from "../components/SelectMedPopup";
 
 type HomeProps = {
-  navigation: any;
+  navigation: NavigationProp<any>;
   route: any;
 };
 
@@ -27,6 +27,8 @@ const Home = ({ navigation, route }: HomeProps) => {
   const [markedDates, setMarkedDates] = useState<MarkedDates>({});
   const [popupState, setPopupState] = useState<medState>(medState.NO_ACTION);
   const [medMap, setMedMap] = useState<Map<string, { pet: Pet, med: Medication }[]>>(new Map());
+
+  const pushToken: string = route.params.pushToken;
 
   // store the user's account info to avoid typing "route.params.account" repeatedly
   let account: Account = route.params.account;
@@ -199,7 +201,7 @@ const Home = ({ navigation, route }: HomeProps) => {
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} account={account} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} account={account} pushToken={pushToken}/>
 
       {/* popup that displays all meds on a certain date */}
       {switchDisplay && (
@@ -227,6 +229,7 @@ const Home = ({ navigation, route }: HomeProps) => {
         readonly={true}
         navigation={navigation}
         account={account}
+        pushToken={pushToken}
       />
 
     </View>

@@ -37,6 +37,8 @@ const Sponsors = ({ navigation, route } : SponsorsProps) => {
     // active pagination dot
     const [activeIndex, setActiveIndex] = useState(0);
 
+    const pushToken: string = route.params.pushToken;
+
     // used to determine which pagination dot should be active
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const scrollX = event.nativeEvent.contentOffset.x;
@@ -79,7 +81,7 @@ const Sponsors = ({ navigation, route } : SponsorsProps) => {
                 ))}
             </View>
 
-            <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Sponsors} account={route.params.account} />
+            <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Sponsors} account={route.params.account} pushToken={pushToken} />
         </View >
     );
 };

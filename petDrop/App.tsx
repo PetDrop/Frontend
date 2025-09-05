@@ -1,8 +1,8 @@
 type RootStackParamList = {
-  Login: undefined;
+  Login: {pushToken: string};
   Signup: undefined;
   Profile: undefined;
-  Home: undefined;
+  Home: {pushToken: string};
   PetInfo: undefined;
   PetInfo1: undefined;
   Reminders: undefined;
@@ -104,6 +104,26 @@ const App = () => {
     "Jua-Regular": require("./assets/fonts/Jua-Regular.ttf"),
   });
 
+  // function withPushToken<P>(
+  //   Component: React.ComponentType<P>,
+  //   defaultParams: object
+  // ) {
+  //   return function Wrapped(props: any) {
+  //     const { route, ...rest } = props;
+  
+  //     // Merge defaults
+  //     const mergedParams = { ...defaultParams, ...route.params };
+  
+  //     // Forward everything else (navigation, etc.)
+  //     return (
+  //       <Component
+  //         {...(rest as P)}
+  //         route={{ ...route, params: mergedParams }}
+  //       />
+  //     );
+  //   };
+  // }
+
   useEffect(() => {
     registerForPushNotificationsAsync()
       .then(token => setExpoPushToken(token ?? ''))
@@ -137,6 +157,7 @@ const App = () => {
               name="Login"
               component={Login}
               options={{ headerShown: false }}
+              initialParams={{pushToken: expoPushToken}}
             />
             <Stack.Screen
               name="Signup"
@@ -152,6 +173,7 @@ const App = () => {
               name="Home"
               component={Home}
               options={{ headerShown: false }}
+              initialParams={{pushToken: expoPushToken}}
             />
             <Stack.Screen
               name="PetInfo"

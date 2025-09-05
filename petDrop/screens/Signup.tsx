@@ -18,11 +18,13 @@ import { Border, Color, FontFamily } from '../GlobalStyles';
 import BlueCircleBig from '../assets/blue_circle_big.svg';
 import { ADD_ACCOUNT, httpRequest } from '../data/endpoints';
 import { Account } from '../data/dataTypes';
+import { NavigationProp } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
 type SignupType = {
-    navigation: any;
+    navigation: NavigationProp<any>;
+    route: any;
 };
 
 const Signup = (props: SignupType) => {
@@ -35,6 +37,8 @@ const Signup = (props: SignupType) => {
     const [termsOfService, setTermsOfService] = useState(false);
     const [privacyPolicy, setPrivacyPolicy] = useState(false);
     const [dataUsage, setDataUsage] = useState(false);
+
+    const pushToken: string = props.route.params.pushToken;
 
     /* handles submit button being pressed
         and checks to make sure all fields have something entered
@@ -67,7 +71,7 @@ const Signup = (props: SignupType) => {
                 // if account successfully created, navigate to profile page for additional info, and pass the account along
                 const account: Account = await response.json();
                 account.sharedPets = [];
-                props.navigation.navigate('Home', { account: account });
+                props.navigation.navigate('Home', { account: account, pushToken: pushToken });
             } else {
                 console.log('unable to write account to database: status code ' + response.status);
                 alert('submission failed');
@@ -162,7 +166,7 @@ const Signup = (props: SignupType) => {
                         </View>
                     </View>
                     <View style={styles.buttonRow}>
-                        <Pressable style={styles.button} onPress={() => props.navigation.navigate('Login')}>
+                        <Pressable style={styles.button} onPress={() => props.navigation.navigate('Login', {pushToken: pushToken})}>
                             <Text style={styles.buttonText}>Login</Text>
                         </Pressable>
 

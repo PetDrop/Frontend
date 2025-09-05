@@ -15,11 +15,11 @@ import {
 	UPDATE_MEDICATION, DELETE_REMINDER_BY_ID, DELETE_MEDICATION_BY_ID
 } from '../data/endpoints';
 import { medState } from '../data/enums';
-import { useFocusEffect } from '@react-navigation/native';
+import { NavigationProp, useFocusEffect } from '@react-navigation/native';
 import Header from '../components/Header';
 
 type MedicationsArchiveProps = {
-	navigation: any;
+	navigation: NavigationProp<any>;
 	route: any;
 }
 
@@ -28,6 +28,8 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	const [med, setMed] = useState<Medication>(emptyMed);
 	const [rem, setRem] = useState<Reminder>();
 	const [popupState, setPopupState] = useState(medState.NO_ACTION);
+
+	const pushToken: string = route.params.pushToken;
 
 	// store the user's account info to avoid typing "route.params.account" repeatedly
 	const account: Account = route.params.account;
@@ -197,6 +199,7 @@ return (
 			navigation={navigation}
 			currentScreen={ScreenEnum.MedicationsArchive}
 			account={account}
+			pushToken={pushToken}
 		/>
 
 		<MedicationPopup
@@ -209,6 +212,7 @@ return (
 			readonly={false}
 			navigation={navigation}
 			account={account}
+			pushToken={pushToken}
 		/>
 	</View>
 );
