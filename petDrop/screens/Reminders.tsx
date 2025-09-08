@@ -10,11 +10,11 @@ import styles from "../styles/Reminders.styles";
 import { NavigationProp, useFocusEffect } from "@react-navigation/native";
 import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
 import { useCallback, useEffect, useState } from "react";
-import ReminderPopup from "../components/ReminderPopup";
 import PetSwitch from '../components/ItemSwitch';
 import { httpRequest, ADD_REMINDER, UPDATE_ACCOUNT, UPDATE_MEDICATION, UPDATE_REMINDER, DELETE_REMINDER_BY_ID } from "../data/endpoints";
 import { remState } from "../data/enums";
 import Header from "../components/Header";
+import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -137,14 +137,17 @@ const Reminders = ({ navigation, route }: Props) => {
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} account={account} pushToken={pushToken} />
 
       {/* popup for adding/editing reminder */}
-      <ReminderPopup
+      <MedicationPopup
         isActive={popupState === remState.SHOW_POPUP}
         setPopupState={setPopupState}
-        setRem={setRem}
-        setMed={setMed}
+        setReminder={setRem}
+        setMedication={setMed}
         pet={selectedPet}
         med={med}
         readonly={false}
+        pushToken={pushToken}
+        navigation={navigation}
+        account={account}
       />
     </View>
   );

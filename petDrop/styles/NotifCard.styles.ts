@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingBottom: height * 0.01,
     },
-    dateCard: {
+    notifCard: {
         paddingBottom: height * 0.01,
         borderRadius: Border.br_30,
         borderWidth: 3,
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
         marginLeft: width * 0.03,
         justifyContent: 'center'
     },
-    dateText: {
+    notifText: {
         color: Color.colorCornflowerblue,
         fontSize: FontSize.size_5xl,
         textAlign: "center",

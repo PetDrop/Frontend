@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
         borderColor: Color.colorCornflowerblue,
         borderWidth: 3,
     },
-    dateCardContainer: {
+    notifCardContainer: {
         marginTop: height * 0.01
     },
     textInput: {
@@ -93,14 +93,6 @@ const styles = StyleSheet.create({
         borderRadius: Border.br_17,
         height: height * 0.04,
         top: height * -0.11,
-        left: width * 0.06,
-        width: width * 0.4,
-        backgroundColor: Color.colorCornflowerblue,
-    },
-    reminderButtonOval: {
-        borderRadius: Border.br_17,
-        height: height * 0.04,
-        top: height * -0.09,
         left: width * 0.06,
         width: width * 0.4,
         backgroundColor: Color.colorCornflowerblue,

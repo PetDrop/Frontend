@@ -34,107 +34,107 @@ const Home = ({ navigation, route }: HomeProps) => {
   let account: Account = route.params.account;
 
   // populates a map of all meds to their pet and dates
-  const populateAllDatesMap = (pet: Pet, allDatesMap: Map<Medication, { pet: Pet, dates: string[] }>) => {
-    pet.medications.forEach(med => {
-      med.dates.forEach(dateObj => {
-        const dates: string[] = [];
-        if (dateObj.endDate.length > 0) {
-          let numDays = (new Date(dateObj.endDate).getTime() - new Date(dateObj.startDate).getTime()) / 86400000;
-          dates.push(dateObj.startDate);
-          for (let i = 0; i < numDays; i++) {
-            let dayToAdd = new Date(dateObj.startDate);
-            dayToAdd.setTime(dayToAdd.getTime() + 86400000 * (i + 1));
-            dates.push(dayToAdd.toISOString().slice(0, 10));
-          }
-        } else {
-          dates.push(dateObj.startDate);
-          for (let i = 1; i < dateObj.recurrances; i++) {
-            let dayToAdd = new Date(dateObj.startDate);
-            dayToAdd.setTime(dayToAdd.getTime() + 604800000 * i)
-            dates.push(dayToAdd.toISOString().slice(0, 10));
-          }
-        }
-        if (allDatesMap.has(med)) {
-          const newDates = allDatesMap.get(med)!.dates.concat(dates);
-          allDatesMap.set(med, { pet, dates: newDates });
-        } else {
-          allDatesMap.set(med, { pet, dates });
-        }
-      })
-    })
-  }
+  // const populateAllDatesMap = (pet: Pet, allDatesMap: Map<Medication, { pet: Pet, dates: string[] }>) => {
+  //   pet.medications.forEach(med => {
+  //     med.dates.forEach(dateObj => {
+  //       const dates: string[] = [];
+  //       if (dateObj.endDate.length > 0) {
+  //         let numDays = (new Date(dateObj.endDate).getTime() - new Date(dateObj.startDate).getTime()) / 86400000;
+  //         dates.push(dateObj.startDate);
+  //         for (let i = 0; i < numDays; i++) {
+  //           let dayToAdd = new Date(dateObj.startDate);
+  //           dayToAdd.setTime(dayToAdd.getTime() + 86400000 * (i + 1));
+  //           dates.push(dayToAdd.toISOString().slice(0, 10));
+  //         }
+  //       } else {
+  //         dates.push(dateObj.startDate);
+  //         for (let i = 1; i < dateObj.recurrances; i++) {
+  //           let dayToAdd = new Date(dateObj.startDate);
+  //           dayToAdd.setTime(dayToAdd.getTime() + 604800000 * i)
+  //           dates.push(dayToAdd.toISOString().slice(0, 10));
+  //         }
+  //       }
+  //       if (allDatesMap.has(med)) {
+  //         const newDates = allDatesMap.get(med)!.dates.concat(dates);
+  //         allDatesMap.set(med, { pet, dates: newDates });
+  //       } else {
+  //         allDatesMap.set(med, { pet, dates });
+  //       }
+  //     })
+  //   })
+  // }
 
-  let markedDatesMap: Map<string, Array<{ color: string, startingDay?: boolean, endingDay?: boolean }>> = new Map();
-  useFocusEffect(
-    useCallback(() => {
-      // maps all meds to an object containing their pets and a list of all their dates
-      const allDatesMap = new Map<Medication, { pet: Pet, dates: string[] }>();
+  // let markedDatesMap: Map<string, Array<{ color: string, startingDay?: boolean, endingDay?: boolean }>> = new Map();
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     // maps all meds to an object containing their pets and a list of all their dates
+  //     const allDatesMap = new Map<Medication, { pet: Pet, dates: string[] }>();
 
-      [...account.pets, ...account.sharedPets].forEach(pet => {
-        populateAllDatesMap(pet, allDatesMap);
-      });
+  //     [...account.pets, ...account.sharedPets].forEach(pet => {
+  //       populateAllDatesMap(pet, allDatesMap);
+  //     });
 
-      // maps all dates of meds to the meds on those dates
-      const tempMedMap = new Map<string, { pet: Pet, med: Medication }[]>();
+  //     // maps all dates of meds to the meds on those dates
+  //     const tempMedMap = new Map<string, { pet: Pet, med: Medication }[]>();
 
-      allDatesMap.forEach((value, med) => {
-        value.dates.forEach(date => {
-          tempMedMap.has(date) ?
-            tempMedMap.set(date, tempMedMap.get(date)!.concat([{ pet: value.pet, med }])) :
-            tempMedMap.set(date, [{ pet: value.pet, med }]);
-        })
-      });
-      setMedMap(tempMedMap);
+  //     allDatesMap.forEach((value, med) => {
+  //       value.dates.forEach(date => {
+  //         tempMedMap.has(date) ?
+  //           tempMedMap.set(date, tempMedMap.get(date)!.concat([{ pet: value.pet, med }])) :
+  //           tempMedMap.set(date, [{ pet: value.pet, med }]);
+  //       })
+  //     });
+  //     setMedMap(tempMedMap);
 
-      // keeps track of which row each med's periods will be in
-      const medRowMap = new Map<string, number>();
+  //     // keeps track of which row each med's periods will be in
+  //     const medRowMap = new Map<string, number>();
 
-      // assign row number to each med while also counting the total number of them
-      let rowIndex = 0;
-      [...account.pets, ...account.sharedPets].forEach(pet => {
-        pet.medications.forEach(med => {
-          if (!medRowMap.has(med.name)) {
-            medRowMap.set(med.name, rowIndex++);
-          }
-        });
-      });
-      const totalRows = rowIndex;
+  //     // assign row number to each med while also counting the total number of them
+  //     let rowIndex = 0;
+  //     [...account.pets, ...account.sharedPets].forEach(pet => {
+  //       pet.medications.forEach(med => {
+  //         if (!medRowMap.has(med.name)) {
+  //           medRowMap.set(med.name, rowIndex++);
+  //         }
+  //       });
+  //     });
+  //     const totalRows = rowIndex;
 
-      // add a period for each date to the markedDatesMap
-      allDatesMap.forEach((value, med) => {
-        value.dates.forEach(date => {
-          // find out what the day before and after the date in question are
-          const dateObject = new Date(date);
-          const dayBefore = new Date(dateObject.getTime() - 86400000).toISOString().slice(0, 10);
-          const dayAfter = new Date(dateObject.getTime() + 86400000).toISOString().slice(0, 10);
+  //     // add a period for each date to the markedDatesMap
+  //     allDatesMap.forEach((value, med) => {
+  //       value.dates.forEach(date => {
+  //         // find out what the day before and after the date in question are
+  //         const dateObject = new Date(date);
+  //         const dayBefore = new Date(dateObject.getTime() - 86400000).toISOString().slice(0, 10);
+  //         const dayAfter = new Date(dateObject.getTime() + 86400000).toISOString().slice(0, 10);
 
-          // use days before and after to test if this date is the start of
-          // a period, the end of it, or neither
-          const period: any = {
-            color: med.color,
-            startingDay: !value.dates.includes(dayBefore),
-            endingDay: !value.dates.includes(dayAfter)
-          };
+  //         // use days before and after to test if this date is the start of
+  //         // a period, the end of it, or neither
+  //         const period: any = {
+  //           color: med.color,
+  //           startingDay: !value.dates.includes(dayBefore),
+  //           endingDay: !value.dates.includes(dayAfter)
+  //         };
 
-          // padding of transparent periods is used to properly line up the ones being shown
-          const existingPeriods = markedDatesMap.get(date) || Array(totalRows).fill({ color: 'transparent' });
-          // put the period in the right row to line it up
-          existingPeriods[medRowMap.get(med.name)!] = period; // non-null assertion used to avoid possibly undefined error
-          markedDatesMap.set(date, existingPeriods);
-        });
-      });
+  //         // padding of transparent periods is used to properly line up the ones being shown
+  //         const existingPeriods = markedDatesMap.get(date) || Array(totalRows).fill({ color: 'transparent' });
+  //         // put the period in the right row to line it up
+  //         existingPeriods[medRowMap.get(med.name)!] = period; // non-null assertion used to avoid possibly undefined error
+  //         markedDatesMap.set(date, existingPeriods);
+  //       });
+  //     });
 
-      // construct MarkedDates prop for calendar by creating a field for each unique date 
-      // containing a period for each med to be administered on said date
-      const newMarkedDates: MarkedDates = {};
-      markedDatesMap.forEach((periods, date) => {
-        newMarkedDates[date] = { periods };
-      });
+  //     // construct MarkedDates prop for calendar by creating a field for each unique date 
+  //     // containing a period for each med to be administered on said date
+  //     const newMarkedDates: MarkedDates = {};
+  //     markedDatesMap.forEach((periods, date) => {
+  //       newMarkedDates[date] = { periods };
+  //     });
 
-      // update state and re-render
-      setMarkedDates(newMarkedDates);
-    }, [])
-  );
+  //     // update state and re-render
+  //     setMarkedDates(newMarkedDates);
+  //   }, [])
+  // );
 
   // find the pet that has med
   const findPet = (med: Medication) => {

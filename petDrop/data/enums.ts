@@ -16,11 +16,3 @@ export enum remState {
     'REM_DELETED' = 3, // need to update med
     'SHOW_POPUP' = 4, // popup showing but no action done yet
 };
-
-
-export enum datePicker {
-  DISABLED = 0,
-  SINGLE = 1,
-  START_DATE = 2,
-  END_DATE = 3
-};
