@@ -49,9 +49,9 @@ export interface Notification {
     title: string,
     body: string,
     data: Map<string, object>,
-    nextRun: Date;
-    repeatInterval: string;
-    remainingRepeats: number
+    nextRun: Date; // next time it will be sent
+    finalRun: Date; // final time it will be sent
+    repeatInterval: number; // minutes between each time notif is sent
 }
 
 export interface DateObj {
@@ -62,7 +62,7 @@ export interface DateObj {
 
 // global default values to avoid having to repeatedly create these in various files
 export const emptyPet: Pet = {id: '', name: '', image: '', age: 0, breed: '', address: '', vet: '', vetPhone: '', medications: []};
-export const emptyNotification: Notification = {id: '', expoPushToken: '', title: '', body: '', data: new Map<string, object>(), nextRun: new Date(), repeatInterval: '', remainingRepeats: 0};
+export const emptyNotification: Notification = {id: '', expoPushToken: '', title: '', body: '', data: new Map<string, object>(), nextRun: new Date(), finalRun: new Date(), repeatInterval: 0};
 export const emptyReminder: Reminder = {id: '', notifications: []};
 export const emptyMed: Medication = {id: '', name: '', color: '', description: '', reminder: emptyReminder, range: 0};
 export const emptySponsorMed: SponsorMedication = {id: '', name: '', instructions: [], videoLink: ''};
