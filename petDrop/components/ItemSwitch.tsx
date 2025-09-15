@@ -53,7 +53,7 @@ const ItemSwitch: React.FC<ItemSwitchProps> = ({ text, selectedItem, data, onSwi
 			<Modal visible={modalVisible} transparent animationType="fade">
 				<View style={styles.modalOverlay}>
 					<View style={styles.modalContainer}>
-						<Text style={styles.modalTitle}>{`Select a ${switchItem}`}</Text>
+						<Text style={styles.modalTitle}>{`Select ${switchItem}`}</Text>
 						<FlatList
 							data={data}
 							keyExtractor={(item) => item.id.toString()}

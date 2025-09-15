@@ -3,8 +3,7 @@ import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingV
 import { Image } from "expo-image";
 import DropdownArrow from "../../assets/dropdown_arrow.svg";
 import styles from '../../styles/MedicationPopup.styles';
-import { Account, emptyReminder, Medication, Pet, Reminder, SponsorMedication } from "../../data/dataTypes";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { Account, emptyNotification, emptyReminder, Medication, Pet, Reminder, SponsorMedication } from "../../data/dataTypes";
 import { useEffect, useState } from "react";
 import { Color } from "../../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
@@ -34,7 +33,8 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   const [propsChanged, setPropsChanged] = useState(true);
   const [sponsorMeds, setSponsorMeds] = useState<SponsorMedication[]>([]);
   const [dateTimePickerMode, setDateTimePickerMode] = useState<'date'|'time'>('date');
-  const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const [dateTimePickerVisible, setDateTimePickerVisible] = useState(false);
+  const [rem, setRem] = useState<Reminder>(med.reminder);
 
   // fetch all the sponsor meds to populate the dropdown with
   const getSponsorMedications = async () => {
@@ -70,8 +70,12 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     setPopupState(medState.NO_ACTION);
   }
 
+  const closeWithAction = () => {
+    // TODO
+  }
+
   // these are the date (and period) cards that will be rendered in the popup
-  // const notifCards: NotifCard[] = [];
+  // const notifCards: React.JSX.Element = <View></View>;
 
   if (isActive) {
     return (
@@ -158,14 +162,6 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
               onChangeText={setDescription}
               multiline={true}
               editable={!readonly}
-            />
-
-            <DateTimePickerModal
-              date={new Date(Date.now())}
-              isVisible={datePickerVisible}
-              mode={dateTimePickerMode}
-              onConfirm={(date) => {}}
-              onCancel={() => { setDatePickerVisible(false) }}
             />
 
           </ScrollView>

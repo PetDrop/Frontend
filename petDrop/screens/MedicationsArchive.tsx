@@ -40,181 +40,181 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 		}, [])
 	);
 
-const editMedication = (med: Medication) => {
-	setMed(med);
-	setPopupState(medState.SHOW_POPUP);
-}
+	const editMedication = (med: Medication) => {
+		setMed(med);
+		setPopupState(medState.SHOW_POPUP);
+	}
 
-const WriteToDB = async () => {
-	let medUrl: string = '', medMethod: string = '', medBody: string = '', remUrl: string = '', remMethod: string = '', remBody: string = '';
-	let log: string = '';
-	switch (popupState) {
-		case medState.MED_CREATED:
-			if (rem) {
+	const WriteToDB = async () => {
+		let medUrl: string = '', medMethod: string = '', medBody: string = '', remUrl: string = '', remMethod: string = '', remBody: string = '';
+		let log: string = '';
+		switch (popupState) {
+			case medState.MED_CREATED:
+				if (rem) {
+					remUrl = ADD_REMINDER;
+					remMethod = 'POST';
+					remBody = JSON.stringify(rem);
+					med.reminder = rem;
+				}
+				medUrl = ADD_MEDICATION;
+				medMethod = 'POST';
+				medBody = JSON.stringify(med);
+				log = 'Successfully created medication'
+				break;
+			case medState.MED_EDITED_REM_NOTHING:
+				medUrl = UPDATE_MEDICATION;
+				medMethod = 'PUT';
+				medBody = JSON.stringify(med);
+				log = 'Successfully edited medication'
+				break;
+			case medState.MED_EDITED_REM_CREATED:
 				remUrl = ADD_REMINDER;
 				remMethod = 'POST';
 				remBody = JSON.stringify(rem);
-				med.reminder = rem;
-			}
-			medUrl = ADD_MEDICATION;
-			medMethod = 'POST';
-			medBody = JSON.stringify(med);
-			log = 'Successfully created medication'
-			break;
-		case medState.MED_EDITED_REM_NOTHING:
-			medUrl = UPDATE_MEDICATION;
-			medMethod = 'PUT';
-			medBody = JSON.stringify(med);
-			log = 'Successfully edited medication'
-			break;
-		case medState.MED_EDITED_REM_CREATED:
-			remUrl = ADD_REMINDER;
-			remMethod = 'POST';
-			remBody = JSON.stringify(rem);
-			med.reminder = rem!; // rem can't be null if it got created
-			medUrl = UPDATE_MEDICATION;
-			medMethod = 'PUT';
-			medBody = JSON.stringify(med);
-			log = 'Successfully edited medication and created reminder'
-			break;
-		case medState.MED_EDITED_REM_EDITED:
-			remUrl = UPDATE_REMINDER;
-			remMethod = 'PUT';
-			remBody = JSON.stringify(rem);
-			med.reminder = rem!; // rem can't be null if it got edited
-			medUrl = UPDATE_MEDICATION;
-			medMethod = 'PUT';
-			medBody = JSON.stringify(med);
-			log = 'Successfully edited medication and reminder'
-			break;
-		case medState.MED_EDITED_REM_DELETED:
-			remUrl = DELETE_REMINDER_BY_ID + rem!.id; // rem can't be null if it got deleted
-			remMethod = 'DELETE';
-			med.reminder = emptyReminder;
-			medUrl = UPDATE_MEDICATION;
-			medMethod = 'PUT';
-			medBody = JSON.stringify(med);
-			log = 'Successfully edited medication and deleted reminder'
-			break;
-		case medState.MED_DELETED:
-			if (rem) {
-				remUrl = DELETE_REMINDER_BY_ID + rem.id;
+				med.reminder = rem!; // rem can't be null if it got created
+				medUrl = UPDATE_MEDICATION;
+				medMethod = 'PUT';
+				medBody = JSON.stringify(med);
+				log = 'Successfully edited medication and created reminder'
+				break;
+			case medState.MED_EDITED_REM_EDITED:
+				remUrl = UPDATE_REMINDER;
+				remMethod = 'PUT';
+				remBody = JSON.stringify(rem);
+				med.reminder = rem!; // rem can't be null if it got edited
+				medUrl = UPDATE_MEDICATION;
+				medMethod = 'PUT';
+				medBody = JSON.stringify(med);
+				log = 'Successfully edited medication and reminder'
+				break;
+			case medState.MED_EDITED_REM_DELETED:
+				remUrl = DELETE_REMINDER_BY_ID + rem!.id; // rem can't be null if it got deleted
 				remMethod = 'DELETE';
 				med.reminder = emptyReminder;
-			}
-			medUrl = DELETE_MEDICATION_BY_ID + med.id;
-			medMethod = 'DELETE';
-			log = 'Successfully deleted medication'
-			break;
-	}
-	let response;
-	if (remUrl === '') {
-		response = await handleMed(medUrl, medMethod, medBody);
-		if (response.ok) {
-			alert(log);
+				medUrl = UPDATE_MEDICATION;
+				medMethod = 'PUT';
+				medBody = JSON.stringify(med);
+				log = 'Successfully edited medication and deleted reminder'
+				break;
+			case medState.MED_DELETED:
+				if (rem) {
+					remUrl = DELETE_REMINDER_BY_ID + rem.id;
+					remMethod = 'DELETE';
+					med.reminder = emptyReminder;
+				}
+				medUrl = DELETE_MEDICATION_BY_ID + med.id;
+				medMethod = 'DELETE';
+				log = 'Successfully deleted medication'
+				break;
 		}
-	} else {
-		response = await httpRequest(remUrl, remMethod, remBody);
-		if (response.ok) {
+		let response;
+		if (remUrl === '') {
 			response = await handleMed(medUrl, medMethod, medBody);
 			if (response.ok) {
 				alert(log);
 			}
+		} else {
+			response = await httpRequest(remUrl, remMethod, remBody);
+			if (response.ok) {
+				response = await handleMed(medUrl, medMethod, medBody);
+				if (response.ok) {
+					alert(log);
+				}
+			}
 		}
+		setRem(undefined);
+		setPopupState(medState.NO_ACTION);
 	}
-	setRem(undefined);
-	setPopupState(medState.NO_ACTION);
-}
 
-const handleMed = async (medUrl: string, medMethod: string, medBody: string): Promise<Response> => {
-	let response = await httpRequest(medUrl, medMethod, medBody);
-	if (response.ok) {
-		if (popupState === medState.MED_CREATED && selectedPet) {
-			selectedPet.medications.push(med);
-			response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(selectedPet));
-		} else if (popupState >= medState.MED_EDITED_REM_NOTHING && popupState <= medState.MED_EDITED_REM_DELETED && selectedPet) {
-			selectedPet.medications[selectedPet.medications.findIndex((medication: Medication) => medication.id === med.id)] = med;
-		} else if (selectedPet) {
-			selectedPet.medications.splice(selectedPet.medications.findIndex((medication: Medication) => medication.id === med.id), 1);
-			response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(selectedPet));
+	const handleMed = async (medUrl: string, medMethod: string, medBody: string): Promise<Response> => {
+		let response = await httpRequest(medUrl, medMethod, medBody);
+		if (response.ok) {
+			if (popupState === medState.MED_CREATED && selectedPet) {
+				selectedPet.medications.push(med);
+				response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(selectedPet));
+			} else if (popupState >= medState.MED_EDITED_REM_NOTHING && popupState <= medState.MED_EDITED_REM_DELETED && selectedPet) {
+				selectedPet.medications[selectedPet.medications.findIndex((medication: Medication) => medication.id === med.id)] = med;
+			} else if (selectedPet) {
+				selectedPet.medications.splice(selectedPet.medications.findIndex((medication: Medication) => medication.id === med.id), 1);
+				response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(selectedPet));
+			}
 		}
+		return response;
 	}
-	return response;
-}
 
-if (popupState !== medState.SHOW_POPUP && popupState !== medState.NO_ACTION) {
-	WriteToDB();
-}
+	if (popupState !== medState.SHOW_POPUP && popupState !== medState.NO_ACTION) {
+		WriteToDB();
+	}
 
-let medicationCards: React.JSX.Element[];
-let selectedReminders: Reminder[] = [];
-selectedPet.medications.forEach((med: Medication) => {
-	selectedReminders.push(med.reminder);
-});
-medicationCards = selectedPet.medications.map((medication: Medication, index: number) => (
-	<MedicationCard
-		key={index}
-		medication={medication}
-		pet={selectedPet}
-		showingFunction={editMedication}
-	/>
-));
+	let medicationCards: React.JSX.Element[];
+	let selectedReminders: Reminder[] = [];
+	selectedPet.medications.forEach((med: Medication) => {
+		selectedReminders.push(med.reminder);
+	});
+	medicationCards = selectedPet.medications.map((medication: Medication, index: number) => (
+		<MedicationCard
+			key={index}
+			medication={medication}
+			pet={selectedPet}
+			showingFunction={editMedication}
+		/>
+	));
 
-return (
-	<View style={styles.container}>
-		<ScrollView
-			contentContainerStyle={styles.scrollContainer}
-			showsVerticalScrollIndicator={false}>
+	return (
+		<View style={styles.container}>
+			<ScrollView
+				contentContainerStyle={styles.scrollContainer}
+				showsVerticalScrollIndicator={false}>
 
-			<Header navigation={navigation} account={account} />
+				<Header navigation={navigation} account={account} />
 
-			<View style={styles.headerContainer}>
-				<Text style={styles.pageTitle}>Medications</Text>
-				<PetSwitch
-					text={'switch'}
-					data={[...account.pets, ...account.sharedPets]}
-					selectedItem={selectedPet}
-					onSwitch={setSelectedPet}
-					switchItem='Pet'
-				/>
-			</View>
-
-			{medicationCards}
-
-			{selectedPet.id !== '' && (
-				<View style={styles.addMedicationButton}>
-					<AddMedicationButton
-						onPressFunction={() => {
-							setMed(emptyMed);
-							setPopupState(medState.SHOW_POPUP);
-						}}
-						innerText={'+ ADD'}
-						color={Color.colorCornflowerblue}
+				<View style={styles.headerContainer}>
+					<Text style={styles.pageTitle}>Medications</Text>
+					<PetSwitch
+						text={'switch'}
+						data={[...account.pets, ...account.sharedPets]}
+						selectedItem={selectedPet}
+						onSwitch={setSelectedPet}
+						switchItem='Pet'
 					/>
 				</View>
-			)}
-		</ScrollView>
 
-		<TopBottomBar
-			navigation={navigation}
-			currentScreen={ScreenEnum.MedicationsArchive}
-			account={account}
-			pushToken={pushToken}
-		/>
+				{medicationCards}
 
-		<MedicationPopup
-			isActive={popupState === medState.SHOW_POPUP}
-			setPopupState={setPopupState}
-			setMedication={setMed}
-			setReminder={setRem}
-			pet={selectedPet}
-			med={med}
-			readonly={false}
-			navigation={navigation}
-			account={account}
-			pushToken={pushToken}
-		/>
-	</View>
-);
+				{selectedPet.id !== '' && (
+					<View style={styles.addMedicationButton}>
+						<AddMedicationButton
+							onPressFunction={() => {
+								setMed(emptyMed);
+								setPopupState(medState.SHOW_POPUP);
+							}}
+							innerText={'+ ADD'}
+							color={Color.colorCornflowerblue}
+						/>
+					</View>
+				)}
+			</ScrollView>
+
+			<TopBottomBar
+				navigation={navigation}
+				currentScreen={ScreenEnum.MedicationsArchive}
+				account={account}
+				pushToken={pushToken}
+			/>
+
+			<MedicationPopup
+				isActive={popupState === medState.SHOW_POPUP}
+				setPopupState={setPopupState}
+				setMedication={setMed}
+				setReminder={setRem}
+				pet={selectedPet}
+				med={med}
+				readonly={false}
+				navigation={navigation}
+				account={account}
+				pushToken={pushToken}
+			/>
+		</View>
+	);
 };
 export default MedicationsArchive;
