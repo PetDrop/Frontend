@@ -1,19 +1,14 @@
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, Pressable } from 'react-native';
+import { useCallback, useState } from 'react';
+import { View, Text, ScrollView } from 'react-native';
 import TopBottomBar from '../components/TopBottomBar';
 import MedicationCard from '../components/Medications/MedicationCard';
 import PetSwitch from '../components/ItemSwitch';
 import styles from '../styles/Medications.styles';
-import { Color, ScreenEnum, logoImage } from '../GlobalStyles';
-import { Image } from 'expo-image';
+import { Color, ScreenEnum } from '../GlobalStyles';
 import AddMedicationButton from '../components/CustomButton';
 import MedicationPopup from '../components/MedicationPopup/MedicationPopup';
-import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from '../data/dataTypes';
-import {
-	httpRequest, ADD_MEDICATION, UPDATE_PET, ADD_REMINDER, UPDATE_REMINDER,
-	UPDATE_MEDICATION, DELETE_REMINDER_BY_ID, DELETE_MEDICATION_BY_ID
-} from '../data/endpoints';
+import { Account, emptyMed, emptyPet, Medication, Pet } from '../data/dataTypes';
 import { medState } from '../data/enums';
 import { NavigationProp, useFocusEffect } from '@react-navigation/native';
 import Header from '../components/Header';
@@ -26,13 +21,20 @@ type MedicationsArchiveProps = {
 const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	const [selectedPet, setSelectedPet] = useState<Pet>(emptyPet);
 	const [med, setMed] = useState<Medication>(emptyMed);
-	const [rem, setRem] = useState<Reminder>();
 	const [popupState, setPopupState] = useState(medState.NO_ACTION);
 
 	const pushToken: string = route.params.pushToken;
 
 	// store the user's account info to avoid typing "route.params.account" repeatedly
 	const account: Account = route.params.account;
+
+	// make deep copy
+	const notifsCopy = med.notifications.map(n => ({
+		...n,
+		data: new Map(n.data),
+		nextRuns: n.nextRuns.map(d => new Date(d)),
+		finalRuns: n.finalRuns.map(d => new Date(d))
+	}));
 
 	useFocusEffect(
 		useCallback(() => {
@@ -46,100 +48,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	}
 
 	const WriteToDB = async () => {
-		let medUrl: string = '', medMethod: string = '', medBody: string = '', remUrl: string = '', remMethod: string = '', remBody: string = '';
-		let log: string = '';
-		switch (popupState) {
-			case medState.MED_CREATED:
-				if (rem) {
-					remUrl = ADD_REMINDER;
-					remMethod = 'POST';
-					remBody = JSON.stringify(rem);
-					med.reminder = rem;
-				}
-				medUrl = ADD_MEDICATION;
-				medMethod = 'POST';
-				medBody = JSON.stringify(med);
-				log = 'Successfully created medication'
-				break;
-			case medState.MED_EDITED_REM_NOTHING:
-				medUrl = UPDATE_MEDICATION;
-				medMethod = 'PUT';
-				medBody = JSON.stringify(med);
-				log = 'Successfully edited medication'
-				break;
-			case medState.MED_EDITED_REM_CREATED:
-				remUrl = ADD_REMINDER;
-				remMethod = 'POST';
-				remBody = JSON.stringify(rem);
-				med.reminder = rem!; // rem can't be null if it got created
-				medUrl = UPDATE_MEDICATION;
-				medMethod = 'PUT';
-				medBody = JSON.stringify(med);
-				log = 'Successfully edited medication and created reminder'
-				break;
-			case medState.MED_EDITED_REM_EDITED:
-				remUrl = UPDATE_REMINDER;
-				remMethod = 'PUT';
-				remBody = JSON.stringify(rem);
-				med.reminder = rem!; // rem can't be null if it got edited
-				medUrl = UPDATE_MEDICATION;
-				medMethod = 'PUT';
-				medBody = JSON.stringify(med);
-				log = 'Successfully edited medication and reminder'
-				break;
-			case medState.MED_EDITED_REM_DELETED:
-				remUrl = DELETE_REMINDER_BY_ID + rem!.id; // rem can't be null if it got deleted
-				remMethod = 'DELETE';
-				med.reminder = emptyReminder;
-				medUrl = UPDATE_MEDICATION;
-				medMethod = 'PUT';
-				medBody = JSON.stringify(med);
-				log = 'Successfully edited medication and deleted reminder'
-				break;
-			case medState.MED_DELETED:
-				if (rem) {
-					remUrl = DELETE_REMINDER_BY_ID + rem.id;
-					remMethod = 'DELETE';
-					med.reminder = emptyReminder;
-				}
-				medUrl = DELETE_MEDICATION_BY_ID + med.id;
-				medMethod = 'DELETE';
-				log = 'Successfully deleted medication'
-				break;
-		}
-		let response;
-		if (remUrl === '') {
-			response = await handleMed(medUrl, medMethod, medBody);
-			if (response.ok) {
-				alert(log);
-			}
-		} else {
-			response = await httpRequest(remUrl, remMethod, remBody);
-			if (response.ok) {
-				response = await handleMed(medUrl, medMethod, medBody);
-				if (response.ok) {
-					alert(log);
-				}
-			}
-		}
-		setRem(undefined);
 		setPopupState(medState.NO_ACTION);
-	}
-
-	const handleMed = async (medUrl: string, medMethod: string, medBody: string): Promise<Response> => {
-		let response = await httpRequest(medUrl, medMethod, medBody);
-		if (response.ok) {
-			if (popupState === medState.MED_CREATED && selectedPet) {
-				selectedPet.medications.push(med);
-				response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(selectedPet));
-			} else if (popupState >= medState.MED_EDITED_REM_NOTHING && popupState <= medState.MED_EDITED_REM_DELETED && selectedPet) {
-				selectedPet.medications[selectedPet.medications.findIndex((medication: Medication) => medication.id === med.id)] = med;
-			} else if (selectedPet) {
-				selectedPet.medications.splice(selectedPet.medications.findIndex((medication: Medication) => medication.id === med.id), 1);
-				response = await httpRequest(UPDATE_PET, 'PUT', JSON.stringify(selectedPet));
-			}
-		}
-		return response;
 	}
 
 	if (popupState !== medState.SHOW_POPUP && popupState !== medState.NO_ACTION) {
@@ -147,10 +56,6 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	}
 
 	let medicationCards: React.JSX.Element[];
-	let selectedReminders: Reminder[] = [];
-	selectedPet.medications.forEach((med: Medication) => {
-		selectedReminders.push(med.reminder);
-	});
 	medicationCards = selectedPet.medications.map((medication: Medication, index: number) => (
 		<MedicationCard
 			key={index}
@@ -206,9 +111,9 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				isActive={popupState === medState.SHOW_POPUP}
 				setPopupState={setPopupState}
 				setMedication={setMed}
-				setReminder={setRem}
 				pet={selectedPet}
 				med={med}
+				notifsCopy={notifsCopy}
 				readonly={false}
 				navigation={navigation}
 				account={account}

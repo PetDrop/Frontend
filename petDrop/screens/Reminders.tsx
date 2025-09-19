@@ -8,11 +8,10 @@ import { Color, logoImage, ScreenEnum } from "../GlobalStyles";
 import styles from "../styles/Reminders.styles";
 
 import { NavigationProp, useFocusEffect } from "@react-navigation/native";
-import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
+import { Account, emptyMed, emptyPet, Medication, Pet } from "../data/dataTypes";
 import { useCallback, useEffect, useState } from "react";
 import PetSwitch from '../components/ItemSwitch';
-import { httpRequest, ADD_REMINDER, UPDATE_ACCOUNT, UPDATE_MEDICATION, UPDATE_REMINDER, DELETE_REMINDER_BY_ID } from "../data/endpoints";
-import { remState } from "../data/enums";
+import { medState } from "../data/enums";
 import Header from "../components/Header";
 import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
 
@@ -23,8 +22,7 @@ interface Props {
 
 const Reminders = ({ navigation, route }: Props) => {
   const [selectedPet, setSelectedPet] = useState(emptyPet);
-  const [popupState, setPopupState] = useState(remState.NO_ACTION);
-  const [rem, setRem] = useState<Reminder>(emptyReminder);
+  const [popupState, setPopupState] = useState(medState.NO_ACTION);
   const [med, setMed] = useState<Medication>(emptyMed);
 
   const pushToken: string = route.params.pushToken;
@@ -40,55 +38,21 @@ const Reminders = ({ navigation, route }: Props) => {
 
   const editReminder = (med: Medication) => {
     setMed(med);
-    setPopupState(remState.SHOW_POPUP);
+    setPopupState(medState.SHOW_POPUP);
   }
 
   const WriteToDB = async () => {
-    let url: string = '', method: string = '', body: string = '';
-    switch (popupState) {
-      case remState.REM_CREATED:
-        url = ADD_REMINDER;
-        method = 'POST';
-        body = JSON.stringify(rem);
-        break;
-      case remState.REM_EDITED:
-        url = UPDATE_REMINDER;
-        method = 'PUT';
-        body = JSON.stringify(rem);
-        break;
-      case remState.REM_DELETED:
-        url = DELETE_REMINDER_BY_ID + rem.id;
-        method = 'DELETE';
-        body = '';
-        break;
-    }
-    let response = await httpRequest(url, method, body);
-    if (response.ok) {
-      const reminder = popupState === remState.REM_DELETED ? emptyReminder : rem;
-      med.reminder = reminder;
-      if (popupState !== remState.REM_EDITED) {
-        response = await httpRequest(UPDATE_MEDICATION, 'PUT', JSON.stringify(med));
-        if (response.ok) {
-          alert(`Successfully ${popupState === remState.REM_DELETED ? 'deleted' : 'submitted'} reminder`);
-        } else {
-          console.log(`http PUT request failed with error code: ${response.status}`);
-          alert('Failed to update medication');
-        }
-      }
-    } else {
-      console.log(`http ${method} request failed with error code: ${response.status}`);
-      alert(`Failed to ${popupState === remState.REM_DELETED ? 'delete' : 'submit'} reminder`);
-    }
-    setPopupState(remState.NO_ACTION);
+    // TODO
+    setPopupState(medState.NO_ACTION);
   }
 
-  if (popupState !== remState.NO_ACTION && popupState !== remState.SHOW_POPUP) {
+  if (popupState !== medState.NO_ACTION && popupState !== medState.SHOW_POPUP) {
     WriteToDB();
   }
 
   let reminderCards: React.JSX.Element[];
   reminderCards = selectedPet.medications.map((med: Medication, index: number) =>
-    med.reminder?.notifications.length > 0 ?
+    med.notifications.length > 0 ?
       <ReminderCard
         key={index}
         med={med}
@@ -124,7 +88,7 @@ const Reminders = ({ navigation, route }: Props) => {
           <View style={styles.addReminderButton}>
             <AddReminderButton
               onPressFunction={() => {
-                setPopupState(remState.SHOW_POPUP);
+                setPopupState(medState.SHOW_POPUP);
               }}
               innerText={'+ ADD'}
               color={Color.colorCornflowerblue}
@@ -137,10 +101,9 @@ const Reminders = ({ navigation, route }: Props) => {
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} account={account} pushToken={pushToken} />
 
       {/* popup for adding/editing reminder */}
-      <MedicationPopup
-        isActive={popupState === remState.SHOW_POPUP}
+      {/* <MedicationPopup
+        isActive={popupState === medState.SHOW_POPUP}
         setPopupState={setPopupState}
-        setReminder={setRem}
         setMedication={setMed}
         pet={selectedPet}
         med={med}
@@ -148,7 +111,7 @@ const Reminders = ({ navigation, route }: Props) => {
         pushToken={pushToken}
         navigation={navigation}
         account={account}
-      />
+      /> */}
     </View>
   );
 };

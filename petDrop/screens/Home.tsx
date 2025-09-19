@@ -42,27 +42,29 @@ const Home = ({ navigation, route }: HomeProps) => {
     account.pets.forEach(pet => {
       pet.medications.forEach((med: Medication) => {
 
-        med.reminder.notifications.forEach((notif: Notification) => {
+        med.notifications.forEach((notif: Notification) => {
           const intervalMs = notif.repeatInterval * 60000; // convert minutes to ms
           if (intervalMs <= 0) return; // should never be negative, but 0 might happen from emptyNotif
 
-          // Walk from nextRun through finalRun, stepping by repeatInterval
-          let cursor = new Date(notif.nextRun);
-          const finalDate = new Date(notif.finalRun);
+          // Walk from nextRuns through finalRuns, stepping by repeatInterval
+          for (let i = 0; i < notif.nextRuns.length; i++) {
+            let cursor = new Date(notif.nextRuns[i]);
+            const finalDate = new Date(notif.finalRuns[i]);
 
-          // Add every date in [nextRun, finalRun], stepping by repeatInterval
-          while (cursor <= finalDate) {
-            const dayKey = formatDate(cursor);
+            // Add every date in [nextRun, finalRun], stepping by repeatInterval
+            while (cursor <= finalDate) {
+              const dayKey = formatDate(cursor);
 
-            // add new key if needed, and update key with period for this notif
-            if (!newMarkedDates[dayKey]) newMarkedDates[dayKey] = { periods: [] };
-            newMarkedDates[dayKey].periods!.push({ color: med.color });
+              // add new key if needed, and update key with period for this notif
+              if (!newMarkedDates[dayKey]) newMarkedDates[dayKey] = { periods: [] };
+              newMarkedDates[dayKey].periods!.push({ color: med.color });
 
-            // add new key if needed, and update key with {pet, med} for this date
-            if (!newMedMap.has(dayKey)) newMedMap.set(dayKey, []);
-            newMedMap.get(dayKey)!.push({ pet, med });
+              // add new key if needed, and update key with {pet, med} for this date
+              if (!newMedMap.has(dayKey)) newMedMap.set(dayKey, []);
+              newMedMap.get(dayKey)!.push({ pet, med });
 
-            cursor = new Date(cursor.getTime() + intervalMs);
+              cursor = new Date(cursor.getTime() + intervalMs);
+            }
           }
         });
       });
@@ -187,9 +189,9 @@ const Home = ({ navigation, route }: HomeProps) => {
         isActive={infoToDisplay ? true : false}
         setPopupState={setPopupState}
         med={infoToDisplay ? infoToDisplay.med : emptyMed}
+        notifsCopy={[]}
         pet={infoToDisplay ? infoToDisplay.pet : emptyPet}
         setMedication={() => { }}
-        setReminder={() => { }}
         readonly={true}
         navigation={navigation}
         account={account}

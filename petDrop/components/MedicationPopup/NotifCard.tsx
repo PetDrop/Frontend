@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import styles from '../../styles/NotifCard.styles';
 import { useState } from 'react';
-import { Notification, Reminder } from '../../data/dataTypes';
+import { Notification } from '../../data/dataTypes';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { enableExperimentalWebImplementation } from 'react-native-gesture-handler';
 
@@ -119,10 +119,10 @@ const NotificationTimes = ({ times, onAddTime }: { times: Date[], onAddTime: () 
 // ---------- main component ----------
 type NotifCardProps = {
     notification: Notification;
-    setReminder: (rem: Reminder) => void;
+    // TODO setMedication?
 }
 
-const NotifCard = ({ notification, setReminder }: NotifCardProps) => {
+const NotifCard = ({ notification }: NotifCardProps) => {
     const [startDate, setStartDate] = useState<Date>();
     const [endDate, setEndDate] = useState<Date>();
     const [occurances, setOccurances] = useState<number>();

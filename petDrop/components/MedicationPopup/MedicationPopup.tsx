@@ -3,12 +3,12 @@ import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingV
 import { Image } from "expo-image";
 import DropdownArrow from "../../assets/dropdown_arrow.svg";
 import styles from '../../styles/MedicationPopup.styles';
-import { Account, emptyNotification, emptyReminder, Medication, Pet, Reminder, SponsorMedication } from "../../data/dataTypes";
+import { Account, Notification, Medication, Pet, SponsorMedication } from "../../data/dataTypes";
 import { useEffect, useState } from "react";
 import { Color } from "../../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
 import DeleteButton from '../CustomButton';
-import { medState, remState } from "../../data/enums";
+import { medState } from "../../data/enums";
 import { GET_ALL_SPONSOR_MEDICATIONS, httpRequest } from "../../data/endpoints";
 import { NavigationProp } from "@react-navigation/core";
 import NotifCard from "./NotifCard";
@@ -17,16 +17,16 @@ type MedicationPopupType = {
   isActive: boolean;
   setPopupState: Function;
   setMedication: Function;
-  setReminder: Function;
   pet: Pet;
   med: Medication;
+  notifsCopy: Notification[];
   readonly: boolean;
   navigation: NavigationProp<any>;
   account: Account;
   pushToken: string;
 };
 
-const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, pet, med, readonly, navigation, account, pushToken }: MedicationPopupType) => {
+const MedicationPopup = ({ isActive, setPopupState, setMedication, pet, med, readonly, navigation, account, pushToken }: MedicationPopupType) => {
   const [description, setDescription] = useState(med.description);
   const [medName, setMedName] = useState(med.name);
   const [color, setColor] = useState(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
@@ -34,7 +34,6 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
   const [sponsorMeds, setSponsorMeds] = useState<SponsorMedication[]>([]);
   const [dateTimePickerMode, setDateTimePickerMode] = useState<'date'|'time'>('date');
   const [dateTimePickerVisible, setDateTimePickerVisible] = useState(false);
-  const [rem, setRem] = useState<Reminder>(med.reminder);
 
   // fetch all the sponsor meds to populate the dropdown with
   const getSponsorMedications = async () => {
@@ -74,8 +73,11 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     // TODO
   }
 
-  // these are the date (and period) cards that will be rendered in the popup
-  // const notifCards: React.JSX.Element = <View></View>;
+  // these are the cards (one for each notif) that the user interacts with for notifs
+  // const notifCards: React.JSX.Element = 
+  // <View>
+  //  {notifsCopy.map => <NotifCard />}
+  // </View>;
 
   if (isActive) {
     return (
