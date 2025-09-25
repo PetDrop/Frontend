@@ -189,9 +189,8 @@ const Home = ({ navigation, route }: HomeProps) => {
         isActive={infoToDisplay ? true : false}
         setPopupState={setPopupState}
         med={infoToDisplay ? infoToDisplay.med : emptyMed}
-        notifsCopy={[]}
+        medCopy={emptyMed}
         pet={infoToDisplay ? infoToDisplay.pet : emptyPet}
-        setMedication={() => { }}
         readonly={true}
         navigation={navigation}
         account={account}

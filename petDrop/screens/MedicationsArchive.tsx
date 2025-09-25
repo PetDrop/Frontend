@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import TopBottomBar from '../components/TopBottomBar';
 import MedicationCard from '../components/Medications/MedicationCard';
@@ -21,6 +21,7 @@ type MedicationsArchiveProps = {
 const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	const [selectedPet, setSelectedPet] = useState<Pet>(emptyPet);
 	const [med, setMed] = useState<Medication>(emptyMed);
+	const [medCopy, setMedCopy] = useState<Medication>(emptyMed);
 	const [popupState, setPopupState] = useState(medState.NO_ACTION);
 
 	const pushToken: string = route.params.pushToken;
@@ -28,13 +29,10 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	// store the user's account info to avoid typing "route.params.account" repeatedly
 	const account: Account = route.params.account;
 
-	// make deep copy
-	const notifsCopy = med.notifications.map(n => ({
-		...n,
-		data: new Map(n.data),
-		nextRuns: n.nextRuns.map(d => new Date(d)),
-		finalRuns: n.finalRuns.map(d => new Date(d))
-	}));
+	// only when med is updated should medCopy be reset
+	useEffect(() => {
+		setMedCopy(structuredClone(med));
+	}, [med]);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -110,10 +108,9 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 			<MedicationPopup
 				isActive={popupState === medState.SHOW_POPUP}
 				setPopupState={setPopupState}
-				setMedication={setMed}
 				pet={selectedPet}
 				med={med}
-				notifsCopy={notifsCopy}
+				medCopy={medCopy}
 				readonly={false}
 				navigation={navigation}
 				account={account}

@@ -119,7 +119,6 @@ const NotificationTimes = ({ times, onAddTime }: { times: Date[], onAddTime: () 
 // ---------- main component ----------
 type NotifCardProps = {
     notification: Notification;
-    // TODO setMedication?
 }
 
 const NotifCard = ({ notification }: NotifCardProps) => {

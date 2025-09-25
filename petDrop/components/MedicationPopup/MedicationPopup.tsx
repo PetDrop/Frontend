@@ -3,7 +3,7 @@ import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingV
 import { Image } from "expo-image";
 import DropdownArrow from "../../assets/dropdown_arrow.svg";
 import styles from '../../styles/MedicationPopup.styles';
-import { Account, Notification, Medication, Pet, SponsorMedication } from "../../data/dataTypes";
+import { Account, Notification, Medication, Pet, SponsorMedication, emptyNotification } from "../../data/dataTypes";
 import { useEffect, useState } from "react";
 import { Color } from "../../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
@@ -16,24 +16,24 @@ import NotifCard from "./NotifCard";
 type MedicationPopupType = {
   isActive: boolean;
   setPopupState: Function;
-  setMedication: Function;
   pet: Pet;
   med: Medication;
-  notifsCopy: Notification[];
+  medCopy: Medication;
   readonly: boolean;
   navigation: NavigationProp<any>;
   account: Account;
   pushToken: string;
 };
 
-const MedicationPopup = ({ isActive, setPopupState, setMedication, pet, med, readonly, navigation, account, pushToken }: MedicationPopupType) => {
-  const [description, setDescription] = useState(med.description);
-  const [medName, setMedName] = useState(med.name);
-  const [color, setColor] = useState(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
+const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, readonly, navigation, account, pushToken }: MedicationPopupType) => {
+  const ObjectID = require('bson-objectid');
+  const [medCopyId, setMedCopyId] = useState<string>(med.id || ObjectID());
+  const [medCopyDescription, setMedCopyDescription] = useState(medCopy.description);
+  const [medCopyName, setMedCopyName] = useState(medCopy.name);
+  const [medCopyColor, setMedCopyColor] = useState(medCopy.color || `#${Math.round(Math.random() * 899998 + 100000)}`);
+  const [medCopyNotifs, setMedCopyNotifs] = useState<Notification[]>(medCopy.notifications);
   const [propsChanged, setPropsChanged] = useState(true);
   const [sponsorMeds, setSponsorMeds] = useState<SponsorMedication[]>([]);
-  const [dateTimePickerMode, setDateTimePickerMode] = useState<'date'|'time'>('date');
-  const [dateTimePickerVisible, setDateTimePickerVisible] = useState(false);
 
   // fetch all the sponsor meds to populate the dropdown with
   const getSponsorMedications = async () => {
@@ -48,36 +48,83 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, pet, med, rea
     getSponsorMedications();
   }, []);
 
-  // this is the id that will be used for a med if changes are made by the popup
-  const ObjectID = require('bson-objectid');
-  const id = med.id !== '' ? med.id : ObjectID();
-
   // rerenders the popup when it's opened if it's possible something changed
   if (isActive && propsChanged) {
     setPropsChanged(false);
-    setDescription(med.description);
-    setMedName(med.name);
-    setColor(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
+    setMedCopyId(med.id || ObjectID());
+    setMedCopyDescription(medCopy.description);
+    setMedCopyName(medCopy.name);
+    setMedCopyNotifs(medCopy.notifications);
+    setMedCopyColor(medCopy.color || `#${Math.round(Math.random() * 899998 + 100000)}`);
   }
 
-  // resets all states - done if 'x' is hit or after saving the changes if closed with action
+  // resets all states - done if 'x' is hit
   const close = () => {
-    setDescription('');
-    setMedName('');
-    setColor(`#${Math.round(Math.random() * 899998 + 100000)}`);
+    setMedCopyId(med.id || ObjectID());
+    setMedCopyDescription(med.description);
+    setMedCopyName(med.name);
+    setMedCopyNotifs(med.notifications);
+    setMedCopyColor(med.color || `#${Math.round(Math.random() * 899998 + 100000)}`);
     setPropsChanged(true);
     setPopupState(medState.NO_ACTION);
   }
 
-  const closeWithAction = () => {
-    // TODO
+  const closeWithAction = (deletePressed: boolean) => {
+    if (deletePressed) {
+      setPopupState(medState.MED_DELETED);
+      setPropsChanged(true);
+      return;
+    }
+    // runningTotal will be used to determine the medState
+    let runningTotal = 0;
+    // check if the med was created or edited
+    // medStates get the tens value from med and the ones value from notifs
+    if (med.name === '' && medCopy.name !== '') { // med was created
+      runningTotal = 10;
+    } else {
+      // check if any fields of med and medCopy differ, i.e. if med was edited
+      const medFieldsToCheck: (keyof Medication)[] = ["name", "color", "description"];
+      for (const field of medFieldsToCheck) {
+        if (med[field] !== medCopy[field]) { // med was edited
+          runningTotal = 20;
+          break;
+        }
+      }
+    }
+    // check if notifs was created, edited, or deleted
+    if (med.notifications.length === 0 && medCopy.notifications.length > 0) { // notifs created
+      runningTotal += 1;
+    } else if (med.notifications.length > 0 && medCopy.notifications.length === 0) { // notifs deleted
+      runningTotal += 3;
+    } else {
+      if (med.notifications.length !== medCopy.notifications.length) { // efficient way to check if notifs edited
+        runningTotal += 2;
+      } else {
+        // check each notif to see if any fields were changed
+        const notifFieldsToCheck: (keyof Notification)[] = ["id", "title", "body", "data", "nextRuns", "finalRuns", "repeatInterval"];
+        med.notifications.forEach((notif, index) => {
+          for (const field of notifFieldsToCheck) {
+            if (notif[field] !== medCopy.notifications[index][field]) { // a notif was edited
+              runningTotal += 2;
+              // early return to avoid unnecessary iterations over notifs array
+              setPopupState(runningTotal);
+              setPropsChanged(true);
+              return;
+            }
+          }
+        })
+      }
+    }
+    // set popup state using runningTotal, which closes the popup
+    setPopupState(runningTotal);
+    setPropsChanged(true);
   }
 
   // these are the cards (one for each notif) that the user interacts with for notifs
-  // const notifCards: React.JSX.Element = 
-  // <View>
-  //  {notifsCopy.map => <NotifCard />}
-  // </View>;
+  const notifCards: React.JSX.Element =
+    <View>
+      {medCopyNotifs.map((notif, index) => <NotifCard notification={notif} key={index} />)}
+    </View>;
 
   if (isActive) {
     return (
@@ -93,7 +140,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, pet, med, rea
 
             {/* TODO: make this pressable to pick a color */}
             {/* color indicator */}
-            <View style={[styles.colorIndicator, { backgroundColor: color }]} />
+            <View style={[styles.colorIndicator, { backgroundColor: medCopyColor }]} />
 
             {/* medication selection */}
             {!readonly ?
@@ -105,7 +152,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, pet, med, rea
                     }
                   })
                 }
-                onSelect={(selectedItem: string) => { setMedName(selectedItem) }}
+                onSelect={(selectedItem: string) => { setMedCopyName(selectedItem) }}
                 renderButton={(selectedItem: string) => {
                   return (
                     <View style={styles.dropdownDefault}>
@@ -126,7 +173,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, pet, med, rea
               />
               :
               <View style={styles.dropdownDefault}>
-                <Text style={styles.text}>{medName}</Text>
+                <Text style={styles.text}>{medCopyName}</Text>
               </View>
             }
 
@@ -145,23 +192,19 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, pet, med, rea
           <ScrollView style={styles.popupBody}>
 
             {!readonly && (
-              <Button title="Add Daily Reminder" onPress={() => {}} />
-            )}
-
-            {!readonly && (
-              <Button title="Add Custom Reminder" onPress={() => {}} />
+              <Button title="Add Reminder" onPress={() => { setMedCopyNotifs((prev) => [...prev, emptyNotification]) }} />
             )}
 
             <View style={styles.notifCardContainer}>
-              {/* {notifCards} */}
+              {notifCards}
             </View>
 
             <TextInput
               style={[styles.textInput]}
               placeholder="Enter any info you'll need later (notes, instructions, etc.)"
               placeholderTextColor={Color.colorCornflowerblue}
-              value={description}
-              onChangeText={setDescription}
+              value={medCopyDescription}
+              onChangeText={setMedCopyDescription}
               multiline={true}
               editable={!readonly}
             />
@@ -170,7 +213,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, pet, med, rea
 
           {/* view instructions button */}
           {med.id !== '' && (
-            <Pressable onPress={() => { navigation.navigate('Instructions', { account: account, medName: medName, pushToken: pushToken }) }}>
+            <Pressable onPress={() => { navigation.navigate('Instructions', { account: account, medName: medCopyName, pushToken: pushToken }) }}>
               <View style={styles.instructionButtonOval}>
                 <Text style={[styles.buttonText, styles.text]}>Instructions</Text>
               </View>
@@ -179,8 +222,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, pet, med, rea
 
           {/* save button */}
           {!readonly && (
-            <Pressable onPress={() => { //closeWithAction(false)
-            }}>
+            <Pressable onPress={() => { closeWithAction(false) }}>
               <View style={styles.saveButtonOval}>
                 <Text style={[styles.buttonText, styles.text]}>SAVE</Text>
               </View>
@@ -190,8 +232,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, pet, med, rea
           {/* delete button */}
           {(med.id !== '' && !readonly) && (
             <View style={styles.deleteButtonContainer}>
-              <DeleteButton onPressFunction={() => { //closeWithAction(true)
-              }} innerText={'delete'} color={Color.colorFirebrick} />
+              <DeleteButton onPressFunction={() => { closeWithAction(true) }} innerText={'delete'} color={Color.colorFirebrick} />
             </View>
           )}
 
