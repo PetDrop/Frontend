@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList, Button } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { Notification } from '../../data/dataTypes';
 import styles from '../../styles/NotifCard.styles';
@@ -68,91 +68,124 @@ const MultiDateSelector = ({ dates, onAddDate, onRemoveDate }: MultiDateSelector
 );
 
 // ----------- Main component -------------
-type NotifCardProps = { notification: Notification };
+type NotifCardProps = {
+    notification: Notification;
+    onChange: (n: Notification) => void;
+    onDelete?: () => void;
+};
 
-export default function NotifCard({ notification }: NotifCardProps) {
-    const [id, setId] = useState<string>('');
-    const [interval, setInterval] = useState<{ name: string }>({ name: '' });
-    const [notifTimes, setNotifTimes] = useState<Date[]>([]);
-    const [occurances, setOccurances] = useState<number>();
-    const [startDates, setStartDates] = useState<Date[]>([]);
-    const [endDates, setEndDates] = useState<Date[]>([]);
-    const [pickerVisible, setPickerVisible] = useState(false);
-    const [pickerMode, setPickerMode] = useState<'date' | 'time'>('date');
-    const [currentAction, setCurrentAction] = useState<'addStart' | 'addEnd' | 'addTime'>();
+export default function NotifCard({ notification, onChange, onDelete }: NotifCardProps) {
+    const [pickerVisible, setPickerVisible] = React.useState(false);
+    const [pickerMode, setPickerMode] = React.useState<'date' | 'time'>('date');
+    const [currentAction, setCurrentAction] =
+        React.useState<'addStart' | 'addEnd' | 'addTime'>();
 
-    // populate states using fields from notification
-    useEffect(() => {
-        if (!notification) return;
+    // ----- derived values from notification -----
+    const repeatMinutes = notification.repeatInterval;
 
-        setId(notification.id);
+    const intervalName =
+        repeatMinutes === 1440
+            ? 'Daily'
+            : repeatMinutes === 10080
+                ? 'Weekly'
+                : repeatMinutes >= 40320
+                    ? 'Monthly'
+                    : '';
 
-        // interval from repeatInterval
-        const mins = notification.repeatInterval;
-        if (mins === 1440) setInterval({ name: 'daily' });
-        else if (mins === 10080) setInterval({ name: 'weekly' });
-        else if (mins >= 40320) setInterval({ name: 'monthly' });
-        else setInterval({ name: '' });
-
-        // unique calendar dates from nextRuns
-        const uniqueStartDates: Date[] = [];
-        const seenStartDays = new Set<string>();
+    // unique start/end dates (date part only)
+    const startDates = React.useMemo(() => {
+        const seen = new Set<string>();
+        const result: Date[] = [];
         notification.nextRuns.forEach(d => {
             const dt = new Date(d);
             const key = dt.toISOString().slice(0, 10);
-            if (!seenStartDays.has(key)) {
-                seenStartDays.add(key);
-                uniqueStartDates.push(new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()));
+            if (!seen.has(key)) {
+                seen.add(key);
+                result.push(new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()));
             }
         });
-        setStartDates(uniqueStartDates);
+        return result;
+    }, [notification.nextRuns]);
 
-        // unique calendar dates from finalRuns
-        // only first index needed for a daily interval
-        if (interval.name === 'Daily') {
-            const dt = new Date(notification.finalRuns[0]);
-            setEndDates([new Date(dt.getFullYear(), dt.getMonth(), dt.getDate())]);
-        } else {
-            const uniqueEndDates: Date[] = [];
-            const seenEndDays = new Set<string>();
-            notification.finalRuns.forEach(d => {
-                const dt = new Date(d);
-                const key = dt.toISOString().slice(0, 10);
-                if (!seenEndDays.has(key)) {
-                    seenEndDays.add(key);
-                    uniqueEndDates.push(new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()));
-                }
-            });
-            setEndDates(uniqueEndDates);
-        }
+    const endDates = React.useMemo(() => {
+        const seen = new Set<string>();
+        const result: Date[] = [];
+        notification.finalRuns.forEach(d => {
+            const dt = new Date(d);
+            const key = dt.toISOString().slice(0, 10);
+            if (!seen.has(key)) {
+                seen.add(key);
+                result.push(new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()));
+            }
+        });
+        return result;
+    }, [notification.finalRuns]);
 
-        // occurances done by dividing time difference between first and last run by the interval
-        if (notification.nextRuns.length && notification.finalRuns.length) {
-            const first = new Date(notification.nextRuns[0]).getTime();
-            const last = new Date(notification.finalRuns[0]).getTime();
-            const diffMinutes = (last - first) / (1000 * 60);
-            setOccurances(Math.floor(diffMinutes / mins) + 1);
-        } else {
-            setOccurances(undefined);
-        }
-
-        // unique times of day from nextRuns
-        const seenTimes = new Set<string>();
+    // unique times of day
+    const notifTimes = React.useMemo(() => {
+        const seen = new Set<string>();
         const times: Date[] = [];
         notification.nextRuns.forEach(d => {
             const t = new Date(d);
             const key = `${t.getHours()}:${t.getMinutes()}:${t.getSeconds()}`;
-            if (!seenTimes.has(key)) {
-                seenTimes.add(key);
-                times.push(
-                    new Date(1970, 0, 1, t.getHours(), t.getMinutes(), t.getSeconds())
-                );
+            if (!seen.has(key)) {
+                seen.add(key);
+                times.push(new Date(1970, 0, 1, t.getHours(), t.getMinutes(), t.getSeconds()));
             }
         });
-        setNotifTimes(times);
-    }, [notification]);
+        return times;
+    }, [notification.nextRuns]);
 
+    // occurrences estimate
+    const occurances = React.useMemo(() => {
+        if (!notification.nextRuns.length || !notification.finalRuns.length) return undefined;
+        const first = new Date(notification.nextRuns[0]).getTime();
+        const last = new Date(notification.finalRuns[0]).getTime();
+        return Math.floor((last - first) / (1000 * 60 * repeatMinutes)) + 1;
+    }, [notification.nextRuns, notification.finalRuns, repeatMinutes]);
 
+    // ----- update helpers -----
+    const updateNotification = (patch: Partial<Notification>) =>
+        onChange({ ...notification, ...patch });
+
+    const addStartDate = (date: Date) => {
+        updateNotification({
+            nextRuns: [...notification.nextRuns, date],
+            finalRuns: [...notification.finalRuns, date],
+        });
+    };
+
+    const removeStartDate = (i: number) => {
+        const removeKey = startDates[i].toISOString().slice(0, 10);
+        updateNotification({
+            nextRuns: notification.nextRuns.filter(
+                d => d.toISOString().slice(0, 10) !== removeKey
+            ),
+            finalRuns: notification.finalRuns.filter(
+                d => d.toISOString().slice(0, 10) !== removeKey
+            ),
+        });
+    };
+
+    const addTime = (time: Date) => {
+        // replicate this time for all start dates
+        const withTime = startDates.flatMap(sd =>
+            new Date(
+                sd.getFullYear(),
+                sd.getMonth(),
+                sd.getDate(),
+                time.getHours(),
+                time.getMinutes(),
+                time.getSeconds()
+            )
+        );
+        updateNotification({
+            nextRuns: [...notification.nextRuns, ...withTime],
+            finalRuns: [...notification.finalRuns, ...withTime],
+        });
+    };
+
+    // ----- date/time picker -----
     const showPicker = (action: typeof currentAction, mode: 'date' | 'time' = 'date') => {
         setCurrentAction(action);
         setPickerMode(mode);
@@ -160,72 +193,44 @@ export default function NotifCard({ notification }: NotifCardProps) {
     };
 
     const handleConfirm = (date: Date) => {
-        switch (currentAction) {
-            case 'addStart':
-                setStartDates(prev => [...prev, date]);
-                setEndDates(prev => [...prev, date]); // keep arrays aligned
-                break;
-            case 'addEnd':
-                // TODO - not sure if this works
-                setEndDates(prev => {
-                    const copy = [...prev];
-                    // update last or create parallel index
-                    copy[copy.length - 1] = date;
-                    return copy;
-                });
-                break;
-            case 'addTime':
-                setNotifTimes(prev => [...prev, date]);
-                break;
-        }
+        if (currentAction === 'addStart') addStartDate(date);
+        else if (currentAction === 'addTime') addTime(date);
         setPickerVisible(false);
     };
 
-    // Render logic
+    // ----- render -----
     function renderIntervalSection() {
-        if (interval.name === 'daily') {
-            // Show only the first start/end from arrays
+        if (intervalName === 'Daily') {
             const firstStart = startDates[0] ?? null;
             const firstEnd = endDates[0] ?? null;
             return (
                 <View>
-                    <TouchableOpacity
-                        style={local.selector}
-                        onPress={() => showPicker('addStart')}
-                    >
-                        <Text>
-                            Start Date:{' '}
-                            {firstStart ? firstStart.toDateString() : 'Select'}
-                        </Text>
+                    <TouchableOpacity style={local.selector} onPress={() => showPicker('addStart')}>
+                        <Text>Start Date: {firstStart ? firstStart.toDateString() : 'Select'}</Text>
                     </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={local.selector}
-                        onPress={() => showPicker('addEnd')}
-                    >
-                        <Text>
-                            End Date: {firstEnd ? firstEnd.toDateString() : 'Select'}
-                        </Text>
+                    <TouchableOpacity style={local.selector} onPress={() => showPicker('addStart')}>
+                        <Text>End Date: {firstEnd ? firstEnd.toDateString() : 'Select'}</Text>
                     </TouchableOpacity>
                 </View>
             );
         }
-
-        if (interval.name === 'weekly' || interval.name === 'monthly') {
+        if (intervalName === 'Weekly' || intervalName === 'Monthly') {
             return (
                 <View>
                     <MultiDateSelector
                         dates={startDates}
                         onAddDate={() => showPicker('addStart')}
-                        onRemoveDate={index => {
-                            setStartDates(s => s.filter((_, i) => i !== index));
-                            setEndDates(e => e.filter((_, i) => i !== index));
-                        }}
+                        onRemoveDate={removeStartDate}
                     />
                     <NumberInput
-                        label={interval.name === 'weekly' ? 'Number of Weeks' : 'Number of Months'}
+                        label={intervalName === 'Weekly' ? 'Number of Weeks' : 'Number of Months'}
                         value={occurances}
-                        onChange={setOccurances}
+                        onChange={n =>
+                            updateNotification({
+                                // you may convert this back to repeatInterval if needed
+                                repeatInterval: notification.repeatInterval,
+                            })
+                        }
                     />
                 </View>
             );
@@ -237,16 +242,23 @@ export default function NotifCard({ notification }: NotifCardProps) {
         <View style={styles.container}>
             <IntervalSwitch
                 data={[{ name: 'Daily' }, { name: 'Weekly' }, { name: 'Monthly' }]}
-                onSwitch={setInterval}
-                selectedItem={interval}
+                onSwitch={item => {
+                    const name = item.name.toLowerCase();
+                    const minutes =
+                        name === 'Daily' ? 1440 : name === 'Weekly' ? 10080 : 40320;
+                    updateNotification({ repeatInterval: minutes });
+                }}
+                selectedItem={{ name: intervalName }}
                 switchItem={'Interval'}
                 text={'Select Interval'}
             />
             {renderIntervalSection()}
-            <NotificationTimes
-                times={notifTimes}
-                onAddTime={() => showPicker('addTime', 'time')}
-            />
+            <NotificationTimes times={notifTimes} onAddTime={() => showPicker('addTime', 'time')} />
+            {onDelete && (
+                <TouchableOpacity onPress={onDelete}>
+                    <Text>Delete</Text>
+                </TouchableOpacity>
+            )}
 
             <DateTimePickerModal
                 isVisible={pickerVisible}
@@ -258,11 +270,9 @@ export default function NotifCard({ notification }: NotifCardProps) {
     );
 }
 
-// --------- Local styles ----------
+// ---- local styles ----
 const local = StyleSheet.create({
     row: { flexDirection: 'row', marginVertical: 8 },
-    option: { padding: 8, marginHorizontal: 4, borderWidth: 1, borderRadius: 6 },
-    optionSelected: { backgroundColor: '#87cefa' },
     selector: { marginVertical: 8 },
     input: {
         borderWidth: 1,
@@ -272,4 +282,5 @@ const local = StyleSheet.create({
         width: 80,
         marginTop: 4,
     },
+    option: { padding: 8, marginHorizontal: 4, borderWidth: 1, borderRadius: 6 },
 });

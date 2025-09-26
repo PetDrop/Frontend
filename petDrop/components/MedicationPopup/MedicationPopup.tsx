@@ -123,7 +123,18 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, readonly,
   // these are the cards (one for each notif) that the user interacts with for notifs
   const notifCards: React.JSX.Element =
     <View>
-      {medCopyNotifs.map((notif, index) => <NotifCard notification={notif} key={index} />)}
+      {medCopyNotifs.map((notif, index) =>
+        <NotifCard
+          notification={notif}
+          onChange={(updatedNotif) => {
+            setMedCopyNotifs((prev) =>
+              prev.map((n, i) => (i === index ? updatedNotif : n))
+            );
+          }}
+          key={index}
+          onDelete={() => {setMedCopyNotifs(prev => prev.filter(n => n.id !== notif.id))}}
+        />
+      )}
     </View>;
 
   if (isActive) {
