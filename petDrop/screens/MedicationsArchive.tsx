@@ -12,6 +12,7 @@ import { Account, emptyMed, emptyPet, Medication, Pet } from '../data/dataTypes'
 import { medState } from '../data/enums';
 import { NavigationProp, useFocusEffect } from '@react-navigation/native';
 import Header from '../components/Header';
+import { httpRequest } from '../data/endpoints';
 
 type MedicationsArchiveProps = {
 	navigation: NavigationProp<any>;
@@ -46,11 +47,46 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	}
 
 	const WriteToDB = async () => {
-		setPopupState(medState.NO_ACTION);
+		let response;
+		switch (popupState) {
+			case medState.MED_NOTHING_NOTIF_CREATED:
+				response = await httpRequest('create notifs and add to med', 'POST', JSON.stringify({ id: medCopy.id, notifs: medCopy.notifications }));
+				break;
+			case medState.MED_NOTHING_NOTIF_EDITED:
+				response = await httpRequest('edit notifs', 'PUT', JSON.stringify({ id: medCopy.id, notifs: medCopy.notifications }));
+				break;
+			case medState.MED_NOTHING_NOTIF_DELETED:
+				response = await httpRequest('delete all notifs from med', 'DELETE', JSON.stringify({ id: medCopy.id }));
+				break;
+			case medState.MED_CREATED_NOTIF_NOTHING:
+			case medState.MED_CREATED_NOTIF_CREATED:
+				response = await httpRequest('add med (possibly with notifs)', 'POST', JSON.stringify({ med: medCopy }));
+				setSelectedPet(prev => {return {...prev, medications: prev.medications.concat([medCopy])}});
+				break;
+			case medState.MED_EDITED_NOTIF_NOTHING:
+			case medState.MED_EDITED_NOTIF_CREATED:
+			case medState.MED_EDITED_NOTIF_EDITED:
+			case medState.MED_EDITED_NOTIF_DELETED:
+				response = await httpRequest('edit med (possibly notifs too)', 'PUT', JSON.stringify({ med: medCopy }));
+				break;
+			case medState.MED_DELETED:
+				httpRequest('delete med and any notifs', 'DELETE', JSON.stringify({ id: medCopy.id }));
+				setSelectedPet(prev => {return {...prev, medications: prev.medications.filter((med) => med.id !== medCopy.id)}});
+				setMed(emptyMed);
+				return;
+			default:
+				break;
+		}
+		if (response?.ok) {
+			setMed(await response.json());
+		} else {
+			console.error(`http request failed with error code ${response?.status}`);
+		}
 	}
 
 	if (popupState !== medState.SHOW_POPUP && popupState !== medState.NO_ACTION) {
 		WriteToDB();
+		setPopupState(medState.NO_ACTION);
 	}
 
 	let medicationCards: React.JSX.Element[];

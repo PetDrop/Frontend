@@ -1,97 +1,17 @@
 import * as React from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
-import styles from '../../styles/NotifCard.styles';
-import { useState } from 'react';
-import { Notification } from '../../data/dataTypes';
+import { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { enableExperimentalWebImplementation } from 'react-native-gesture-handler';
+import { Notification } from '../../data/dataTypes';
+import styles from '../../styles/NotifCard.styles';
+import IntervalSwitch from '../ItemSwitch';
 
-// ---------- helper sub-components ----------
-
-// Switch between daily / weekly / monthly
-const ItemSwitch = ({
-    value,
-    onChange,
-}: {
-    value: string;
-    onChange: (v: string) => void;
-}) => {
-    const options = ['daily', 'weekly', 'monthly'];
-    return (
-        <View style={local.row}>
-            {options.map(opt => (
-                <TouchableOpacity
-                    key={opt}
-                    style={[
-                        local.option,
-                        value === opt && { backgroundColor: '#87cefa' },
-                    ]}
-                    onPress={() => onChange(opt)}
-                >
-                    <Text>{opt}</Text>
-                </TouchableOpacity>
-            ))}
-        </View>
-    );
-};
-
-// Pick a single calendar date
-const DateSelector = ({
-    label,
-    onPress,
-    date,
-}: {
-    label: string;
-    onPress: () => void;
-    date?: Date;
-}) => (
-    <TouchableOpacity style={local.selector} onPress={onPress}>
-        <Text>{label}: {date ? date.toDateString() : 'Select'}</Text>
-    </TouchableOpacity>
-);
-
-// Choose which weekdays
-const MultipleChoiceWeekdaySelection = ({
-    value,
-    onChange,
-}: {
-    value: string[];
-    onChange: (days: string[]) => void;
-}) => {
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const toggle = (d: string) =>
-        value.includes(d)
-            ? onChange(value.filter(x => x !== d))
-            : onChange([...value, d]);
-
-    return (
-        <View style={local.rowWrap}>
-            {days.map(d => (
-                <TouchableOpacity
-                    key={d}
-                    style={[
-                        local.optionSmall,
-                        value.includes(d) && { backgroundColor: '#87cefa' },
-                    ]}
-                    onPress={() => toggle(d)}
-                >
-                    <Text>{d}</Text>
-                </TouchableOpacity>
-            ))}
-        </View>
-    );
-};
-
-// Number input
-const NumberOfOccurancesInput = ({
-    value,
-    onChange,
-    label,
-}: {
+type NumberInputProps = {
     value?: number;
-    onChange: (n: number) => void;
     label: string;
-}) => (
+    onChange: (n: number) => void;
+}
+const NumberInput = ({ value, label, onChange }: NumberInputProps) => (
     <View style={local.selector}>
         <Text>{label}</Text>
         <TextInput
@@ -103,12 +23,16 @@ const NumberOfOccurancesInput = ({
     </View>
 );
 
-// List of notification times with “add time” button
-const NotificationTimes = ({ times, onAddTime }: { times: Date[], onAddTime: () => void }) => (
+type NotificationTimesProps = {
+    times: Date[];
+    onAddTime: () => void;
+};
+
+const NotificationTimes = ({ times, onAddTime }: NotificationTimesProps) => (
     <View style={local.selector}>
         <Text>Notification Times:</Text>
-        {times.map((time, index) => (
-            <Text key={index}>{time.toLocaleTimeString()}</Text>
+        {times.map((t, i) => (
+            <Text key={i}>{t.toLocaleTimeString()}</Text>
         ))}
         <TouchableOpacity onPress={onAddTime}>
             <Text style={{ color: 'blue' }}>+ Add Time</Text>
@@ -116,121 +40,229 @@ const NotificationTimes = ({ times, onAddTime }: { times: Date[], onAddTime: () 
     </View>
 );
 
-// ---------- main component ----------
-type NotifCardProps = {
-    notification: Notification;
-}
+type MultiDateSelectorProps = {
+    dates: Date[];
+    onAddDate: () => void;
+    onRemoveDate: (index: number) => void;
+};
 
-const NotifCard = ({ notification }: NotifCardProps) => {
-    const [startDate, setStartDate] = useState<Date>();
-    const [endDate, setEndDate] = useState<Date>();
-    const [occurances, setOccurances] = useState<number>();
-    const [weekdays, setWeekdays] = useState<string[]>([]);
+const MultiDateSelector = ({ dates, onAddDate, onRemoveDate }: MultiDateSelectorProps) => (
+    <View style={local.selector}>
+        <Text>Selected Start Dates:</Text>
+        <FlatList
+            data={dates}
+            keyExtractor={(_, i) => i.toString()}
+            renderItem={({ item, index }) => (
+                <View style={local.row}>
+                    <Text>{item.toDateString()}</Text>
+                    <TouchableOpacity onPress={() => onRemoveDate(index)}>
+                        <Text style={{ color: 'red', marginLeft: 8 }}>Remove</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+        />
+        <TouchableOpacity onPress={onAddDate}>
+            <Text style={{ color: 'blue' }}>+ Add Start Date</Text>
+        </TouchableOpacity>
+    </View>
+);
+
+// ----------- Main component -------------
+type NotifCardProps = { notification: Notification };
+
+export default function NotifCard({ notification }: NotifCardProps) {
+    const [id, setId] = useState<string>('');
+    const [interval, setInterval] = useState<{ name: string }>({ name: '' });
     const [notifTimes, setNotifTimes] = useState<Date[]>([]);
-    const [interval, setInterval] = useState<'daily' | 'weekly' | 'monthly' | ''>('');
-    const [dateTimePickerMode, setDateTimePickerMode] = useState<'date'|'time'>();
-    const [dateTimePickerVisible, setDateTimePickerVisible] = useState(false);
+    const [occurances, setOccurances] = useState<number>();
+    const [startDates, setStartDates] = useState<Date[]>([]);
+    const [endDates, setEndDates] = useState<Date[]>([]);
+    const [pickerVisible, setPickerVisible] = useState(false);
+    const [pickerMode, setPickerMode] = useState<'date' | 'time'>('date');
+    const [currentAction, setCurrentAction] = useState<'addStart' | 'addEnd' | 'addTime'>();
 
-    const addTime = () => {
-        setDateTimePickerMode('time');
-        setDateTimePickerVisible(true);
+    // populate states using fields from notification
+    useEffect(() => {
+        if (!notification) return;
+
+        setId(notification.id);
+
+        // interval from repeatInterval
+        const mins = notification.repeatInterval;
+        if (mins === 1440) setInterval({ name: 'daily' });
+        else if (mins === 10080) setInterval({ name: 'weekly' });
+        else if (mins >= 40320) setInterval({ name: 'monthly' });
+        else setInterval({ name: '' });
+
+        // unique calendar dates from nextRuns
+        const uniqueStartDates: Date[] = [];
+        const seenStartDays = new Set<string>();
+        notification.nextRuns.forEach(d => {
+            const dt = new Date(d);
+            const key = dt.toISOString().slice(0, 10);
+            if (!seenStartDays.has(key)) {
+                seenStartDays.add(key);
+                uniqueStartDates.push(new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()));
+            }
+        });
+        setStartDates(uniqueStartDates);
+
+        // unique calendar dates from finalRuns
+        // only first index needed for a daily interval
+        if (interval.name === 'Daily') {
+            const dt = new Date(notification.finalRuns[0]);
+            setEndDates([new Date(dt.getFullYear(), dt.getMonth(), dt.getDate())]);
+        } else {
+            const uniqueEndDates: Date[] = [];
+            const seenEndDays = new Set<string>();
+            notification.finalRuns.forEach(d => {
+                const dt = new Date(d);
+                const key = dt.toISOString().slice(0, 10);
+                if (!seenEndDays.has(key)) {
+                    seenEndDays.add(key);
+                    uniqueEndDates.push(new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()));
+                }
+            });
+            setEndDates(uniqueEndDates);
+        }
+
+        // occurances done by dividing time difference between first and last run by the interval
+        if (notification.nextRuns.length && notification.finalRuns.length) {
+            const first = new Date(notification.nextRuns[0]).getTime();
+            const last = new Date(notification.finalRuns[0]).getTime();
+            const diffMinutes = (last - first) / (1000 * 60);
+            setOccurances(Math.floor(diffMinutes / mins) + 1);
+        } else {
+            setOccurances(undefined);
+        }
+
+        // unique times of day from nextRuns
+        const seenTimes = new Set<string>();
+        const times: Date[] = [];
+        notification.nextRuns.forEach(d => {
+            const t = new Date(d);
+            const key = `${t.getHours()}:${t.getMinutes()}:${t.getSeconds()}`;
+            if (!seenTimes.has(key)) {
+                seenTimes.add(key);
+                times.push(
+                    new Date(1970, 0, 1, t.getHours(), t.getMinutes(), t.getSeconds())
+                );
+            }
+        });
+        setNotifTimes(times);
+    }, [notification]);
+
+
+    const showPicker = (action: typeof currentAction, mode: 'date' | 'time' = 'date') => {
+        setCurrentAction(action);
+        setPickerMode(mode);
+        setPickerVisible(true);
     };
 
-    function renderBasedOnInterval(): React.JSX.Element {
-        switch (interval) {
-            case 'daily':
-                return (
-                    <View>
-                        <DateSelector
-                            label="Start Date"
-                            date={startDate}
-                            onPress={() => {
-                                setDateTimePickerMode('date');
-                                setDateTimePickerVisible(true);
-                            }}
-                        />
-                        <DateSelector
-                            label="End Date"
-                            date={endDate}
-                            onPress={() => {
-                                setDateTimePickerMode('date');
-                                setDateTimePickerVisible(true);
-                            }}
-                        />
-                    </View>
-                );
-            case 'weekly':
-                return (
-                    <View>
-                        <MultipleChoiceWeekdaySelection
-                            value={weekdays}
-                            onChange={setWeekdays}
-                        />
-                        <NumberOfOccurancesInput
-                            label="Number of Weeks"
-                            value={occurances}
-                            onChange={setOccurances}
-                        />
-                    </View>
-                );
-            case 'monthly':
-                return (
-                    <View>
-                        <DateSelector
-                            label="Day of Month"
-                            date={startDate}
-                            onPress={() => {
-                                setDateTimePickerMode('date');
-                                setDateTimePickerVisible(true);
-                            }}
-                        />
-                        <NumberOfOccurancesInput
-                            label="Number of Months"
-                            value={occurances}
-                            onChange={setOccurances}
-                        />
-                    </View>
-                );
-            default:
-                return <></>;
+    const handleConfirm = (date: Date) => {
+        switch (currentAction) {
+            case 'addStart':
+                setStartDates(prev => [...prev, date]);
+                setEndDates(prev => [...prev, date]); // keep arrays aligned
+                break;
+            case 'addEnd':
+                // TODO - not sure if this works
+                setEndDates(prev => {
+                    const copy = [...prev];
+                    // update last or create parallel index
+                    copy[copy.length - 1] = date;
+                    return copy;
+                });
+                break;
+            case 'addTime':
+                setNotifTimes(prev => [...prev, date]);
+                break;
         }
+        setPickerVisible(false);
+    };
+
+    // Render logic
+    function renderIntervalSection() {
+        if (interval.name === 'daily') {
+            // Show only the first start/end from arrays
+            const firstStart = startDates[0] ?? null;
+            const firstEnd = endDates[0] ?? null;
+            return (
+                <View>
+                    <TouchableOpacity
+                        style={local.selector}
+                        onPress={() => showPicker('addStart')}
+                    >
+                        <Text>
+                            Start Date:{' '}
+                            {firstStart ? firstStart.toDateString() : 'Select'}
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={local.selector}
+                        onPress={() => showPicker('addEnd')}
+                    >
+                        <Text>
+                            End Date: {firstEnd ? firstEnd.toDateString() : 'Select'}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            );
+        }
+
+        if (interval.name === 'weekly' || interval.name === 'monthly') {
+            return (
+                <View>
+                    <MultiDateSelector
+                        dates={startDates}
+                        onAddDate={() => showPicker('addStart')}
+                        onRemoveDate={index => {
+                            setStartDates(s => s.filter((_, i) => i !== index));
+                            setEndDates(e => e.filter((_, i) => i !== index));
+                        }}
+                    />
+                    <NumberInput
+                        label={interval.name === 'weekly' ? 'Number of Weeks' : 'Number of Months'}
+                        value={occurances}
+                        onChange={setOccurances}
+                    />
+                </View>
+            );
+        }
+        return null;
     }
 
     return (
         <View style={styles.container}>
-            <ItemSwitch value={interval} onChange={v => setInterval(v as any)} />
-            {renderBasedOnInterval()}
-            <NotificationTimes times={notifTimes} onAddTime={addTime} />
+            <IntervalSwitch
+                data={[{ name: 'Daily' }, { name: 'Weekly' }, { name: 'Monthly' }]}
+                onSwitch={setInterval}
+                selectedItem={interval}
+                switchItem={'Interval'}
+                text={'Select Interval'}
+            />
+            {renderIntervalSection()}
+            <NotificationTimes
+                times={notifTimes}
+                onAddTime={() => showPicker('addTime', 'time')}
+            />
 
             <DateTimePickerModal
-              date={new Date(Date.now())}
-              isVisible={dateTimePickerVisible}
-              mode={dateTimePickerMode}
-              onConfirm={(date) => {}}
-              onCancel={() => { setDateTimePickerVisible(false) }}
+                isVisible={pickerVisible}
+                mode={pickerMode}
+                onConfirm={handleConfirm}
+                onCancel={() => setPickerVisible(false)}
             />
         </View>
     );
-};
+}
 
-export default NotifCard;
-
-// local styling helpers
+// --------- Local styles ----------
 const local = StyleSheet.create({
     row: { flexDirection: 'row', marginVertical: 8 },
-    rowWrap: { flexDirection: 'row', flexWrap: 'wrap', marginVertical: 8 },
-    option: {
-        padding: 8,
-        marginHorizontal: 4,
-        borderWidth: 1,
-        borderRadius: 6,
-    },
-    optionSmall: {
-        padding: 6,
-        margin: 2,
-        borderWidth: 1,
-        borderRadius: 4,
-    },
+    option: { padding: 8, marginHorizontal: 4, borderWidth: 1, borderRadius: 6 },
+    optionSelected: { backgroundColor: '#87cefa' },
     selector: { marginVertical: 8 },
     input: {
         borderWidth: 1,
