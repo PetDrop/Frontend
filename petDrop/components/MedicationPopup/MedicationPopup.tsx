@@ -4,7 +4,7 @@ import { Image } from "expo-image";
 import DropdownArrow from "../../assets/dropdown_arrow.svg";
 import styles from '../../styles/MedicationPopup.styles';
 import { Account, Notification, Medication, Pet, SponsorMedication, emptyNotification } from "../../data/dataTypes";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Color } from "../../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
 import DeleteButton from '../CustomButton';
@@ -121,21 +121,24 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, readonly,
   }
 
   // these are the cards (one for each notif) that the user interacts with for notifs
-  const notifCards: React.JSX.Element =
-    <View>
-      {medCopyNotifs.map((notif, index) =>
-        <NotifCard
-          notification={notif}
-          onChange={(updatedNotif) => {
-            setMedCopyNotifs((prev) =>
-              prev.map((n, i) => (i === index ? updatedNotif : n))
-            );
-          }}
-          key={index}
-          onDelete={() => {setMedCopyNotifs(prev => prev.filter(n => n.id !== notif.id))}}
-        />
-      )}
-    </View>;
+  const notifCards: React.JSX.Element = useMemo(() => {
+    return (
+      <View>
+        {medCopyNotifs.map((notif, index) =>
+          <NotifCard
+            notification={{ ...notif, zoneId: Intl.DateTimeFormat().resolvedOptions().timeZone }}
+            onChange={(updatedNotif) => {
+              setMedCopyNotifs((prev) =>
+                prev.map((n, i) => (i === index ? updatedNotif : n))
+              );
+            }}
+            key={index}
+            onDelete={() => { setMedCopyNotifs(prev => prev.filter(n => n.id !== notif.id)) }}
+          />
+        )}
+      </View>
+    )
+  }, [medCopyNotifs]);
 
   if (isActive) {
     return (

@@ -12,7 +12,11 @@ import { Account, emptyMed, emptyPet, Medication, Pet } from '../data/dataTypes'
 import { medState } from '../data/enums';
 import { NavigationProp, useFocusEffect } from '@react-navigation/native';
 import Header from '../components/Header';
-import { httpRequest } from '../data/endpoints';
+import {
+	ADD_MEDICATION, CREATE_NOTIFS_FOR_MED, DELETE_MEDICATION, DELETE_NOTIFS_FROM_MED,
+	EDIT_NOTIFS_FOR_MED, httpRequest, UPDATE_MED_AND_NOTIFS, UPDATE_MED_CREATE_NOTIFS,
+	UPDATE_MED_DELETE_NOTIFS, UPDATE_MED_NOT_NOTIFS
+} from '../data/endpoints';
 
 type MedicationsArchiveProps = {
 	navigation: NavigationProp<any>;
@@ -50,28 +54,34 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 		let response;
 		switch (popupState) {
 			case medState.MED_NOTHING_NOTIF_CREATED:
-				response = await httpRequest('create notifs and add to med', 'POST', JSON.stringify({ id: medCopy.id, notifs: medCopy.notifications }));
+				response = await httpRequest(CREATE_NOTIFS_FOR_MED + medCopy.id, 'POST', JSON.stringify({ notifications: medCopy.notifications }));
 				break;
 			case medState.MED_NOTHING_NOTIF_EDITED:
-				response = await httpRequest('edit notifs', 'PUT', JSON.stringify({ id: medCopy.id, notifs: medCopy.notifications }));
+				response = await httpRequest(EDIT_NOTIFS_FOR_MED + medCopy.id, 'PUT', JSON.stringify({ notifications: medCopy.notifications }));
 				break;
 			case medState.MED_NOTHING_NOTIF_DELETED:
-				response = await httpRequest('delete all notifs from med', 'DELETE', JSON.stringify({ id: medCopy.id }));
+				response = await httpRequest(DELETE_NOTIFS_FROM_MED + medCopy.id, 'DELETE', '');
 				break;
 			case medState.MED_CREATED_NOTIF_NOTHING:
 			case medState.MED_CREATED_NOTIF_CREATED:
-				response = await httpRequest('add med (possibly with notifs)', 'POST', JSON.stringify({ med: medCopy }));
-				setSelectedPet(prev => {return {...prev, medications: prev.medications.concat([medCopy])}});
+				response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify({ med: medCopy }));
+				setSelectedPet(prev => { return { ...prev, medications: prev.medications.concat([medCopy]) } });
 				break;
 			case medState.MED_EDITED_NOTIF_NOTHING:
+				response = await httpRequest(UPDATE_MED_NOT_NOTIFS, 'PUT', JSON.stringify({ med: medCopy }));
+				break;
 			case medState.MED_EDITED_NOTIF_CREATED:
+				response = await httpRequest(UPDATE_MED_CREATE_NOTIFS, 'PUT', JSON.stringify({ med: medCopy }));
+				break;
 			case medState.MED_EDITED_NOTIF_EDITED:
+				response = await httpRequest(UPDATE_MED_AND_NOTIFS, 'PUT', JSON.stringify({ med: medCopy }));
+				break;
 			case medState.MED_EDITED_NOTIF_DELETED:
-				response = await httpRequest('edit med (possibly notifs too)', 'PUT', JSON.stringify({ med: medCopy }));
+				response = await httpRequest(UPDATE_MED_DELETE_NOTIFS, 'PUT', JSON.stringify({ med: medCopy }));
 				break;
 			case medState.MED_DELETED:
-				httpRequest('delete med and any notifs', 'DELETE', JSON.stringify({ id: medCopy.id }));
-				setSelectedPet(prev => {return {...prev, medications: prev.medications.filter((med) => med.id !== medCopy.id)}});
+				httpRequest(DELETE_MEDICATION + medCopy.id, 'DELETE', '');
+				setSelectedPet(prev => { return { ...prev, medications: prev.medications.filter((med) => med.id !== medCopy.id) } });
 				setMed(emptyMed);
 				return;
 			default:
