@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList, Button } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { Notification } from '../../data/dataTypes';
-import styles from '../../styles/NotifCard.styles';
-import IntervalSwitch from '../ItemSwitch';
+import { Notification } from '../data/dataTypes';
+import styles from '../styles/NotifCard.styles';
+import IntervalSwitch from './ItemSwitch';
 
 type NumberInputProps = {
     value?: number;

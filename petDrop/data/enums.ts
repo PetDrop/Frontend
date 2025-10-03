@@ -12,3 +12,11 @@ export enum medState {
     'MED_DELETED' = 30, // med was deleted, so notif(s) will be too if they exist
     'SHOW_POPUP' = 4, // popup(s) showing and no actions performed yet
 };
+
+export enum notifState {
+    'NO_ACTION' = 0,
+    'SHOW_POPUP' = 1,
+    'NOTIF_CREATED' = 2,
+    'NOTIF_EDITED' = 3,
+    'NOTIF_DELETED' = 4
+};

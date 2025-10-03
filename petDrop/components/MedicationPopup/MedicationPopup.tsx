@@ -11,7 +11,7 @@ import DeleteButton from '../CustomButton';
 import { medState } from "../../data/enums";
 import { GET_ALL_SPONSOR_MEDICATIONS, httpRequest } from "../../data/endpoints";
 import { NavigationProp } from "@react-navigation/core";
-import NotifCard from "./NotifCard";
+import NotifCard from "../NotifCard";
 
 type MedicationPopupType = {
   isActive: boolean;
@@ -127,7 +127,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, readonly,
         {medCopyNotifs.map((notif, index) =>
           <NotifCard
             notification={{ ...notif, zoneId: Intl.DateTimeFormat().resolvedOptions().timeZone }}
-            onChange={(updatedNotif) => {
+            onChange={(updatedNotif: Notification) => {
               setMedCopyNotifs((prev) =>
                 prev.map((n, i) => (i === index ? updatedNotif : n))
               );

@@ -28,12 +28,10 @@ export const DELETE_MEDICATION = 'http://localhost:8080/delete-medication/';
 export const GET_ALL_SPONSOR_MEDICATIONS = 'http://localhost:8080/get-all-sponsor-medications';
 export const GET_SPONSOR_MEDICATION_BY_ID = 'http://localhost:8080/get-sponsor-medication-by-id/';
 export const GET_SPONSOR_MEDICATION_BY_NAME = 'http://localhost:8080/get-sponsor-medication-by-name/';
-// REMINDERS
-export const ADD_REMINDER = 'http://localhost:8080/add-reminder';
-export const UPDATE_REMINDER = 'http://localhost:8080/update-reminder';
-export const GET_ALL_REMINDERS = 'http://localhost:8080/get-all-reminders';
-export const GET_REMINDER_BY_ID = 'http://localhost:8080/get-reminder/';
-export const DELETE_REMINDER_BY_ID = 'http://localhost:8080/delete-reminder/';
+// NOTIFICATIONS
+export const ADD_NOTIF = 'http://localhost:8080/add-notification';
+export const UPDATE_NOTIF = 'http://localhost:8080/update-notification';
+export const DELETE_NOTIF = 'http://localhost:8080/delete-notification/';
 
 // http function with parameters for url and request body
 export const httpRequest = async (url: string, method: string, body: string): Promise<Response> => {
