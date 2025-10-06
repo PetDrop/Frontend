@@ -9,12 +9,13 @@ import styles from "../styles/Reminders.styles";
 
 import { NavigationProp, useFocusEffect } from "@react-navigation/native";
 import { Account, emptyMed, emptyPet, Medication, Pet, Notification, emptyNotification } from "../data/dataTypes";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import PetSwitch from '../components/ItemSwitch';
 import { notifState } from "../data/enums";
 import Header from "../components/Header";
 import NotificationPopup from "../components/Reminders/NotificationPopup";
 import { CREATE_NOTIFS_FOR_MED, DELETE_NOTIF, DELETE_NOTIFS_FROM_MED, httpRequest, UPDATE_NOTIF } from "../data/endpoints";
+import structuredClone from '@ungap/structured-clone';
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -84,19 +85,21 @@ const Reminders = ({ navigation, route }: Props) => {
     WriteToDB();
   }
 
-  let reminderCards: React.JSX.Element[] = [];
-  selectedPet.medications.forEach((med: Medication, index1: number) => {
-    med.notifications.forEach((notif: Notification, index2: number) => {
-      reminderCards.push(
+  const reminderCards = useMemo(() => {
+    return selectedPet.medications.flatMap((med: Medication, index1: number) =>
+      med.notifications.map((notif: Notification, index2: number) => (
         <ReminderCard
-          key={`${index1}${index2}`}
+          key={`${index1}-${index2}`}
           med={med}
-          notif={{ ...notif, zoneId: Intl.DateTimeFormat().resolvedOptions().timeZone }}
+          notif={{
+            ...notif,
+            zoneId: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          }}
           showingFunction={editNotification}
         />
-      );
-    });
-  });
+      ))
+    );
+  }, [selectedPet.medications, editNotification]);
 
   return (
     <View style={styles.container}>

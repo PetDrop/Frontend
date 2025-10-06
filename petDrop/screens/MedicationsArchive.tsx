@@ -17,6 +17,7 @@ import {
 	EDIT_NOTIFS_FOR_MED, httpRequest, UPDATE_MED_AND_NOTIFS, UPDATE_MED_CREATE_NOTIFS,
 	UPDATE_MED_DELETE_NOTIFS, UPDATE_MED_NOT_NOTIFS
 } from '../data/endpoints';
+import structuredClone from '@ungap/structured-clone';
 
 type MedicationsArchiveProps = {
 	navigation: NavigationProp<any>;

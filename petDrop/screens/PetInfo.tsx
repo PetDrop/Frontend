@@ -12,6 +12,7 @@ import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
 import { ADD_MEDICATION, CREATE_NOTIFS_FOR_MED, DELETE_MEDICATION, DELETE_NOTIFS_FROM_MED, EDIT_NOTIFS_FOR_MED, httpRequest, UPDATE_ACCOUNT, UPDATE_MED_AND_NOTIFS, UPDATE_MED_CREATE_NOTIFS, UPDATE_MED_DELETE_NOTIFS, UPDATE_MED_NOT_NOTIFS, UPDATE_PET } from "../data/endpoints";
 import { medState } from "../data/enums";
 import Header from "../components/Header";
+import structuredClone from '@ungap/structured-clone';
 
 interface Props {
   navigation: NavigationProp<any>;
