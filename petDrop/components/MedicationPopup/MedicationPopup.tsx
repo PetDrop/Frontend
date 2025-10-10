@@ -19,19 +19,15 @@ type MedicationPopupType = {
   pet: Pet;
   med: Medication;
   medCopy: Medication;
+  setMedCopy: React.Dispatch<React.SetStateAction<Medication>>;
   readonly: boolean;
   navigation: NavigationProp<any>;
   account: Account;
   pushToken: string;
 };
 
-const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, readonly, navigation, account, pushToken }: MedicationPopupType) => {
+const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCopy, readonly, navigation, account, pushToken }: MedicationPopupType) => {
   const ObjectID = require('bson-objectid');
-  const [medCopyId, setMedCopyId] = useState<string>(med.id || ObjectID());
-  const [medCopyDescription, setMedCopyDescription] = useState(medCopy.description);
-  const [medCopyName, setMedCopyName] = useState(medCopy.name);
-  const [medCopyColor, setMedCopyColor] = useState(medCopy.color || `#${Math.round(Math.random() * 899998 + 100000)}`);
-  const [medCopyNotifs, setMedCopyNotifs] = useState<Notification[]>(medCopy.notifications);
   const [propsChanged, setPropsChanged] = useState(true);
   const [sponsorMeds, setSponsorMeds] = useState<SponsorMedication[]>([]);
 
@@ -51,20 +47,20 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, readonly,
   // rerenders the popup when it's opened if it's possible something changed
   if (isActive && propsChanged) {
     setPropsChanged(false);
-    setMedCopyId(med.id || ObjectID());
-    setMedCopyDescription(medCopy.description);
-    setMedCopyName(medCopy.name);
-    setMedCopyNotifs(medCopy.notifications);
-    setMedCopyColor(medCopy.color || `#${Math.round(Math.random() * 899998 + 100000)}`);
+    // setMedCopy({...medCopy, id: medCopy.id || ObjectID()});
+    // setMedCopy({...medCopy, description: medCopy.description});
+    // setMedCopy({...medCopy, name: medCopy.name});
+    // setMedCopy({...medCopy, notifications: medCopy.notifications});
+    // setMedCopy({...medCopy, color: medCopy.color || `#${Math.round(Math.random() * 899998 + 100000)}`});
   }
 
   // resets all states - done if 'x' is hit
   const close = () => {
-    setMedCopyId(med.id || ObjectID());
-    setMedCopyDescription(med.description);
-    setMedCopyName(med.name);
-    setMedCopyNotifs(med.notifications);
-    setMedCopyColor(med.color || `#${Math.round(Math.random() * 899998 + 100000)}`);
+    // setMedCopyId(med.id || ObjectID());
+    // setMedCopyDescription(med.description);
+    // setMedCopyName(med.name);
+    // setMedCopyNotifs(med.notifications);
+    // setMedCopyColor(med.color || `#${Math.round(Math.random() * 899998 + 100000)}`);
     setPropsChanged(true);
     setPopupState(medState.NO_ACTION);
   }
@@ -101,7 +97,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, readonly,
         runningTotal += 2;
       } else {
         // check each notif to see if any fields were changed
-        const notifFieldsToCheck: (keyof Notification)[] = ["id", "title", "body", "data", "nextRuns", "finalRuns", "repeatInterval"];
+        const notifFieldsToCheck: (keyof Notification)[] = ["id", "title", "body", "data", "nextLocalRuns", "finalLocalRuns", "repeatInterval"];
         med.notifications.forEach((notif, index) => {
           for (const field of notifFieldsToCheck) {
             if (notif[field] !== medCopy.notifications[index][field]) { // a notif was edited
@@ -124,21 +120,25 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, readonly,
   const notifCards: React.JSX.Element = useMemo(() => {
     return (
       <View>
-        {medCopyNotifs.map((notif, index) =>
+        {medCopy.notifications?.map((notif, index) =>
           <NotifCard
-            notification={{ ...notif, zoneId: Intl.DateTimeFormat().resolvedOptions().timeZone }}
+            notification={{ ...notif, zoneId: Intl.DateTimeFormat().resolvedOptions().timeZone, expoPushToken: pushToken }}
             onChange={(updatedNotif: Notification) => {
-              setMedCopyNotifs((prev) =>
-                prev.map((n, i) => (i === index ? updatedNotif : n))
-              );
+              setMedCopy((prev) => {
+                return { ...prev, notifications: prev.notifications.map((n, i) => (i === index ? updatedNotif : n)) }
+              });
             }}
             key={index}
-            onDelete={() => { setMedCopyNotifs(prev => prev.filter(n => n.id !== notif.id)) }}
+            onDelete={() => {
+              setMedCopy((prev) => {
+                return { ...prev, notifications: prev.notifications.filter(n => n.id !== notif.id) }
+              });
+            }}
           />
         )}
       </View>
     )
-  }, [medCopyNotifs]);
+  }, [medCopy]);
 
   if (isActive) {
     return (
@@ -154,7 +154,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, readonly,
 
             {/* TODO: make this pressable to pick a color */}
             {/* color indicator */}
-            <View style={[styles.colorIndicator, { backgroundColor: medCopyColor }]} />
+            <View style={[styles.colorIndicator, { backgroundColor: medCopy.color }]} />
 
             {/* medication selection */}
             {!readonly ?
@@ -166,7 +166,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, readonly,
                     }
                   })
                 }
-                onSelect={(selectedItem: string) => { setMedCopyName(selectedItem) }}
+                onSelect={(selectedItem: string) => { setMedCopy({ ...medCopy, name: selectedItem }) }}
                 renderButton={(selectedItem: string) => {
                   return (
                     <View style={styles.dropdownDefault}>
@@ -187,7 +187,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, readonly,
               />
               :
               <View style={styles.dropdownDefault}>
-                <Text style={styles.text}>{medCopyName}</Text>
+                <Text style={styles.text}>{medCopy.name}</Text>
               </View>
             }
 
@@ -206,7 +206,14 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, readonly,
           <ScrollView style={styles.popupBody}>
 
             {!readonly && (
-              <Button title="Add Reminder" onPress={() => { setMedCopyNotifs((prev) => [...prev, emptyNotification]) }} />
+              <Button
+                title="Add Reminder"
+                onPress={() => {
+                  setMedCopy((prev) => {
+                    return { ...prev, notifications: [...prev.notifications, emptyNotification] }
+                  })
+                }}
+              />
             )}
 
             <View style={styles.notifCardContainer}>
@@ -217,8 +224,8 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, readonly,
               style={[styles.textInput]}
               placeholder="Enter any info you'll need later (notes, instructions, etc.)"
               placeholderTextColor={Color.colorCornflowerblue}
-              value={medCopyDescription}
-              onChangeText={setMedCopyDescription}
+              value={medCopy.description}
+              onChangeText={(newText) => { setMedCopy((prev) => { return { ...prev, description: newText } }) }}
               multiline={true}
               editable={!readonly}
             />
@@ -227,7 +234,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, readonly,
 
           {/* view instructions button */}
           {med.id !== '' && (
-            <Pressable onPress={() => { navigation.navigate('Instructions', { account: account, medName: medCopyName, pushToken: pushToken }) }}>
+            <Pressable onPress={() => { navigation.navigate('Instructions', { account: account, medName: medCopy.name, pushToken: pushToken }) }}>
               <View style={styles.instructionButtonOval}>
                 <Text style={[styles.buttonText, styles.text]}>Instructions</Text>
               </View>

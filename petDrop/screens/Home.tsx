@@ -47,9 +47,9 @@ const Home = ({ navigation, route }: HomeProps) => {
           if (intervalMs <= 0) return; // should never be negative, but 0 might happen from emptyNotif
 
           // Walk from nextRuns through finalRuns, stepping by repeatInterval
-          for (let i = 0; i < notif.nextRuns.length; i++) {
-            let cursor = new Date(notif.nextRuns[i]);
-            const finalDate = new Date(notif.finalRuns[i]);
+          for (let i = 0; i < notif.nextLocalRuns.length; i++) {
+            let cursor = new Date(notif.nextLocalRuns[i]);
+            const finalDate = new Date(notif.finalLocalRuns[i]);
 
             // Add every date in [nextRun, finalRun], stepping by repeatInterval
             while (cursor <= finalDate) {

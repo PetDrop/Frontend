@@ -96,7 +96,7 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
     const startDates = React.useMemo(() => {
         const seen = new Set<string>();
         const result: Date[] = [];
-        notification.nextRuns.forEach(d => {
+        notification.nextLocalRuns.forEach(d => {
             const dt = new Date(d);
             const key = dt.toISOString().slice(0, 10);
             if (!seen.has(key)) {
@@ -105,12 +105,12 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
             }
         });
         return result;
-    }, [notification.nextRuns]);
+    }, [notification.nextLocalRuns]);
 
     const endDates = React.useMemo(() => {
         const seen = new Set<string>();
         const result: Date[] = [];
-        notification.finalRuns.forEach(d => {
+        notification.finalLocalRuns.forEach(d => {
             const dt = new Date(d);
             const key = dt.toISOString().slice(0, 10);
             if (!seen.has(key)) {
@@ -119,13 +119,13 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
             }
         });
         return result;
-    }, [notification.finalRuns]);
+    }, [notification.finalLocalRuns]);
 
     // unique times of day
     const notifTimes = React.useMemo(() => {
         const seen = new Set<string>();
         const times: Date[] = [];
-        notification.nextRuns.forEach(d => {
+        notification.nextLocalRuns.forEach(d => {
             const t = new Date(d);
             const key = `${t.getHours()}:${t.getMinutes()}:${t.getSeconds()}`;
             if (!seen.has(key)) {
@@ -134,15 +134,15 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
             }
         });
         return times;
-    }, [notification.nextRuns]);
+    }, [notification.nextLocalRuns]);
 
     // occurrences estimate
     const occurances = React.useMemo(() => {
-        if (!notification.nextRuns.length || !notification.finalRuns.length) return undefined;
-        const first = new Date(notification.nextRuns[0]).getTime();
-        const last = new Date(notification.finalRuns[0]).getTime();
+        if (!notification.nextLocalRuns.length || !notification.finalLocalRuns.length) return undefined;
+        const first = new Date(notification.nextLocalRuns[0]).getTime();
+        const last = new Date(notification.finalLocalRuns[0]).getTime();
         return Math.floor((last - first) / (1000 * 60 * repeatMinutes)) + 1;
-    }, [notification.nextRuns, notification.finalRuns, repeatMinutes]);
+    }, [notification.nextLocalRuns, notification.finalLocalRuns, repeatMinutes]);
 
     // ----- update helpers -----
     const updateNotification = (patch: Partial<Notification>) =>
@@ -150,18 +150,18 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
 
     const addStartDate = (date: Date) => {
         updateNotification({
-            nextRuns: [...notification.nextRuns, date],
-            finalRuns: [...notification.finalRuns, date],
+            nextLocalRuns: [...notification.nextLocalRuns, date],
+            finalLocalRuns: [...notification.finalLocalRuns, date],
         });
     };
 
     const removeStartDate = (i: number) => {
         const removeKey = startDates[i].toISOString().slice(0, 10);
         updateNotification({
-            nextRuns: notification.nextRuns.filter(
+            nextLocalRuns: notification.nextLocalRuns.filter(
                 d => d.toISOString().slice(0, 10) !== removeKey
             ),
-            finalRuns: notification.finalRuns.filter(
+            finalLocalRuns: notification.finalLocalRuns.filter(
                 d => d.toISOString().slice(0, 10) !== removeKey
             ),
         });
@@ -180,8 +180,8 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
             )
         );
         updateNotification({
-            nextRuns: [...notification.nextRuns, ...withTime],
-            finalRuns: [...notification.finalRuns, ...withTime],
+            nextLocalRuns: [...notification.nextLocalRuns, ...withTime],
+            finalLocalRuns: [...notification.finalLocalRuns, ...withTime],
         });
     };
 

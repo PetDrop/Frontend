@@ -24,11 +24,17 @@ type MedicationsArchiveProps = {
 	route: any;
 }
 
+const addRequestType = (med: Medication) => {
+	return {...med, notifications: med.notifications.map((notif) => { return {...notif, id: "y428ch183", type: "request"} })};
+}
+
 const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	const [selectedPet, setSelectedPet] = useState<Pet>(emptyPet);
 	const [med, setMed] = useState<Medication>(emptyMed);
 	const [medCopy, setMedCopy] = useState<Medication>(emptyMed);
 	const [popupState, setPopupState] = useState(medState.NO_ACTION);
+
+	const ObjectID = require('bson-objectid');
 
 	const pushToken: string = route.params.pushToken;
 
@@ -37,7 +43,8 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 
 	// only when med is updated should medCopy be reset
 	useEffect(() => {
-		setMedCopy(structuredClone(med));
+		const tempMed = structuredClone(med);
+		setMedCopy({ ...tempMed, id: med.id || ObjectID(), color: med.color || `#${Math.round(Math.random() * 899998 + 100000)}` });
 	}, [med]);
 
 	useFocusEffect(
@@ -65,20 +72,21 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				break;
 			case medState.MED_CREATED_NOTIF_NOTHING:
 			case medState.MED_CREATED_NOTIF_CREATED:
-				response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify({ med: medCopy }));
+				console.log(addRequestType(medCopy));
+				response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify(addRequestType(medCopy)));
 				setSelectedPet(prev => { return { ...prev, medications: prev.medications.concat([medCopy]) } });
 				break;
 			case medState.MED_EDITED_NOTIF_NOTHING:
-				response = await httpRequest(UPDATE_MED_NOT_NOTIFS, 'PUT', JSON.stringify({ med: medCopy }));
+				response = await httpRequest(UPDATE_MED_NOT_NOTIFS, 'PUT', JSON.stringify(addRequestType(medCopy)));
 				break;
 			case medState.MED_EDITED_NOTIF_CREATED:
-				response = await httpRequest(UPDATE_MED_CREATE_NOTIFS, 'PUT', JSON.stringify({ med: medCopy }));
+				response = await httpRequest(UPDATE_MED_CREATE_NOTIFS, 'PUT', JSON.stringify(addRequestType(medCopy)));
 				break;
 			case medState.MED_EDITED_NOTIF_EDITED:
-				response = await httpRequest(UPDATE_MED_AND_NOTIFS, 'PUT', JSON.stringify({ med: medCopy }));
+				response = await httpRequest(UPDATE_MED_AND_NOTIFS, 'PUT', JSON.stringify(addRequestType(medCopy)));
 				break;
 			case medState.MED_EDITED_NOTIF_DELETED:
-				response = await httpRequest(UPDATE_MED_DELETE_NOTIFS, 'PUT', JSON.stringify({ med: medCopy }));
+				response = await httpRequest(UPDATE_MED_DELETE_NOTIFS, 'PUT', JSON.stringify(addRequestType(medCopy)));
 				break;
 			case medState.MED_DELETED:
 				httpRequest(DELETE_MEDICATION + medCopy.id, 'DELETE', '');
@@ -158,6 +166,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				pet={selectedPet}
 				med={med}
 				medCopy={medCopy}
+				setMedCopy={setMedCopy}
 				readonly={false}
 				navigation={navigation}
 				account={account}

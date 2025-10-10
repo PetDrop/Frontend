@@ -87,6 +87,7 @@ const PetInfo = ({ navigation, route }: Props) => {
         pet={petBeingEdited}
         med={med}
         medCopy={medCopy}
+        setMedCopy={setMedCopy}
         readonly={false}
         navigation={navigation}
         account={account}

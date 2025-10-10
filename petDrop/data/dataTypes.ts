@@ -44,8 +44,8 @@ export interface Notification {
     title: string,
     body: string,
     data: Map<string, object>,
-    nextRuns: Date[]; // next times it will be sent
-    finalRuns: Date[]; // final times it will be sent
+    nextLocalRuns: Date[]; // next times it will be sent
+    finalLocalRuns: Date[]; // final times it will be sent
     zoneId: string; // used for turning local time into zoned time on backend
     repeatInterval: number; // minutes between each time notif is sent
 }
@@ -58,6 +58,6 @@ export interface DateObj {
 
 // global default values to avoid having to repeatedly create these in various files
 export const emptyPet: Pet = {id: '', name: '', image: '', age: 0, breed: '', address: '', vet: '', vetPhone: '', medications: []};
-export const emptyNotification: Notification = {id: '', expoPushToken: '', title: '', body: '', data: new Map<string, object>(), nextRuns: [], finalRuns: [], zoneId: '', repeatInterval: 0};
-export const emptyMed: Medication = {id: '', name: '', color: '', description: '', notifications: [], range: 0};
+export const emptyNotification: Notification = {id: '', expoPushToken: '', title: '', body: '', data: new Map<string, object>(), nextLocalRuns: [], finalLocalRuns: [], zoneId: '', repeatInterval: 0};
+export const emptyMed: Medication = {id: '', name: '', color: '', description: '', notifications: [], range: 4};
 export const emptySponsorMed: SponsorMedication = {id: '', name: '', instructions: [], videoLink: ''};
