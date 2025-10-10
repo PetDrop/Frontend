@@ -9,6 +9,7 @@ import { Account, emptySponsorMed, SponsorMedication } from "../data/dataTypes";
 import { useEffect, useState } from "react";
 import { GET_SPONSOR_MEDICATION_BY_NAME, httpRequest } from "../data/endpoints";
 import VideoScreen from "../components/Instructions/VideoScreen";
+import { useAccount } from "../context/AccountContext";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -16,12 +17,10 @@ interface Props {
 }
 
 const Instructions = ({ navigation, route }: Props) => {
+    const { account, setAccount } = useAccount();
   const [med, setMed] = useState<SponsorMedication>(emptySponsorMed);
 
   const pushToken: string = route.params.pushToken;
-
-  // store the user's account info to avoid typing "route.params.account" repeatedly
-  const account: Account = route.params.account;
 
   // get the sponsor med from the db
   const getMed = async () => {

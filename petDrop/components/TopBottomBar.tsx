@@ -33,82 +33,82 @@ const NavButton = ({ icon, label, isActive, onPress }: any) => {
 
 const TopBottomBar = ({ navigation, currentScreen, account, pushToken }: TopBottomBarProps) => {
 	return (
-    <>
-    <View style={styles.topBar}>
-    </View>
-		<View style={styles.bottomBar}>
-			{/* HOME Button */}
-			<NavButton
-				icon={
-					<View style={styles.iconContainer}>
-						<HouseButtonRoof style={styles.polygonIcon} />
-						<View style={styles.houseBase} />
-					</View>
-				}
-				label="HOME"
-				isActive={currentScreen === ScreenEnum.Home}
-				onPress={() => navigation.navigate('Home', {account: account, pushToken: pushToken})}
-			/>
+		<>
+			<View style={styles.topBar}>
+			</View>
+			<View style={styles.bottomBar}>
+				{/* HOME Button */}
+				<NavButton
+					icon={
+						<View style={styles.iconContainer}>
+							<HouseButtonRoof style={styles.polygonIcon} />
+							<View style={styles.houseBase} />
+						</View>
+					}
+					label="HOME"
+					isActive={currentScreen === ScreenEnum.Home}
+					onPress={() => navigation.navigate('Home', { pushToken: pushToken })}
+				/>
 
-			{/* PETS Button */}
-			<NavButton
-				icon={
-					<PetInfoButton
-						style={styles.navIcon}
-						width={width * 0.08}
-						height={height * 0.03}
-					/>
-				}
-				label="PETS"
-				isActive={
-					currentScreen === ScreenEnum.PetInfo ||
-					currentScreen === ScreenEnum.PetInfo1
-				}
-				onPress={() => navigation.navigate('PetInfo', {account: account, pushToken: pushToken})}
-			/>
+				{/* PETS Button */}
+				<NavButton
+					icon={
+						<PetInfoButton
+							style={styles.navIcon}
+							width={width * 0.08}
+							height={height * 0.03}
+						/>
+					}
+					label="PETS"
+					isActive={
+						currentScreen === ScreenEnum.PetInfo ||
+						currentScreen === ScreenEnum.PetInfo1
+					}
+					onPress={() => navigation.navigate('PetInfo', { pushToken: pushToken })}
+				/>
 
-			{/* REMINDERS Button */}
-			<NavButton
-				icon={
-					<RemindersButton
-						style={styles.navIcon}
-						width={width * 0.07}
-						height={height * 0.03}
-					/>
-				}
-				label="REMINDERS"
-				isActive={currentScreen === ScreenEnum.Reminders}
-				onPress={() => navigation.navigate('Reminders', {account: account, pushToken: pushToken})}
-			/>
+				{/* REMINDERS Button */}
+				<NavButton
+					icon={
+						<RemindersButton
+							style={styles.navIcon}
+							width={width * 0.07}
+							height={height * 0.03}
+						/>
+					}
+					label="REMINDERS"
+					isActive={currentScreen === ScreenEnum.Reminders}
+					onPress={() => navigation.navigate('Reminders', { pushToken: pushToken })}
+				/>
 
-			{/* MEDS Button */}
-			<NavButton
-				icon={
-					<Image
-						source={require('../assets/medications_button.png')}
-						style={styles.medIcon}
-					/>
-				}
-				label="MEDS"
-				isActive={currentScreen === ScreenEnum.MedicationsArchive}
-				onPress={() => navigation.navigate('MedicationsArchive', {account: account, pushToken: pushToken})}
-			/>
+				{/* MEDS Button */}
+				<NavButton
+					icon={
+						<Image
+							source={require('../assets/medications_button.png')}
+							style={styles.medIcon}
+						/>
+					}
+					label="MEDS"
+					isActive={currentScreen === ScreenEnum.MedicationsArchive}
+					onPress={() => navigation.navigate('MedicationsArchive', { pushToken: pushToken })}
+				/>
 
-			{/* PROFILE Button */}
-			<NavButton
-				icon={
-					<ShareButtonRightArrow
-						style={styles.shareIcon}
-						width={width * 0.05}
-						height={height * 0.03}
-					/>
-				}
-				label="PROFILE"
-				isActive={false}
-				onPress={() => navigation.navigate('Profile', {account: account, pushToken: pushToken})}
-			/>
-		</View>
-    </>
+				{/* PROFILE Button */}
+				<NavButton
+					icon={
+						<ShareButtonRightArrow
+							style={styles.shareIcon}
+							width={width * 0.05}
+							height={height * 0.03}
+						/>
+					}
+					label="PROFILE"
+					isActive={false}
+					onPress={() => navigation.navigate('Profile', { pushToken: pushToken })}
+				/>
+			</View>
+		</>
 	);
 };
 

@@ -30,8 +30,8 @@ const HamburgerMenu = ({ navigation, account, pushToken }: HambugerMenuProps) =>
     };
 
     const menuItems = [
-        { label: 'Sponsors', onPress: () => { navigation.navigate('Sponsors', { account: account, pushToken: pushToken }) } },
-        { label: 'Credits', onPress: () => { navigation.navigate('Credits', { account: account, pushToken: pushToken }) } }
+        { label: 'Sponsors', onPress: () => { navigation.navigate('Sponsors', { pushToken: pushToken }) } },
+        { label: 'Credits', onPress: () => { navigation.navigate('Credits', { pushToken: pushToken }) } }
     ].map((item, index) => (
         <TouchableOpacity key={index} style={styles.menuItem} onPress={() => {
             item.onPress();

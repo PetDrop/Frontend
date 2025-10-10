@@ -19,6 +19,7 @@ import BlueCircleBig from '../assets/blue_circle_big.svg';
 import { ADD_ACCOUNT, httpRequest } from '../data/endpoints';
 import { Account } from '../data/dataTypes';
 import { NavigationProp } from '@react-navigation/native';
+import { useAccount } from '../context/AccountContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -28,6 +29,7 @@ type SignupType = {
 };
 
 const Signup = (props: SignupType) => {
+    const { account, setAccount } = useAccount();
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -39,6 +41,8 @@ const Signup = (props: SignupType) => {
     const [dataUsage, setDataUsage] = useState(false);
 
     const pushToken: string = props.route.params.pushToken;
+
+    const ObjectID = require('bson-objectid');
 
     /* handles submit button being pressed
         and checks to make sure all fields have something entered
@@ -59,19 +63,20 @@ const Signup = (props: SignupType) => {
     const WriteToDB = async () => {
         try {
             const response = await httpRequest(ADD_ACCOUNT, 'POST', JSON.stringify({
+                id: ObjectID(),
                 username: username,
                 email: email,
                 password: password,
                 sharedUsers: [],
                 usersSharedWith: [],
                 pets: [],
-                reminders: []
+                sharedPets: [],
+                image: ''
             }));
             if (response.ok) {
                 // if account successfully created, navigate to profile page for additional info, and pass the account along
-                const account: Account = await response.json();
-                account.sharedPets = [];
-                props.navigation.navigate('Home', { account: account, pushToken: pushToken });
+                setAccount(await response.json());
+                props.navigation.navigate('Home', { pushToken: pushToken });
             } else {
                 console.log('unable to write account to database: status code ' + response.status);
                 alert('submission failed');
@@ -166,7 +171,7 @@ const Signup = (props: SignupType) => {
                         </View>
                     </View>
                     <View style={styles.buttonRow}>
-                        <Pressable style={styles.button} onPress={() => props.navigation.navigate('Login', {pushToken: pushToken})}>
+                        <Pressable style={styles.button} onPress={() => props.navigation.navigate('Login', { pushToken: pushToken })}>
                             <Text style={styles.buttonText}>Login</Text>
                         </Pressable>
 

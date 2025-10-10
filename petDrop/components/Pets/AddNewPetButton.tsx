@@ -13,7 +13,7 @@ type AddNewPetButtonProps = {
 
 const AddNewPetButton = ({ navigation, account, pushToken }: AddNewPetButtonProps) => {
   return (
-    <Pressable style={styles.addPetButton} onPress={() => navigation.navigate("PetInfo1", {account: account, pushToken: pushToken})}>
+    <Pressable style={styles.addPetButton} onPress={() => navigation.navigate("PetInfo1", { pushToken: pushToken })}>
       <Text style={styles.addPetText}>+ ADD NEW PET</Text>
     </Pressable>
   );

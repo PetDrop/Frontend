@@ -15,6 +15,7 @@ import MedSwitch from '../components/ItemSwitch';
 import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
 import { medState } from "../data/enums";
 import SelectMedPopup from "../components/SelectMedPopup";
+import { useAccount } from "../context/AccountContext";
 
 type HomeProps = {
   navigation: NavigationProp<any>;
@@ -22,6 +23,7 @@ type HomeProps = {
 };
 
 const Home = ({ navigation, route }: HomeProps) => {
+  const { account, setAccount } = useAccount();
   const [switchDisplay, setSwitchDisplay] = useState<Medication[]>();
   const [infoToDisplay, setInfoToDisplay] = useState<{ pet: Pet, med: Medication }>();
   const [markedDates, setMarkedDates] = useState<MarkedDates>({});
@@ -30,8 +32,6 @@ const Home = ({ navigation, route }: HomeProps) => {
 
   const pushToken: string = route.params.pushToken;
 
-  // store the user's account info to avoid typing "route.params.account" repeatedly
-  let account: Account = route.params.account;
 
   useEffect(() => {
     const newMarkedDates: MarkedDates = {};
@@ -190,6 +190,7 @@ const Home = ({ navigation, route }: HomeProps) => {
         setPopupState={setPopupState}
         med={infoToDisplay ? infoToDisplay.med : emptyMed}
         medCopy={emptyMed}
+        setMedCopy={() => { }}
         pet={infoToDisplay ? infoToDisplay.pet : emptyPet}
         readonly={true}
         navigation={navigation}

@@ -234,7 +234,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
 
           {/* view instructions button */}
           {med.id !== '' && (
-            <Pressable onPress={() => { navigation.navigate('Instructions', { account: account, medName: medCopy.name, pushToken: pushToken }) }}>
+            <Pressable onPress={() => { navigation.navigate('Instructions', { medName: medCopy.name, pushToken: pushToken }) }}>
               <View style={styles.instructionButtonOval}>
                 <Text style={[styles.buttonText, styles.text]}>Instructions</Text>
               </View>

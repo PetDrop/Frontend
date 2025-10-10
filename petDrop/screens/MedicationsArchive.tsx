@@ -18,6 +18,7 @@ import {
 	UPDATE_MED_DELETE_NOTIFS, UPDATE_MED_NOT_NOTIFS
 } from '../data/endpoints';
 import structuredClone from '@ungap/structured-clone';
+import { useAccount } from '../context/AccountContext';
 
 type MedicationsArchiveProps = {
 	navigation: NavigationProp<any>;
@@ -38,17 +39,25 @@ const formatDates = (med: Medication) => {
 }
 
 const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
-	const [selectedPet, setSelectedPet] = useState<Pet>(emptyPet);
+	const { account, setAccount, updatePetMedications } = useAccount();
 	const [med, setMed] = useState<Medication>(emptyMed);
 	const [medCopy, setMedCopy] = useState<Medication>(emptyMed);
 	const [popupState, setPopupState] = useState(medState.NO_ACTION);
+	const [selectedPetId, setSelectedPetId] = useState(account.pets[0]?.id || account.sharedPets[0]?.id || '');
+
+
+	// derive the selected pet from account whenever it changes
+	const selectedPet = React.useMemo(() => {
+		return (
+			account.pets.find((p) => p.id === selectedPetId) ||
+			account.sharedPets.find((p) => p.id === selectedPetId) ||
+			emptyPet
+		);
+	}, [account, selectedPetId]);
 
 	const ObjectID = require('bson-objectid');
 
 	const pushToken: string = route.params.pushToken;
-
-	// store the user's account info to avoid typing "route.params.account" repeatedly
-	const account: Account = route.params.account;
 
 	// only when med is updated should medCopy be reset
 	useEffect(() => {
@@ -58,7 +67,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 
 	useFocusEffect(
 		useCallback(() => {
-			setSelectedPet(account.pets[0] || account.sharedPets[0] || emptyPet);
+			setSelectedPetId(account.pets[0]?.id || account.sharedPets[0]?.id || '');
 		}, [])
 	);
 
@@ -83,7 +92,6 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 			case medState.MED_CREATED_NOTIF_CREATED:
 				console.log(formatDates(medCopy));
 				response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify(formatDates(medCopy)));
-				setSelectedPet(prev => { return { ...prev, medications: prev.medications.concat([medCopy]) } });
 				break;
 			case medState.MED_EDITED_NOTIF_NOTHING:
 				response = await httpRequest(UPDATE_MED_NOT_NOTIFS, 'PUT', JSON.stringify(formatDates(medCopy)));
@@ -99,14 +107,20 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				break;
 			case medState.MED_DELETED:
 				httpRequest(DELETE_MEDICATION + medCopy.id, 'DELETE', '');
-				setSelectedPet(prev => { return { ...prev, medications: prev.medications.filter((med) => med.id !== medCopy.id) } });
+				updatePetMedications(selectedPet.id, selectedPet.medications.filter((med) => med.id !== medCopy.id));
 				setMed(emptyMed);
 				return;
 			default:
 				break;
 		}
 		if (response?.ok) {
-			setMed(await response.json());
+			const newMed = await response.json();
+			const meds = selectedPet.medications.some((m) => m.id === newMed.id)
+				? selectedPet.medications.map((m) => (m.id === newMed.id ? newMed : m))
+				: [...selectedPet.medications, newMed];
+
+			updatePetMedications(selectedPet.id, meds);
+			setMed(newMed);
 		} else {
 			console.error(`http request failed with error code ${response?.status}`);
 		}
@@ -139,9 +153,9 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 					<Text style={styles.pageTitle}>Medications</Text>
 					<PetSwitch
 						text={'switch'}
-						data={[...account.pets, ...account.sharedPets]}
+						data={[...(account.pets ?? []), ...(account.sharedPets ?? [])]}
 						selectedItem={selectedPet}
-						onSwitch={setSelectedPet}
+						onSwitch={(item) => { setSelectedPetId(item.id) }}
 						switchItem='Pet'
 					/>
 				</View>

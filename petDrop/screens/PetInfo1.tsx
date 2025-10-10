@@ -12,6 +12,7 @@ import SubmitButton from "../components/CustomButton";
 import DeleteButton from "../components/CustomButton";
 import { ADD_PET, DELETE_PET_BY_ID, httpRequest, UPDATE_ACCOUNT, UPDATE_PET } from "../data/endpoints";
 import * as ImagePicker from 'expo-image-picker';
+import { useAccount } from "../context/AccountContext";
 
 type PetInfo1Type = {
   navigation: NavigationProp<any>;
@@ -19,6 +20,7 @@ type PetInfo1Type = {
 }
 
 const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
+  const { account, setAccount } = useAccount();
   const [image, setImage] = useState('');
   const [inputFields, setInputFields] = useState(new Map<string, string>([
     ['pet name', ''],
@@ -37,9 +39,6 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
   function updateInputFields(key: string, value: string) {
     setInputFields((prevState) => new Map(prevState.set(key, value)));
   }
-
-  // store the user's account info to avoid typing "route.params.account" repeatedly
-  const account: Account = route.params.account;
 
   // get pet from param in case one is being edited (if undefined then creating new pet)
   const petBeingEdited: Pet = route.params.pet;
@@ -83,15 +82,19 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
           // TODO: allow for editing of shared pets
           if (petBeingEdited) {
             const updatedPet: Pet = await response.json();
-            account.pets[account.pets.findIndex((pet: Pet) => pet.id === updatedPet.id)] = updatedPet;
+            setAccount((prev) => {
+              return { ...prev, pets: prev.pets.map((pet) => pet.id === updatedPet.id ? updatedPet : pet) };
+            });
           } else {
             const newPet: Pet = await response.json();
-            account.pets.push(newPet);
+            setAccount((prev) => {
+              return { ...prev, pets: prev.pets.concat([newPet]) };
+            });
           }
           response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
           if (response.ok) {
             alert('Submission successful. You have now been redirected to the Pet Info page where you can view it, as well as add medications and reminders for it.');
-            navigation.navigate('PetInfo', { account: account, pushToken: pushToken });
+            navigation.navigate('PetInfo', { pushToken: pushToken });
           } else {
             console.log('unable to add pet to account');
             alert('submission failed');
@@ -110,11 +113,13 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
     // TODO: ask for confirmation
     let response = await httpRequest(DELETE_PET_BY_ID + petBeingEdited.id, 'DELETE', '');
     if (response.ok) {
-      account.pets.splice(account.pets.indexOf(petBeingEdited), 1);
+      setAccount((prev) => {
+        return { ...prev, pets: prev.pets.filter((pet) => pet.id !== petBeingEdited.id) };
+      });
       response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
       if (response.ok) {
         alert(`Pet: ${petBeingEdited.name} has been successfully deleted.`);
-        navigation.navigate('PetInfo', { account: account, pushToken: pushToken });
+        navigation.navigate('PetInfo', { pushToken: pushToken });
       } else {
         console.log(`http PUT request failed with error code: ${response.status}`);
         alert(`Failed to update account after deleting pet: ${petBeingEdited.id}`);
@@ -168,7 +173,7 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
       </ScrollView>
 
       {/* Top Banner and Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo1} account={account} pushToken={pushToken}/>
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo1} account={account} pushToken={pushToken} />
 
     </KeyboardAvoidingView>
   );

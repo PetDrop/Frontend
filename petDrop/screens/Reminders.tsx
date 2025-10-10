@@ -16,6 +16,7 @@ import Header from "../components/Header";
 import NotificationPopup from "../components/Reminders/NotificationPopup";
 import { CREATE_NOTIFS_FOR_MED, DELETE_NOTIF, DELETE_NOTIFS_FROM_MED, httpRequest, UPDATE_NOTIF } from "../data/endpoints";
 import structuredClone from '@ungap/structured-clone';
+import { useAccount } from "../context/AccountContext";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -23,11 +24,21 @@ interface Props {
 }
 
 const Reminders = ({ navigation, route }: Props) => {
-  const [selectedPet, setSelectedPet] = useState(emptyPet);
+  const { account, setAccount, updateNotifications } = useAccount();
+  const [selectedPetId, setSelectedPetId] = useState(account.pets[0]?.id || account.sharedPets[0]?.id || '');
   const [popupState, setPopupState] = useState(notifState.NO_ACTION);
   const [med, setMed] = useState<Medication>(emptyMed);
   const [notification, setNotification] = useState<Notification>(emptyNotification);
   const [notificationCopy, setNotificationCopy] = useState<Notification>(emptyNotification);
+
+  // derive the selected pet from account whenever it changes
+  const selectedPet = React.useMemo(() => {
+    return (
+      account.pets.find((p) => p.id === selectedPetId) ||
+      account.sharedPets.find((p) => p.id === selectedPetId) ||
+      emptyPet
+    );
+  }, [account, selectedPetId]);
 
   // only when notification is updated should notificationCopy be reset
   useEffect(() => {
@@ -38,12 +49,9 @@ const Reminders = ({ navigation, route }: Props) => {
 
   const pushToken: string = route.params.pushToken;
 
-  // store the user's account info to avoid typing "route.params.account" repeatedly
-  const account: Account = route.params.account;
-
   useFocusEffect(
     useCallback(() => {
-      setSelectedPet(account.pets[0] || account.sharedPets[0] || emptyPet);
+      setSelectedPetId(account.pets[0]?.id || account.sharedPets[0]?.id || '');
     }, [])
   );
 
@@ -53,27 +61,39 @@ const Reminders = ({ navigation, route }: Props) => {
     setPopupState(notifState.SHOW_POPUP);
   }
 
+  const formatDates = (notif: Notification) => {
+    return {
+      ...notif,
+      nextRuns: notif.nextRuns.map((nextRun) => nextRun.toISOString()),
+      finalRuns: notif.finalRuns.map((finalRun) => finalRun.toISOString())
+    }
+  }
+
   const WriteToDB = async () => {
     let response;
     switch (popupState) {
       case notifState.NOTIF_CREATED:
-        response = await httpRequest(CREATE_NOTIFS_FOR_MED + med.id, 'PUT', JSON.stringify([notificationCopy]));
+        response = await httpRequest(CREATE_NOTIFS_FOR_MED + med.id, 'PUT', JSON.stringify(formatDates(notificationCopy)));
+        updateNotifications(selectedPet.id, med.id, med.notifications.concat([notificationCopy]));
         setMed((prev) => {
           return { ...prev, notifications: prev.notifications.concat([notificationCopy]) }
         });
       case notifState.NOTIF_DELETED:
         response = await httpRequest(DELETE_NOTIF + notificationCopy.id, 'DELETE', '');
+        updateNotifications(selectedPet.id, med.id, med.notifications.filter((notif) => notif.id !== notificationCopy.id));
         setMed((prev) => {
           return { ...prev, notifications: prev.notifications.filter((notif) => notif.id !== notificationCopy.id) }
         });
         break;
+      default: // to avoid response possibly undefined
       case notifState.NOTIF_EDITED:
-        response = await httpRequest(UPDATE_NOTIF, 'PUT', JSON.stringify(notificationCopy));
+        response = await httpRequest(UPDATE_NOTIF, 'PUT', JSON.stringify(formatDates(notificationCopy)));
+        updateNotifications(selectedPet.id, med.id, med.notifications.map((notif) => notif.id === notificationCopy.id ? notificationCopy : notif));
         break;
     }
 
-    if (!response?.ok) {
-      console.error(`http request failed with status code ${response?.status}`);
+    if (!response.ok) {
+      console.error(`http request failed with status code ${response.status}`);
     }
 
     setMed(emptyMed);
@@ -91,10 +111,7 @@ const Reminders = ({ navigation, route }: Props) => {
         <ReminderCard
           key={`${index1}-${index2}`}
           med={med}
-          notif={{
-            ...notif,
-            zoneId: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          }}
+          notif={notif}
           showingFunction={editNotification}
         />
       ))
@@ -112,9 +129,9 @@ const Reminders = ({ navigation, route }: Props) => {
           <Text style={styles.pageTitle}>Reminders</Text>
           <PetSwitch
             text={'switch'}
-            data={[...account.pets, ...account.sharedPets]}
+            data={[...(account.pets ?? []), ...(account.sharedPets ?? [])]}
             selectedItem={selectedPet}
-            onSwitch={setSelectedPet}
+            onSwitch={(item) => { setSelectedPetId(item.id) }}
             switchItem="Pet"
           />
         </View>
@@ -127,7 +144,7 @@ const Reminders = ({ navigation, route }: Props) => {
           <View style={styles.addReminderButton}>
             <AddReminderButton
               onPressFunction={() => {
-                setNotificationCopy({ ...emptyNotification, id: ObjectID(), zoneId: Intl.DateTimeFormat().resolvedOptions().timeZone });
+                setNotificationCopy({ ...emptyNotification, id: ObjectID() });
                 setPopupState(notifState.SHOW_POPUP);
               }}
               innerText={'+ ADD'}

@@ -13,6 +13,7 @@ import { ADD_MEDICATION, CREATE_NOTIFS_FOR_MED, DELETE_MEDICATION, DELETE_NOTIFS
 import { medState } from "../data/enums";
 import Header from "../components/Header";
 import structuredClone from '@ungap/structured-clone';
+import { useAccount } from "../context/AccountContext";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -20,6 +21,7 @@ interface Props {
 }
 
 const PetInfo = ({ navigation, route }: Props) => {
+  const { account, setAccount } = useAccount();
   const [popupState, setPopupState] = useState(medState.NO_ACTION);
   const [petBeingEdited, setPetBeingEdited] = useState<Pet>(emptyPet); // the pet the user is adding a medication to
   const [med, setMed] = useState<Medication>(emptyMed);
@@ -31,9 +33,6 @@ const PetInfo = ({ navigation, route }: Props) => {
   }, [med]);
 
   const pushToken: string = route.params.pushToken;
-
-  // store the user's account info to avoid typing "route.params.account" repeatedly
-  const account: Account = route.params.account;
 
   const WriteToDB = async () => {
     let response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify({ med: medCopy }));

@@ -31,7 +31,7 @@ const PetCard = ({ pet, account, onPressFunction, navigation, pushToken }: PetCa
 					<Text style={styles.petDetails}>Vet: {pet.vet}</Text>
 					<Text style={styles.petDetails}>{pet.vetPhone}</Text>
 				</View>
-				<Pressable onPress={() => { navigation.navigate('PetInfo1', { account: account, pet: pet, pushToken: pushToken }) }}>
+				<Pressable onPress={() => { navigation.navigate('PetInfo1', { pet: pet, pushToken: pushToken }) }}>
 					<EditIcon style={styles.editIcon} />
 				</Pressable>
 			</View>

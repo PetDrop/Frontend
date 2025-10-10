@@ -56,7 +56,8 @@ export interface DateObj {
 }
 
 // global default values to avoid having to repeatedly create these in various files
-export const emptyPet: Pet = {id: '', name: '', image: '', age: 0, breed: '', address: '', vet: '', vetPhone: '', medications: []};
-export const emptyNotification: Notification = {id: '', expoPushToken: '', title: '', body: '', data: new Map<string, object>(), nextRuns: [], finalRuns: [], repeatInterval: 0};
-export const emptyMed: Medication = {id: '', name: '', color: '', description: '', notifications: [], range: 4};
-export const emptySponsorMed: SponsorMedication = {id: '', name: '', instructions: [], videoLink: ''};
+export const emptyAccount: Account = { id: '', username: '', email: '', password: '', sharedUsers: [], usersSharedWith: [], pets: [], sharedPets: [], image: '' }
+export const emptyPet: Pet = { id: '', name: '', image: '', age: 0, breed: '', address: '', vet: '', vetPhone: '', medications: [] };
+export const emptyNotification: Notification = { id: '', expoPushToken: '', title: '', body: '', data: new Map<string, object>(), nextRuns: [], finalRuns: [], repeatInterval: 0 };
+export const emptyMed: Medication = { id: '', name: '', color: '', description: '', notifications: [], range: 4 };
+export const emptySponsorMed: SponsorMedication = { id: '', name: '', instructions: [], videoLink: '' };

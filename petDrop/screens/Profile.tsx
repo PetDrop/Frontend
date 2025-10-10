@@ -11,6 +11,7 @@ import { Account } from "../data/dataTypes";
 import { useReducer, useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
 import { NavigationProp } from "@react-navigation/native";
+import { useAccount } from "../context/AccountContext";
 
 function updateSharedUsers(state: string[], action: { index: number, text: string }) {
   let newState;
@@ -34,7 +35,7 @@ type ProfileType = {
 };
 
 const Profile = ({ navigation, route }: ProfileType) => {
-  const account: Account = route.params.account;
+  const { account, setAccount } = useAccount();
 
   const [image, setImage] = useState(account.image);
   const [username, setUsername] = useState(account.username);
@@ -44,7 +45,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
   const [sharedUsers, setSharedUsers] = useReducer(updateSharedUsers, account.sharedUsers);
   const [numUsersSharedWith, setNumUsersSharedWith] = useState(Math.max(account.usersSharedWith.length, 1));
   const [usersSharedWith, setUsersSharedWith] = useReducer(updateSharedUsers, account.usersSharedWith);
-  
+
   const pushToken: string = route.params.pushToken;
 
   /* handles submit button being pressed
@@ -73,7 +74,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
   */
   const WriteToDB = async (sharedUserContacts: string[], usersSharedWithContacts: string[]) => {
     // create updated account object with new info, to be put in the db
-    const updatedAccount = {
+    setAccount({
       id: account.id,
       username: username,
       email: email,
@@ -81,14 +82,15 @@ const Profile = ({ navigation, route }: ProfileType) => {
       sharedUsers: sharedUserContacts,
       usersSharedWith: usersSharedWithContacts,
       pets: account.pets,
+      sharedPets: account.sharedPets,
       image: image
-    };
+    });
     // then update the account in the db with the new info
     try {
-      const response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(updatedAccount));
+      const response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
       if (response.ok) {
         // navigate to home screen and pass the account there
-        navigation.navigate('Home', { account: updatedAccount, pushToken: pushToken });
+        navigation.navigate('Home', { pushToken: pushToken });
       } else {
         console.log('unable to write account to database: status code ' + response.status);
         alert('submission failed');

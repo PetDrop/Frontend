@@ -37,6 +37,8 @@ import { Button, Platform, View, Text } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
+import { AccountProvider } from "./context/AccountContext";
+import { emptyAccount } from "./data/dataTypes";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -149,6 +151,7 @@ const App = () => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <AccountProvider initialAccount={emptyAccount}>
       <NavigationContainer>
         {hideSplashScreen ? (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -218,6 +221,7 @@ const App = () => {
           </Stack.Navigator>
         ) : null}
       </NavigationContainer>
+      </AccountProvider>
     </GestureHandlerRootView>
   );
 };
