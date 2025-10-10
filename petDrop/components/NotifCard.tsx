@@ -49,18 +49,14 @@ type MultiDateSelectorProps = {
 const MultiDateSelector = ({ dates, onAddDate, onRemoveDate }: MultiDateSelectorProps) => (
     <View style={local.selector}>
         <Text>Selected Start Dates:</Text>
-        <FlatList
-            data={dates}
-            keyExtractor={(_, i) => i.toString()}
-            renderItem={({ item, index }) => (
-                <View style={local.row}>
-                    <Text>{item.toDateString()}</Text>
-                    <TouchableOpacity onPress={() => onRemoveDate(index)}>
-                        <Text style={{ color: 'red', marginLeft: 8 }}>Remove</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
-        />
+        {dates.map((item, index) => (
+            <View style={local.row} key={index}>
+                <Text>{item.toDateString()}</Text>
+                <TouchableOpacity onPress={() => onRemoveDate(index)}>
+                    <Text style={{ color: 'red', marginLeft: 8 }}>Remove</Text>
+                </TouchableOpacity>
+            </View>
+        ))}
         <TouchableOpacity onPress={onAddDate}>
             <Text style={{ color: 'blue' }}>+ Add Start Date</Text>
         </TouchableOpacity>
@@ -96,7 +92,7 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
     const startDates = React.useMemo(() => {
         const seen = new Set<string>();
         const result: Date[] = [];
-        notification.nextLocalRuns.forEach(d => {
+        notification.nextRuns.forEach(d => {
             const dt = new Date(d);
             const key = dt.toISOString().slice(0, 10);
             if (!seen.has(key)) {
@@ -105,12 +101,12 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
             }
         });
         return result;
-    }, [notification.nextLocalRuns]);
+    }, [notification.nextRuns]);
 
     const endDates = React.useMemo(() => {
         const seen = new Set<string>();
         const result: Date[] = [];
-        notification.finalLocalRuns.forEach(d => {
+        notification.finalRuns.forEach(d => {
             const dt = new Date(d);
             const key = dt.toISOString().slice(0, 10);
             if (!seen.has(key)) {
@@ -119,13 +115,13 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
             }
         });
         return result;
-    }, [notification.finalLocalRuns]);
+    }, [notification.finalRuns]);
 
     // unique times of day
     const notifTimes = React.useMemo(() => {
         const seen = new Set<string>();
         const times: Date[] = [];
-        notification.nextLocalRuns.forEach(d => {
+        notification.nextRuns.forEach(d => {
             const t = new Date(d);
             const key = `${t.getHours()}:${t.getMinutes()}:${t.getSeconds()}`;
             if (!seen.has(key)) {
@@ -134,15 +130,15 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
             }
         });
         return times;
-    }, [notification.nextLocalRuns]);
+    }, [notification.nextRuns]);
 
     // occurrences estimate
     const occurances = React.useMemo(() => {
-        if (!notification.nextLocalRuns.length || !notification.finalLocalRuns.length) return undefined;
-        const first = new Date(notification.nextLocalRuns[0]).getTime();
-        const last = new Date(notification.finalLocalRuns[0]).getTime();
+        if (!notification.nextRuns.length || !notification.finalRuns.length) return undefined;
+        const first = new Date(notification.nextRuns[0]).getTime();
+        const last = new Date(notification.finalRuns[0]).getTime();
         return Math.floor((last - first) / (1000 * 60 * repeatMinutes)) + 1;
-    }, [notification.nextLocalRuns, notification.finalLocalRuns, repeatMinutes]);
+    }, [notification.nextRuns, notification.finalRuns, repeatMinutes]);
 
     // ----- update helpers -----
     const updateNotification = (patch: Partial<Notification>) =>
@@ -150,18 +146,18 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
 
     const addStartDate = (date: Date) => {
         updateNotification({
-            nextLocalRuns: [...notification.nextLocalRuns, date],
-            finalLocalRuns: [...notification.finalLocalRuns, date],
+            nextRuns: [...notification.nextRuns, date],
+            finalRuns: [...notification.finalRuns, date],
         });
     };
 
     const removeStartDate = (i: number) => {
         const removeKey = startDates[i].toISOString().slice(0, 10);
         updateNotification({
-            nextLocalRuns: notification.nextLocalRuns.filter(
+            nextRuns: notification.nextRuns.filter(
                 d => d.toISOString().slice(0, 10) !== removeKey
             ),
-            finalLocalRuns: notification.finalLocalRuns.filter(
+            finalRuns: notification.finalRuns.filter(
                 d => d.toISOString().slice(0, 10) !== removeKey
             ),
         });
@@ -180,8 +176,8 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
             )
         );
         updateNotification({
-            nextLocalRuns: [...notification.nextLocalRuns, ...withTime],
-            finalLocalRuns: [...notification.finalLocalRuns, ...withTime],
+            nextRuns: [...notification.nextRuns, ...withTime],
+            finalRuns: [...notification.finalRuns, ...withTime],
         });
     };
 
@@ -226,10 +222,7 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
                         label={intervalName === 'Weekly' ? 'Number of Weeks' : 'Number of Months'}
                         value={occurances}
                         onChange={n =>
-                            updateNotification({
-                                // you may convert this back to repeatInterval if needed
-                                repeatInterval: notification.repeatInterval,
-                            })
+                            updateNotification({ repeatInterval: notification.repeatInterval })
                         }
                     />
                 </View>

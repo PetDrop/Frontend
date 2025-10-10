@@ -97,7 +97,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
         runningTotal += 2;
       } else {
         // check each notif to see if any fields were changed
-        const notifFieldsToCheck: (keyof Notification)[] = ["id", "title", "body", "data", "nextLocalRuns", "finalLocalRuns", "repeatInterval"];
+        const notifFieldsToCheck: (keyof Notification)[] = ["id", "title", "body", "data", "nextRuns", "finalRuns", "repeatInterval"];
         med.notifications.forEach((notif, index) => {
           for (const field of notifFieldsToCheck) {
             if (notif[field] !== medCopy.notifications[index][field]) { // a notif was edited
@@ -122,7 +122,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
       <View>
         {medCopy.notifications?.map((notif, index) =>
           <NotifCard
-            notification={{ ...notif, zoneId: Intl.DateTimeFormat().resolvedOptions().timeZone, expoPushToken: pushToken }}
+            notification={{ ...notif, expoPushToken: pushToken }}
             onChange={(updatedNotif: Notification) => {
               setMedCopy((prev) => {
                 return { ...prev, notifications: prev.notifications.map((n, i) => (i === index ? updatedNotif : n)) }

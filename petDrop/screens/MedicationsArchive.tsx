@@ -24,8 +24,17 @@ type MedicationsArchiveProps = {
 	route: any;
 }
 
-const addRequestType = (med: Medication) => {
-	return {...med, notifications: med.notifications.map((notif) => { return {...notif, id: "y428ch183", type: "request"} })};
+const formatDates = (med: Medication) => {
+	return {
+		...med,
+		notifications: med.notifications.map((notif) => {
+			return {
+				...notif,
+				nextRuns: notif.nextRuns.map((nextRun) => nextRun.toISOString()),
+				finalRuns: notif.finalRuns.map((finalRun) => finalRun.toISOString())
+			}
+		})
+	};
 }
 
 const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
@@ -72,21 +81,21 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				break;
 			case medState.MED_CREATED_NOTIF_NOTHING:
 			case medState.MED_CREATED_NOTIF_CREATED:
-				console.log(addRequestType(medCopy));
-				response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify(addRequestType(medCopy)));
+				console.log(formatDates(medCopy));
+				response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify(formatDates(medCopy)));
 				setSelectedPet(prev => { return { ...prev, medications: prev.medications.concat([medCopy]) } });
 				break;
 			case medState.MED_EDITED_NOTIF_NOTHING:
-				response = await httpRequest(UPDATE_MED_NOT_NOTIFS, 'PUT', JSON.stringify(addRequestType(medCopy)));
+				response = await httpRequest(UPDATE_MED_NOT_NOTIFS, 'PUT', JSON.stringify(formatDates(medCopy)));
 				break;
 			case medState.MED_EDITED_NOTIF_CREATED:
-				response = await httpRequest(UPDATE_MED_CREATE_NOTIFS, 'PUT', JSON.stringify(addRequestType(medCopy)));
+				response = await httpRequest(UPDATE_MED_CREATE_NOTIFS, 'PUT', JSON.stringify(formatDates(medCopy)));
 				break;
 			case medState.MED_EDITED_NOTIF_EDITED:
-				response = await httpRequest(UPDATE_MED_AND_NOTIFS, 'PUT', JSON.stringify(addRequestType(medCopy)));
+				response = await httpRequest(UPDATE_MED_AND_NOTIFS, 'PUT', JSON.stringify(formatDates(medCopy)));
 				break;
 			case medState.MED_EDITED_NOTIF_DELETED:
-				response = await httpRequest(UPDATE_MED_DELETE_NOTIFS, 'PUT', JSON.stringify(addRequestType(medCopy)));
+				response = await httpRequest(UPDATE_MED_DELETE_NOTIFS, 'PUT', JSON.stringify(formatDates(medCopy)));
 				break;
 			case medState.MED_DELETED:
 				httpRequest(DELETE_MEDICATION + medCopy.id, 'DELETE', '');
