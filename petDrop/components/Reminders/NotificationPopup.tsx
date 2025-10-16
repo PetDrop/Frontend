@@ -1,5 +1,5 @@
-import React from "react"
-import { Pressable, View } from "react-native"
+import React, { useState } from "react"
+import { Platform, Pressable, View } from "react-native"
 import { Image } from "expo-image";
 import { emptyNotification, Notification } from "../../data/dataTypes";
 import NotifCard from "../NotifCard";
@@ -7,6 +7,7 @@ import { notifState } from "../../data/enums";
 import { Color } from "../../GlobalStyles";
 import DeleteButton from "../CustomButton";
 import SaveButton from "../CustomButton";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 type NotificationPopupProps = {
     isActive: boolean;
@@ -17,8 +18,33 @@ type NotificationPopupProps = {
 };
 
 const NotificationPopup = ({ isActive, setPopupState, notif, notifCopy, setNotifCopy }: NotificationPopupProps) => {
+    const [pickerVisible, setPickerVisible] = useState(false);
+    const [pickerMode, setPickerMode] = useState<'date' | 'time'>('date');
+    const [onPickerConfirm, setOnPickerConfirm] = useState<((date: Date) => void) | null>(null);
+    const [occurences, setOccurences] = useState<number>(1);
+
+    const openPicker = (mode: 'date' | 'time', onConfirm: (date: Date) => void) => {
+        setPickerMode(mode);
+        setOnPickerConfirm(() => onConfirm);
+        setPickerVisible(true);
+    };
+
+    const handleOccurrenceChange = (occ: number) => {
+        setOccurences(occ);
+    };
 
     const decideState = () => {
+        // update the final runs of the notif
+        const newFinalRuns = notifCopy.nextRuns.map(start => {
+            const end = new Date(start);
+            end.setTime(start.getTime() + notifCopy.repeatInterval * (occurences - 1));
+            return end;
+        });
+        setNotifCopy({
+            ...notifCopy,
+            finalRuns: newFinalRuns,
+        });
+
         // check if new notif was being created
         if (notif.id === '') {
             setPopupState(notifState.NOTIF_CREATED);
@@ -37,7 +63,7 @@ const NotificationPopup = ({ isActive, setPopupState, notif, notifCopy, setNotif
 
     if (isActive) {
         return (
-            <View>
+            <View style={{ position: 'absolute', top: 400, left: 50 }}>
                 {/* close button */}
                 <Pressable onPress={() => { setPopupState(notifState.NO_ACTION) }} style={{}}>
                     <Image
@@ -52,6 +78,8 @@ const NotificationPopup = ({ isActive, setPopupState, notif, notifCopy, setNotif
                     notification={notifCopy}
                     onChange={updatedNotif => setNotifCopy(updatedNotif)}
                     onDelete={() => { setNotifCopy(emptyNotification) }}
+                    onOpenPicker={(mode, handler) => openPicker(mode, handler)}
+                    onOccurrenceChange={handleOccurrenceChange}
                 />
 
                 {/* save button */}
@@ -73,6 +101,18 @@ const NotificationPopup = ({ isActive, setPopupState, notif, notifCopy, setNotif
                         />
                     </View>
                 )}
+
+                <DateTimePickerModal
+                    isVisible={pickerVisible}
+                    mode={pickerMode}
+                    onConfirm={(date) => {
+                        onPickerConfirm?.(date);
+                        setPickerVisible(false);
+                    }}
+                    onCancel={() => setPickerVisible(false)}
+                    display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                    modalPropsIOS={{ presentationStyle: 'overFullScreen' }}
+                />
             </View>
         );
     }

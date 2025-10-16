@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList, Button } from 'react-native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList, Button, Keyboard, Platform } from 'react-native';
 import { Notification } from '../data/dataTypes';
 import styles from '../styles/NotifCard.styles';
 import IntervalSwitch from './ItemSwitch';
@@ -68,13 +67,13 @@ type NotifCardProps = {
     notification: Notification;
     onChange: (n: Notification) => void;
     onDelete?: () => void;
+    onOccurrenceChange?: (n: number) => void;
+    onOpenPicker?: (mode: 'date' | 'time', onConfirm: (date: Date) => void) => void;
 };
 
-export default function NotifCard({ notification, onChange, onDelete }: NotifCardProps) {
-    const [pickerVisible, setPickerVisible] = React.useState(false);
-    const [pickerMode, setPickerMode] = React.useState<'date' | 'time'>('date');
-    const [currentAction, setCurrentAction] =
-        React.useState<'addStart' | 'addEnd' | 'addTime'>();
+export default function NotifCard({ notification, onChange, onDelete, onOccurrenceChange, onOpenPicker }: NotifCardProps) {
+    const [currentAction, setCurrentAction] = React.useState<'addStart' | 'addEnd' | 'addTime'>();
+    const [occurrences, setOccurrences] = useState<number>(1);
 
     // ----- derived values from notification -----
     const repeatMinutes = notification.repeatInterval;
@@ -132,14 +131,6 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
         return times;
     }, [notification.nextRuns]);
 
-    // occurrences estimate
-    const occurances = React.useMemo(() => {
-        if (!notification.nextRuns.length || !notification.finalRuns.length) return undefined;
-        const first = new Date(notification.nextRuns[0]).getTime();
-        const last = new Date(notification.finalRuns[0]).getTime();
-        return Math.floor((last - first) / (1000 * 60 * repeatMinutes)) + 1;
-    }, [notification.nextRuns, notification.finalRuns, repeatMinutes]);
-
     // ----- update helpers -----
     const updateNotification = (patch: Partial<Notification>) =>
         onChange({ ...notification, ...patch });
@@ -147,6 +138,11 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
     const addStartDate = (date: Date) => {
         updateNotification({
             nextRuns: [...notification.nextRuns, date],
+        });
+    };
+
+    const addEndDate = (date: Date) => {
+        updateNotification({
             finalRuns: [...notification.finalRuns, date],
         });
     };
@@ -183,15 +179,16 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
 
     // ----- date/time picker -----
     const showPicker = (action: typeof currentAction, mode: 'date' | 'time' = 'date') => {
+        Keyboard.dismiss();
         setCurrentAction(action);
-        setPickerMode(mode);
-        setPickerVisible(true);
+        onOpenPicker?.(mode, handleConfirm);
     };
 
     const handleConfirm = (date: Date) => {
         if (currentAction === 'addStart') addStartDate(date);
+        else if (currentAction === 'addEnd') addEndDate(date);
         else if (currentAction === 'addTime') addTime(date);
-        setPickerVisible(false);
+        // handled in parent
     };
 
     // ----- render -----
@@ -204,7 +201,7 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
                     <TouchableOpacity style={local.selector} onPress={() => showPicker('addStart')}>
                         <Text>Start Date: {firstStart ? firstStart.toDateString() : 'Select'}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={local.selector} onPress={() => showPicker('addStart')}>
+                    <TouchableOpacity style={local.selector} onPress={() => showPicker('addEnd')}>
                         <Text>End Date: {firstEnd ? firstEnd.toDateString() : 'Select'}</Text>
                     </TouchableOpacity>
                 </View>
@@ -220,10 +217,11 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
                     />
                     <NumberInput
                         label={intervalName === 'Weekly' ? 'Number of Weeks' : 'Number of Months'}
-                        value={occurances}
-                        onChange={n =>
-                            updateNotification({ repeatInterval: notification.repeatInterval })
-                        }
+                        value={occurrences}
+                        onChange={n => {
+                            setOccurrences(n);
+                            onOccurrenceChange?.(n);
+                        }}
                     />
                 </View>
             );
@@ -236,14 +234,14 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
             <IntervalSwitch
                 data={[{ name: 'Daily' }, { name: 'Weekly' }, { name: 'Monthly' }]}
                 onSwitch={item => {
-                    const name = item.name.toLowerCase();
+                    const name = item.name;
                     const minutes =
                         name === 'Daily' ? 1440 : name === 'Weekly' ? 10080 : 40320;
                     updateNotification({ repeatInterval: minutes });
                 }}
                 selectedItem={{ name: intervalName }}
                 switchItem={'Interval'}
-                text={'Select Interval'}
+                text={intervalName ? intervalName : 'Select Interval'}
             />
             {renderIntervalSection()}
             <NotificationTimes times={notifTimes} onAddTime={() => showPicker('addTime', 'time')} />
@@ -253,12 +251,7 @@ export default function NotifCard({ notification, onChange, onDelete }: NotifCar
                 </TouchableOpacity>
             )}
 
-            <DateTimePickerModal
-                isVisible={pickerVisible}
-                mode={pickerMode}
-                onConfirm={handleConfirm}
-                onCancel={() => setPickerVisible(false)}
-            />
+            {/* Picker rendered in parent MedicationPopup */}
         </View>
     );
 }

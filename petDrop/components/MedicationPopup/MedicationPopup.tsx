@@ -1,5 +1,6 @@
 import * as React from "react";
-import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingView } from "react-native";
+import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingView, Platform, Keyboard } from "react-native";
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { Image } from "expo-image";
 import DropdownArrow from "../../assets/dropdown_arrow.svg";
 import styles from '../../styles/MedicationPopup.styles';
@@ -30,6 +31,21 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
   const ObjectID = require('bson-objectid');
   const [propsChanged, setPropsChanged] = useState(true);
   const [sponsorMeds, setSponsorMeds] = useState<SponsorMedication[]>([]);
+  const [occurrencesMap, setOccurrencesMap] = useState<Record<string, number>>({});
+  const [pickerVisible, setPickerVisible] = useState(false);
+  const [pickerMode, setPickerMode] = useState<'date' | 'time'>('date');
+  const [onPickerConfirm, setOnPickerConfirm] = useState<((date: Date) => void) | null>(null);
+
+  const openPicker = (mode: 'date' | 'time', onConfirm: (date: Date) => void) => {
+    Keyboard.dismiss();
+    setPickerMode(mode);
+    setOnPickerConfirm(() => onConfirm);
+    setPickerVisible(true);
+  };
+
+  const handleOccurrenceChange = (notifId: string, occ: number) => {
+    setOccurrencesMap(prev => ({ ...prev, [notifId]: occ }));
+  };
 
   // fetch all the sponsor meds to populate the dropdown with
   const getSponsorMedications = async () => {
@@ -71,6 +87,22 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
       setPropsChanged(true);
       return;
     }
+
+    // handle occurances for each notif
+    const updatedNotifs = medCopy.notifications.map(notif => {
+      const occ = occurrencesMap[notif.id] ?? 1; // default if not set
+      const newFinalRuns = notif.nextRuns.map(start => {
+        const end = new Date(start);
+        end.setTime(start.getTime() + notif.repeatInterval * (occ - 1));
+        return end;
+      });
+      return { ...notif, finalRuns: newFinalRuns };
+    });
+    setMedCopy({
+      ...medCopy,
+      notifications: updatedNotifs,
+    });
+
     // runningTotal will be used to determine the medState
     let runningTotal = 0;
     // check if the med was created or edited
@@ -120,22 +152,24 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
   const notifCards: React.JSX.Element = useMemo(() => {
     return (
       <View>
-        {medCopy.notifications?.map((notif, index) =>
-          <NotifCard
-            notification={{ ...notif, expoPushToken: pushToken }}
-            onChange={(updatedNotif: Notification) => {
-              setMedCopy((prev) => {
-                return { ...prev, notifications: prev.notifications.map((n, i) => (i === index ? updatedNotif : n)) }
-              });
-            }}
-            key={index}
-            onDelete={() => {
-              setMedCopy((prev) => {
-                return { ...prev, notifications: prev.notifications.filter(n => n.id !== notif.id) }
-              });
-            }}
-          />
-        )}
+        {medCopy.notifications?.map((notif, index) => (
+                <NotifCard
+                  key={index}
+                  notification={{ ...notif, expoPushToken: pushToken }}
+                  onChange={(updatedNotif: Notification) => {
+                    setMedCopy((prev) => {
+                      return { ...prev, notifications: prev.notifications.map((n, i) => (i === index ? updatedNotif : n)) }
+                    });
+                  }}
+                  onDelete={() => {
+                    setMedCopy((prev) => {
+                      return { ...prev, notifications: prev.notifications.filter(n => n.id !== notif.id) }
+                    });
+                  }}
+                  onOccurrenceChange={(occ) => handleOccurrenceChange(notif.id, occ)}
+                  onOpenPicker={(mode, handler) => openPicker(mode, handler)}
+                />
+              ))}
       </View>
     )
   }, [medCopy]);
@@ -217,7 +251,24 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
             )}
 
             <View style={styles.notifCardContainer}>
-              {notifCards}
+              {medCopy.notifications?.map((notif, index) => (
+                <NotifCard
+                  key={index}
+                  notification={{ ...notif, expoPushToken: pushToken, id: notif.id || ObjectID() }}
+                  onChange={(updatedNotif: Notification) => {
+                    setMedCopy((prev) => {
+                      return { ...prev, notifications: prev.notifications.map((n, i) => (i === index ? updatedNotif : n)) }
+                    });
+                  }}
+                  onDelete={() => {
+                    setMedCopy((prev) => {
+                      return { ...prev, notifications: prev.notifications.filter(n => n.id !== notif.id) }
+                    });
+                  }}
+                  onOccurrenceChange={(occ) => handleOccurrenceChange(notif.id, occ)}
+                  onOpenPicker={(mode, handler) => openPicker(mode, handler)}
+                />
+              ))}
             </View>
 
             <TextInput
@@ -258,6 +309,18 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
           )}
 
         </View>
+
+        <DateTimePickerModal
+          isVisible={pickerVisible}
+          mode={pickerMode}
+          onConfirm={(date) => {
+            onPickerConfirm?.(date);
+            setPickerVisible(false);
+          }}
+          onCancel={() => setPickerVisible(false)}
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          modalPropsIOS={{ presentationStyle: 'overFullScreen' }}
+        />
       </KeyboardAvoidingView>
     );
   }

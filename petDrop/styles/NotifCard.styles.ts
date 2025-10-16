@@ -5,7 +5,7 @@ const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     container: {
-        flexDirection: 'row',
+        // flexDirection: 'row',
         paddingBottom: height * 0.01,
     },
     notifCard: {
