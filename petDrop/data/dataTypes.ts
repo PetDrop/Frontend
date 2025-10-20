@@ -46,7 +46,7 @@ export interface Notification {
     data: Map<string, object>,
     nextRuns: Date[]; // next times it will be sent
     finalRuns: Date[]; // final times it will be sent
-    repeatInterval: number; // minutes between each time notif is sent
+    repeatInterval: string; // "daily", "weekly", "monthly", or "" for one-time
 }
 
 export interface DateObj {
@@ -58,6 +58,6 @@ export interface DateObj {
 // global default values to avoid having to repeatedly create these in various files
 export const emptyAccount: Account = { id: '', username: '', email: '', password: '', sharedUsers: [], usersSharedWith: [], pets: [], sharedPets: [], image: '' }
 export const emptyPet: Pet = { id: '', name: '', image: '', age: 0, breed: '', address: '', vet: '', vetPhone: '', medications: [] };
-export const emptyNotification: Notification = { id: '', expoPushToken: '', title: '', body: '', data: new Map<string, object>(), nextRuns: [], finalRuns: [], repeatInterval: 0 };
+export const emptyNotification: Notification = { id: '', expoPushToken: '', title: '', body: '', data: new Map<string, object>(), nextRuns: [], finalRuns: [], repeatInterval: '' };
 export const emptyMed: Medication = { id: '', name: '', color: '', description: '', notifications: [], range: 4 };
 export const emptySponsorMed: SponsorMedication = { id: '', name: '', instructions: [], videoLink: '' };

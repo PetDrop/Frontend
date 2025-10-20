@@ -80,6 +80,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 		let response;
 		switch (popupState) {
 			case medState.MED_NOTHING_NOTIF_CREATED:
+				console.log('notifications: ', medCopy.notifications);
 				response = await httpRequest(CREATE_NOTIFS_FOR_MED + medCopy.id, 'POST', JSON.stringify({ notifications: medCopy.notifications }));
 				break;
 			case medState.MED_NOTHING_NOTIF_EDITED:
@@ -165,8 +166,12 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				{selectedPet.id !== '' && (
 					<View style={styles.addMedicationButton}>
 						<AddMedicationButton
+							disabled={false}
 							onPressFunction={() => {
-								setMed(emptyMed);
+								setMed({
+									...emptyMed,
+									color: `#${Math.round(Math.random() * 899998 + 100000)}`
+								});
 								setPopupState(medState.SHOW_POPUP);
 							}}
 							innerText={'+ ADD'}

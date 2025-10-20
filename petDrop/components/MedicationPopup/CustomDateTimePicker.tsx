@@ -25,13 +25,16 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
     return h === 0 ? 12 : h > 12 ? h - 12 : h;
   });
   const [minute, setMinute] = useState(selectedDate.getMinutes());
-  const [isAM, setIsAM] = useState(selectedDate.getHours() < 12);
+  const [hourSet, setHourSet] = useState(() => {
+    const h = selectedDate.getHours();
+    return h < 12 ? 0 : 1; // 0 for first set (AM), 1 for second set (PM)
+  });
 
   const handleConfirm = () => {
     const newDate = mode === 'date' 
       ? new Date(year, month - 1, day)
       : new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 
-          isAM ? (hour === 12 ? 0 : hour) : (hour === 12 ? 12 : hour + 12), minute);
+          hourSet === 0 ? (hour === 12 ? 0 : hour) : (hour === 12 ? 12 : hour + 12), minute);
     setSelectedDate(newDate);
     onConfirm(newDate);
   };
@@ -46,13 +49,31 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
     const itemHeight = 50; // Height of each item (15 padding top + 15 padding bottom + ~20 text height)
     
     const scrollToSelected = () => {
-      const selectedIndex = items.findIndex(item => item.value === selectedValue);
+      const selectedIndex = items.findIndex(item => {
+        if (typeof selectedValue === 'object' && selectedValue !== null) {
+          return item.value.hour === selectedValue.hour && item.value.set === selectedValue.set;
+        }
+        return item.value === selectedValue;
+      });
       if (selectedIndex !== -1 && scrollViewRef.current) {
+        // Center the selected item in the visible area
+        const containerHeight = 300;
+        const visibleItems = Math.floor(containerHeight / itemHeight);
+        const centerOffset = (visibleItems - 1) / 2;
+        const targetY = Math.max(0, (selectedIndex - centerOffset) * itemHeight);
+        
         scrollViewRef.current.scrollTo({
-          y: selectedIndex * itemHeight,
+          y: targetY,
           animated: true
         });
       }
+    };
+
+    const isSelected = (item: any) => {
+      if (typeof selectedValue === 'object' && selectedValue !== null) {
+        return item.value.hour === selectedValue.hour && item.value.set === selectedValue.set;
+      }
+      return item.value === selectedValue;
     };
 
     return (
@@ -71,7 +92,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
               onPress={() => onValueChange(item.value)}
               style={{
                 padding: 15,
-                backgroundColor: selectedValue === item.value ? '#007AFF' : 'transparent',
+                backgroundColor: isSelected(item) ? '#007AFF' : 'transparent',
                 borderBottomWidth: 1,
                 borderBottomColor: '#eee',
                 minHeight: itemHeight
@@ -80,7 +101,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
               <Text style={{
                 textAlign: 'center',
                 fontSize: 18,
-                color: selectedValue === item.value ? 'white' : 'black'
+                color: isSelected(item) ? 'white' : 'black'
               }}>
                 {item.label}
               </Text>
@@ -134,12 +155,23 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
               ) : (
                 <>
                   <WheelPicker
-                    items={Array.from({ length: 12 }, (_, i) => ({ 
-                      value: i + 1, 
-                      label: (i + 1).toString() 
-                    }))}
-                    selectedValue={hour}
-                    onValueChange={setHour}
+                    items={[
+                      // First set (AM): 12, 1, 2, ..., 11
+                      ...Array.from({ length: 12 }, (_, i) => ({ 
+                        value: { hour: i === 0 ? 12 : i, set: 0 }, 
+                        label: (i === 0 ? 12 : i).toString() 
+                      })),
+                      // Second set (PM): 12, 1, 2, ..., 11
+                      ...Array.from({ length: 12 }, (_, i) => ({ 
+                        value: { hour: i === 0 ? 12 : i, set: 1 }, 
+                        label: (i === 0 ? 12 : i).toString() 
+                      }))
+                    ]}
+                    selectedValue={{ hour, set: hourSet }}
+                    onValueChange={(value) => {
+                      setHour(value.hour);
+                      setHourSet(value.set);
+                    }}
                     label="Hour"
                   />
                   <WheelPicker
@@ -151,15 +183,14 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
                     onValueChange={setMinute}
                     label="Minute"
                   />
-                  <WheelPicker
-                    items={[
-                      { value: true, label: 'AM' },
-                      { value: false, label: 'PM' }
-                    ]}
-                    selectedValue={isAM}
-                    onValueChange={setIsAM}
-                    label="AM/PM"
-                  />
+                  <View style={{ flex: 1, marginHorizontal: 5, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ textAlign: 'center', marginBottom: 10, fontWeight: 'bold' }}>AM/PM</Text>
+                    <View style={{ height: 300, justifyContent: 'center', alignItems: 'center' }}>
+                      <Text style={{ fontSize: 24, fontWeight: 'bold', color: hourSet === 0 ? '#007AFF' : '#666' }}>
+                        {hourSet === 0 ? 'AM' : 'PM'}
+                      </Text>
+                    </View>
+                  </View>
                 </>
               )}
             </View>

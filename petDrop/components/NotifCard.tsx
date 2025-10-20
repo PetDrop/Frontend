@@ -25,13 +25,19 @@ const NumberInput = ({ value, label, onChange }: NumberInputProps) => (
 type NotificationTimesProps = {
     times: Date[];
     onAddTime: () => void;
+    onRemoveTime: (index: number) => void;
 };
 
-const NotificationTimes = ({ times, onAddTime }: NotificationTimesProps) => (
+const NotificationTimes = ({ times, onAddTime, onRemoveTime }: NotificationTimesProps) => (
     <View style={local.selector}>
         <Text>Notification Times:</Text>
         {times.map((t, i) => (
-            <Text key={i}>{t.toLocaleTimeString()}</Text>
+            <View style={local.row} key={i}>
+                <Text>{t.toLocaleTimeString()}</Text>
+                <TouchableOpacity onPress={() => onRemoveTime(i)}>
+                    <Text style={{ color: 'red', marginLeft: 8 }}>Remove</Text>
+                </TouchableOpacity>
+            </View>
         ))}
         <TouchableOpacity onPress={onAddTime}>
             <Text style={{ color: 'blue' }}>+ Add Time</Text>
@@ -69,26 +75,17 @@ type NotifCardProps = {
     onDelete?: () => void;
     onOccurrenceChange?: (n: number) => void;
     onOpenPicker?: (mode: 'date' | 'time', onConfirm: (date: Date) => void) => void;
+    onStateChange?: (state: { startDates: Date[], endDates: Date[], times: Date[], repeatInterval: string, occurrences: number }) => void;
 };
 
-export default function NotifCard({ notification, onChange, onDelete, onOccurrenceChange, onOpenPicker }: NotifCardProps) {
+export default function NotifCard({ notification, onChange, onDelete, onOccurrenceChange, onOpenPicker, onStateChange }: NotifCardProps) {
     const [currentAction, setCurrentAction] = React.useState<'addStart' | 'addEnd' | 'addTime'>();
     const [occurrences, setOccurrences] = useState<number>(1);
-
-    // ----- derived values from notification -----
-    const repeatMinutes = notification.repeatInterval;
-
-    const intervalName =
-        repeatMinutes === 1440
-            ? 'Daily'
-            : repeatMinutes === 10080
-                ? 'Weekly'
-                : repeatMinutes >= 40320
-                    ? 'Monthly'
-                    : '';
-
-    // unique start/end dates (date part only)
-    const startDates = React.useMemo(() => {
+    const [localRepeatInterval, setLocalRepeatInterval] = useState<string>(notification.repeatInterval || 'daily');
+    
+    // Local state to track user inputs
+    const [localStartDates, setLocalStartDates] = useState<Date[]>(() => {
+        // Extract unique start dates from existing notification
         const seen = new Set<string>();
         const result: Date[] = [];
         notification.nextRuns.forEach(d => {
@@ -100,9 +97,9 @@ export default function NotifCard({ notification, onChange, onDelete, onOccurren
             }
         });
         return result;
-    }, [notification.nextRuns]);
-
-    const endDates = React.useMemo(() => {
+    });
+    const [localEndDates, setLocalEndDates] = useState<Date[]>(() => {
+        // Extract unique end dates from existing notification
         const seen = new Set<string>();
         const result: Date[] = [];
         notification.finalRuns.forEach(d => {
@@ -114,10 +111,9 @@ export default function NotifCard({ notification, onChange, onDelete, onOccurren
             }
         });
         return result;
-    }, [notification.finalRuns]);
-
-    // unique times of day
-    const notifTimes = React.useMemo(() => {
+    });
+    const [localTimes, setLocalTimes] = useState<Date[]>(() => {
+        // Extract unique times from existing notification
         const seen = new Set<string>();
         const times: Date[] = [];
         notification.nextRuns.forEach(d => {
@@ -129,73 +125,103 @@ export default function NotifCard({ notification, onChange, onDelete, onOccurren
             }
         });
         return times;
-    }, [notification.nextRuns]);
+    });
+
+    // Update parent with local state changes
+    useEffect(() => {
+        onStateChange?.({
+            startDates: localStartDates,
+            endDates: localEndDates,
+            times: localTimes,
+            repeatInterval: localRepeatInterval,
+            occurrences: occurrences
+        });
+    }, [localStartDates, localEndDates, localTimes, localRepeatInterval, occurrences]);
+
+    // Validate end date when interval changes to daily
+    useEffect(() => {
+        if (localRepeatInterval === 'daily' && localStartDates.length > 0 && localEndDates.length > 0) {
+            const startDate = localStartDates[0];
+            const endDate = localEndDates[0];
+            const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+            const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+            
+            if (endDateOnly < startDateOnly) {
+                setLocalEndDates([]);
+            }
+        }
+    }, [localRepeatInterval]);
 
     // ----- update helpers -----
-    const updateNotification = (patch: Partial<Notification>) =>
-        onChange({ ...notification, ...patch });
-
     const addStartDate = (date: Date) => {
-        updateNotification({
-            nextRuns: [...notification.nextRuns, date],
-        });
+        // For daily, replace the start date instead of adding to array
+        if (localRepeatInterval === 'daily') {
+            setLocalStartDates([date]);
+            
+            // If we have an end date that's now invalid, clear it
+            if (localEndDates.length > 0) {
+                const endDate = localEndDates[0];
+                const startDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+                
+                if (endDateOnly < startDateOnly) {
+                    setLocalEndDates([]);
+                }
+            }
+        } else {
+            // For weekly/monthly, add to the array
+            setLocalStartDates(prev => [...prev, date]);
+        }
     };
 
     const addEndDate = (date: Date) => {
-        updateNotification({
-            finalRuns: [...notification.finalRuns, date],
-        });
+        // validate that end date is not before start date
+        if (localRepeatInterval === 'daily' && localStartDates.length > 0) {
+            const startDate = localStartDates[0];
+            const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+            const endDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            
+            if (endDateOnly < startDateOnly) {
+                // Show error or prevent adding - for now, we'll just not add it
+                return;
+            }
+            // For daily, replace the end date instead of adding to array
+            setLocalEndDates([date]);
+        }
     };
 
     const removeStartDate = (i: number) => {
-        const removeKey = startDates[i].toISOString().slice(0, 10);
-        updateNotification({
-            nextRuns: notification.nextRuns.filter(
-                d => d.toISOString().slice(0, 10) !== removeKey
-            ),
-            finalRuns: notification.finalRuns.filter(
-                d => d.toISOString().slice(0, 10) !== removeKey
-            ),
-        });
+        setLocalStartDates(prev => prev.filter((_, index) => index !== i));
     };
 
     const addTime = (time: Date) => {
-        // replicate this time for all start dates
-        const withTime = startDates.flatMap(sd =>
-            new Date(
-                sd.getFullYear(),
-                sd.getMonth(),
-                sd.getDate(),
-                time.getHours(),
-                time.getMinutes(),
-                time.getSeconds()
-            )
-        );
-        updateNotification({
-            nextRuns: [...notification.nextRuns, ...withTime],
-            finalRuns: [...notification.finalRuns, ...withTime],
-        });
+        setLocalTimes(prev => [...prev, time]);
+    };
+
+    const removeTime = (index: number) => {
+        setLocalTimes(prev => prev.filter((_, i) => i !== index));
     };
 
     // ----- date/time picker -----
     const showPicker = (action: typeof currentAction, mode: 'date' | 'time' = 'date') => {
         Keyboard.dismiss();
         setCurrentAction(action);
-        onOpenPicker?.(mode, handleConfirm);
-    };
-
-    const handleConfirm = (date: Date) => {
-        if (currentAction === 'addStart') addStartDate(date);
-        else if (currentAction === 'addEnd') addEndDate(date);
-        else if (currentAction === 'addTime') addTime(date);
-        // handled in parent
+        
+        // Create a handler that captures the action at the time of creation
+        const handleConfirmWithAction = (date: Date) => {
+            if (action === 'addStart') addStartDate(date);
+            else if (action === 'addEnd') addEndDate(date);
+            else if (action === 'addTime') addTime(date);
+        };
+        
+        onOpenPicker?.(mode, handleConfirmWithAction);
     };
 
     // ----- render -----
     function renderIntervalSection() {
-        if (intervalName === 'Daily') {
-            const firstStart = startDates[0] ?? null;
-            const firstEnd = endDates[0] ?? null;
+        if (localRepeatInterval === 'daily') {
+            const firstStart = localStartDates[0] ?? null;
+            const firstEnd = localEndDates[0] ?? null;
             return (
                 <View>
                     <TouchableOpacity style={local.selector} onPress={() => showPicker('addStart')}>
@@ -207,16 +233,16 @@ export default function NotifCard({ notification, onChange, onDelete, onOccurren
                 </View>
             );
         }
-        if (intervalName === 'Weekly' || intervalName === 'Monthly') {
+        if (localRepeatInterval === 'weekly' || localRepeatInterval === 'monthly') {
             return (
                 <View>
                     <MultiDateSelector
-                        dates={startDates}
+                        dates={localStartDates}
                         onAddDate={() => showPicker('addStart')}
                         onRemoveDate={removeStartDate}
                     />
                     <NumberInput
-                        label={intervalName === 'Weekly' ? 'Number of Weeks' : 'Number of Months'}
+                        label={localRepeatInterval === 'weekly' ? 'Number of Weeks' : 'Number of Months'}
                         value={occurrences}
                         onChange={n => {
                             setOccurrences(n);
@@ -232,19 +258,17 @@ export default function NotifCard({ notification, onChange, onDelete, onOccurren
     return (
         <View style={styles.container}>
             <IntervalSwitch
-                data={[{ name: 'Daily' }, { name: 'Weekly' }, { name: 'Monthly' }]}
+                data={[{ name: 'daily' }, { name: 'weekly' }, { name: 'monthly' }]}
                 onSwitch={item => {
                     const name = item.name;
-                    const minutes =
-                        name === 'Daily' ? 1440 : name === 'Weekly' ? 10080 : 40320;
-                    updateNotification({ repeatInterval: minutes });
+                    setLocalRepeatInterval(name);
                 }}
-                selectedItem={{ name: intervalName }}
+                selectedItem={{ name: localRepeatInterval }}
                 switchItem={'Interval'}
-                text={intervalName ? intervalName : 'Select Interval'}
+                text={localRepeatInterval}
             />
             {renderIntervalSection()}
-            <NotificationTimes times={notifTimes} onAddTime={() => showPicker('addTime', 'time')} />
+            <NotificationTimes times={localTimes} onAddTime={() => showPicker('addTime', 'time')} onRemoveTime={removeTime} />
             {onDelete && (
                 <TouchableOpacity onPress={onDelete}>
                     <Text>Delete</Text>

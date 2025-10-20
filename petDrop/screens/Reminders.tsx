@@ -143,6 +143,7 @@ const Reminders = ({ navigation, route }: Props) => {
         {selectedPet.id !== '' && (
           <View style={styles.addReminderButton}>
             <AddReminderButton
+              disabled={false}
               onPressFunction={() => {
                 setNotificationCopy({ ...emptyNotification, id: ObjectID() });
                 setPopupState(notifState.SHOW_POPUP);

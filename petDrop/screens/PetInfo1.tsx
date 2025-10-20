@@ -161,13 +161,13 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
         {/* delete button */}
         {petBeingEdited && (
           <View style={styles.deleteButtonContainer}>
-            <DeleteButton onPressFunction={Delete} innerText={'Delete'} color={Color.colorFirebrick} />
+            <DeleteButton disabled={false} onPressFunction={Delete} innerText={'Delete'} color={Color.colorFirebrick} />
           </View>
         )}
 
         {/* submit button */}
         <View style={styles.submitButtonContainer}>
-          <SubmitButton onPressFunction={Submit} innerText={'Submit'} color={Color.colorCornflowerblue} />
+          <SubmitButton disabled={false} onPressFunction={Submit} innerText={'Submit'} color={Color.colorCornflowerblue} />
         </View>
 
       </ScrollView>

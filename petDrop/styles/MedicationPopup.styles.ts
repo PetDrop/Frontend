@@ -100,13 +100,9 @@ const styles = StyleSheet.create({
     buttonText: {
         top: height * -0.005,
     },
-    saveButtonOval: {
-        borderRadius: Border.br_17,
-        height: height * 0.04,
+    saveButtonContainer: {
         top: height * -0.13,
         left: width * 0.692,
-        width: width * 0.19,
-        backgroundColor: Color.colorCornflowerblue,
     },
     deleteButtonContainer: {
         top: height * -0.23,

@@ -184,7 +184,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
 
         {/* add shared user button */}
         <View style={styles.addButtonContainer}>
-          <AddButton onPressFunction={() => { setNumSharedUsers(numSharedUsers + 1) }} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
+          <AddButton disabled={false} onPressFunction={() => { setNumSharedUsers(numSharedUsers + 1) }} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
         </View>
 
         {/* users shared with */}
@@ -193,12 +193,12 @@ const Profile = ({ navigation, route }: ProfileType) => {
 
         {/* add user shared with button */}
         <View style={styles.addButtonContainer}>
-          <AddButton onPressFunction={() => { setNumUsersSharedWith(numUsersSharedWith + 1) }} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
+          <AddButton disabled={false} onPressFunction={() => { setNumUsersSharedWith(numUsersSharedWith + 1) }} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
         </View>
 
         {/* save changes button */}
         <View style={styles.saveChangesButtonContainer}>
-          <SaveChangesButton onPressFunction={UpdateAccount} innerText={'Save'} color={Color.colorCornflowerblue} />
+          <SaveChangesButton disabled={false} onPressFunction={UpdateAccount} innerText={'Save'} color={Color.colorCornflowerblue} />
         </View>
 
       </ScrollView>
