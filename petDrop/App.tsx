@@ -7,7 +7,7 @@ type RootStackParamList = {
   PetInfo1: undefined;
   Reminders: undefined;
   MedicationsArchive: undefined;
-  Instructions: undefined;
+  Instructions: { medName: string; pushToken: string };
   Sponsors: undefined;
   Credits: undefined;
   LoadingScreen: undefined;
@@ -97,34 +97,26 @@ async function registerForPushNotificationsAsync() {
 }
 
 const App = () => {
+  const navigationRef = React.useRef<any>(null);
   const [hideSplashScreen, setHideSplashScreen] = useState(true);
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined);
+  const [pendingNavigation, setPendingNavigation] = useState<{medName: string, pushToken: string} | null>(null);
+
+  // Function to handle navigation after login
+  const handleNavigationAfterLogin = () => {
+    if (pendingNavigation && navigationRef.current) {
+      navigationRef.current.navigate('Instructions', pendingNavigation);
+      setPendingNavigation(null); // Clear the pending navigation
+    } else {
+      console.log('Cannot navigate - missing pendingNavigation or navigationRef');
+    }
+  };
 
   const [fontsLoaded, error] = useFonts({
     "Koulen-Regular": require("./assets/fonts/Koulen-Regular.ttf"),
     "Jua-Regular": require("./assets/fonts/Jua-Regular.ttf"),
   });
-
-  // function withPushToken<P>(
-  //   Component: React.ComponentType<P>,
-  //   defaultParams: object
-  // ) {
-  //   return function Wrapped(props: any) {
-  //     const { route, ...rest } = props;
-  
-  //     // Merge defaults
-  //     const mergedParams = { ...defaultParams, ...route.params };
-  
-  //     // Forward everything else (navigation, etc.)
-  //     return (
-  //       <Component
-  //         {...(rest as P)}
-  //         route={{ ...route, params: mergedParams }}
-  //       />
-  //     );
-  //   };
-  // }
 
   useEffect(() => {
     registerForPushNotificationsAsync()
@@ -135,15 +127,58 @@ const App = () => {
       setNotification(notification);
     });
 
-    const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
-    });
 
     return () => {
       notificationListener.remove();
-      responseListener.remove();
     };
   }, []);
+
+  // Set up response listener when expoPushToken is available
+  useEffect(() => {
+    if (expoPushToken) {
+      
+      // Check for any pending notification responses
+      Notifications.getLastNotificationResponseAsync().then(response => {
+        if (response) {
+          handleNotificationResponse(response);
+        }
+      });
+      
+      const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
+        handleNotificationResponse(response);
+      });
+
+      return () => {
+        responseListener.remove();
+      };
+    }
+  }, [expoPushToken]);
+
+  // Function to handle notification response
+  const handleNotificationResponse = (response: any) => {
+    const medNameData = response.notification.request.content.data?.medName as any;
+    const medName = medNameData?.value || medNameData;
+    
+    if (medName && navigationRef.current) {
+      // Check if user is already logged in by checking if we're on Home screen
+      const currentRoute = navigationRef.current.getCurrentRoute();
+      
+      if (currentRoute?.name !== 'Login' && currentRoute?.name !== 'Signup') {
+        // User is already logged in, navigate directly to Instructions
+        navigationRef.current.navigate('Instructions', {
+          medName: medName,
+          pushToken: expoPushToken
+        });
+      } else {
+        // User is not logged in, set pending navigation and go to Login
+        setPendingNavigation({ medName, pushToken: expoPushToken });
+        navigationRef.current.navigate('Login', { pushToken: expoPushToken });
+      }
+    } else {
+      console.log('No medName found in notification data or navigationRef not available');
+    }
+  };
+
 
   if (!fontsLoaded && !error) {
     return null;
@@ -152,16 +187,19 @@ const App = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AccountProvider initialAccount={emptyAccount}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         {hideSplashScreen ? (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             {/* first screen listed is the one rendered by default */}
             <Stack.Screen
               name="Login"
-              component={Login}
               options={{ headerShown: false }}
               initialParams={{pushToken: expoPushToken}}
-            />
+            >
+              {(props) => {
+                return <Login {...props} onLoginSuccess={pendingNavigation ? handleNavigationAfterLogin : undefined} />;
+              }}
+            </Stack.Screen>
             <Stack.Screen
               name="Signup"
               component={Signup}

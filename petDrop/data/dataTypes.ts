@@ -43,7 +43,7 @@ export interface Notification {
     expoPushToken: string,
     title: string,
     body: string,
-    data: string,
+    data: Record<string, any>,
     nextRuns: Date[]; // next times it will be sent
     finalRuns: Date[]; // final times it will be sent
     repeatInterval: string; // "daily", "weekly", "monthly", or "" for one-time
@@ -58,6 +58,6 @@ export interface DateObj {
 // global default values to avoid having to repeatedly create these in various files
 export const emptyAccount: Account = { id: '', username: '', email: '', password: '', sharedUsers: [], usersSharedWith: [], pets: [], sharedPets: [], image: '' }
 export const emptyPet: Pet = { id: '', name: '', image: '', age: 0, breed: '', address: '', vet: '', vetPhone: '', medications: [] };
-export const emptyNotification: Notification = { id: '', expoPushToken: '', title: 'Reminder to Administer Medication', body: `It's time to give petName their medName!`, data: '', nextRuns: [], finalRuns: [], repeatInterval: '' };
+export const emptyNotification: Notification = { id: '', expoPushToken: '', title: 'Reminder to Administer Medication', body: `It's time to give petName their medName!`, data: {}, nextRuns: [], finalRuns: [], repeatInterval: '' };
 export const emptyMed: Medication = { id: '', name: '', color: '', description: '', notifications: [], range: 4 };
 export const emptySponsorMed: SponsorMedication = { id: '', name: '', instructions: [], videoLink: '' };

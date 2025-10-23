@@ -52,17 +52,6 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 		});
 	};
 
-	// populate the notifications' bodies and data for the database
-	const populateNotifBodies = (notifs: Notification[]): Notification[] => {
-		return notifs.map((notif) => {
-			return {
-				...notif,
-				body: `It's time to give ${selectedPet.name} their ${med.name}!`,
-				data: med.name,
-			};
-		});
-	};
-
 	const ObjectID = require('bson-objectid');
 
 	const pushToken: string = route.params.pushToken;
@@ -86,7 +75,6 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 
 	const WriteToDB = async () => {
 		let response;
-		setMedCopy({ ...medCopy, notifications: populateNotifBodies(medCopy.notifications) });
 		switch (popupState) {
 			case medState.MED_NOTHING_NOTIF_CREATED:
 				console.log('notifications: ', formatNotifs(medCopy.notifications));

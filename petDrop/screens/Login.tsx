@@ -26,6 +26,7 @@ const { width, height } = Dimensions.get('window');
 type LoginType = {
     navigation: NavigationProp<any>;
     route: any;
+    onLoginSuccess?: () => void;
 };
 
 const Login = (props: LoginType) => {
@@ -35,7 +36,8 @@ const Login = (props: LoginType) => {
     const [rememberMe, setRememberMe] = useState(false);
 
     const pushToken: string = props.route.params.pushToken;
-
+    const onLoginSuccess: (() => void) | undefined = props.onLoginSuccess;
+    
     // populates the account's sharedPets with all the pets shared with them
     const addSharedInfo = async () => {
         // check each account they requested info from
@@ -48,7 +50,6 @@ const Login = (props: LoginType) => {
                     setAccount((prev) => {
                         return { ...prev, sharedPets: prev.sharedPets.concat(sharedAccount.pets) };
                     });
-                    console.log(account.sharedPets);
                 }
             } else {
                 console.log('could not find account with username: ' + sharedUser + '\n status code: ' + response.status);
@@ -75,9 +76,12 @@ const Login = (props: LoginType) => {
                 if (temp.password === password) {
                     // if info is correct, populate the account with shared info
                     await addSharedInfo();
-                    console.log(account);
-                    // navigate home and pass the account there
-                    props.navigation.navigate('Home');
+                    // navigate home and pass the account there, or handle pending navigation
+                    if (onLoginSuccess) {
+                        onLoginSuccess();
+                    } else {
+                        props.navigation.navigate('Home');
+                    }
                 } else {
                     console.log('incorrect password for username: ' + username);
                     alert('Incorrect username or password');

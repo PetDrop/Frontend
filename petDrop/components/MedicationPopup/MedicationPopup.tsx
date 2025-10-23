@@ -227,11 +227,17 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
       if (state) {
         const { nextRuns, finalRuns } = generateNotificationRuns(state);
         // Use string repeatInterval directly for the notification object
+        // Create data object with medName for navigation
+        const notificationData = { medName: { value: medCopy.name } };
+        
         return {
           ...notif,
           nextRuns,
           finalRuns,
-          repeatInterval: state.repeatInterval
+          repeatInterval: state.repeatInterval,
+          data: notificationData,
+          body: `It's time to give ${pet.name} their ${medCopy.name}!`,
+          expoPushToken: pushToken
         };
       }
       // If no state found, return the notification as-is (might be an empty notification)
@@ -357,7 +363,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
                 title="Add Reminder"
                 onPress={() => {
                   setMedCopy((prev) => {
-                    const newNotification = { ...emptyNotification, id: ObjectID() };
+                    const newNotification = { ...emptyNotification, id: ObjectID(), expoPushToken: pushToken };
                     return { ...prev, notifications: [...prev.notifications, newNotification] }
                   })
                 }}
