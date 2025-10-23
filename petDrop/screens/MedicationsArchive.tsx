@@ -8,7 +8,7 @@ import styles from '../styles/Medications.styles';
 import { Color, ScreenEnum } from '../GlobalStyles';
 import AddMedicationButton from '../components/CustomButton';
 import MedicationPopup from '../components/MedicationPopup/MedicationPopup';
-import { Account, emptyMed, emptyPet, Medication, Pet } from '../data/dataTypes';
+import { Account, emptyMed, emptyPet, Medication, Notification, Pet } from '../data/dataTypes';
 import { medState } from '../data/enums';
 import { NavigationProp, useFocusEffect } from '@react-navigation/native';
 import Header from '../components/Header';
@@ -25,26 +25,12 @@ type MedicationsArchiveProps = {
 	route: any;
 }
 
-const formatDates = (med: Medication) => {
-	return {
-		...med,
-		notifications: med.notifications.map((notif) => {
-			return {
-				...notif,
-				nextRuns: notif.nextRuns.map((nextRun) => nextRun.toISOString()),
-				finalRuns: notif.finalRuns.map((finalRun) => finalRun.toISOString())
-			}
-		})
-	};
-}
-
 const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	const { account, setAccount, updatePetMedications } = useAccount();
 	const [med, setMed] = useState<Medication>(emptyMed);
 	const [medCopy, setMedCopy] = useState<Medication>(emptyMed);
 	const [popupState, setPopupState] = useState(medState.NO_ACTION);
 	const [selectedPetId, setSelectedPetId] = useState(account.pets[0]?.id || account.sharedPets[0]?.id || '');
-
 
 	// derive the selected pet from account whenever it changes
 	const selectedPet = React.useMemo(() => {
@@ -54,6 +40,28 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 			emptyPet
 		);
 	}, [account, selectedPetId]);
+
+	// format the notifications' nextRuns and finalRuns for the database
+	const formatNotifs = (notifs: Notification[]) => {
+		return notifs.map((notif) => {
+			return {
+				...notif,
+				nextRuns: notif.nextRuns.map((nextRun) => nextRun.toISOString()),
+				finalRuns: notif.finalRuns.map((finalRun) => finalRun.toISOString())
+			};
+		});
+	};
+
+	// populate the notifications' bodies and data for the database
+	const populateNotifBodies = (notifs: Notification[]): Notification[] => {
+		return notifs.map((notif) => {
+			return {
+				...notif,
+				body: `It's time to give ${selectedPet.name} their ${med.name}!`,
+				data: med.name,
+			};
+		});
+	};
 
 	const ObjectID = require('bson-objectid');
 
@@ -78,33 +86,34 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 
 	const WriteToDB = async () => {
 		let response;
+		setMedCopy({ ...medCopy, notifications: populateNotifBodies(medCopy.notifications) });
 		switch (popupState) {
 			case medState.MED_NOTHING_NOTIF_CREATED:
-				console.log('notifications: ', medCopy.notifications);
-				response = await httpRequest(CREATE_NOTIFS_FOR_MED + medCopy.id, 'POST', JSON.stringify({ notifications: medCopy.notifications }));
+				console.log('notifications: ', formatNotifs(medCopy.notifications));
+				response = await httpRequest(CREATE_NOTIFS_FOR_MED + medCopy.id, 'POST', JSON.stringify({ notifications: formatNotifs(medCopy.notifications) }));
 				break;
 			case medState.MED_NOTHING_NOTIF_EDITED:
-				response = await httpRequest(EDIT_NOTIFS_FOR_MED + medCopy.id, 'PUT', JSON.stringify({ notifications: medCopy.notifications }));
+				response = await httpRequest(EDIT_NOTIFS_FOR_MED + medCopy.id, 'PUT', JSON.stringify({ notifications: formatNotifs(medCopy.notifications) }));
 				break;
 			case medState.MED_NOTHING_NOTIF_DELETED:
 				response = await httpRequest(DELETE_NOTIFS_FROM_MED + medCopy.id, 'DELETE', '');
 				break;
 			case medState.MED_CREATED_NOTIF_NOTHING:
 			case medState.MED_CREATED_NOTIF_CREATED:
-				console.log(formatDates(medCopy));
-				response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify(formatDates(medCopy)));
+				console.log({ ...medCopy, notifications: formatNotifs(medCopy.notifications) });
+				response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify({ ...medCopy, notifications: formatNotifs(medCopy.notifications) }));
 				break;
 			case medState.MED_EDITED_NOTIF_NOTHING:
-				response = await httpRequest(UPDATE_MED_NOT_NOTIFS, 'PUT', JSON.stringify(formatDates(medCopy)));
+				response = await httpRequest(UPDATE_MED_NOT_NOTIFS, 'PUT', JSON.stringify({ ...medCopy, notifications: formatNotifs(medCopy.notifications) }));
 				break;
 			case medState.MED_EDITED_NOTIF_CREATED:
-				response = await httpRequest(UPDATE_MED_CREATE_NOTIFS, 'PUT', JSON.stringify(formatDates(medCopy)));
+				response = await httpRequest(UPDATE_MED_CREATE_NOTIFS, 'PUT', JSON.stringify({ ...medCopy, notifications: formatNotifs(medCopy.notifications) }));
 				break;
 			case medState.MED_EDITED_NOTIF_EDITED:
-				response = await httpRequest(UPDATE_MED_AND_NOTIFS, 'PUT', JSON.stringify(formatDates(medCopy)));
+				response = await httpRequest(UPDATE_MED_AND_NOTIFS, 'PUT', JSON.stringify({ ...medCopy, notifications: formatNotifs(medCopy.notifications) }));
 				break;
 			case medState.MED_EDITED_NOTIF_DELETED:
-				response = await httpRequest(UPDATE_MED_DELETE_NOTIFS, 'PUT', JSON.stringify(formatDates(medCopy)));
+				response = await httpRequest(UPDATE_MED_DELETE_NOTIFS, 'PUT', JSON.stringify({ ...medCopy, notifications: formatNotifs(medCopy.notifications) }));
 				break;
 			case medState.MED_DELETED:
 				httpRequest(DELETE_MEDICATION + medCopy.id, 'DELETE', '');
