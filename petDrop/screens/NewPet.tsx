@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Text, View, Image, KeyboardAvoidingView, ScrollView } from "react-native";
-import AddButtons from "../components/AddPets/PetInfo1AddButtons";
+import AddButtons from "../components/AddPets/NewPetAddButtons";
 import TopBottomBar from "../components/TopBottomBar";
 import { Color, logoImage, ScreenEnum } from "../GlobalStyles";
-import { NavigationProp } from "@react-navigation/core";
-import styles from '../styles/PetInfo1.styles';
+import { NavigationProp } from "@react-navigation/native";
+import styles from '../styles/NewPet.styles';
 import { Account, emptyPet, Pet } from "../data/dataTypes";
 import { useEffect, useState } from "react";
 import AddPetImage from "../components/AddImage";
@@ -12,13 +12,15 @@ import SubmitButton from "../components/CustomButton";
 import DeleteButton from "../components/CustomButton";
 import { ADD_PET, DELETE_PET_BY_ID, httpRequest, UPDATE_ACCOUNT, UPDATE_PET } from "../data/endpoints";
 import * as ImagePicker from 'expo-image-picker';
+import { useAccount } from "../context/AccountContext";
 
-type PetInfo1Type = {
+type NewPetType = {
   navigation: NavigationProp<any>;
   route: any;
 }
 
-const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
+const NewPet = ({ navigation, route }: NewPetType) => {
+  const { account, setAccount } = useAccount();
   const [image, setImage] = useState('');
   const [inputFields, setInputFields] = useState(new Map<string, string>([
     ['pet name', ''],
@@ -35,9 +37,6 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
   function updateInputFields(key: string, value: string) {
     setInputFields((prevState) => new Map(prevState.set(key, value)));
   }
-
-  // store the user's account info to avoid typing "route.params.account" repeatedly
-  const account: Account = route.params.account;
 
   // get pet from param in case one is being edited (if undefined then creating new pet)
   const petBeingEdited: Pet = route.params.pet;
@@ -81,15 +80,19 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
           // TODO: allow for editing of shared pets
           if (petBeingEdited) {
             const updatedPet: Pet = await response.json();
-            account.pets[account.pets.findIndex((pet: Pet) => pet.id === updatedPet.id)] = updatedPet;
+            setAccount((prev) => {
+              return { ...prev, pets: prev.pets.map((pet) => pet.id === updatedPet.id ? updatedPet : pet) };
+            });
           } else {
             const newPet: Pet = await response.json();
-            account.pets.push(newPet);
+            setAccount((prev) => {
+              return { ...prev, pets: prev.pets.concat([newPet]) };
+            });
           }
           response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
           if (response.ok) {
             alert('Submission successful. You have now been redirected to the Pet Info page where you can view it, as well as add medications and reminders for it.');
-            navigation.navigate('PetInfo', { account: account });
+            navigation.navigate('PetInfo');
           } else {
             console.log('unable to add pet to account');
             alert('submission failed');
@@ -108,11 +111,13 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
     // TODO: ask for confirmation
     let response = await httpRequest(DELETE_PET_BY_ID + petBeingEdited.id, 'DELETE', '');
     if (response.ok) {
-      account.pets.splice(account.pets.indexOf(petBeingEdited), 1);
+      setAccount((prev) => {
+        return { ...prev, pets: prev.pets.filter((pet) => pet.id !== petBeingEdited.id) };
+      });
       response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
       if (response.ok) {
         alert(`Pet: ${petBeingEdited.name} has been successfully deleted.`);
-        navigation.navigate('PetInfo', { account: account });
+        navigation.navigate('PetInfo');
       } else {
         console.log(`http PUT request failed with error code: ${response.status}`);
         alert(`Failed to update account after deleting pet: ${petBeingEdited.id}`);
@@ -142,34 +147,34 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
         </View>
 
         {/* Page Title */}
-        <Text style={[styles.petInfo1AddPet, styles.addPetTypo]}>Add Pet</Text>
+        <Text style={[styles.newPetAddPet, styles.addPetTypo]}>Add Pet</Text>
 
         {/* Add Image Circle w/ Plus Sign */}
         <AddPetImage onPressFunction={addImage} containerStyle={styles.addImageContainer} uri={image} />
 
         {/* Pet Info Input Section */}
-        <Text style={[styles.petInfo1Name, styles.nameTypo]}>Pet Info</Text>
+        <Text style={[styles.newPetName, styles.nameTypo]}>Pet Info</Text>
         <AddButtons inputFields={inputFields} inputFieldsSetter={updateInputFields} />
 
         {/* delete button */}
         {petBeingEdited && (
           <View style={styles.deleteButtonContainer}>
-            <DeleteButton onPressFunction={Delete} innerText={'Delete'} color={Color.colorFirebrick} />
+            <DeleteButton disabled={false} onPressFunction={Delete} innerText={'Delete'} color={Color.colorFirebrick} />
           </View>
         )}
 
         {/* submit button */}
         <View style={styles.submitButtonContainer}>
-          <SubmitButton onPressFunction={Submit} innerText={'Submit'} color={Color.colorCornflowerblue} />
+          <SubmitButton disabled={false} onPressFunction={Submit} innerText={'Submit'} color={Color.colorCornflowerblue} />
         </View>
 
       </ScrollView>
 
       {/* Top Banner and Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo1} account={account} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.NewPet} />
 
     </KeyboardAvoidingView>
   );
 };
 
-export default PetInfo1;
+export default NewPet;

@@ -1,33 +1,25 @@
 import * as React from 'react';
 import { useState } from 'react';
-import {
-	FlatList,
-	Image,
-	Modal,
-	Pressable,
-	Text,
-	TouchableOpacity,
-	View,
-} from 'react-native';
+import { FlatList, Image, Modal, Pressable, Text, TouchableOpacity, View } from 'react-native';
 import styles from '../styles/Medications.styles';
 
 interface ItemSwitchProps {
 	text: string;
-	selectedItem: { id: string, name: string, image?: string };
-	data: Array<{ id: string, name: string, image?: string }>,
+	selectedItem: { id?: string, name: string, image?: string };
+	data: Array<{ id?: string, name: string, image?: string }>,
 	onSwitch: (item: any) => void;
-	switchItem: 'Item' | 'Medication' | string;
+	switchItem: string;
 }
 
 
-const ItemSwitch: React.FC<ItemSwitchProps> = ({ text, selectedItem, data, onSwitch, switchItem }) => {
+const ItemSwitch = ({ text, selectedItem, data, onSwitch, switchItem }: ItemSwitchProps) => {
 	const [modalVisible, setModalVisible] = useState(false);
 
 	if (selectedItem === undefined) {
 		selectedItem = { id: "", name: "", image: "" };
 	}
 
-	// if switch is for items, then put the image portion else don't
+	// if switch is for pets, then put the image portion else don't
 	let image;
 	if (switchItem === 'Pet') {
 		// the following should always be able to set imageString to selectedItem.image
@@ -53,10 +45,10 @@ const ItemSwitch: React.FC<ItemSwitchProps> = ({ text, selectedItem, data, onSwi
 			<Modal visible={modalVisible} transparent animationType="fade">
 				<View style={styles.modalOverlay}>
 					<View style={styles.modalContainer}>
-						<Text style={styles.modalTitle}>{`Select a ${switchItem}`}</Text>
+						<Text style={styles.modalTitle}>{`Select ${switchItem}`}</Text>
 						<FlatList
 							data={data}
-							keyExtractor={(item) => item.id.toString()}
+							keyExtractor={(item) => item.id ? item.id.toString() : item.name.toString()}
 							renderItem={({ item }) => (
 								<TouchableOpacity
 									style={[

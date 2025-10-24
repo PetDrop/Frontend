@@ -10,6 +10,8 @@ import { GET_ACCOUNT_BY_EMAIL, httpRequest, UPDATE_ACCOUNT } from "../data/endpo
 import { Account } from "../data/dataTypes";
 import { useReducer, useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
+import { NavigationProp } from "@react-navigation/native";
+import { useAccount } from "../context/AccountContext";
 
 function updateSharedUsers(state: string[], action: { index: number, text: string }) {
   let newState;
@@ -28,12 +30,12 @@ function updateSharedUsers(state: string[], action: { index: number, text: strin
 }
 
 type ProfileType = {
-  navigation: any;
+  navigation: NavigationProp<any>;
   route: any;
 };
 
 const Profile = ({ navigation, route }: ProfileType) => {
-  const account: Account = route.params.account;
+  const { account, setAccount } = useAccount();
 
   const [image, setImage] = useState(account.image);
   const [username, setUsername] = useState(account.username);
@@ -43,6 +45,8 @@ const Profile = ({ navigation, route }: ProfileType) => {
   const [sharedUsers, setSharedUsers] = useReducer(updateSharedUsers, account.sharedUsers);
   const [numUsersSharedWith, setNumUsersSharedWith] = useState(Math.max(account.usersSharedWith.length, 1));
   const [usersSharedWith, setUsersSharedWith] = useReducer(updateSharedUsers, account.usersSharedWith);
+
+  const pushToken: string = route.params.pushToken;
 
   /* handles submit button being pressed
     checks to make sure required fields have values
@@ -70,7 +74,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
   */
   const WriteToDB = async (sharedUserContacts: string[], usersSharedWithContacts: string[]) => {
     // create updated account object with new info, to be put in the db
-    const updatedAccount = {
+    setAccount({
       id: account.id,
       username: username,
       email: email,
@@ -78,14 +82,15 @@ const Profile = ({ navigation, route }: ProfileType) => {
       sharedUsers: sharedUserContacts,
       usersSharedWith: usersSharedWithContacts,
       pets: account.pets,
+      sharedPets: account.sharedPets,
       image: image
-    };
+    });
     // then update the account in the db with the new info
     try {
-      const response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(updatedAccount));
+      const response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
       if (response.ok) {
         // navigate to home screen and pass the account there
-        navigation.navigate('Home', { account: updatedAccount });
+        navigation.navigate('Home');
       } else {
         console.log('unable to write account to database: status code ' + response.status);
         alert('submission failed');
@@ -144,7 +149,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* header */}
-        <Header navigation={navigation} account={account} />
+        <Header navigation={navigation} />
 
         {/* profile title */}
         <Text style={styles.title}>{`${account.username}'s Profile`}</Text>
@@ -179,7 +184,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
 
         {/* add shared user button */}
         <View style={styles.addButtonContainer}>
-          <AddButton onPressFunction={() => { setNumSharedUsers(numSharedUsers + 1) }} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
+          <AddButton disabled={false} onPressFunction={() => { setNumSharedUsers(numSharedUsers + 1) }} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
         </View>
 
         {/* users shared with */}
@@ -188,12 +193,12 @@ const Profile = ({ navigation, route }: ProfileType) => {
 
         {/* add user shared with button */}
         <View style={styles.addButtonContainer}>
-          <AddButton onPressFunction={() => { setNumUsersSharedWith(numUsersSharedWith + 1) }} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
+          <AddButton disabled={false} onPressFunction={() => { setNumUsersSharedWith(numUsersSharedWith + 1) }} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
         </View>
 
         {/* save changes button */}
         <View style={styles.saveChangesButtonContainer}>
-          <SaveChangesButton onPressFunction={UpdateAccount} innerText={'Save'} color={Color.colorCornflowerblue} />
+          <SaveChangesButton disabled={false} onPressFunction={UpdateAccount} innerText={'Save'} color={Color.colorCornflowerblue} />
         </View>
 
       </ScrollView>

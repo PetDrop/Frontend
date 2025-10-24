@@ -65,7 +65,7 @@ export enum ScreenEnum {
   Signup = 1,
   Home = 2,
   PetInfo = 3,
-  PetInfo1 = 4, //new pet page
+  NewPet = 4,
   Reminders = 5,
   MedicationsArchive = 6,
   Instructions = 7,

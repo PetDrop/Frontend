@@ -1,45 +1,137 @@
 import * as React from "react";
-import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingView } from "react-native";
+import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingView, Platform, Keyboard, Modal } from "react-native";
 import { Image } from "expo-image";
 import DropdownArrow from "../../assets/dropdown_arrow.svg";
 import styles from '../../styles/MedicationPopup.styles';
-import { Account, DateObj, emptyReminder, Medication, Pet, Reminder, SponsorMedication } from "../../data/dataTypes";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { useEffect, useState } from "react";
+import { Notification, Medication, Pet, SponsorMedication, emptyNotification, emptyMed } from "../../data/dataTypes";
+import { useEffect, useMemo, useState } from "react";
 import { Color } from "../../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
-import DateCard from "./DateCard";
-import PeriodCard from "./PeriodCard";
-import ReminderPopup from "../ReminderPopup";
 import DeleteButton from '../CustomButton';
-import { medState, remState, datePicker } from "../../data/enums";
+import SaveButton from '../CustomButton';
+import { medState } from "../../data/enums";
 import { GET_ALL_SPONSOR_MEDICATIONS, httpRequest } from "../../data/endpoints";
 import { NavigationProp } from "@react-navigation/core";
+import NotifCard from "../NotifCard";
+import CustomDateTimePicker from "./CustomDateTimePicker";
+import * as Notifications from 'expo-notifications';
+import { usePushToken } from '../../context/PushTokenContext';
 
 type MedicationPopupType = {
   isActive: boolean;
   setPopupState: Function;
-  setMedication: Function;
-  setReminder: Function;
   pet: Pet;
   med: Medication;
+  medCopy: Medication;
+  setMedCopy: React.Dispatch<React.SetStateAction<Medication>>;
   readonly: boolean;
   navigation: NavigationProp<any>;
-  account: Account;
 };
 
-const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, pet, med, readonly, navigation, account }: MedicationPopupType) => {
-  const [datePickerMode, setDatePickerMode] = useState(datePicker.DISABLED);
-  const [dates, setDates] = useState<DateObj[]>([]);
-  const [description, setDescription] = useState(med.description);
-  const [medName, setMedName] = useState(med.name);
-  const [color, setColor] = useState(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
+const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCopy, readonly, navigation }: MedicationPopupType) => {
+	const { pushToken: currentPushToken } = usePushToken();
+  const ObjectID = require('bson-objectid');
   const [propsChanged, setPropsChanged] = useState(true);
-  const [remPopupState, setRemPopupState] = useState(remState.NO_ACTION);
-  const [rem, setRem] = useState(med.reminder ? med.reminder : emptyReminder);
-  const [creatingPeriod, setCreatingPeriod] = useState(false);
-  const [curPeriod, setCurPeriod] = useState<{ start: Date | undefined, end: Date | undefined }>({ start: undefined, end: undefined });
   const [sponsorMeds, setSponsorMeds] = useState<SponsorMedication[]>([]);
+  const [occurrencesMap, setOccurrencesMap] = useState<Record<string, number>>({});
+  const [notifStates, setNotifStates] = useState<Record<string, { startDates: Date[], endDates: Date[], times: Date[], repeatInterval: string, occurrences: number }>>({});
+  const [pickerVisible, setPickerVisible] = useState(false);
+  const [pickerMode, setPickerMode] = useState<'date' | 'time'>('date');
+  const [onPickerConfirm, setOnPickerConfirm] = useState<((date: Date) => void) | null>(null);
+
+  const openPicker = (mode: 'date' | 'time', onConfirm: (date: Date) => void) => {
+    Keyboard.dismiss();
+    setPickerMode(mode);
+    setOnPickerConfirm(() => onConfirm);
+    setPickerVisible(true);
+  };
+
+  const handleOccurrenceChange = (notifId: string, occ: number) => {
+    setOccurrencesMap(prev => ({ ...prev, [notifId]: occ }));
+  };
+
+  const handleNotifStateChange = (notifId: string, state: { startDates: Date[], endDates: Date[], times: Date[], repeatInterval: string, occurrences: number }) => {
+    setNotifStates(prev => ({ ...prev, [notifId]: state }));
+  };
+
+  // Generate all combinations of dates and times for a notification
+  const generateNotificationRuns = (state: { startDates: Date[], endDates: Date[], times: Date[], repeatInterval: string, occurrences: number }) => {
+    const { startDates, endDates, times, repeatInterval, occurrences } = state;
+    const nextRuns: Date[] = [];
+    const finalRuns: Date[] = [];
+
+    if (startDates.length === 0 || times.length === 0) {
+      return { nextRuns, finalRuns };
+    }
+
+    // For daily intervals: nextRuns = startDate x times, finalRuns = endDate x times
+    if (repeatInterval === 'daily') {
+      const startDate = startDates[0];
+      const endDate = endDates[0] || startDate;
+
+      // nextRuns: startDate x all times
+      times.forEach(time => {
+        const dateTime = new Date(
+          startDate.getFullYear(),
+          startDate.getMonth(),
+          startDate.getDate(),
+          time.getHours(),
+          time.getMinutes(),
+          time.getSeconds()
+        );
+        nextRuns.push(new Date(dateTime));
+      });
+
+      // finalRuns: endDate x all times
+      times.forEach(time => {
+        const dateTime = new Date(
+          endDate.getFullYear(),
+          endDate.getMonth(),
+          endDate.getDate(),
+          time.getHours(),
+          time.getMinutes(),
+          time.getSeconds()
+        );
+        finalRuns.push(new Date(dateTime));
+      });
+    } else {
+      // For weekly/monthly intervals: nextRuns = startDates x times, finalRuns = endDates(determined from startDates + repeatInterval * occurrences) x times
+      startDates.forEach(startDate => {
+        times.forEach(time => {
+          // nextRuns: startDate x time
+          const startDateTime = new Date(
+            startDate.getFullYear(),
+            startDate.getMonth(),
+            startDate.getDate(),
+            time.getHours(),
+            time.getMinutes(),
+            time.getSeconds()
+          );
+          nextRuns.push(new Date(startDateTime));
+
+          // finalRuns: endDate (startDate + repeatInterval * occurrences) x time
+          const endDate = new Date(startDate);
+          if (repeatInterval === 'weekly') {
+            endDate.setDate(endDate.getDate() + (occurrences - 1) * 7);
+          } else if (repeatInterval === 'monthly') {
+            endDate.setMonth(endDate.getMonth() + (occurrences - 1));
+          }
+
+          const endDateTime = new Date(
+            endDate.getFullYear(),
+            endDate.getMonth(),
+            endDate.getDate(),
+            time.getHours(),
+            time.getMinutes(),
+            time.getSeconds()
+          );
+          finalRuns.push(new Date(endDateTime));
+        });
+      });
+    }
+
+    return { nextRuns, finalRuns };
+  };
 
   // fetch all the sponsor meds to populate the dropdown with
   const getSponsorMedications = async () => {
@@ -54,125 +146,153 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
     getSponsorMedications();
   }, []);
 
-  // this is the id that will be used for a med if changes are made by the popup
-  const ObjectID = require('bson-objectid');
-  const id = med.id !== '' ? med.id : ObjectID();
-
-  // handles changes to the rem for the current med
-  const updateRem = (rem: Reminder, deleted: boolean) => {
-    if (deleted) {
-      setRem(emptyReminder);
-      setReminder({ id: ObjectID(), notifications: [] })
-    } else {
-      setRem(rem);
-      setReminder(rem);
-    }
-  }
-
-  // function for updating dates state
-  const updateDates = (startDate: string | undefined, endDate: string | undefined, recurring: number) => {
-    if (startDate === undefined) {
-      setDates(new Array<DateObj>());
-    } else {
-      let newDateObj: DateObj = {
-        startDate: startDate,
-        endDate: endDate ? endDate : '',
-        recurrances: recurring
-      };
-      setDates((prevState) => {
-        if (startDate && endDate) {
-          prevState.push(newDateObj);
-          setCurPeriod({ start: undefined, end: undefined });
-          setCreatingPeriod(false);
-        } else {
-          let oldDateObj = prevState.find((dateObj => dateObj.startDate === startDate));
-          oldDateObj ? oldDateObj.recurrances = recurring : prevState.push(newDateObj);
-        }
-        return [...prevState];
-      });
-    }
-  }
-
-  // intermediate function to handle whether a single date is added, or the start/end of a period
-  const addDate = (date: Date) => {
-    switch (datePickerMode) {
-      case datePicker.SINGLE:
-        if (!dates.some((dateObj: DateObj) => dateObj.startDate === date.toISOString().slice(0, 10))) {
-          updateDates(date.toISOString().slice(0, 10), undefined, 1);
-        }
-        break;
-      case datePicker.START_DATE:
-        if (!dates.some((dateObj: DateObj) => dateObj.startDate === date.toISOString().slice(0, 10) && dateObj.recurrances === 0)) {
-          curPeriod.start = date;
-          if (curPeriod.end) {
-            updateDates(date.toISOString().slice(0, 10), curPeriod.end.toISOString().slice(0, 10), 0);
-          }
-        }
-        break;
-      case datePicker.END_DATE:
-        if (!dates.some((dateObj: DateObj) => dateObj.endDate === date.toISOString().slice(0, 10) && dateObj.recurrances === 0)) {
-          curPeriod.end = date;
-          if (curPeriod.start) {
-            updateDates(curPeriod.start.toISOString().slice(0, 10), date.toISOString().slice(0, 10), 0);
-          }
-        }
-        break;
-    }
-    setDatePickerMode(datePicker.DISABLED);
-  }
-
   // rerenders the popup when it's opened if it's possible something changed
   if (isActive && propsChanged) {
     setPropsChanged(false);
-    setDescription(med.description);
-    setDates(med.dates.map(date => ({ ...date }))); // deep copy med.dates so you don't mutate med when calling setDates elsewhere
-    setMedName(med.name);
-    setColor(med.color !== '' ? med.color : `#${Math.round(Math.random() * 899998 + 100000)}`);
-    setRem(med.reminder ? med.reminder : emptyReminder);
+    // setMedCopy({...medCopy, id: medCopy.id || ObjectID()});
+    // setMedCopy({...medCopy, description: medCopy.description});
+    // setMedCopy({...medCopy, name: medCopy.name});
+    // setMedCopy({...medCopy, notifications: medCopy.notifications});
+    // setMedCopy({...medCopy, color: medCopy.color || `#${Math.round(Math.random() * 899998 + 100000)}`});
   }
 
-  // resets all states - done if 'x' is hit or after saving the changes if closed with action
-  const close = () => {
-    setDescription('');
-    updateDates(undefined, undefined, 0); // undefined clears the array
-    setMedName('');
-    setColor(`#${Math.round(Math.random() * 899998 + 100000)}`);
+  // resets all states - done if 'x' is hit
+  const close = (state: medState) => {
+    // Clear all notification states
+    setNotifStates({});
+    setOccurrencesMap({});
     setPropsChanged(true);
-    setPopupState(medState.NO_ACTION);
-    setRem(emptyReminder);
+    setPopupState(state);
   }
 
-  // this is called if there are any changes made via the popup that need to be saved
-  const closeWithAction = (deleted: boolean) => {
-    // TODO: ask for confirmation if deleted
-    const newMed: Medication = { id: id, name: medName, color: color, description: description, dates: dates, reminder: rem, range: 4 };
-    // add medication to the list that will be created when the popup is closed
-    setMedication(newMed);
-    let newState;
-    if (med.id === '') {
-      newState = medState.MED_CREATED;
-    } else if (deleted) {
-      newState = medState.MED_DELETED;
-    } else {
-      // use the numbers behind states to avoid a switch statement
-      newState = medState.MED_EDITED_REM_NOTHING + remPopupState;
-    }
-    close();
-    setPopupState(newState);
+  // Validation functions
+  const validateMedicationName = () => {
+    return medCopy.name && medCopy.name.trim() !== '';
   };
 
-  // these are the date (and period) cards that will be rendered in the popup
-  const dateCards: Array<React.JSX.Element> = [];
-  dates.forEach((dateObj: DateObj, index: number) => {
-    dateCards.push(
-      <DateCard dateObj={dateObj} updateDates={updateDates} readonly={readonly} key={index} />
-    )
-  });
-  if (creatingPeriod) {
-    dateCards.push(
-      <PeriodCard startDate={curPeriod.start} endDate={curPeriod.end} modalFunction={setDatePickerMode} key={'creatingPeriodCard'} />
-    )
+  const validateNotifications = () => {
+    return medCopy.notifications.every(notif => {
+      const state = notifStates[notif.id];
+      if (!state) return false; // No state means notification hasn't been configured
+
+      // Check if notification has at least one start date and one time
+      const hasStartDate = state.startDates.length > 0;
+      const hasTime = state.times.length > 0;
+
+      // For daily intervals, also require an end date
+      if (state.repeatInterval === 'daily') {
+        const hasEndDate = state.endDates.length > 0;
+        return hasStartDate && hasTime && hasEndDate;
+      }
+
+      // For weekly/monthly intervals, only need start date and time
+      return hasStartDate && hasTime;
+    });
+  };
+
+  const validateAndSave = () => {
+    const errors: string[] = [];
+
+    // Check medication name
+    if (!validateMedicationName()) {
+      errors.push('Please select a medication from the dropdown.');
+    }
+
+    // Check notifications
+    if (medCopy.notifications.length > 0 && !validateNotifications()) {
+      errors.push('Please ensure all notifications are properly configured. Daily notifications need start date, end date, and time. Weekly/monthly notifications need start date and time.');
+    }
+
+    if (errors.length > 0) {
+      alert(errors.join('\n'));
+      return false;
+    }
+
+    return true;
+  };
+
+  const closeWithAction = (deletePressed: boolean) => {
+    if (deletePressed) {
+      close(medState.MED_DELETED);
+      return;
+    }
+
+    // Validation checks
+    if (!validateAndSave()) {
+      return; // Stop if validation fails
+    }
+
+    // Generate nextRuns and finalRuns from local state
+    const updatedNotifs = medCopy.notifications.map(notif => {
+      const state = notifStates[notif.id];
+      if (state) {
+        const { nextRuns, finalRuns } = generateNotificationRuns(state);
+        // Use string repeatInterval directly for the notification object
+        // Create data object with medName for navigation
+        const notificationData = { medName: { value: medCopy.name } };
+        
+        return {
+          ...notif,
+          nextRuns,
+          finalRuns,
+          repeatInterval: state.repeatInterval,
+          data: notificationData,
+          body: `It's time to give ${pet.name} their ${medCopy.name}!`,
+          expoPushToken: currentPushToken
+        };
+      }
+      // If no state found, return the notification as-is (might be an empty notification)
+      // This prevents notifications with no user interaction from being lost
+      return notif;
+    });
+    setMedCopy({
+      ...medCopy,
+      notifications: updatedNotifs,
+    });
+
+    // runningTotal will be used to determine the medState
+    let runningTotal = 0;
+    // check if the med was created or edited
+    // medStates get the tens value from med and the ones value from notifs
+    if (med.name === '' && medCopy.name !== '') { // med was created
+      runningTotal = 10;
+    } else {
+      // check if any fields of med and medCopy differ, i.e. if med was edited
+      const medFieldsToCheck: (keyof Medication)[] = ["name", "color", "description"];
+      for (const field of medFieldsToCheck) {
+        if (med[field] !== medCopy[field]) { // med was edited
+          runningTotal = 20;
+          break;
+        }
+      }
+    }
+    // check if notifs was created, edited, or deleted
+    if (med.notifications.length === 0 && medCopy.notifications.length > 0) { // notifs created
+      runningTotal += 1;
+    } else if (med.notifications.length > 0 && medCopy.notifications.length === 0) { // notifs deleted
+      runningTotal += 3;
+    } else {
+      if (med.notifications.length !== medCopy.notifications.length) { // efficient way to check if notifs edited
+        runningTotal += 2;
+      } else {
+        // check each notif to see if any fields were changed
+        const notifFieldsToCheck: (keyof Notification)[] = ["id", "title", "body", "data", "nextRuns", "finalRuns", "repeatInterval"];
+        med.notifications.forEach((notif, index) => {
+          for (const field of notifFieldsToCheck) {
+            if (notif[field] !== medCopy.notifications[index][field]) { // a notif was edited
+              runningTotal += 2;
+              // early return to avoid unnecessary iterations over notifs array
+              close(runningTotal);
+              return;
+            }
+          }
+        })
+      }
+    }
+    // set popup state using runningTotal, which closes the popup
+    close(runningTotal);
   }
+
 
   if (isActive) {
     return (
@@ -188,7 +308,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
 
             {/* TODO: make this pressable to pick a color */}
             {/* color indicator */}
-            <View style={[styles.colorIndicator, { backgroundColor: color }]} />
+            <View style={[styles.colorIndicator, { backgroundColor: medCopy.color }]} />
 
             {/* medication selection */}
             {!readonly ?
@@ -200,7 +320,7 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
                     }
                   })
                 }
-                onSelect={(selectedItem: string) => { setMedName(selectedItem) }}
+                onSelect={(selectedItem: string) => { setMedCopy({ ...medCopy, name: selectedItem }) }}
                 renderButton={(selectedItem: string) => {
                   return (
                     <View style={styles.dropdownDefault}>
@@ -221,12 +341,12 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
               />
               :
               <View style={styles.dropdownDefault}>
-                <Text style={styles.text}>{medName}</Text>
+                <Text style={styles.text}>{medCopy.name}</Text>
               </View>
             }
 
             {/* close x button */}
-            <Pressable onPress={() => { close() }} style={styles.closePopupContainer}>
+            <Pressable onPress={() => { close(medState.NO_ACTION) }} style={styles.closePopupContainer}>
               <Image
                 style={styles.closePopup}
                 contentFit="cover"
@@ -239,32 +359,46 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
           {/* white main area */}
           <ScrollView style={styles.popupBody}>
 
-            <View style={styles.dateCardContainer}>
-              {dateCards}
-            </View>
-
             {!readonly && (
-              <Button title="Add Date" onPress={() => { setDatePickerMode(datePicker.SINGLE) }} />
+              <Button
+                title="Add Reminder"
+                onPress={() => {
+                  setMedCopy((prev) => {
+                    const newNotification = { ...emptyNotification, id: ObjectID(), expoPushToken: currentPushToken };
+                    return { ...prev, notifications: [...prev.notifications, newNotification] }
+                  })
+                }}
+              />
             )}
 
-            {(!creatingPeriod && !readonly) && (
-              <Button title="Add Date Period" onPress={() => { setCreatingPeriod(true) }} />
-            )}
-
-            <DateTimePickerModal
-              date={new Date(Date.now())}
-              isVisible={datePickerMode !== datePicker.DISABLED}
-              mode="date"
-              onConfirm={(date) => addDate(date)}
-              onCancel={() => { setDatePickerMode(datePicker.DISABLED) }}
-            />
+            <View style={styles.notifCardContainer}>
+              {medCopy.notifications?.map((notif, index) => (
+                <NotifCard
+                  key={notif.id}
+                  notification={{ ...notif, expoPushToken: currentPushToken }}
+                  onChange={(updatedNotif: Notification) => {
+                    setMedCopy((prev) => {
+                      return { ...prev, notifications: prev.notifications.map((n, i) => (i === index ? updatedNotif : n)) }
+                    });
+                  }}
+                  onDelete={() => {
+                    setMedCopy((prev) => {
+                      return { ...prev, notifications: prev.notifications.filter(n => n.id !== notif.id) }
+                    });
+                  }}
+                  onOccurrenceChange={(occ) => handleOccurrenceChange(notif.id, occ)}
+                  onOpenPicker={(mode, handler) => openPicker(mode, handler)}
+                  onStateChange={(state) => handleNotifStateChange(notif.id, state)}
+                />
+              ))}
+            </View>
 
             <TextInput
               style={[styles.textInput]}
               placeholder="Enter any info you'll need later (notes, instructions, etc.)"
               placeholderTextColor={Color.colorCornflowerblue}
-              value={description}
-              onChangeText={setDescription}
+              value={medCopy.description}
+              onChangeText={(newText) => { setMedCopy((prev) => { return { ...prev, description: newText } }) }}
               multiline={true}
               editable={!readonly}
             />
@@ -273,56 +407,37 @@ const MedicationPopup = ({ isActive, setPopupState, setMedication, setReminder, 
 
           {/* view instructions button */}
           {med.id !== '' && (
-            <Pressable onPress={() => {navigation.navigate('Instructions', {account: account, medName: medName})}}>
+            <Pressable onPress={() => { navigation.navigate('Instructions', { medName: medCopy.name }) }}>
               <View style={styles.instructionButtonOval}>
                 <Text style={[styles.buttonText, styles.text]}>Instructions</Text>
               </View>
             </Pressable>
           )}
 
-          {/* view/add reminder button */}
-          {((readonly && rem.id !== '') || (!readonly)) && (
-            <Pressable onPress={() => { setRemPopupState(remState.SHOW_POPUP) }}>
-              <View style={styles.reminderButtonOval}>
-                <Text style={[styles.buttonText, styles.text]}>{`${rem.id !== '' ? 'VIEW' : 'ADD'} REMINDER`}</Text>
-              </View>
-            </Pressable>
-          )}
-
           {/* save button */}
           {!readonly && (
-            <Pressable onPress={() => { closeWithAction(false) }}>
-              <View style={styles.saveButtonOval}>
-                <Text style={[styles.buttonText, styles.text]}>SAVE</Text>
-              </View>
-            </Pressable>
+            <View style={styles.saveButtonContainer}>
+              <SaveButton disabled={false} onPressFunction={() => { closeWithAction(false) }} innerText={'save'} color={Color.colorCornflowerblue} />
+            </View>
           )}
 
           {/* delete button */}
           {(med.id !== '' && !readonly) && (
             <View style={styles.deleteButtonContainer}>
-              <DeleteButton onPressFunction={() => { closeWithAction(true) }} innerText={'delete'} color={Color.colorFirebrick} />
+              <DeleteButton disabled={false} onPressFunction={() => { closeWithAction(true) }} innerText={'delete'} color={Color.colorFirebrick} />
             </View>
           )}
 
         </View>
 
-        <ReminderPopup
-          isActive={remPopupState === remState.SHOW_POPUP}
-          setPopupState={setRemPopupState}
-          setRem={updateRem}
-          setMed={() => { }}
-          pet={pet}
-          med={{
-            id: med.id,
-            color: color,
-            dates: dates,
-            description: description,
-            name: medName === '' ? 'MED BEING ADDED' : medName,
-            range: med.range,
-            reminder: rem
+        <CustomDateTimePicker
+          isVisible={pickerVisible}
+          mode={pickerMode}
+          onConfirm={(date) => {
+            onPickerConfirm?.(date);
+            setPickerVisible(false);
           }}
-          readonly={readonly}
+          onCancel={() => setPickerVisible(false)}
         />
       </KeyboardAvoidingView>
     );

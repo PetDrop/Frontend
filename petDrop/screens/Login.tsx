@@ -1,40 +1,48 @@
 import * as React from 'react';
 import { useState } from 'react';
 import {
-  Dimensions,
-  Image,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
+    Dimensions,
+    Image,
+    Keyboard,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableWithoutFeedback,
+    View,
 } from 'react-native';
 import { Border, Color, FontFamily } from '../GlobalStyles';
 import BlueCircleBig from '../assets/blue_circle_big.svg';
 import { GET_ACCOUNT_BY_EMAIL, GET_ACCOUNT_BY_USERNAME, httpRequest } from '../data/endpoints';
 import { Account } from '../data/dataTypes';
+import { NavigationProp } from '@react-navigation/native';
+import { useAccount } from '../context/AccountContext';
+import { usePushToken } from '../context/PushTokenContext';
+import { convertDateStringsToDates } from '../utils/dateConversion';
 
 const { width, height } = Dimensions.get('window');
 
+
 type LoginType = {
-	navigation: any;
+    navigation: NavigationProp<any>;
+    route: any;
+    onLoginSuccess?: () => void;
 };
 
 const Login = (props: LoginType) => {
+    const { account, setAccount } = useAccount();
+    const { pushToken } = usePushToken();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
 
-
-    // populates an accounts sharedPets with all the pets shared with them
-    const addSharedInfo = async (account: Account) => {
-        // initialize sharedPets since it's undefined in db
-        account.sharedPets = [];
+    const pendingNavigation: (() => void) | undefined = props.onLoginSuccess;
+    
+    // populates the account's sharedPets with all the pets shared with them
+    const addSharedInfo = async () => {
         // check each account they requested info from
         account.sharedUsers.forEach(async (sharedUser) => {
             const response = await httpRequest(GET_ACCOUNT_BY_USERNAME + sharedUser, 'GET', '');
@@ -42,8 +50,10 @@ const Login = (props: LoginType) => {
                 // if account found check if they volunteered their info
                 const sharedAccount: Account = await response.json();
                 if (sharedAccount.usersSharedWith.includes(account.username)) {
-                    account.sharedPets = account.sharedPets.concat(sharedAccount.pets);
-                    console.log(account.sharedPets);
+                    const convertedSharedAccount = convertDateStringsToDates(sharedAccount);
+                    setAccount((prev) => {
+                        return { ...prev, sharedPets: prev.sharedPets.concat(convertedSharedAccount.pets) };
+                    });
                 }
             } else {
                 console.log('could not find account with username: ' + sharedUser + '\n status code: ' + response.status);
@@ -65,18 +75,24 @@ const Login = (props: LoginType) => {
             const response = await httpRequest(GET_ACCOUNT_BY_USERNAME + username, 'GET', '');
             if (response.ok) {
                 // if account found check its password against the one entered
-                const account: Account = await response.json();
-                if (account.password === password) {
+                const temp: Account = await response.json();
+                if (temp.password === password) {
                     // if info is correct, populate the account with shared info
-                    await addSharedInfo(account);
-                    // navigate home and pass the account there
-                    props.navigation.navigate('Home', {account: account});
+                    await addSharedInfo();
+                    // convert date strings to dates and set account context
+                    setAccount(convertDateStringsToDates(temp));
+                    // handle pending navigation if it exists, otherwise navigate home
+                    if (pendingNavigation) {
+                        pendingNavigation();
+                    } else {
+                        props.navigation.navigate('Home');
+                    }
                 } else {
                     console.log('incorrect password for username: ' + username);
                     alert('Incorrect username or password');
                 }
             } else {
-                // http request failed - most likely means no account with entered email exists
+                // http request failed - most likely means no account with entered username exists
                 console.log('could not find account with username: ' + username + '\n status code: ' + response.status);
                 alert('Incorrect username or password');
             }
@@ -90,8 +106,8 @@ const Login = (props: LoginType) => {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={styles.container}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <ScrollView 
-                    contentContainerStyle={styles.scrollContainer} 
+                <ScrollView
+                    contentContainerStyle={styles.scrollContainer}
                     keyboardShouldPersistTaps="handled">
 
                     <View>

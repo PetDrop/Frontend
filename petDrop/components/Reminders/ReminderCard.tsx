@@ -2,14 +2,33 @@ import * as React from 'react';
 import { Text, View, Pressable } from 'react-native';
 import { styles } from '../../styles/Reminders.styles';
 import EditIcon from '../../assets/edit_icon.svg';
-import { Medication } from '../../data/dataTypes';
+import { Medication, Notification } from '../../data/dataTypes';
+import { useMemo } from 'react';
 
 type ReminderCardProps = {
 	med: Medication;
+	notif: Notification;
 	showingFunction: Function;
 }
 
-const ReminderCard = ({ med, showingFunction }: ReminderCardProps) => {
+const ReminderCard = ({ med, notif, showingFunction }: ReminderCardProps) => {
+	const notificationsString = useMemo(() => {
+		if (notif.nextRuns.length > 0) {
+			// Get unique times from nextRuns
+			const uniqueTimes = [...new Set(notif.nextRuns.map(date => date.toTimeString()))];
+			return `NOTIFICATIONS: ${uniqueTimes.join(', ')}`;
+		}
+		return 'NO NOTIFICATIONS';
+	}, [notif]);
+	const datesString = useMemo(() => {
+		if (notif.nextRuns.length > 0) {
+			// Get unique dates from nextRuns
+			const uniqueDates = [...new Set(notif.nextRuns.map(date => date.toDateString()))];
+			return `DATES: ${uniqueDates.join(', ')}`;
+		}
+		return 'NO DATES';
+	}, [notif]);
+
 	return (
 		<View style={styles.cardContainer}>
 			<View style={styles.header}>
@@ -17,16 +36,16 @@ const ReminderCard = ({ med, showingFunction }: ReminderCardProps) => {
 					<View style={[styles.reminderColor, { backgroundColor: med.color }]} />
 					<Text style={styles.reminderTitle}>{med.name}</Text>
 				</View>
-				<Pressable onPress={() => {showingFunction(med)}}>
+				<Pressable onPress={() => { showingFunction(notif, med) }}>
 					<EditIcon style={styles.editIcon} />
 				</Pressable>
 			</View>
 			<View style={styles.body}>
 				<Text style={styles.reminderDetails}>
-					DATES: {med.dates.join(', ')}
+					{`${datesString}`}
 				</Text>
 				<Text style={styles.reminderDetails}>
-					NOTIFICATIONS: {med.reminder.notifications.join(', ')}
+					{`${notificationsString}`}
 				</Text>
 				<Text style={styles.reminderDetails}>
 					MESSAGE: "{med.description}"

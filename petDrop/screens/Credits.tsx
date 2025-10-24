@@ -38,12 +38,7 @@ const authors = [
     },
 ];
 
-type CreditsProps = {
-    navigation: NavigationProp<any>;
-    route: any;
-}
-
-const Credits = ({ navigation, route } : CreditsProps) => {
+const Credits = ({ navigation }: { navigation: NavigationProp<any> }) => {
     // active pagination dot
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -90,7 +85,7 @@ const Credits = ({ navigation, route } : CreditsProps) => {
                 ))}
             </View>
 
-            <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Credits} account={route.params.account} />
+            <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Credits} />
         </View >
     );
 };

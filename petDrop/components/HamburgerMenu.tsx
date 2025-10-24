@@ -4,18 +4,16 @@ import Icon from "react-native-vector-icons/Feather";
 import { styles } from '../styles/HamburgerMenu.styles';
 import { Color } from '../GlobalStyles';
 import { NavigationProp } from '@react-navigation/native';
-import { Account } from '../data/dataTypes';
 
 const { width } = Dimensions.get('window');
 
 type HambugerMenuProps = {
     navigation: NavigationProp<any>;
-    account: Account;
 }
 
-const HamburgerMenu = ({ navigation, account }: HambugerMenuProps) => {
+const HamburgerMenu = ({ navigation }: HambugerMenuProps) => {
     const [isOpen, setIsOpen] = useState(false);
-
+    
     const translateX = useState(new Animated.Value(width))[0];
 
     const toggleMenu = () => {
@@ -29,8 +27,8 @@ const HamburgerMenu = ({ navigation, account }: HambugerMenuProps) => {
     };
 
     const menuItems = [
-        { label: 'Sponsors', onPress: () => { navigation.navigate('Sponsors', { account: account }) } },
-        { label: 'Credits', onPress: () => { navigation.navigate('Credits', { account: account }) } }
+        { label: 'Sponsors', onPress: () => { navigation.navigate('Sponsors') } },
+        { label: 'Credits', onPress: () => { navigation.navigate('Credits') } }
     ].map((item, index) => (
         <TouchableOpacity key={index} style={styles.menuItem} onPress={() => {
             item.onPress();

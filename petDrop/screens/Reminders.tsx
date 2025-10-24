@@ -8,13 +8,15 @@ import { Color, logoImage, ScreenEnum } from "../GlobalStyles";
 import styles from "../styles/Reminders.styles";
 
 import { NavigationProp, useFocusEffect } from "@react-navigation/native";
-import { Account, emptyMed, emptyPet, emptyReminder, Medication, Pet, Reminder } from "../data/dataTypes";
-import { useCallback, useEffect, useState } from "react";
-import ReminderPopup from "../components/ReminderPopup";
+import { Account, emptyMed, emptyPet, Medication, Pet, Notification, emptyNotification } from "../data/dataTypes";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import PetSwitch from '../components/ItemSwitch';
-import { httpRequest, ADD_REMINDER, UPDATE_ACCOUNT, UPDATE_MEDICATION, UPDATE_REMINDER, DELETE_REMINDER_BY_ID } from "../data/endpoints";
-import { remState } from "../data/enums";
+import { notifState } from "../data/enums";
 import Header from "../components/Header";
+import NotificationPopup from "../components/Reminders/NotificationPopup";
+import { CREATE_NOTIFS_FOR_MED, DELETE_NOTIF, DELETE_NOTIFS_FROM_MED, httpRequest, UPDATE_NOTIF } from "../data/endpoints";
+import structuredClone from '@ungap/structured-clone';
+import { useAccount } from "../context/AccountContext";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -22,94 +24,112 @@ interface Props {
 }
 
 const Reminders = ({ navigation, route }: Props) => {
-  const [selectedPet, setSelectedPet] = useState(emptyPet);
-  const [popupState, setPopupState] = useState(remState.NO_ACTION);
-  const [rem, setRem] = useState<Reminder>(emptyReminder);
+  const { account, setAccount, updateNotifications } = useAccount();
+  const [selectedPetId, setSelectedPetId] = useState(account.pets[0]?.id || account.sharedPets[0]?.id || '');
+  const [popupState, setPopupState] = useState(notifState.NO_ACTION);
   const [med, setMed] = useState<Medication>(emptyMed);
+  const [notification, setNotification] = useState<Notification>(emptyNotification);
+  const [notificationCopy, setNotificationCopy] = useState<Notification>(emptyNotification);
 
-  // store the user's account info to avoid typing "route.params.account" repeatedly
-  const account: Account = route.params.account;
+  // derive the selected pet from account whenever it changes
+  const selectedPet = React.useMemo(() => {
+    return (
+      account.pets.find((p) => p.id === selectedPetId) ||
+      account.sharedPets.find((p) => p.id === selectedPetId) ||
+      emptyPet
+    );
+  }, [account, selectedPetId]);
+
+  // only when notification is updated should notificationCopy be reset
+  useEffect(() => {
+    setNotificationCopy(structuredClone(notification));
+  }, [notification]);
+
+  const ObjectID = require('bson-objectid');
 
   useFocusEffect(
     useCallback(() => {
-      setSelectedPet(account.pets[0] || account.sharedPets[0] || emptyPet);
+      setSelectedPetId(account.pets[0]?.id || account.sharedPets[0]?.id || '');
     }, [])
   );
 
-  const editReminder = (med: Medication) => {
+  const editNotification = (notif: Notification, med: Medication) => {
+    setNotification(notif);
     setMed(med);
-    setPopupState(remState.SHOW_POPUP);
+    setPopupState(notifState.SHOW_POPUP);
+  }
+
+  const formatDates = (notif: Notification) => {
+    return {
+      ...notif,
+      nextRuns: notif.nextRuns.map((nextRun) => nextRun.toISOString()),
+      finalRuns: notif.finalRuns.map((finalRun) => finalRun.toISOString())
+    }
   }
 
   const WriteToDB = async () => {
-    let url: string = '', method: string = '', body: string = '';
+    let response;
     switch (popupState) {
-      case remState.REM_CREATED:
-        url = ADD_REMINDER;
-        method = 'POST';
-        body = JSON.stringify(rem);
+      case notifState.NOTIF_CREATED:
+        response = await httpRequest(CREATE_NOTIFS_FOR_MED + med.id, 'PUT', JSON.stringify(formatDates(notificationCopy)));
+        updateNotifications(selectedPet.id, med.id, med.notifications.concat([notificationCopy]));
+        setMed((prev) => {
+          return { ...prev, notifications: prev.notifications.concat([notificationCopy]) }
+        });
+      case notifState.NOTIF_DELETED:
+        response = await httpRequest(DELETE_NOTIF + notificationCopy.id, 'DELETE', '');
+        updateNotifications(selectedPet.id, med.id, med.notifications.filter((notif) => notif.id !== notificationCopy.id));
+        setMed((prev) => {
+          return { ...prev, notifications: prev.notifications.filter((notif) => notif.id !== notificationCopy.id) }
+        });
         break;
-      case remState.REM_EDITED:
-        url = UPDATE_REMINDER;
-        method = 'PUT';
-        body = JSON.stringify(rem);
-        break;
-      case remState.REM_DELETED:
-        url = DELETE_REMINDER_BY_ID + rem.id;
-        method = 'DELETE';
-        body = '';
+      default: // to avoid response possibly undefined
+      case notifState.NOTIF_EDITED:
+        response = await httpRequest(UPDATE_NOTIF, 'PUT', JSON.stringify(formatDates(notificationCopy)));
+        updateNotifications(selectedPet.id, med.id, med.notifications.map((notif) => notif.id === notificationCopy.id ? notificationCopy : notif));
         break;
     }
-    let response = await httpRequest(url, method, body);
-    if (response.ok) {
-      const reminder = popupState === remState.REM_DELETED ? emptyReminder : rem;
-      med.reminder = reminder;
-      if (popupState !== remState.REM_EDITED) {
-        response = await httpRequest(UPDATE_MEDICATION, 'PUT', JSON.stringify(med));
-        if (response.ok) {
-          alert(`Successfully ${popupState === remState.REM_DELETED ? 'deleted' : 'submitted'} reminder`);
-        } else {
-          console.log(`http PUT request failed with error code: ${response.status}`);
-          alert('Failed to update medication');
-        }
-      }
-    } else {
-      console.log(`http ${method} request failed with error code: ${response.status}`);
-      alert(`Failed to ${popupState === remState.REM_DELETED ? 'delete' : 'submit'} reminder`);
+
+    if (!response.ok) {
+      console.error(`http request failed with status code ${response.status}`);
     }
-    setPopupState(remState.NO_ACTION);
+
+    setMed(emptyMed);
+    setNotification(emptyNotification);
+    setPopupState(notifState.NO_ACTION);
   }
 
-  if (popupState !== remState.NO_ACTION && popupState !== remState.SHOW_POPUP) {
+  if (popupState !== notifState.NO_ACTION && popupState !== notifState.SHOW_POPUP) {
     WriteToDB();
   }
 
-  let reminderCards: React.JSX.Element[];
-  reminderCards = selectedPet.medications.map((med: Medication, index: number) =>
-    med.reminder?.notifications.length > 0 ?
-      <ReminderCard
-        key={index}
-        med={med}
-        showingFunction={editReminder}
-      />
-      :
-      <View key={index}></View>
-  );
+  const reminderCards = useMemo(() => {
+    return selectedPet.medications.flatMap((med: Medication, index1: number) =>
+      med.notifications.map((notif: Notification, index2: number) => (
+        <ReminderCard
+          key={`${index1}-${index2}`}
+          med={med}
+          notif={notif}
+          showingFunction={editNotification}
+        />
+      ))
+    );
+  }, [selectedPet.medications, editNotification]);
 
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Header */}
-        <Header navigation={navigation} account={account} />
+        <Header navigation={navigation} />
 
         {/* Page Title */}
         <View style={styles.headerContainer}>
           <Text style={styles.pageTitle}>Reminders</Text>
           <PetSwitch
             text={'switch'}
-            data={[...account.pets, ...account.sharedPets]}
+            data={[...(account.pets ?? []), ...(account.sharedPets ?? [])]}
             selectedItem={selectedPet}
-            onSwitch={setSelectedPet}
+            onSwitch={(item) => { setSelectedPetId(item.id) }}
             switchItem="Pet"
           />
         </View>
@@ -121,8 +141,10 @@ const Reminders = ({ navigation, route }: Props) => {
         {selectedPet.id !== '' && (
           <View style={styles.addReminderButton}>
             <AddReminderButton
+              disabled={false}
               onPressFunction={() => {
-                setPopupState(remState.SHOW_POPUP);
+                setNotificationCopy({ ...emptyNotification, id: ObjectID() });
+                setPopupState(notifState.SHOW_POPUP);
               }}
               innerText={'+ ADD'}
               color={Color.colorCornflowerblue}
@@ -132,17 +154,15 @@ const Reminders = ({ navigation, route }: Props) => {
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} account={account} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} />
 
       {/* popup for adding/editing reminder */}
-      <ReminderPopup
-        isActive={popupState === remState.SHOW_POPUP}
+      <NotificationPopup
+        isActive={popupState == notifState.SHOW_POPUP}
         setPopupState={setPopupState}
-        setRem={setRem}
-        setMed={setMed}
-        pet={selectedPet}
-        med={med}
-        readonly={false}
+        notif={notification}
+        notifCopy={notificationCopy}
+        setNotifCopy={setNotificationCopy}
       />
     </View>
   );

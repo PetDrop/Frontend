@@ -30,7 +30,7 @@ const PetCard = ({ pet, account, onPressFunction, navigation }: PetCardProps) =>
 					<Text style={styles.petDetails}>Vet: {pet.vet}</Text>
 					<Text style={styles.petDetails}>{pet.vetPhone}</Text>
 				</View>
-				<Pressable onPress={() => { navigation.navigate('PetInfo1', { account: account, pet: pet }) }}>
+				<Pressable onPress={() => { navigation.navigate('NewPet', { pet: pet }) }}>
 					<EditIcon style={styles.editIcon} />
 				</Pressable>
 			</View>
@@ -49,7 +49,7 @@ const PetCard = ({ pet, account, onPressFunction, navigation }: PetCardProps) =>
 				))}
 			</View>
 			<View style={styles.addMedicationButton}>
-				<AddMedicationButton onPressFunction={onPressFunction} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
+				<AddMedicationButton disabled={false} onPressFunction={onPressFunction} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
 			</View>
 			<View style={styles.separatorBar} />
 		</View>

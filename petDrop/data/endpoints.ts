@@ -1,54 +1,37 @@
 // replace 'localhost' with the ip address of your computer to hit these on expo go
 // ACCOUNT
-export const ADD_ACCOUNT = 'http://localhost:8080/addaccount';
-export const UPDATE_ACCOUNT = 'http://localhost:8080/updateaccount';
-export const UPDATE_ACCOUNT_USERNAME = 'http://localhost:8080/updateaccount/username/';
-export const UPDATE_ACCOUNT_EMAIL = 'http://localhost:8080/updateaccount/email/';
-export const UPDATE_ACCOUNT_PASSWORD = 'http://localhost:8080/updateaccount/password/';
-export const UPDATE_ACCOUNT_SHARED_USERS = 'http://localhost:8080/updateaccount/sharedusers/';
-export const UPDATE_ACCOUNT_PETS = 'http://localhost:8080/updateaccount/pets/';
-export const UPDATE_ACCOUNT_REMINDERS = 'http://localhost:8080/updateaccount/reminders/';
-export const GET_ALL_ACCOUNTS = 'http://localhost:8080/getallaccounts';
-export const GET_ACCOUNT_BY_USERNAME = 'http://localhost:8080/getaccountbyusername/';
-export const GET_ACCOUNT_BY_EMAIL = 'http://localhost:8080/getaccountbyemail/';
-export const GET_ACCOUNT_BY_ID = 'http://localhost:8080/getaccountbyid/';
+export const ADD_ACCOUNT = 'http://localhost:8080/add-account';
+export const UPDATE_ACCOUNT = 'http://localhost:8080/update-account';
+export const GET_ALL_ACCOUNTS = 'http://localhost:8080/get-all-accounts';
+export const GET_ACCOUNT_BY_USERNAME = 'http://localhost:8080/get-account-by-username/';
+export const GET_ACCOUNT_BY_EMAIL = 'http://localhost:8080/get-account-by-email/';
+export const GET_ACCOUNT_BY_ID = 'http://localhost:8080/get-account-by-id/';
 // PETS
-export const ADD_PET = 'http://localhost:8080/addpet';
-export const UPDATE_PET = 'http://localhost:8080/updatepet';
-export const UPDATE_PET_NAME = 'http://localhost:8080/updatepet/name/';
-export const UPDATE_PET_IMAGE = 'http://localhost:8080/updatepet/image/';
-export const UPDATE_PET_AGE = 'http://localhost:8080/updatepet/age/';
-export const UPDATE_PET_BREED = 'http://localhost:8080/updatepet/breed/';
-export const UPDATE_PET_ADDRESS = 'http://localhost:8080/updatepet/address/';
-export const UPDATE_PET_VET = 'http://localhost:8080/updatepet/vet/';
-export const UPDATE_PET_VETPHONE = 'http://localhost:8080/updatepet/vetphone/';
-export const UPDATE_PET_MEDICATIONS = 'http://localhost:8080/updatepet/medications/';
-export const GET_ALL_PETS = 'http://localhost:8080/getallpets';
-export const GET_PET_BY_ID = 'http://localhost:8080/getpetbyid/';
-export const DELETE_PET_BY_ID = 'http://localhost:8080/deletepetbyid/';
+export const ADD_PET = 'http://localhost:8080/add-pet';
+export const UPDATE_PET = 'http://localhost:8080/update-pet';
+export const GET_ALL_PETS = 'http://localhost:8080/get-all-pets';
+export const GET_PET_BY_ID = 'http://localhost:8080/get-pet/';
+export const DELETE_PET_BY_ID = 'http://localhost:8080/delete-pet/';
 // MEDICATIONS
-export const ADD_MEDICATION = 'http://localhost:8080/addmedication';
-export const UPDATE_MEDICATION = 'http://localhost:8080/updatemedication';
-export const UPDATE_MEDICATION_NAME = 'http://localhost:8080/updatemedication/name/';
-export const UPDATE_MEDICATION_COLOR = 'http://localhost:8080/updatemedication/color/';
-export const UPDATE_MEDICATION_DESCRIPTION = 'http://localhost:8080/updatemedication/description/';
-export const UPDATE_MEDICATION_DATES = 'http://localhost:8080/updatemedication/dates/';
-export const UPDATE_MEDICATION_RANGE = 'http://localhost:8080/updatemedication/range/';
-export const GET_ALL_MEDICATIONS = 'http://localhost:8080/getallmedications';
-export const GET_MEDICATION_BY_ID = 'http://localhost:8080/getmedicationbyid/';
-export const DELETE_MEDICATION_BY_ID = 'http://localhost:8080/deletemedicationbyid/';
+export const ADD_MEDICATION = 'http://localhost:8080/add-medication/';
+export const CREATE_NOTIFS_FOR_MED = 'http://localhost:8080/create-notifications-for-medication/';
+export const EDIT_NOTIFS_FOR_MED = 'http://localhost:8080/edit-notifications-for-medication/';
+export const DELETE_NOTIFS_FROM_MED = 'http://localhost:8080/delete-notifications-from-medication/';
+export const UPDATE_MED_NOT_NOTIFS = 'http://localhost:8080/update-medication-not-notifications';
+export const UPDATE_MED_CREATE_NOTIFS = 'http://localhost:8080/update-medication-create-notifications';
+export const UPDATE_MED_AND_NOTIFS = 'http://localhost:8080/update-medication-and-notifications';
+export const UPDATE_MED_DELETE_NOTIFS = 'http://localhost:8080/update-medication-delete-notifications';
+export const GET_ALL_MEDICATIONS = 'http://localhost:8080/get-all-medications';
+export const GET_MEDICATION_BY_ID = 'http://localhost:8080/get-medication/';
+export const DELETE_MEDICATION = 'http://localhost:8080/delete-medication/';
 // SPONSOR MEDICATIONS
-export const GET_ALL_SPONSOR_MEDICATIONS = 'http://localhost:8080/getallsponsormedications';
-export const GET_SPONSOR_MEDICATION_BY_ID = 'http://localhost:8080/getsponsormedicationbyid/';
-export const GET_SPONSOR_MEDICATION_BY_NAME = 'http://localhost:8080/getsponsormedicationbyname/';
-// REMINDERS
-export const ADD_REMINDER = 'http://localhost:8080/addreminder';
-export const UPDATE_REMINDER = 'http://localhost:8080/updatereminder';
-export const UPDATE_REMINDER_MEDICATION = 'http://localhost:8080/updatereminder/medication/';
-export const UPDATE_REMINDER_PET = 'http://localhost:8080/updatereminder/pet/';
-export const GET_ALL_REMINDERS = 'http://localhost:8080/getallreminders';
-export const GET_REMINDER_BY_ID = 'http://localhost:8080/getreminderbyid/';
-export const DELETE_REMINDER_BY_ID = 'http://localhost:8080/deletereminderbyid/';
+export const GET_ALL_SPONSOR_MEDICATIONS = 'http://localhost:8080/get-all-sponsor-medications';
+export const GET_SPONSOR_MEDICATION_BY_ID = 'http://localhost:8080/get-sponsor-medication-by-id/';
+export const GET_SPONSOR_MEDICATION_BY_NAME = 'http://localhost:8080/get-sponsor-medication-by-name/';
+// NOTIFICATIONS
+export const ADD_NOTIF = 'http://localhost:8080/add-notification';
+export const UPDATE_NOTIF = 'http://localhost:8080/update-notification';
+export const DELETE_NOTIF = 'http://localhost:8080/delete-notification/';
 
 // http function with parameters for url and request body
 export const httpRequest = async (url: string, method: string, body: string): Promise<Response> => {

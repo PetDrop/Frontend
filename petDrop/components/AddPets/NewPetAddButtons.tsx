@@ -1,14 +1,14 @@
 import * as React from "react";
 import { View } from "react-native";
 import NewPetAddButton from "./NewPetAddButton";
-import styles from '../../styles/PetInfo1AddButtons.styles';
+import styles from '../../styles/NewPetAddButtons.styles';
 
-type PetInfo1AddButtonsProps = {
+type NewPetAddButtonsProps = {
   inputFields: Map<string, string>;
   inputFieldsSetter: Function;
 }
 
-const PetInfo1AddButtons = ({ inputFields, inputFieldsSetter }: PetInfo1AddButtonsProps) => {
+const NewPetAddButtons = ({ inputFields, inputFieldsSetter }: NewPetAddButtonsProps) => {
   return (
     <View style={styles.newPetButtonGroupParent}>
       {Array.from(inputFields.keys()).map((key: string, index: number) => {
@@ -23,4 +23,4 @@ const PetInfo1AddButtons = ({ inputFields, inputFieldsSetter }: PetInfo1AddButto
   );
 };
 
-export default PetInfo1AddButtons;
+export default NewPetAddButtons;

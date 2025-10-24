@@ -7,132 +7,110 @@ import UserGreeting from "../components/Home/UserGreeting";
 import TopBottomBar from "../components/TopBottomBar";
 import { ScreenEnum } from "../GlobalStyles";
 import { styles, calendarTheme } from "../styles/Home.styles";
-import { Account, emptyMed, emptyPet, Medication, Pet } from "../data/dataTypes";
-import { useCallback, useState } from "react";
+import { Account, emptyMed, emptyPet, Medication, Pet, Notification } from "../data/dataTypes";
+import { useEffect, useState } from "react";
 import { MarkedDates } from "react-native-calendars/src/types";
-import { useFocusEffect } from "@react-navigation/native";
+import { NavigationProp } from "@react-navigation/native";
 import MedSwitch from '../components/ItemSwitch';
 import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
 import { medState } from "../data/enums";
 import SelectMedPopup from "../components/SelectMedPopup";
+import { useAccount } from "../context/AccountContext";
+import { usePushToken } from "../context/PushTokenContext";
 
 type HomeProps = {
-  navigation: any;
+  navigation: NavigationProp<any>;
   route: any;
 };
 
 const Home = ({ navigation, route }: HomeProps) => {
+  const { account, setAccount } = useAccount();
+  const { pushToken } = usePushToken();
   const [switchDisplay, setSwitchDisplay] = useState<Medication[]>();
   const [infoToDisplay, setInfoToDisplay] = useState<{ pet: Pet, med: Medication }>();
   const [markedDates, setMarkedDates] = useState<MarkedDates>({});
   const [popupState, setPopupState] = useState<medState>(medState.NO_ACTION);
   const [medMap, setMedMap] = useState<Map<string, { pet: Pet, med: Medication }[]>>(new Map());
 
-  // store the user's account info to avoid typing "route.params.account" repeatedly
-  let account: Account = route.params.account;
 
-  // populates a map of all meds to their pet and dates
-  const populateAllDatesMap = (pet: Pet, allDatesMap: Map<Medication, { pet: Pet, dates: string[] }>) => {
-    pet.medications.forEach(med => {
-      med.dates.forEach(dateObj => {
-        const dates: string[] = [];
-        if (dateObj.endDate.length > 0) {
-          let numDays = (new Date(dateObj.endDate).getTime() - new Date(dateObj.startDate).getTime()) / 86400000;
-          dates.push(dateObj.startDate);
-          for (let i = 0; i < numDays; i++) {
-            let dayToAdd = new Date(dateObj.startDate);
-            dayToAdd.setTime(dayToAdd.getTime() + 86400000 * (i + 1));
-            dates.push(dayToAdd.toISOString().slice(0, 10));
-          }
-        } else {
-          dates.push(dateObj.startDate);
-          for (let i = 1; i < dateObj.recurrances; i++) {
-            let dayToAdd = new Date(dateObj.startDate);
-            dayToAdd.setTime(dayToAdd.getTime() + 604800000 * i)
-            dates.push(dayToAdd.toISOString().slice(0, 10));
-          }
-        }
-        if (allDatesMap.has(med)) {
-          const newDates = allDatesMap.get(med)!.dates.concat(dates);
-          allDatesMap.set(med, { pet, dates: newDates });
-        } else {
-          allDatesMap.set(med, { pet, dates });
-        }
-      })
-    })
-  }
 
-  let markedDatesMap: Map<string, Array<{ color: string, startingDay?: boolean, endingDay?: boolean }>> = new Map();
-  useFocusEffect(
-    useCallback(() => {
-      // maps all meds to an object containing their pets and a list of all their dates
-      const allDatesMap = new Map<Medication, { pet: Pet, dates: string[] }>();
+  useEffect(() => {
+    const newMarkedDates: MarkedDates = {};
+    const newMedMap = new Map<string, { pet: Pet, med: Medication }[]>();
 
-      [...account.pets, ...account.sharedPets].forEach(pet => {
-        populateAllDatesMap(pet, allDatesMap);
-      });
+    const formatDate = (d: Date) => d.toISOString().slice(0, 10); // YYYY-MM-DD formatting
 
-      // maps all dates of meds to the meds on those dates
-      const tempMedMap = new Map<string, { pet: Pet, med: Medication }[]>();
+    account.pets.forEach(pet => {
+      pet.medications.forEach((med: Medication) => {
 
-      allDatesMap.forEach((value, med) => {
-        value.dates.forEach(date => {
-          tempMedMap.has(date) ?
-            tempMedMap.set(date, tempMedMap.get(date)!.concat([{ pet: value.pet, med }])) :
-            tempMedMap.set(date, [{ pet: value.pet, med }]);
-        })
-      });
-      setMedMap(tempMedMap);
+        med.notifications.forEach((notif: Notification) => {
+          if (notif.repeatInterval === '') return;
+          // Walk from nextRuns through finalRuns, stepping by repeatInterval
+          for (let i = 0; i < notif.nextRuns.length; i++) {
+            let cursor = new Date(notif.nextRuns[i]);
+            const finalDate = new Date(notif.finalRuns[i]);
 
-      // keeps track of which row each med's periods will be in
-      const medRowMap = new Map<string, number>();
+            // Add every date in [nextRun, finalRun], stepping by repeatInterval
+            while (cursor <= finalDate) {
+              const dayKey = formatDate(cursor);
 
-      // assign row number to each med while also counting the total number of them
-      let rowIndex = 0;
-      [...account.pets, ...account.sharedPets].forEach(pet => {
-        pet.medications.forEach(med => {
-          if (!medRowMap.has(med.name)) {
-            medRowMap.set(med.name, rowIndex++);
+              // add new key if needed, and update key with period for this notif
+              if (!newMarkedDates[dayKey]) newMarkedDates[dayKey] = { periods: [] };
+              newMarkedDates[dayKey].periods!.push({ color: med.color });
+
+              // add new key if needed, and update key with {pet, med} for this date
+              if (!newMedMap.has(dayKey)) newMedMap.set(dayKey, []);
+              newMedMap.get(dayKey)!.push({ pet, med });
+
+              // increment cursor by the repeat interval
+              switch (notif.repeatInterval) {
+                case 'daily':
+                  cursor.setDate(cursor.getDate() + 1);
+                  break;
+                case 'weekly':
+                  cursor.setDate(cursor.getDate() + 7);
+                  break;
+                case 'monthly':
+                  cursor.setMonth(cursor.getMonth() + 1);
+                  break;
+              }
+            }
           }
         });
       });
-      const totalRows = rowIndex;
+    });
 
-      // add a period for each date to the markedDatesMap
-      allDatesMap.forEach((value, med) => {
-        value.dates.forEach(date => {
-          // find out what the day before and after the date in question are
-          const dateObject = new Date(date);
-          const dayBefore = new Date(dateObject.getTime() - 86400000).toISOString().slice(0, 10);
-          const dayAfter = new Date(dateObject.getTime() + 86400000).toISOString().slice(0, 10);
+    // function for taking YYYY-MM-DD and returning another day
+    const addDays = (d: string, n: number) => {
+      const newDate = new Date(d + 'T00:00:00');
+      newDate.setDate(newDate.getDate() + n);
+      return formatDate(newDate);
+    };
 
-          // use days before and after to test if this date is the start of
-          // a period, the end of it, or neither
-          const period: any = {
-            color: med.color,
-            startingDay: !value.dates.includes(dayBefore),
-            endingDay: !value.dates.includes(dayAfter)
-          };
+    // Add startingDay/endingDay flags so multi-period bars link correctly
+    Object.keys(newMarkedDates).forEach(date => {
+      // get the prev and next days to check if this med is administered then
+      const prevDay = addDays(date, -1);
+      const nextDay = addDays(date, 1);
 
-          // padding of transparent periods is used to properly line up the ones being shown
-          const existingPeriods = markedDatesMap.get(date) || Array(totalRows).fill({ color: 'transparent' });
-          // put the period in the right row to line it up
-          existingPeriods[medRowMap.get(med.name)!] = period; // non-null assertion used to avoid possibly undefined error
-          markedDatesMap.set(date, existingPeriods);
-        });
+      // iterate through each period and add startingDay and endingDay to them
+      newMarkedDates[date].periods = newMarkedDates[date].periods!.map(period => {
+        // same color means same med
+        const prevSameColor = prevDay && newMarkedDates[prevDay]?.periods?.some(p => p.color === period.color);
+        const nextSameColor = nextDay && newMarkedDates[nextDay]?.periods?.some(p => p.color === period.color);
+
+        // add the new valus
+        return {
+          ...period,
+          startingDay: !prevSameColor,
+          endingDay: !nextSameColor,
+        };
       });
+    });
 
-      // construct MarkedDates prop for calendar by creating a field for each unique date 
-      // containing a period for each med to be administered on said date
-      const newMarkedDates: MarkedDates = {};
-      markedDatesMap.forEach((periods, date) => {
-        newMarkedDates[date] = { periods };
-      });
-
-      // update state and re-render
-      setMarkedDates(newMarkedDates);
-    }, [])
-  );
+    setMarkedDates(newMarkedDates);
+    setMedMap(newMedMap);
+  }, [account]);
 
   // find the pet that has med
   const findPet = (med: Medication) => {
@@ -164,7 +142,7 @@ const Home = ({ navigation, route }: HomeProps) => {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Header */}
-        <Header navigation={navigation} account={account} />
+        <Header navigation={navigation} />
 
         {/* User Greeting */}
         <UserGreeting name={account.username} />
@@ -199,7 +177,7 @@ const Home = ({ navigation, route }: HomeProps) => {
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} account={account} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} />
 
       {/* popup that displays all meds on a certain date */}
       {switchDisplay && (
@@ -221,12 +199,11 @@ const Home = ({ navigation, route }: HomeProps) => {
         isActive={infoToDisplay ? true : false}
         setPopupState={setPopupState}
         med={infoToDisplay ? infoToDisplay.med : emptyMed}
+        medCopy={infoToDisplay ? infoToDisplay.med : emptyMed}
+        setMedCopy={() => { }}
         pet={infoToDisplay ? infoToDisplay.pet : emptyPet}
-        setMedication={() => { }}
-        setReminder={() => { }}
         readonly={true}
         navigation={navigation}
-        account={account}
       />
 
     </View>

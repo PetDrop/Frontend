@@ -28,12 +28,7 @@ const sponsors = [
     },
 ];
 
-type SponsorsProps = {
-    navigation: NavigationProp<any>;
-    route: any;
-}
-
-const Sponsors = ({ navigation, route } : SponsorsProps) => {
+const Sponsors = ({ navigation } : { navigation: NavigationProp<any> }) => {
     // active pagination dot
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -79,7 +74,7 @@ const Sponsors = ({ navigation, route } : SponsorsProps) => {
                 ))}
             </View>
 
-            <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Sponsors} account={route.params.account} />
+            <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Sponsors} />
         </View >
     );
 };

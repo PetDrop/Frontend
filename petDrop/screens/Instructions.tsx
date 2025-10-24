@@ -5,7 +5,7 @@ import TopBottomBar from "../components/TopBottomBar";
 import { logoImage, ScreenEnum } from "../GlobalStyles";
 import styles from "../styles/Instructions.styles";
 import { NavigationProp } from "@react-navigation/native";
-import { Account, emptySponsorMed, SponsorMedication } from "../data/dataTypes";
+import { emptySponsorMed, SponsorMedication } from "../data/dataTypes";
 import { useEffect, useState } from "react";
 import { GET_SPONSOR_MEDICATION_BY_NAME, httpRequest } from "../data/endpoints";
 import VideoScreen from "../components/Instructions/VideoScreen";
@@ -17,9 +17,6 @@ interface Props {
 
 const Instructions = ({ navigation, route }: Props) => {
   const [med, setMed] = useState<SponsorMedication>(emptySponsorMed);
-
-  // store the user's account info to avoid typing "route.params.account" repeatedly
-  const account: Account = route.params.account;
 
   // get the sponsor med from the db
   const getMed = async () => {
@@ -64,7 +61,7 @@ const Instructions = ({ navigation, route }: Props) => {
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Instructions} account={account} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Instructions} />
 
     </View>
   );
