@@ -38,16 +38,9 @@ const authors = [
     },
 ];
 
-type CreditsProps = {
-    navigation: NavigationProp<any>;
-    route: any;
-}
-
-const Credits = ({ navigation, route } : CreditsProps) => {
+const Credits = ({ navigation }: { navigation: NavigationProp<any> }) => {
     // active pagination dot
     const [activeIndex, setActiveIndex] = useState(0);
-
-    const pushToken: string = route.params.pushToken;
 
     // used to determine which pagination dot should be active
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -92,7 +85,7 @@ const Credits = ({ navigation, route } : CreditsProps) => {
                 ))}
             </View>
 
-            <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Credits} account={route.params.account} pushToken={pushToken} />
+            <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Credits} />
         </View >
     );
 };

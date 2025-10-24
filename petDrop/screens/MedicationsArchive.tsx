@@ -19,6 +19,7 @@ import {
 } from '../data/endpoints';
 import structuredClone from '@ungap/structured-clone';
 import { useAccount } from '../context/AccountContext';
+import { usePushToken } from '../context/PushTokenContext';
 
 type MedicationsArchiveProps = {
 	navigation: NavigationProp<any>;
@@ -27,6 +28,7 @@ type MedicationsArchiveProps = {
 
 const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	const { account, setAccount, updatePetMedications } = useAccount();
+	const { pushToken } = usePushToken();
 	const [med, setMed] = useState<Medication>(emptyMed);
 	const [medCopy, setMedCopy] = useState<Medication>(emptyMed);
 	const [popupState, setPopupState] = useState(medState.NO_ACTION);
@@ -53,8 +55,6 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	};
 
 	const ObjectID = require('bson-objectid');
-
-	const pushToken: string = route.params.pushToken;
 
 	// only when med is updated should medCopy be reset
 	useEffect(() => {
@@ -88,8 +88,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				break;
 			case medState.MED_CREATED_NOTIF_NOTHING:
 			case medState.MED_CREATED_NOTIF_CREATED:
-				console.log({ ...medCopy, notifications: formatNotifs(medCopy.notifications) });
-				response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify({ ...medCopy, notifications: formatNotifs(medCopy.notifications) }));
+				response = await httpRequest(ADD_MEDICATION + selectedPetId, 'POST', JSON.stringify({ ...medCopy, notifications: formatNotifs(medCopy.notifications) }));
 				break;
 			case medState.MED_EDITED_NOTIF_NOTHING:
 				response = await httpRequest(UPDATE_MED_NOT_NOTIFS, 'PUT', JSON.stringify({ ...medCopy, notifications: formatNotifs(medCopy.notifications) }));
@@ -145,7 +144,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				contentContainerStyle={styles.scrollContainer}
 				showsVerticalScrollIndicator={false}>
 
-				<Header navigation={navigation} account={account} />
+				<Header navigation={navigation} />
 
 				<View style={styles.headerContainer}>
 					<Text style={styles.pageTitle}>Medications</Text>
@@ -181,8 +180,6 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 			<TopBottomBar
 				navigation={navigation}
 				currentScreen={ScreenEnum.MedicationsArchive}
-				account={account}
-				pushToken={pushToken}
 			/>
 
 			<MedicationPopup
@@ -194,8 +191,6 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				setMedCopy={setMedCopy}
 				readonly={false}
 				navigation={navigation}
-				account={account}
-				pushToken={pushToken}
 			/>
 		</View>
 	);

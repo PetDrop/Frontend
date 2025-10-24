@@ -13,30 +13,20 @@ type ReminderCardProps = {
 
 const ReminderCard = ({ med, notif, showingFunction }: ReminderCardProps) => {
 	const notificationsString = useMemo(() => {
-		notif.nextRuns.length > 0
-			?
-			`NOTIFICATIONS: ${notif.nextRuns.filter((date) => date.toDateString() === notif.nextRuns[0].toDateString())
-				.map((date) => date.toTimeString()).join(', ')}`
-			:
-			'NO NOTIFICATIONS';
+		if (notif.nextRuns.length > 0) {
+			// Get unique times from nextRuns
+			const uniqueTimes = [...new Set(notif.nextRuns.map(date => date.toTimeString()))];
+			return `NOTIFICATIONS: ${uniqueTimes.join(', ')}`;
+		}
+		return 'NO NOTIFICATIONS';
 	}, [notif]);
 	const datesString = useMemo(() => {
-		notif.nextRuns.length > 0
-			?
-			`DATES: ${notif.nextRuns.filter((date, index) => {
-				let shouldInclude: boolean = true;
-				if (index > 0) {
-					shouldInclude = date.toDateString() !== notif.nextRuns[index - 1].toDateString();
-				}
-				if (shouldInclude && index < notif.nextRuns.length) {
-					shouldInclude = date.toDateString() !== notif.nextRuns[index + 1].toDateString();
-				}
-				if (shouldInclude) {
-					return date;
-				}
-			}).map((date) => date.toDateString()).join(', ')}`
-			:
-			'NO DATES';
+		if (notif.nextRuns.length > 0) {
+			// Get unique dates from nextRuns
+			const uniqueDates = [...new Set(notif.nextRuns.map(date => date.toDateString()))];
+			return `DATES: ${uniqueDates.join(', ')}`;
+		}
+		return 'NO DATES';
 	}, [notif]);
 
 	return (

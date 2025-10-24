@@ -20,8 +20,11 @@ import { GET_ACCOUNT_BY_EMAIL, GET_ACCOUNT_BY_USERNAME, httpRequest } from '../d
 import { Account } from '../data/dataTypes';
 import { NavigationProp } from '@react-navigation/native';
 import { useAccount } from '../context/AccountContext';
+import { usePushToken } from '../context/PushTokenContext';
+import { convertDateStringsToDates } from '../utils/dateConversion';
 
 const { width, height } = Dimensions.get('window');
+
 
 type LoginType = {
     navigation: NavigationProp<any>;
@@ -31,12 +34,12 @@ type LoginType = {
 
 const Login = (props: LoginType) => {
     const { account, setAccount } = useAccount();
+    const { pushToken } = usePushToken();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
 
-    const pushToken: string = props.route.params.pushToken;
-    const onLoginSuccess: (() => void) | undefined = props.onLoginSuccess;
+    const pendingNavigation: (() => void) | undefined = props.onLoginSuccess;
     
     // populates the account's sharedPets with all the pets shared with them
     const addSharedInfo = async () => {
@@ -47,8 +50,9 @@ const Login = (props: LoginType) => {
                 // if account found check if they volunteered their info
                 const sharedAccount: Account = await response.json();
                 if (sharedAccount.usersSharedWith.includes(account.username)) {
+                    const convertedSharedAccount = convertDateStringsToDates(sharedAccount);
                     setAccount((prev) => {
-                        return { ...prev, sharedPets: prev.sharedPets.concat(sharedAccount.pets) };
+                        return { ...prev, sharedPets: prev.sharedPets.concat(convertedSharedAccount.pets) };
                     });
                 }
             } else {
@@ -71,14 +75,15 @@ const Login = (props: LoginType) => {
             const response = await httpRequest(GET_ACCOUNT_BY_USERNAME + username, 'GET', '');
             if (response.ok) {
                 // if account found check its password against the one entered
-                const temp = await response.json(); // TODO find out why this nonsense needs to be done
-                setAccount(temp);
+                const temp: Account = await response.json();
                 if (temp.password === password) {
                     // if info is correct, populate the account with shared info
                     await addSharedInfo();
-                    // navigate home and pass the account there, or handle pending navigation
-                    if (onLoginSuccess) {
-                        onLoginSuccess();
+                    // convert date strings to dates and set account context
+                    setAccount(convertDateStringsToDates(temp));
+                    // handle pending navigation if it exists, otherwise navigate home
+                    if (pendingNavigation) {
+                        pendingNavigation();
                     } else {
                         props.navigation.navigate('Home');
                     }
@@ -154,7 +159,7 @@ const Login = (props: LoginType) => {
 
                     {/* Buttons Row */}
                     <View style={styles.buttonRow}>
-                        <Pressable style={styles.button} onPress={() => props.navigation.navigate('Signup', { pushToken: pushToken })}>
+                        <Pressable style={styles.button} onPress={() => props.navigation.navigate('Signup')}>
                             <Text style={styles.buttonText}>Sign Up</Text>
                         </Pressable>
 

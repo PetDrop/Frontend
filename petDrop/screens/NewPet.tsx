@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Text, View, Image, KeyboardAvoidingView, ScrollView } from "react-native";
-import AddButtons from "../components/AddPets/PetInfo1AddButtons";
+import AddButtons from "../components/AddPets/NewPetAddButtons";
 import TopBottomBar from "../components/TopBottomBar";
 import { Color, logoImage, ScreenEnum } from "../GlobalStyles";
 import { NavigationProp } from "@react-navigation/native";
-import styles from '../styles/PetInfo1.styles';
+import styles from '../styles/NewPet.styles';
 import { Account, emptyPet, Pet } from "../data/dataTypes";
 import { useEffect, useState } from "react";
 import AddPetImage from "../components/AddImage";
@@ -14,12 +14,12 @@ import { ADD_PET, DELETE_PET_BY_ID, httpRequest, UPDATE_ACCOUNT, UPDATE_PET } fr
 import * as ImagePicker from 'expo-image-picker';
 import { useAccount } from "../context/AccountContext";
 
-type PetInfo1Type = {
+type NewPetType = {
   navigation: NavigationProp<any>;
   route: any;
 }
 
-const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
+const NewPet = ({ navigation, route }: NewPetType) => {
   const { account, setAccount } = useAccount();
   const [image, setImage] = useState('');
   const [inputFields, setInputFields] = useState(new Map<string, string>([
@@ -30,8 +30,6 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
     ['pet vet', ''],
     ['vet phone', ''],
   ]));
-
-  const pushToken: string = route.params.pushToken;
 
   const ObjectID = require('bson-objectid');
 
@@ -94,7 +92,7 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
           response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
           if (response.ok) {
             alert('Submission successful. You have now been redirected to the Pet Info page where you can view it, as well as add medications and reminders for it.');
-            navigation.navigate('PetInfo', { pushToken: pushToken });
+            navigation.navigate('PetInfo');
           } else {
             console.log('unable to add pet to account');
             alert('submission failed');
@@ -119,7 +117,7 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
       response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
       if (response.ok) {
         alert(`Pet: ${petBeingEdited.name} has been successfully deleted.`);
-        navigation.navigate('PetInfo', { pushToken: pushToken });
+        navigation.navigate('PetInfo');
       } else {
         console.log(`http PUT request failed with error code: ${response.status}`);
         alert(`Failed to update account after deleting pet: ${petBeingEdited.id}`);
@@ -149,13 +147,13 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
         </View>
 
         {/* Page Title */}
-        <Text style={[styles.petInfo1AddPet, styles.addPetTypo]}>Add Pet</Text>
+        <Text style={[styles.newPetAddPet, styles.addPetTypo]}>Add Pet</Text>
 
         {/* Add Image Circle w/ Plus Sign */}
         <AddPetImage onPressFunction={addImage} containerStyle={styles.addImageContainer} uri={image} />
 
         {/* Pet Info Input Section */}
-        <Text style={[styles.petInfo1Name, styles.nameTypo]}>Pet Info</Text>
+        <Text style={[styles.newPetName, styles.nameTypo]}>Pet Info</Text>
         <AddButtons inputFields={inputFields} inputFieldsSetter={updateInputFields} />
 
         {/* delete button */}
@@ -173,10 +171,10 @@ const PetInfo1 = ({ navigation, route }: PetInfo1Type) => {
       </ScrollView>
 
       {/* Top Banner and Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo1} account={account} pushToken={pushToken} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.NewPet} />
 
     </KeyboardAvoidingView>
   );
 };
 
-export default PetInfo1;
+export default NewPet;

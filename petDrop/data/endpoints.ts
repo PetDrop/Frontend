@@ -13,7 +13,7 @@ export const GET_ALL_PETS = 'http://localhost:8080/get-all-pets';
 export const GET_PET_BY_ID = 'http://localhost:8080/get-pet/';
 export const DELETE_PET_BY_ID = 'http://localhost:8080/delete-pet/';
 // MEDICATIONS
-export const ADD_MEDICATION = 'http://localhost:8080/add-medication';
+export const ADD_MEDICATION = 'http://localhost:8080/add-medication/';
 export const CREATE_NOTIFS_FOR_MED = 'http://localhost:8080/create-notifications-for-medication/';
 export const EDIT_NOTIFS_FOR_MED = 'http://localhost:8080/edit-notifications-for-medication/';
 export const DELETE_NOTIFS_FROM_MED = 'http://localhost:8080/delete-notifications-from-medication/';

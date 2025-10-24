@@ -4,7 +4,6 @@ import TopBottomBar from '../components/TopBottomBar';
 import { styles } from '../styles/Sponsors.styles';
 import { NavigationProp } from '@react-navigation/native';
 import { ScreenEnum } from '../GlobalStyles';
-import { useAccount } from '../context/AccountContext';
 
 const { width } = Dimensions.get('window');
 
@@ -29,17 +28,9 @@ const sponsors = [
     },
 ];
 
-type SponsorsProps = {
-    navigation: NavigationProp<any>;
-    route: any;
-}
-
-const Sponsors = ({ navigation, route } : SponsorsProps) => {
-    const { account } = useAccount();
+const Sponsors = ({ navigation } : { navigation: NavigationProp<any> }) => {
     // active pagination dot
     const [activeIndex, setActiveIndex] = useState(0);
-
-    const pushToken: string = route.params.pushToken;
 
     // used to determine which pagination dot should be active
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -83,7 +74,7 @@ const Sponsors = ({ navigation, route } : SponsorsProps) => {
                 ))}
             </View>
 
-            <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Sponsors} account={account} pushToken={pushToken} />
+            <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Sponsors} />
         </View >
     );
 };

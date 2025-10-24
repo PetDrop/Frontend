@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         fontFamily: FontFamily.jsMathCmbx10,
         position: "absolute",
     },
-    petInfo1Name: {
+    newPetName: {
         top: (height * 0.32),
         left: (width * 0.4513),
         fontSize: FontSize.size_17xl,
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
         height: (height * 0.0509),
         position: 'absolute',
     },
-    petInfo1Medications: {
+    newPetMedications: {
         top: (height * 0.54),
         left: (width * 0.0538),
     },
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         left: (width * 0.0564),
         width: (width * 0.1026),
     },
-    petInfo1AddPet: {
+    newPetAddPet: {
         top: (height * 0.2227),
         width: (width * 0.4641),
         left: (width * 0.0564),

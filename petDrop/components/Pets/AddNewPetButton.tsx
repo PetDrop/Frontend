@@ -1,19 +1,12 @@
 import * as React from "react";
-import { View, Text, Pressable } from "react-native";
+import { Text, Pressable } from "react-native";
 import styles from "../../styles/Pets.styles";
 
 import { NavigationProp } from '@react-navigation/native';
-import { Account } from "../../data/dataTypes";
 
-type AddNewPetButtonProps = {
-  navigation: NavigationProp<any>,
-  account: Account
-  pushToken: string;
-}
-
-const AddNewPetButton = ({ navigation, account, pushToken }: AddNewPetButtonProps) => {
+const AddNewPetButton = ({ navigation }: { navigation: NavigationProp<any> }) => {
   return (
-    <Pressable style={styles.addPetButton} onPress={() => navigation.navigate("PetInfo1", { pushToken: pushToken })}>
+    <Pressable style={styles.addPetButton} onPress={() => navigation.navigate("NewPet")}>
       <Text style={styles.addPetText}>+ ADD NEW PET</Text>
     </Pressable>
   );

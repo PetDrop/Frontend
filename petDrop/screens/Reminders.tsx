@@ -47,8 +47,6 @@ const Reminders = ({ navigation, route }: Props) => {
 
   const ObjectID = require('bson-objectid');
 
-  const pushToken: string = route.params.pushToken;
-
   useFocusEffect(
     useCallback(() => {
       setSelectedPetId(account.pets[0]?.id || account.sharedPets[0]?.id || '');
@@ -122,7 +120,7 @@ const Reminders = ({ navigation, route }: Props) => {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Header */}
-        <Header navigation={navigation} account={account} />
+        <Header navigation={navigation} />
 
         {/* Page Title */}
         <View style={styles.headerContainer}>
@@ -156,7 +154,7 @@ const Reminders = ({ navigation, route }: Props) => {
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} account={account} pushToken={pushToken} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Reminders} />
 
       {/* popup for adding/editing reminder */}
       <NotificationPopup

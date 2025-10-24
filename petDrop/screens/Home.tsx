@@ -16,6 +16,7 @@ import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
 import { medState } from "../data/enums";
 import SelectMedPopup from "../components/SelectMedPopup";
 import { useAccount } from "../context/AccountContext";
+import { usePushToken } from "../context/PushTokenContext";
 
 type HomeProps = {
   navigation: NavigationProp<any>;
@@ -24,13 +25,13 @@ type HomeProps = {
 
 const Home = ({ navigation, route }: HomeProps) => {
   const { account, setAccount } = useAccount();
+  const { pushToken } = usePushToken();
   const [switchDisplay, setSwitchDisplay] = useState<Medication[]>();
   const [infoToDisplay, setInfoToDisplay] = useState<{ pet: Pet, med: Medication }>();
   const [markedDates, setMarkedDates] = useState<MarkedDates>({});
   const [popupState, setPopupState] = useState<medState>(medState.NO_ACTION);
   const [medMap, setMedMap] = useState<Map<string, { pet: Pet, med: Medication }[]>>(new Map());
 
-  const pushToken: string = route.params.pushToken;
 
 
   useEffect(() => {
@@ -43,9 +44,7 @@ const Home = ({ navigation, route }: HomeProps) => {
       pet.medications.forEach((med: Medication) => {
 
         med.notifications.forEach((notif: Notification) => {
-          const intervalMs = notif.repeatInterval * 60000; // convert minutes to ms
-          if (intervalMs <= 0) return; // should never be negative, but 0 might happen from emptyNotif
-
+          if (notif.repeatInterval === '') return;
           // Walk from nextRuns through finalRuns, stepping by repeatInterval
           for (let i = 0; i < notif.nextRuns.length; i++) {
             let cursor = new Date(notif.nextRuns[i]);
@@ -63,7 +62,18 @@ const Home = ({ navigation, route }: HomeProps) => {
               if (!newMedMap.has(dayKey)) newMedMap.set(dayKey, []);
               newMedMap.get(dayKey)!.push({ pet, med });
 
-              cursor = new Date(cursor.getTime() + intervalMs);
+              // increment cursor by the repeat interval
+              switch (notif.repeatInterval) {
+                case 'daily':
+                  cursor.setDate(cursor.getDate() + 1);
+                  break;
+                case 'weekly':
+                  cursor.setDate(cursor.getDate() + 7);
+                  break;
+                case 'monthly':
+                  cursor.setMonth(cursor.getMonth() + 1);
+                  break;
+              }
             }
           }
         });
@@ -132,7 +142,7 @@ const Home = ({ navigation, route }: HomeProps) => {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Header */}
-        <Header navigation={navigation} account={account} />
+        <Header navigation={navigation} />
 
         {/* User Greeting */}
         <UserGreeting name={account.username} />
@@ -167,7 +177,7 @@ const Home = ({ navigation, route }: HomeProps) => {
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} account={account} pushToken={pushToken} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Home} />
 
       {/* popup that displays all meds on a certain date */}
       {switchDisplay && (
@@ -189,13 +199,11 @@ const Home = ({ navigation, route }: HomeProps) => {
         isActive={infoToDisplay ? true : false}
         setPopupState={setPopupState}
         med={infoToDisplay ? infoToDisplay.med : emptyMed}
-        medCopy={emptyMed}
+        medCopy={infoToDisplay ? infoToDisplay.med : emptyMed}
         setMedCopy={() => { }}
         pet={infoToDisplay ? infoToDisplay.pet : emptyPet}
         readonly={true}
         navigation={navigation}
-        account={account}
-        pushToken={pushToken}
       />
 
     </View>

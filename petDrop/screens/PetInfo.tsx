@@ -5,7 +5,7 @@ import PetCard from "../components/Pets/PetCard";
 import AddNewPetButton from "../components/Pets/AddNewPetButton";
 import styles from "../styles/Pets.styles";
 import { ScreenEnum, logoImage } from "../GlobalStyles";
-import { NavigationProp, Route } from "@react-navigation/native";
+import { NavigationProp } from "@react-navigation/native";
 import { Account, emptyMed, emptyPet, Medication, Pet } from "../data/dataTypes";
 import { useEffect, useState } from "react";
 import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
@@ -14,14 +14,11 @@ import { medState } from "../data/enums";
 import Header from "../components/Header";
 import structuredClone from '@ungap/structured-clone';
 import { useAccount } from "../context/AccountContext";
+import { usePushToken } from "../context/PushTokenContext";
 
-interface Props {
-  navigation: NavigationProp<any>;
-  route: any;
-}
-
-const PetInfo = ({ navigation, route }: Props) => {
+const PetInfo = ({ navigation }: { navigation: NavigationProp<any> }) => {
   const { account, setAccount } = useAccount();
+  const { pushToken } = usePushToken();
   const [popupState, setPopupState] = useState(medState.NO_ACTION);
   const [petBeingEdited, setPetBeingEdited] = useState<Pet>(emptyPet); // the pet the user is adding a medication to
   const [med, setMed] = useState<Medication>(emptyMed);
@@ -32,10 +29,9 @@ const PetInfo = ({ navigation, route }: Props) => {
     setMedCopy(structuredClone(med));
   }, [med]);
 
-  const pushToken: string = route.params.pushToken;
 
   const WriteToDB = async () => {
-    let response = await httpRequest(ADD_MEDICATION, 'POST', JSON.stringify({ med: medCopy }));
+    let response = await httpRequest(ADD_MEDICATION + petBeingEdited.id, 'POST', JSON.stringify({ med: medCopy }));
     setPetBeingEdited(prev => { return { ...prev, medications: prev.medications.concat([medCopy]) } });
     if (!response.ok) {
       console.error(`http request failed with error code ${response.status}`);
@@ -50,7 +46,7 @@ const PetInfo = ({ navigation, route }: Props) => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Header navigation={navigation} account={account} />
+        <Header navigation={navigation} />
         <Text style={styles.pageTitle}>Pets</Text>
         {account.pets.map((pet: Pet) => (
           <View key={pet.id}>
@@ -62,8 +58,7 @@ const PetInfo = ({ navigation, route }: Props) => {
                 setPetBeingEdited(pet);
                 setPopupState(medState.SHOW_POPUP);
               }}
-              navigation={navigation}
-              pushToken={pushToken} />
+              navigation={navigation} />
           </View>
         ))}
         {account.sharedPets?.map((pet: Pet) => (
@@ -73,13 +68,12 @@ const PetInfo = ({ navigation, route }: Props) => {
               pet={pet}
               account={account}
               onPressFunction={() => { }}
-              navigation={navigation}
-              pushToken={pushToken} />
+              navigation={navigation} />
           </View>
         ))}
-        <AddNewPetButton navigation={navigation} account={account} pushToken={pushToken} />
+        <AddNewPetButton navigation={navigation} />
       </ScrollView>
-      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo} account={account} pushToken={pushToken} />
+      <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.PetInfo} />
       <MedicationPopup
         isActive={popupState === medState.SHOW_POPUP}
         setPopupState={setPopupState}
@@ -89,8 +83,6 @@ const PetInfo = ({ navigation, route }: Props) => {
         setMedCopy={setMedCopy}
         readonly={false}
         navigation={navigation}
-        account={account}
-        pushToken={pushToken}
       />
     </View>
   );

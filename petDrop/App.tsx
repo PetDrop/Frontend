@@ -4,7 +4,7 @@ type RootStackParamList = {
   Profile: undefined;
   Home: {pushToken: string};
   PetInfo: undefined;
-  PetInfo1: undefined;
+  NewPet: undefined;
   Reminders: undefined;
   MedicationsArchive: undefined;
   Instructions: { medName: string; pushToken: string };
@@ -22,7 +22,7 @@ import LoadingScreen from "./screens/LoadingScreen";
 import Login from "./screens/Login";
 import MedicationsArchive from "./screens/MedicationsArchive";
 import PetInfo from "./screens/PetInfo";
-import PetInfo1 from "./screens/PetInfo1";
+import NewPet from "./screens/NewPet";
 import Reminders from "./screens/Reminders";
 import Profile from "./screens/Profile";
 import Instructions from "./screens/Instructions";
@@ -38,6 +38,7 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import { AccountProvider } from "./context/AccountContext";
+import { PushTokenProvider, usePushToken } from "./context/PushTokenContext";
 import { emptyAccount } from "./data/dataTypes";
 
 Notifications.setNotificationHandler({
@@ -96,12 +97,12 @@ async function registerForPushNotificationsAsync() {
   }
 }
 
-const App = () => {
+const AppContent = () => {
   const navigationRef = React.useRef<any>(null);
   const [hideSplashScreen, setHideSplashScreen] = useState(true);
-  const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined);
   const [pendingNavigation, setPendingNavigation] = useState<{medName: string, pushToken: string} | null>(null);
+  const { pushToken, setPushToken } = usePushToken();
 
   // Function to handle navigation after login
   const handleNavigationAfterLogin = () => {
@@ -120,8 +121,8 @@ const App = () => {
 
   useEffect(() => {
     registerForPushNotificationsAsync()
-      .then(token => setExpoPushToken(token ?? ''))
-      .catch((error: any) => setExpoPushToken(`${error}`));
+      .then(token => setPushToken(token ?? ''))
+      .catch((error: any) => setPushToken(`${error}`));
 
     const notificationListener = Notifications.addNotificationReceivedListener(notification => {
       setNotification(notification);
@@ -131,11 +132,11 @@ const App = () => {
     return () => {
       notificationListener.remove();
     };
-  }, []);
+  }, [setPushToken]);
 
-  // Set up response listener when expoPushToken is available
+  // Set up response listener when pushToken is available
   useEffect(() => {
-    if (expoPushToken) {
+    if (pushToken) {
       
       // Check for any pending notification responses
       Notifications.getLastNotificationResponseAsync().then(response => {
@@ -152,7 +153,7 @@ const App = () => {
         responseListener.remove();
       };
     }
-  }, [expoPushToken]);
+  }, [pushToken]);
 
   // Function to handle notification response
   const handleNotificationResponse = (response: any) => {
@@ -160,19 +161,19 @@ const App = () => {
     const medName = medNameData?.value || medNameData;
     
     if (medName && navigationRef.current) {
-      // Check if user is already logged in by checking if we're on Home screen
+      // Check if user is already logged in by checking if we're passed the login screen
       const currentRoute = navigationRef.current.getCurrentRoute();
       
       if (currentRoute?.name !== 'Login' && currentRoute?.name !== 'Signup') {
         // User is already logged in, navigate directly to Instructions
         navigationRef.current.navigate('Instructions', {
           medName: medName,
-          pushToken: expoPushToken
+          pushToken: pushToken
         });
       } else {
         // User is not logged in, set pending navigation and go to Login
-        setPendingNavigation({ medName, pushToken: expoPushToken });
-        navigationRef.current.navigate('Login', { pushToken: expoPushToken });
+        setPendingNavigation({ medName, pushToken: pushToken });
+        navigationRef.current.navigate('Login');
       }
     } else {
       console.log('No medName found in notification data or navigationRef not available');
@@ -194,7 +195,6 @@ const App = () => {
             <Stack.Screen
               name="Login"
               options={{ headerShown: false }}
-              initialParams={{pushToken: expoPushToken}}
             >
               {(props) => {
                 return <Login {...props} onLoginSuccess={pendingNavigation ? handleNavigationAfterLogin : undefined} />;
@@ -214,7 +214,6 @@ const App = () => {
               name="Home"
               component={Home}
               options={{ headerShown: false }}
-              initialParams={{pushToken: expoPushToken}}
             />
             <Stack.Screen
               name="PetInfo"
@@ -222,8 +221,8 @@ const App = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="PetInfo1"
-              component={PetInfo1}
+              name="NewPet"
+              component={NewPet}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -263,4 +262,13 @@ const App = () => {
     </GestureHandlerRootView>
   );
 };
+
+const App = () => {
+  return (
+    <PushTokenProvider>
+      <AppContent />
+    </PushTokenProvider>
+  );
+};
+
 export default App;

@@ -76,7 +76,7 @@ const Signup = (props: SignupType) => {
             if (response.ok) {
                 // if account successfully created, navigate to profile page for additional info, and pass the account along
                 setAccount(await response.json());
-                props.navigation.navigate('Home', { pushToken: pushToken });
+                props.navigation.navigate('Home');
             } else {
                 console.log('unable to write account to database: status code ' + response.status);
                 alert('submission failed');
@@ -171,7 +171,7 @@ const Signup = (props: SignupType) => {
                         </View>
                     </View>
                     <View style={styles.buttonRow}>
-                        <Pressable style={styles.button} onPress={() => props.navigation.navigate('Login', { pushToken: pushToken })}>
+                        <Pressable style={styles.button} onPress={() => props.navigation.navigate('Login')}>
                             <Text style={styles.buttonText}>Login</Text>
                         </Pressable>
 

@@ -3,7 +3,7 @@ import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingV
 import { Image } from "expo-image";
 import DropdownArrow from "../../assets/dropdown_arrow.svg";
 import styles from '../../styles/MedicationPopup.styles';
-import { Account, Notification, Medication, Pet, SponsorMedication, emptyNotification, emptyMed } from "../../data/dataTypes";
+import { Notification, Medication, Pet, SponsorMedication, emptyNotification, emptyMed } from "../../data/dataTypes";
 import { useEffect, useMemo, useState } from "react";
 import { Color } from "../../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
@@ -14,6 +14,8 @@ import { GET_ALL_SPONSOR_MEDICATIONS, httpRequest } from "../../data/endpoints";
 import { NavigationProp } from "@react-navigation/core";
 import NotifCard from "../NotifCard";
 import CustomDateTimePicker from "./CustomDateTimePicker";
+import * as Notifications from 'expo-notifications';
+import { usePushToken } from '../../context/PushTokenContext';
 
 type MedicationPopupType = {
   isActive: boolean;
@@ -24,11 +26,10 @@ type MedicationPopupType = {
   setMedCopy: React.Dispatch<React.SetStateAction<Medication>>;
   readonly: boolean;
   navigation: NavigationProp<any>;
-  account: Account;
-  pushToken: string;
 };
 
-const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCopy, readonly, navigation, account, pushToken }: MedicationPopupType) => {
+const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCopy, readonly, navigation }: MedicationPopupType) => {
+	const { pushToken: currentPushToken } = usePushToken();
   const ObjectID = require('bson-objectid');
   const [propsChanged, setPropsChanged] = useState(true);
   const [sponsorMeds, setSponsorMeds] = useState<SponsorMedication[]>([]);
@@ -237,7 +238,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
           repeatInterval: state.repeatInterval,
           data: notificationData,
           body: `It's time to give ${pet.name} their ${medCopy.name}!`,
-          expoPushToken: pushToken
+          expoPushToken: currentPushToken
         };
       }
       // If no state found, return the notification as-is (might be an empty notification)
@@ -363,7 +364,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
                 title="Add Reminder"
                 onPress={() => {
                   setMedCopy((prev) => {
-                    const newNotification = { ...emptyNotification, id: ObjectID(), expoPushToken: pushToken };
+                    const newNotification = { ...emptyNotification, id: ObjectID(), expoPushToken: currentPushToken };
                     return { ...prev, notifications: [...prev.notifications, newNotification] }
                   })
                 }}
@@ -374,7 +375,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
               {medCopy.notifications?.map((notif, index) => (
                 <NotifCard
                   key={notif.id}
-                  notification={{ ...notif, expoPushToken: pushToken }}
+                  notification={{ ...notif, expoPushToken: currentPushToken }}
                   onChange={(updatedNotif: Notification) => {
                     setMedCopy((prev) => {
                       return { ...prev, notifications: prev.notifications.map((n, i) => (i === index ? updatedNotif : n)) }
@@ -406,7 +407,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
 
           {/* view instructions button */}
           {med.id !== '' && (
-            <Pressable onPress={() => { navigation.navigate('Instructions', { medName: medCopy.name, pushToken: pushToken }) }}>
+            <Pressable onPress={() => { navigation.navigate('Instructions', { medName: medCopy.name }) }}>
               <View style={styles.instructionButtonOval}>
                 <Text style={[styles.buttonText, styles.text]}>Instructions</Text>
               </View>

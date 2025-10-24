@@ -90,7 +90,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
       const response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
       if (response.ok) {
         // navigate to home screen and pass the account there
-        navigation.navigate('Home', { pushToken: pushToken });
+        navigation.navigate('Home');
       } else {
         console.log('unable to write account to database: status code ' + response.status);
         alert('submission failed');
@@ -149,7 +149,7 @@ const Profile = ({ navigation, route }: ProfileType) => {
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* header */}
-        <Header navigation={navigation} account={account} />
+        <Header navigation={navigation} />
 
         {/* profile title */}
         <Text style={styles.title}>{`${account.username}'s Profile`}</Text>

@@ -25,12 +25,12 @@ export const AccountProvider = ({
     const updatePetMedications = (petId: string, newMeds: Medication[]) => {
         setAccount((prev) => ({
             ...prev,
-            pets: prev.pets.map((p) =>
+            pets: prev.pets?.map((p) =>
                 p.id === petId ? { ...p, medications: newMeds } : p
-            ),
-            sharedPets: prev.sharedPets.map((p) =>
+            ) || [],
+            sharedPets: prev.sharedPets?.map((p) =>
                 p.id === petId ? { ...p, medications: newMeds } : p
-            ),
+            ) || [],
         }));
     };
 
@@ -38,18 +38,18 @@ export const AccountProvider = ({
     const updateMedication = (petId: string, updatedMed: Medication) => {
         setAccount((prev) => {
             const updateList = (pets: Pet[]) =>
-                pets.map((p) =>
+                pets?.map((p) =>
                     p.id === petId
                         ? {
                             ...p,
-                            medications: p.medications.some((m) => m.id === updatedMed.id)
+                            medications: p.medications?.some((m) => m.id === updatedMed.id)
                                 ? p.medications.map((m) =>
                                     m.id === updatedMed.id ? updatedMed : m
                                 )
-                                : [...p.medications, updatedMed],
+                                : [...(p.medications || []), updatedMed],
                         }
                         : p
-                );
+                ) || [];
 
             return {
                 ...prev,
@@ -63,11 +63,11 @@ export const AccountProvider = ({
     const deleteMedication = (petId: string, medId: string) => {
         setAccount((prev) => {
             const filterList = (pets: Pet[]) =>
-                pets.map((p) =>
+                pets?.map((p) =>
                     p.id === petId
-                        ? { ...p, medications: p.medications.filter((m) => m.id !== medId) }
+                        ? { ...p, medications: (p.medications || []).filter((m) => m.id !== medId) }
                         : p
-                );
+                ) || [];
 
             return {
                 ...prev,
@@ -81,16 +81,16 @@ export const AccountProvider = ({
     const updateNotifications = (petId: string, medId: string, newNotifs: Notification[]) => {
         setAccount((prev) => {
             const updateList = (pets: Pet[]) =>
-                pets.map((p) =>
+                pets?.map((p) =>
                     p.id === petId
                         ? {
                             ...p,
-                            medications: p.medications.map((m) =>
+                            medications: (p.medications || []).map((m) =>
                                 m.id === medId ? { ...m, notifications: newNotifs } : m
                             ),
                         }
                         : p
-                );
+                ) || [];
 
             return {
                 ...prev,
