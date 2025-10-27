@@ -296,21 +296,31 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
 
   if (isActive) {
     return (
-      <KeyboardAvoidingView style={{ position: 'absolute' }} behavior="padding">
-        {/* opaque layer to blur background */}
-        <View style={styles.opaqueBackground} />
+      <Pressable 
+        style={styles.modalBackground}
+        onPress={() => Keyboard.dismiss()}
+      >
+        {/* Background container */}
+        <View style={styles.modalContainer}>
 
-        {/* the popup itself */}
-        <View style={styles.medicationPopup}>
+          {/* close button */}
+          <Pressable 
+            onPress={() => { close(medState.NO_ACTION) }} 
+            style={styles.closeButton}
+          >
+            <Image
+              style={styles.closeIcon}
+              contentFit="cover"
+              source={require("../../assets/remove_x_blue.png")}
+            />
+          </Pressable>
 
-          {/* blue top banner */}
-          <View style={styles.topBanner}>
+          {/* Header with color indicator and medication selection */}
+          <View style={styles.headerContainer}>
+            {/* Color indicator */}
+            <View style={[styles.colorIndicatorNew, { backgroundColor: medCopy.color }]} />
 
-            {/* TODO: make this pressable to pick a color */}
-            {/* color indicator */}
-            <View style={[styles.colorIndicator, { backgroundColor: medCopy.color }]} />
-
-            {/* medication selection */}
+            {/* Medication selection */}
             {!readonly ?
               <Selection
                 data={
@@ -323,55 +333,48 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
                 onSelect={(selectedItem: string) => { setMedCopy({ ...medCopy, name: selectedItem }) }}
                 renderButton={(selectedItem: string) => {
                   return (
-                    <View style={styles.dropdownDefault}>
-                      <Text style={styles.text}>
+                    <View style={styles.dropdownButton}>
+                      <Text style={styles.dropdownText}>
                         {selectedItem ? selectedItem : med.name ? med.name : 'Select Medication'}
                       </Text>
-                      <DropdownArrow style={styles.downArrow} width={19} height={12} />
+                      <DropdownArrow width={19} height={12} />
                     </View>
                   )
                 }}
                 renderItem={(selectedItem: string) => {
                   return (
-                    <View style={styles.dropdownItem}>
-                      <Text style={styles.text}>{selectedItem}</Text>
+                    <View style={styles.dropdownItemNew}>
+                      <Text style={styles.dropdownText}>{selectedItem}</Text>
                     </View>
                   )
                 }}
               />
               :
-              <View style={styles.dropdownDefault}>
-                <Text style={styles.text}>{medCopy.name}</Text>
+              <View style={styles.readonlyDropdown}>
+                <Text style={styles.dropdownText}>{medCopy.name}</Text>
               </View>
             }
-
-            {/* close x button */}
-            <Pressable onPress={() => { close(medState.NO_ACTION) }} style={styles.closePopupContainer}>
-              <Image
-                style={styles.closePopup}
-                contentFit="cover"
-                source={require("../../assets/remove_x_white.png")}
-              />
-            </Pressable>
-
           </View>
 
-          {/* white main area */}
-          <ScrollView style={styles.popupBody}>
+          {/* Scrollable content area */}
+          <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
 
             {!readonly && (
-              <Button
-                title="Add Reminder"
+              <Pressable
+                style={styles.addReminderButton}
                 onPress={() => {
                   setMedCopy((prev) => {
                     const newNotification = { ...emptyNotification, id: ObjectID(), expoPushToken: currentPushToken };
                     return { ...prev, notifications: [...prev.notifications, newNotification] }
                   })
                 }}
-              />
+              >
+                <Text style={styles.addReminderText}>Add Reminder</Text>
+              </Pressable>
             )}
 
-            <View style={styles.notifCardContainer}>
+            {/* Notification cards */}
+            <View style={styles.notifCardsContainer}>
               {medCopy.notifications?.map((notif, index) => (
                 <NotifCard
                   key={notif.id}
@@ -393,8 +396,9 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
               ))}
             </View>
 
+            {/* Description input */}
             <TextInput
-              style={[styles.textInput]}
+              style={styles.descriptionInput}
               placeholder="Enter any info you'll need later (notes, instructions, etc.)"
               placeholderTextColor={Color.colorCornflowerblue}
               value={medCopy.description}
@@ -405,28 +409,38 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
 
           </ScrollView>
 
-          {/* view instructions button */}
-          {med.id !== '' && (
-            <Pressable onPress={() => { navigation.navigate('Instructions', { medName: medCopy.name }) }}>
-              <View style={styles.instructionButtonOval}>
-                <Text style={[styles.buttonText, styles.text]}>Instructions</Text>
-              </View>
-            </Pressable>
-          )}
+          {/* Action buttons */}
+          <View style={styles.actionButtonsContainer}>
+            {/* Instructions button */}
+            {med.id !== '' && (
+              <Pressable 
+                onPress={() => { navigation.navigate('Instructions', { medName: medCopy.name }) }}
+                style={styles.instructionsButton}
+              >
+                <Text style={styles.buttonText}>Instructions</Text>
+              </Pressable>
+            )}
 
-          {/* save button */}
-          {!readonly && (
-            <View style={styles.saveButtonContainer}>
-              <SaveButton disabled={false} onPressFunction={() => { closeWithAction(false) }} innerText={'save'} color={Color.colorCornflowerblue} />
-            </View>
-          )}
+            {/* Save button */}
+            {!readonly && (
+              <Pressable
+                onPress={() => { closeWithAction(false) }}
+                style={styles.saveButton}
+              >
+                <Text style={styles.buttonText}>Save</Text>
+              </Pressable>
+            )}
 
-          {/* delete button */}
-          {(med.id !== '' && !readonly) && (
-            <View style={styles.deleteButtonContainer}>
-              <DeleteButton disabled={false} onPressFunction={() => { closeWithAction(true) }} innerText={'delete'} color={Color.colorFirebrick} />
-            </View>
-          )}
+            {/* Delete button */}
+            {(med.id !== '' && !readonly) && (
+              <Pressable
+                onPress={() => { closeWithAction(true) }}
+                style={styles.deleteButton}
+              >
+                <Text style={styles.buttonText}>Delete</Text>
+              </Pressable>
+            )}
+          </View>
 
         </View>
 
@@ -439,7 +453,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
           }}
           onCancel={() => setPickerVisible(false)}
         />
-      </KeyboardAvoidingView>
+      </Pressable>
     );
   }
 };

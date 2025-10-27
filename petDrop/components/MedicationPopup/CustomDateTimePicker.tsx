@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, Pressable, Modal, ScrollView, TouchableOpacity } from 'react-native';
+import styles from '../../styles/CustomDateTimePicker.styles';
 
 type CustomDateTimePickerProps = {
   isVisible: boolean;
@@ -46,7 +47,6 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
 
   const WheelPicker = ({ items, selectedValue, onValueChange, label }: { items: any[], selectedValue: any, onValueChange: (value: any) => void, label: string }) => {
     const scrollViewRef = useRef<ScrollView>(null);
-    const itemHeight = 50; // Height of each item (15 padding top + 15 padding bottom + ~20 text height)
     
     const scrollToSelected = () => {
       const selectedIndex = items.findIndex(item => {
@@ -58,9 +58,9 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
       if (selectedIndex !== -1 && scrollViewRef.current) {
         // Center the selected item in the visible area
         const containerHeight = 300;
-        const visibleItems = Math.floor(containerHeight / itemHeight);
+        const visibleItems = Math.floor(containerHeight / styles.wheelPickerItem.minHeight);
         const centerOffset = (visibleItems - 1) / 2;
-        const targetY = Math.max(0, (selectedIndex - centerOffset) * itemHeight);
+        const targetY = Math.max(0, (selectedIndex - centerOffset) * styles.wheelPickerItem.minHeight);
         
         scrollViewRef.current.scrollTo({
           y: targetY,
@@ -77,11 +77,11 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
     };
 
     return (
-      <View style={{ flex: 1, marginHorizontal: 5 }}>
-        <Text style={{ textAlign: 'center', marginBottom: 10, fontWeight: 'bold' }}>{label}</Text>
+      <View style={styles.wheelPickerContainer}>
+        <Text style={styles.wheelPickerLabel}>{label}</Text>
         <ScrollView 
           ref={scrollViewRef}
-          style={{ height: 300, borderWidth: 1, borderColor: '#ddd', borderRadius: 8 }}
+          style={styles.wheelPickerScroll}
           showsVerticalScrollIndicator={false}
           onContentSizeChange={scrollToSelected}
           onLayout={scrollToSelected}
@@ -90,19 +90,15 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
             <TouchableOpacity
               key={index}
               onPress={() => onValueChange(item.value)}
-              style={{
-                padding: 15,
-                backgroundColor: isSelected(item) ? '#007AFF' : 'transparent',
-                borderBottomWidth: 1,
-                borderBottomColor: '#eee',
-                minHeight: itemHeight
-              }}
+              style={[
+                styles.wheelPickerItem,
+                isSelected(item) && styles.wheelPickerItemSelected
+              ]}
             >
-              <Text style={{
-                textAlign: 'center',
-                fontSize: 18,
-                color: isSelected(item) ? 'white' : 'black'
-              }}>
+              <Text style={[
+                styles.wheelPickerItemText,
+                isSelected(item) && styles.wheelPickerItemTextSelected
+              ]}>
                 {item.label}
               </Text>
             </TouchableOpacity>
@@ -114,14 +110,14 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
 
   return (
     <Modal visible={isVisible} transparent animationType="slide">
-      <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-        <View style={{ backgroundColor: 'white', borderRadius: 20, padding: 20, marginHorizontal: 20, maxHeight: '80%', minHeight: '60%' }}>
-          <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' }}>
+      <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>
             Select {mode === 'date' ? 'Date' : 'Time'}
           </Text>
           
-          <View style={{ flex: 1, justifyContent: 'space-between' }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+          <View style={styles.contentContainer}>
+            <View style={styles.pickerRow}>
               {mode === 'date' ? (
                 <>
                   <WheelPicker
@@ -183,10 +179,10 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
                     onValueChange={setMinute}
                     label="Minute"
                   />
-                  <View style={{ flex: 1, marginHorizontal: 5, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ textAlign: 'center', marginBottom: 10, fontWeight: 'bold' }}>AM/PM</Text>
-                    <View style={{ height: 300, justifyContent: 'center', alignItems: 'center' }}>
-                      <Text style={{ fontSize: 24, fontWeight: 'bold', color: hourSet === 0 ? '#007AFF' : '#666' }}>
+                  <View style={styles.ampmContainer}>
+                    <Text style={styles.wheelPickerLabel}>AM/PM</Text>
+                    <View style={styles.ampmTextContainer}>
+                      <Text style={[styles.ampmText, hourSet === 0 ? styles.ampmTextActive : styles.ampmTextInactive]}>
                         {hourSet === 0 ? 'AM' : 'PM'}
                       </Text>
                     </View>
@@ -195,12 +191,12 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
               )}
             </View>
             
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 20 }}>
-              <Pressable onPress={onCancel} style={{ padding: 10 }}>
-                <Text style={{ color: 'blue' }}>Cancel</Text>
+            <View style={styles.buttonRow}>
+              <Pressable onPress={onCancel} style={styles.button}>
+                <Text style={styles.buttonText}>Cancel</Text>
               </Pressable>
-              <Pressable onPress={handleConfirm} style={{ padding: 10 }}>
-                <Text style={{ color: 'blue' }}>Confirm</Text>
+              <Pressable onPress={handleConfirm} style={styles.button}>
+                <Text style={styles.buttonText}>Confirm</Text>
               </Pressable>
             </View>
           </View>

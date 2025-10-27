@@ -108,6 +108,45 @@ const styles = StyleSheet.create({
           textAlign: "center",
           fontFamily: FontFamily.koulenRegular,
       },
+      // Modal styles for NotificationPopup
+      modalBackground: {
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          justifyContent: 'center',
+          alignItems: 'center'
+      },
+      modalContainer: {
+          backgroundColor: 'white',
+          borderRadius: width * 0.05,
+          padding: width * 0.05,
+          width: '90%',
+          maxWidth: width * 1.0,
+          alignItems: 'center',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: height * 0.0025 },
+          shadowOpacity: 0.25,
+          shadowRadius: width * 0.01,
+          elevation: 5
+      },
+      closeButton: {
+          position: 'absolute',
+          top: height * 0.012,
+          right: width * 0.025,
+          zIndex: 1,
+          padding: width * 0.02
+      },
+      closeIcon: {
+          width: width * 0.06,
+          height: height * 0.03
+      },
+      buttonContainer: {
+          marginTop: height * 0.012,
+          width: '100%'
+      },
 });
 
 export default styles;
