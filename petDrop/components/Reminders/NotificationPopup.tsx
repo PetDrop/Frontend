@@ -1,14 +1,16 @@
 import React, { useState } from "react"
-import { Pressable, View, Keyboard } from "react-native"
+import { Pressable, View, Keyboard, ScrollView, Text, Dimensions } from "react-native"
 import { Image } from "expo-image";
 import { emptyNotification, Notification } from "../../data/dataTypes";
 import NotifCard from "../NotifCard";
 import { notifState } from "../../data/enums";
-import { Color } from "../../GlobalStyles";
+import { Color, FontFamily, FontSize } from "../../GlobalStyles";
 import DeleteButton from "../CustomButton";
 import SaveButton from "../CustomButton";
 import CustomDateTimePicker from "../MedicationPopup/CustomDateTimePicker";
 import styles from "../../styles/NotificationPopup.styles";
+
+const { width } = Dimensions.get('window');
 
 type NotificationPopupProps = {
     isActive: boolean;
@@ -169,36 +171,47 @@ const NotificationPopup = ({ isActive, setPopupState, notif, notifCopy, setNotif
                         />
                     </Pressable>
 
-                    {/* card where user edits the notif */}
-                    <NotifCard
-                        notification={notifCopy}
-                        onChange={updatedNotif => setNotifCopy(updatedNotif)}
-                        onDelete={() => { setNotifCopy(emptyNotification) }}
-                        onOpenPicker={(mode, handler) => openPicker(mode, handler)}
-                        onStateChange={(state) => setLocalNotifState(state)}
-                    />
+                    {/* Title */}
+                    <Text style={styles.titleText}>{`${notif.id !== '' ? 'Edit' : 'Add'} Reminder`}</Text>
 
-                    {/* save button */}
-                    <View style={styles.buttonContainer}>
-                        <SaveButton
-                            onPressFunction={() => decideState()}
-                            innerText={'save'}
-                            color={Color.colorCornflowerblue}
-                            disabled={false}
+                    {/* Scrollable content */}
+                    <ScrollView 
+                        style={styles.scrollContainer}
+                        contentContainerStyle={styles.scrollContent}
+                        showsVerticalScrollIndicator={false}
+                        nestedScrollEnabled={true}
+                    >
+                        {/* card where user edits the notif */}
+                        <NotifCard
+                            notification={notifCopy}
+                            onChange={updatedNotif => setNotifCopy(updatedNotif)}
+                            onDelete={() => { setNotifCopy(emptyNotification) }}
+                            onOpenPicker={(mode, handler) => openPicker(mode, handler)}
+                            onStateChange={(state) => setLocalNotifState(state)}
                         />
-                    </View>
+                    </ScrollView>
 
-                    {/* delete button */}
-                    {notif.id !== '' && (
-                        <View style={styles.buttonContainer}>
-                            <DeleteButton
-                                onPressFunction={() => { setPopupState(notifState.NOTIF_DELETED) }}
-                                innerText={'delete'}
-                                color={Color.colorFirebrick}
+                    {/* Action buttons - outside scrollview, side by side */}
+                    <View style={styles.actionsContainer}>
+                        {notif.id !== '' && (
+                            <View style={styles.deleteButtonWrapper}>
+                                <DeleteButton
+                                    onPressFunction={() => { setPopupState(notifState.NOTIF_DELETED) }}
+                                    innerText={'delete'}
+                                    color={Color.colorFirebrick}
+                                    disabled={false}
+                                />
+                            </View>
+                        )}
+                        <View style={[styles.saveButtonWrapper, { marginLeft: notif.id !== '' ? width * 0.2 : width * 0.52 }]}>
+                            <SaveButton
+                                onPressFunction={() => decideState()}
+                                innerText={'save'}
+                                color={Color.colorCornflowerblue}
                                 disabled={false}
                             />
                         </View>
-                    )}
+                    </View>
                 </View>
 
                 <CustomDateTimePicker

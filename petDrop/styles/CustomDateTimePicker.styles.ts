@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from 'react-native';
+import { FontSize } from '../GlobalStyles';
 
 const { width, height } = Dimensions.get('window');
 
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
         minHeight: '60%'
     },
     modalTitle: {
-        fontSize: 18,
+        fontSize: FontSize.size_lg,
         fontWeight: 'bold',
         marginBottom: height * 0.025,
         textAlign: 'center'
@@ -37,27 +38,28 @@ const styles = StyleSheet.create({
     wheelPickerLabel: {
         textAlign: 'center',
         marginBottom: height * 0.0125,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        fontSize: FontSize.size_base
     },
     wheelPickerScroll: {
-        height: 300,
+        height: height * 0.4,
         borderWidth: 1,
         borderColor: '#ddd',
         borderRadius: width * 0.02
     },
     wheelPickerItem: {
-        padding: 15,
+        padding: height * 0.018,
         backgroundColor: 'transparent',
         borderBottomWidth: 1,
         borderBottomColor: '#eee',
-        minHeight: 50
+        minHeight: height * 0.06
     },
     wheelPickerItemSelected: {
         backgroundColor: '#007AFF'
     },
     wheelPickerItemText: {
         textAlign: 'center',
-        fontSize: 18,
+        fontSize: FontSize.size_lg,
         color: 'black'
     },
     wheelPickerItemTextSelected: {
@@ -70,12 +72,12 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     ampmTextContainer: {
-        height: 300,
+        height: height * 0.4,
         justifyContent: 'center',
         alignItems: 'center'
     },
     ampmText: {
-        fontSize: 24,
+        fontSize: FontSize.size_5xl,
         fontWeight: 'bold'
     },
     ampmTextActive: {
@@ -90,10 +92,11 @@ const styles = StyleSheet.create({
         marginTop: height * 0.025
     },
     button: {
-        padding: 10
+        padding: width * 0.025
     },
     buttonText: {
-        color: 'blue'
+        color: 'blue',
+        fontSize: FontSize.size_base
     }
 });
 

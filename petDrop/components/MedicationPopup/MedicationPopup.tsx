@@ -357,7 +357,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
           </View>
 
           {/* Scrollable content area */}
-          <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+          <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false} nestedScrollEnabled={true}>
 
             {!readonly && (
               <Pressable

@@ -35,12 +35,12 @@ const ItemSwitch = ({ text, selectedItem, data, onSwitch, switchItem }: ItemSwit
 
 	return (
 		<View style={styles.itemSwitchContainer}>
-			<Pressable
+			<TouchableOpacity
 				style={styles.switchButton}
 				onPress={() => setModalVisible(true)}>
 				{image}
 				<Text style={styles.switchText}>{text}</Text>
-			</Pressable>
+			</TouchableOpacity>
 
 			<Modal visible={modalVisible} transparent animationType="fade">
 				<View style={styles.modalOverlay}>

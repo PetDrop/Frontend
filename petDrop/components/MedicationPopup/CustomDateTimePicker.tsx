@@ -57,7 +57,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
       });
       if (selectedIndex !== -1 && scrollViewRef.current) {
         // Center the selected item in the visible area
-        const containerHeight = 300;
+        const containerHeight = styles.wheelPickerScroll.height;
         const visibleItems = Math.floor(containerHeight / styles.wheelPickerItem.minHeight);
         const centerOffset = (visibleItems - 1) / 2;
         const targetY = Math.max(0, (selectedIndex - centerOffset) * styles.wheelPickerItem.minHeight);
@@ -109,7 +109,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
   };
 
   return (
-    <Modal visible={isVisible} transparent animationType="slide">
+    <Modal visible={isVisible} transparent>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>

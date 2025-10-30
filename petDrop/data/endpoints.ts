@@ -1,4 +1,3 @@
-// replace 'localhost' with the ip address of your computer to hit these on expo go
 // ACCOUNT
 export const ADD_ACCOUNT = 'http://localhost:8080/add-account';
 export const UPDATE_ACCOUNT = 'http://localhost:8080/update-account';
