@@ -78,13 +78,13 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 		switch (popupState) {
 			case medState.MED_NOTHING_NOTIF_CREATED:
 				console.log('notifications: ', formatNotifs(medCopy.notifications));
-				response = await httpRequest(CREATE_NOTIFS_FOR_MED + medCopy.id, 'POST', JSON.stringify({ notifications: formatNotifs(medCopy.notifications) }));
+				response = await httpRequest(CREATE_NOTIFS_FOR_MED + medCopy.id, 'PUT', JSON.stringify(formatNotifs(medCopy.notifications)));
 				break;
 			case medState.MED_NOTHING_NOTIF_EDITED:
-				response = await httpRequest(EDIT_NOTIFS_FOR_MED + medCopy.id, 'PUT', JSON.stringify({ notifications: formatNotifs(medCopy.notifications) }));
+				response = await httpRequest(EDIT_NOTIFS_FOR_MED + medCopy.id, 'PUT', JSON.stringify(formatNotifs(medCopy.notifications)));
 				break;
 			case medState.MED_NOTHING_NOTIF_DELETED:
-				response = await httpRequest(DELETE_NOTIFS_FROM_MED + medCopy.id, 'DELETE', '');
+				response = await httpRequest(DELETE_NOTIFS_FROM_MED + medCopy.id, 'PUT', '');
 				break;
 			case medState.MED_CREATED_NOTIF_NOTHING:
 			case medState.MED_CREATED_NOTIF_CREATED:
@@ -103,9 +103,13 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				response = await httpRequest(UPDATE_MED_DELETE_NOTIFS, 'PUT', JSON.stringify({ ...medCopy, notifications: formatNotifs(medCopy.notifications) }));
 				break;
 			case medState.MED_DELETED:
-				httpRequest(DELETE_MEDICATION + medCopy.id, 'DELETE', '');
-				updatePetMedications(selectedPet.id, selectedPet.medications.filter((med) => med.id !== medCopy.id));
-				setMed(emptyMed);
+				response = await httpRequest(DELETE_MEDICATION + medCopy.id, 'DELETE', '');
+				if (response.ok) {
+					updatePetMedications(selectedPet.id, selectedPet.medications.filter((med) => med.id !== medCopy.id));
+					setMed(emptyMed);
+				} else {
+					console.error(`http request failed with error code ${response?.status}`);
+				}
 				return;
 			default:
 				break;
@@ -123,10 +127,13 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 		}
 	}
 
-	if (popupState !== medState.SHOW_POPUP && popupState !== medState.NO_ACTION) {
-		WriteToDB();
-		setPopupState(medState.NO_ACTION);
-	}
+	// Handle database operations when popup state changes
+	useEffect(() => {
+		if (popupState !== medState.SHOW_POPUP && popupState !== medState.NO_ACTION) {
+			WriteToDB();
+			setPopupState(medState.NO_ACTION);
+		}
+	}, [popupState]);
 
 	let medicationCards: React.JSX.Element[];
 	medicationCards = selectedPet.medications.map((medication: Medication, index: number) => (

@@ -3,6 +3,7 @@ import { Pressable, Text, View } from 'react-native';
 import EditIcon from '../../assets/edit_icon.svg';
 import styles from '../../styles/Medications.styles';
 import { DateObj, Medication, Pet } from '../../data/dataTypes';
+import { useMemo } from 'react';
 
 interface MedicationCardProps {
 	medication: Medication;
@@ -11,24 +12,23 @@ interface MedicationCardProps {
 }
 
 const MedicationCard = ({ medication, pet, showingFunction }: MedicationCardProps) => {
+	const remindersText = useMemo(() => {
+		if (medication.notifications.length > 0) {
+			// Get unique times from nextRuns
+			const uniqueTimes = [...new Set(medication.notifications.flatMap(notification => notification.nextRuns.map(date => new Date(date).toLocaleTimeString())))];
+			return `REMINDERS: ${uniqueTimes.join(', ')}`;
+		}
+		return 'NO REMINDERS';
+	}, [medication]);
 
-	// Format notifications as a string, e.g., "6AM, 6PM"
-	const remindersText: string = medication.notifications?.join(', ') || 'No reminders';
-
-	// turn DateObjs into strings that are then joined to be displayed
-	// let dates: string[] = medication.dates.map((date: DateObj) => {
-	// 	if (date.endDate.length === 0) { // recurring single date
-	// 		if (date.recurrances > 1) {
-	// 			// say how many times it recurs
-	// 			return `${date.startDate} x${date.recurrances}`;
-	// 		} else {
-	// 			return date.startDate;
-	// 		}
-	// 	} else { // date range
-	// 		return `${date.startDate} to ${date.endDate}`;
-	// 	}
-	// });
-	// const datesText: string = dates.join(', ');
+	const datesText = useMemo(() => {
+		if (medication.notifications.length > 0) {
+			// Get unique dates from nextRuns
+			const uniqueDates = [...new Set(medication.notifications.flatMap(notification => notification.nextRuns.map(date => new Date(date).toDateString())))];
+			return `DATES: ${uniqueDates.join(', ')}`;
+		}
+		return 'NO DATES';
+	}, [medication]);
 
 	return (
 		<View style={styles.medicationCardContainer}>
@@ -47,10 +47,10 @@ const MedicationCard = ({ medication, pet, showingFunction }: MedicationCardProp
 			<View style={styles.medicationBody}>
 				<Text style={styles.medicationText}>PET: {pet.name}</Text>
 				<Text style={styles.medicationText}>
-					DATES: {/* datesText */}
+					{datesText}
 				</Text>
 				<Text style={styles.medicationText}>
-					NOTIFICATIONS: {remindersText}
+					{remindersText}
 				</Text>
 				<Text style={styles.medicationText}>
 					MESSAGE: {medication.description}

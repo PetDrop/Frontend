@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList, Button, Keyboard, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, FlatList, Keyboard, Platform } from 'react-native';
 import { Notification } from '../data/dataTypes';
 import styles from '../styles/NotifCard.styles';
 import IntervalSwitch from './ItemSwitch';
@@ -11,10 +11,10 @@ type NumberInputProps = {
     onChange: (n: number) => void;
 }
 const NumberInput = ({ value, label, onChange }: NumberInputProps) => (
-    <View style={local.selector}>
-        <Text>{label}</Text>
+    <View style={styles.numberInputContainer}>
+        <Text style={styles.numberInputLabel}>{label}</Text>
         <TextInput
-            style={local.input}
+            style={styles.numberInput}
             keyboardType="numeric"
             value={value?.toString() ?? ''}
             onChangeText={t => onChange(Number(t))}
@@ -29,18 +29,18 @@ type NotificationTimesProps = {
 };
 
 const NotificationTimes = ({ times, onAddTime, onRemoveTime }: NotificationTimesProps) => (
-    <View style={local.selector}>
-        <Text>Notification Times:</Text>
+    <View style={styles.selectorContainer}>
+        <Text style={styles.selectorText}>Notification Times:</Text>
         {times.map((t, i) => (
-            <View style={local.row} key={i}>
-                <Text>{t.toLocaleTimeString()}</Text>
+            <View style={styles.row} key={i}>
+                <Text style={styles.rowText}>{t.toLocaleTimeString()}</Text>
                 <TouchableOpacity onPress={() => onRemoveTime(i)}>
-                    <Text style={{ color: 'red', marginLeft: 8 }}>Remove</Text>
+                    <Text style={styles.removeButtonText}>Remove</Text>
                 </TouchableOpacity>
             </View>
         ))}
-        <TouchableOpacity onPress={onAddTime}>
-            <Text style={{ color: 'blue' }}>+ Add Time</Text>
+        <TouchableOpacity onPress={onAddTime} style={styles.addButton}>
+            <Text style={styles.addButtonText}>+ Add Time</Text>
         </TouchableOpacity>
     </View>
 );
@@ -52,18 +52,18 @@ type MultiDateSelectorProps = {
 };
 
 const MultiDateSelector = ({ dates, onAddDate, onRemoveDate }: MultiDateSelectorProps) => (
-    <View style={local.selector}>
-        <Text>Selected Start Dates:</Text>
+    <View style={styles.selectorContainer}>
+        <Text style={styles.selectorText}>Selected Start Dates:</Text>
         {dates.map((item, index) => (
-            <View style={local.row} key={index}>
-                <Text>{item.toDateString()}</Text>
+            <View style={styles.row} key={index}>
+                <Text style={styles.rowText}>{item.toDateString()}</Text>
                 <TouchableOpacity onPress={() => onRemoveDate(index)}>
-                    <Text style={{ color: 'red', marginLeft: 8 }}>Remove</Text>
+                    <Text style={styles.removeButtonText}>Remove</Text>
                 </TouchableOpacity>
             </View>
         ))}
-        <TouchableOpacity onPress={onAddDate}>
-            <Text style={{ color: 'blue' }}>+ Add Start Date</Text>
+        <TouchableOpacity onPress={onAddDate} style={styles.addButton}>
+            <Text style={styles.addButtonText}>+ Add Start Date</Text>
         </TouchableOpacity>
     </View>
 );
@@ -223,12 +223,15 @@ export default function NotifCard({ notification, onChange, onDelete, onOccurren
             const firstStart = localStartDates[0] ?? null;
             const firstEnd = localEndDates[0] ?? null;
             return (
-                <View>
-                    <TouchableOpacity style={local.selector} onPress={() => showPicker('addStart')}>
-                        <Text>Start Date: {firstStart ? firstStart.toDateString() : 'Select'}</Text>
+                <View style={styles.selectorContainer}>
+                    <Text style={styles.selectorText}>Start Date: {firstStart ? firstStart.toDateString() : 'Select'}</Text>
+                    <TouchableOpacity style={styles.selectorButton} onPress={() => showPicker('addStart')}>
+                        <Text style={styles.selectorButtonText}>Select Start Date</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={local.selector} onPress={() => showPicker('addEnd')}>
-                        <Text>End Date: {firstEnd ? firstEnd.toDateString() : 'Select'}</Text>
+                    
+                    <Text style={styles.selectorText}>End Date: {firstEnd ? firstEnd.toDateString() : 'Select'}</Text>
+                    <TouchableOpacity style={styles.selectorButton} onPress={() => showPicker('addEnd')}>
+                        <Text style={styles.selectorButtonText}>Select End Date</Text>
                     </TouchableOpacity>
                 </View>
             );
@@ -257,21 +260,23 @@ export default function NotifCard({ notification, onChange, onDelete, onOccurren
 
     return (
         <View style={styles.container}>
-            <IntervalSwitch
-                data={[{ name: 'daily' }, { name: 'weekly' }, { name: 'monthly' }]}
-                onSwitch={item => {
-                    const name = item.name;
-                    setLocalRepeatInterval(name);
-                }}
-                selectedItem={{ name: localRepeatInterval }}
-                switchItem={'Interval'}
-                text={localRepeatInterval}
-            />
+            <View style={styles.intervalSwitchContainer}>
+                <IntervalSwitch
+                    data={[{ name: 'daily' }, { name: 'weekly' }, { name: 'monthly' }]}
+                    onSwitch={item => {
+                        const name = item.name;
+                        setLocalRepeatInterval(name);
+                    }}
+                    selectedItem={{ name: localRepeatInterval }}
+                    switchItem={'Interval'}
+                    text={localRepeatInterval}
+                />
+            </View>
             {renderIntervalSection()}
             <NotificationTimes times={localTimes} onAddTime={() => showPicker('addTime', 'time')} onRemoveTime={removeTime} />
             {onDelete && (
-                <TouchableOpacity onPress={onDelete}>
-                    <Text>Delete</Text>
+                <TouchableOpacity onPress={onDelete} style={styles.deleteButton}>
+                    <Text style={styles.deleteButtonText}>Delete Notification</Text>
                 </TouchableOpacity>
             )}
 
@@ -279,18 +284,3 @@ export default function NotifCard({ notification, onChange, onDelete, onOccurren
         </View>
     );
 }
-
-// ---- local styles ----
-const local = StyleSheet.create({
-    row: { flexDirection: 'row', marginVertical: 8 },
-    selector: { marginVertical: 8 },
-    input: {
-        borderWidth: 1,
-        borderRadius: 6,
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        width: 80,
-        marginTop: 4,
-    },
-    option: { padding: 8, marginHorizontal: 4, borderWidth: 1, borderRadius: 6 },
-});

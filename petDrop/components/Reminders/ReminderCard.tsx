@@ -15,7 +15,7 @@ const ReminderCard = ({ med, notif, showingFunction }: ReminderCardProps) => {
 	const notificationsString = useMemo(() => {
 		if (notif.nextRuns.length > 0) {
 			// Get unique times from nextRuns
-			const uniqueTimes = [...new Set(notif.nextRuns.map(date => date.toTimeString()))];
+			const uniqueTimes = [...new Set(notif.nextRuns.map(date => new Date(date).toLocaleTimeString()))];
 			return `NOTIFICATIONS: ${uniqueTimes.join(', ')}`;
 		}
 		return 'NO NOTIFICATIONS';
@@ -23,7 +23,7 @@ const ReminderCard = ({ med, notif, showingFunction }: ReminderCardProps) => {
 	const datesString = useMemo(() => {
 		if (notif.nextRuns.length > 0) {
 			// Get unique dates from nextRuns
-			const uniqueDates = [...new Set(notif.nextRuns.map(date => date.toDateString()))];
+			const uniqueDates = [...new Set(notif.nextRuns.map(date => new Date(date).toDateString()))];
 			return `DATES: ${uniqueDates.join(', ')}`;
 		}
 		return 'NO DATES';
@@ -42,13 +42,13 @@ const ReminderCard = ({ med, notif, showingFunction }: ReminderCardProps) => {
 			</View>
 			<View style={styles.body}>
 				<Text style={styles.reminderDetails}>
-					{`${datesString}`}
+					{datesString}
 				</Text>
 				<Text style={styles.reminderDetails}>
-					{`${notificationsString}`}
+					{notificationsString}
 				</Text>
 				<Text style={styles.reminderDetails}>
-					MESSAGE: "{med.description}"
+					MESSAGE: {med.description}
 				</Text>
 			</View>
 		</View>

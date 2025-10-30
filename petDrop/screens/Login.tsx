@@ -45,7 +45,7 @@ const Login = (props: LoginType) => {
     const addSharedInfo = async () => {
         // check each account they requested info from
         account.sharedUsers.forEach(async (sharedUser) => {
-            const response = await httpRequest(GET_ACCOUNT_BY_USERNAME + sharedUser, 'GET', '');
+            const response = await httpRequest(GET_ACCOUNT_BY_USERNAME + sharedUser, 'GET', '', false);
             if (response.ok) {
                 // if account found check if they volunteered their info
                 const sharedAccount: Account = await response.json();
@@ -72,7 +72,7 @@ const Login = (props: LoginType) => {
         }
         try {
             // try to find account with the email entered
-            const response = await httpRequest(GET_ACCOUNT_BY_USERNAME + username, 'GET', '');
+            const response = await httpRequest(GET_ACCOUNT_BY_USERNAME + username, 'GET', '', false);
             if (response.ok) {
                 // if account found check its password against the one entered
                 const temp: Account = await response.json();

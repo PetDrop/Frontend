@@ -67,41 +67,44 @@ const Reminders = ({ navigation, route }: Props) => {
     }
   }
 
+
   const WriteToDB = async () => {
     let response;
     switch (popupState) {
       case notifState.NOTIF_CREATED:
-        response = await httpRequest(CREATE_NOTIFS_FOR_MED + med.id, 'PUT', JSON.stringify(formatDates(notificationCopy)));
+        response = await httpRequest(CREATE_NOTIFS_FOR_MED + med.id, 'PUT', JSON.stringify([formatDates(notificationCopy)]));
         updateNotifications(selectedPet.id, med.id, med.notifications.concat([notificationCopy]));
         setMed((prev) => {
           return { ...prev, notifications: prev.notifications.concat([notificationCopy]) }
         });
-      case notifState.NOTIF_DELETED:
-        response = await httpRequest(DELETE_NOTIF + notificationCopy.id, 'DELETE', '');
-        updateNotifications(selectedPet.id, med.id, med.notifications.filter((notif) => notif.id !== notificationCopy.id));
-        setMed((prev) => {
-          return { ...prev, notifications: prev.notifications.filter((notif) => notif.id !== notificationCopy.id) }
-        });
         break;
-      default: // to avoid response possibly undefined
+      case notifState.NOTIF_DELETED:
+        response = await httpRequest(DELETE_NOTIF + notificationCopy.id + '?medId=' + med.id, 'DELETE', '');
+        updateNotifications(selectedPet.id, med.id, med.notifications.filter((notif) => notif.id !== notificationCopy.id));
+        break;
       case notifState.NOTIF_EDITED:
         response = await httpRequest(UPDATE_NOTIF, 'PUT', JSON.stringify(formatDates(notificationCopy)));
         updateNotifications(selectedPet.id, med.id, med.notifications.map((notif) => notif.id === notificationCopy.id ? notificationCopy : notif));
         break;
+      default:
+        break;
     }
 
-    if (!response.ok) {
+    if (response && !response.ok) {
       console.error(`http request failed with status code ${response.status}`);
     }
 
     setMed(emptyMed);
     setNotification(emptyNotification);
+    setNotificationCopy(emptyNotification);
     setPopupState(notifState.NO_ACTION);
   }
 
-  if (popupState !== notifState.NO_ACTION && popupState !== notifState.SHOW_POPUP) {
-    WriteToDB();
-  }
+  useEffect(() => {
+    if (popupState !== notifState.NO_ACTION && popupState !== notifState.SHOW_POPUP) {
+      WriteToDB();
+    }
+  }, [popupState]);
 
   const reminderCards = useMemo(() => {
     return selectedPet.medications.flatMap((med: Medication, index1: number) =>
@@ -138,17 +141,27 @@ const Reminders = ({ navigation, route }: Props) => {
         {reminderCards}
 
         {/* Add Reminder Button */}
-        {selectedPet.id !== '' && (
+        {selectedPet.id !== '' && selectedPet.medications.length > 0 ? (
           <View style={styles.addReminderButton}>
             <AddReminderButton
               disabled={false}
               onPressFunction={() => {
-                setNotificationCopy({ ...emptyNotification, id: ObjectID() });
-                setPopupState(notifState.SHOW_POPUP);
+                // First medication is default, but user should select which one when editing the notification
+                if (selectedPet.medications.length > 0) {
+                  const firstMed = selectedPet.medications[0];
+                  setMed(firstMed);
+                  setNotificationCopy({ ...emptyNotification, id: ObjectID() });
+                  setNotification(emptyNotification);
+                  setPopupState(notifState.SHOW_POPUP);
+                }
               }}
               innerText={'+ ADD'}
               color={Color.colorCornflowerblue}
             />
+          </View>
+        ) : (
+          <View style={styles.noRemindersTextContainer}>
+            <Text style={styles.noRemindersText}>NO MEDICATIONS FOUND</Text>
           </View>
         )}
       </ScrollView>

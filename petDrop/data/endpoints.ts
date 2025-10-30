@@ -1,4 +1,3 @@
-// replace 'localhost' with the ip address of your computer to hit these on expo go
 // ACCOUNT
 export const ADD_ACCOUNT = 'http://localhost:8080/add-account';
 export const UPDATE_ACCOUNT = 'http://localhost:8080/update-account';
@@ -34,13 +33,37 @@ export const UPDATE_NOTIF = 'http://localhost:8080/update-notification';
 export const DELETE_NOTIF = 'http://localhost:8080/delete-notification/';
 
 // http function with parameters for url and request body
-export const httpRequest = async (url: string, method: string, body: string): Promise<Response> => {
-    return await fetch(url, {
-        method: method,
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: body,
-    });
+import { Alert } from 'react-native';
+
+export const httpRequest = async (
+    url: string,
+    method: string,
+    body: string,
+    showAlert: boolean = true
+): Promise<Response> => {
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: body,
+        });
+
+        if (showAlert) {
+            if (response.ok) {
+                Alert.alert('Success', 'Request completed successfully');
+            } else {
+                Alert.alert('Error', `Request failed (${response.status})`);
+            }
+        }
+
+        return response;
+    } catch (error) {
+        if (showAlert) {
+            Alert.alert('Error', 'Network error. Please try again.');
+        }
+        throw error;
+    }
 }

@@ -83,9 +83,20 @@ export const styles = StyleSheet.create({
     reminderColor: {
         width: width * 0.06,
         height: width * 0.06,
-        borderRadius: 8,
+        borderRadius: width * 0.02,
         marginLeft: width * 0.05,
         marginRight: width * 0.03,
+    },
+    noRemindersTextContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: width * 0.05,
+        marginVertical: height * 0.05,
+    },
+    noRemindersText: {
+        fontSize: 18,
+        fontFamily: FontFamily.koulenRegular,
+        color: Color.colorCornflowerblue,
     },
 });
 
