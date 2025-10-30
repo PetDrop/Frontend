@@ -72,7 +72,7 @@ const Signup = (props: SignupType) => {
                 pets: [],
                 sharedPets: [],
                 image: ''
-            }));
+            }), false);
             if (response.ok) {
                 // if account successfully created, navigate to profile page for additional info, and pass the account along
                 setAccount(await response.json());

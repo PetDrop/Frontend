@@ -103,9 +103,13 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				response = await httpRequest(UPDATE_MED_DELETE_NOTIFS, 'PUT', JSON.stringify({ ...medCopy, notifications: formatNotifs(medCopy.notifications) }));
 				break;
 			case medState.MED_DELETED:
-				httpRequest(DELETE_MEDICATION + medCopy.id, 'DELETE', '');
-				updatePetMedications(selectedPet.id, selectedPet.medications.filter((med) => med.id !== medCopy.id));
-				setMed(emptyMed);
+				response = await httpRequest(DELETE_MEDICATION + medCopy.id, 'DELETE', '');
+				if (response.ok) {
+					updatePetMedications(selectedPet.id, selectedPet.medications.filter((med) => med.id !== medCopy.id));
+					setMed(emptyMed);
+				} else {
+					console.error(`http request failed with error code ${response?.status}`);
+				}
 				return;
 			default:
 				break;

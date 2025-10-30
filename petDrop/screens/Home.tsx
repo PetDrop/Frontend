@@ -42,6 +42,8 @@ const Home = ({ navigation, route }: HomeProps) => {
 
     account.pets.forEach(pet => {
       pet.medications.forEach((med: Medication) => {
+        // aggregate all dates for this medication across all its notifications
+        const medDates = new Set<string>();
 
         med.notifications.forEach((notif: Notification) => {
           if (notif.repeatInterval === '') return;
@@ -50,19 +52,9 @@ const Home = ({ navigation, route }: HomeProps) => {
             let cursor = new Date(notif.nextRuns[i]);
             const finalDate = new Date(notif.finalRuns[i]);
 
-            // Add every date in [nextRun, finalRun], stepping by repeatInterval
             while (cursor <= finalDate) {
-              const dayKey = formatDate(cursor);
+              medDates.add(formatDate(cursor));
 
-              // add new key if needed, and update key with period for this notif
-              if (!newMarkedDates[dayKey]) newMarkedDates[dayKey] = { periods: [] };
-              newMarkedDates[dayKey].periods!.push({ color: med.color });
-
-              // add new key if needed, and update key with {pet, med} for this date
-              if (!newMedMap.has(dayKey)) newMedMap.set(dayKey, []);
-              newMedMap.get(dayKey)!.push({ pet, med });
-
-              // increment cursor by the repeat interval
               switch (notif.repeatInterval) {
                 case 'daily':
                   cursor.setDate(cursor.getDate() + 1);
@@ -76,6 +68,21 @@ const Home = ({ navigation, route }: HomeProps) => {
               }
             }
           }
+        });
+
+        // now mark each date only once per medication
+        medDates.forEach((dayKey) => {
+          if (!newMarkedDates[dayKey]) newMarkedDates[dayKey] = { periods: [] };
+          const periods = newMarkedDates[dayKey].periods!;
+          // avoid duplicate period for same medication/color
+          const alreadyHasColor = periods.some(p => p.color === med.color);
+          if (!alreadyHasColor) periods.push({ color: med.color });
+
+          if (!newMedMap.has(dayKey)) newMedMap.set(dayKey, []);
+          const arr = newMedMap.get(dayKey)!;
+          // avoid duplicate {pet, med} entries for this date
+          const alreadyHasMed = arr.some(entry => entry.med.id === med.id);
+          if (!alreadyHasMed) arr.push({ pet, med });
         });
       });
     });

@@ -135,7 +135,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
 
   // fetch all the sponsor meds to populate the dropdown with
   const getSponsorMedications = async () => {
-    const response = await httpRequest(GET_ALL_SPONSOR_MEDICATIONS, 'GET', '');
+    const response = await httpRequest(GET_ALL_SPONSOR_MEDICATIONS, 'GET', '', false);
     if (response.ok) {
       setSponsorMeds(await response.json());
     }
