@@ -35,7 +35,8 @@
       "permissions": [
         "android.permission.NOTIFICATIONS",
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "package": "io.expo.client.PetDrop"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -50,7 +51,8 @@
       ],
       "expo-video",
       "expo-notifications",
-      "expo-asset"
+      "expo-asset",
+      "expo-secure-store"
     ],
     "extra": {
       "eas": {

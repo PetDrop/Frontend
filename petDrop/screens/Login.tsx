@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     Dimensions,
     Image,
@@ -18,10 +18,41 @@ import { Border, Color, FontFamily } from '../GlobalStyles';
 import BlueCircleBig from '../assets/blue_circle_big.svg';
 import { GET_ACCOUNT_BY_EMAIL, GET_ACCOUNT_BY_USERNAME, httpRequest } from '../data/endpoints';
 import { Account } from '../data/dataTypes';
-import { NavigationProp } from '@react-navigation/native';
+import { NavigationProp, useFocusEffect } from '@react-navigation/native';
 import { useAccount } from '../context/AccountContext';
 import { usePushToken } from '../context/PushTokenContext';
 import { convertDateStringsToDates } from '../utils/dateConversion';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// Secure password storage helper functions with runtime fallback
+const getSavedPassword = async (): Promise<string | null> => {
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const SecureStore = require('expo-secure-store');
+        return await SecureStore.getItemAsync('savedPassword');
+    } catch {
+        return await AsyncStorage.getItem('savedPassword_fallback');
+    }
+};
+
+const setSavedPassword = async (value: string): Promise<void> => {
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const SecureStore = require('expo-secure-store');
+        await SecureStore.setItemAsync('savedPassword', value);
+    } catch {
+        await AsyncStorage.setItem('savedPassword_fallback', value);
+    }
+};
+
+const deleteSavedPassword = async (): Promise<void> => {
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const SecureStore = require('expo-secure-store');
+        await SecureStore.deleteItemAsync('savedPassword');
+    } catch {
+        await AsyncStorage.removeItem('savedPassword_fallback');
+    }
+};
 
 const { width, height } = Dimensions.get('window');
 
@@ -41,6 +72,38 @@ const Login = (props: LoginType) => {
 
     const pendingNavigation: (() => void) | undefined = props.onLoginSuccess;
     
+    // Shared routine to refresh credentials from storage
+    const refreshCredentials = React.useCallback(async () => {
+        try {
+            const storedRemember = await AsyncStorage.getItem('rememberMe');
+            const shouldRemember = storedRemember === 'true';
+            setRememberMe(shouldRemember);
+            if (shouldRemember) {
+                const storedUsername = await AsyncStorage.getItem('savedUsername');
+                const storedPassword = await getSavedPassword();
+                setUsername(storedUsername || '');
+                setPassword(storedPassword || '');
+            } else {
+                setUsername('');
+                setPassword('');
+                // Extra safety: ensure password is not kept anywhere
+                try { await deleteSavedPassword(); } catch {}
+            }
+        } catch (e) {
+            console.log('Failed to refresh remembered credentials');
+        }
+    }, []);
+
+    // Load saved remember-me preference and username on mount
+    useEffect(() => {
+        refreshCredentials();
+    }, [refreshCredentials]);
+
+    // Refresh credentials on focus to reflect logout or changes
+    useFocusEffect(React.useCallback(() => {
+        refreshCredentials();
+    }, [refreshCredentials]));
+
     // populates the account's sharedPets with all the pets shared with them
     const addSharedInfo = async () => {
         // check each account they requested info from
@@ -81,6 +144,20 @@ const Login = (props: LoginType) => {
                     await addSharedInfo();
                     // convert date strings to dates and set account context
                     setAccount(convertDateStringsToDates(temp));
+                    // persist remember-me selection (username only, never password)
+                    try {
+                        await AsyncStorage.setItem('rememberMe', rememberMe ? 'true' : 'false');
+                        if (rememberMe) {
+                            await AsyncStorage.setItem('savedUsername', username);
+                            // Store password securely for auto-login
+                            await setSavedPassword(password);
+                        } else {
+                            await AsyncStorage.removeItem('savedUsername');
+                            await deleteSavedPassword();
+                        }
+                    } catch (e) {
+                        console.log('Failed to persist remember-me preference');
+                    }
                     // handle pending navigation if it exists, otherwise navigate home
                     if (pendingNavigation) {
                         pendingNavigation();
@@ -146,13 +223,27 @@ const Login = (props: LoginType) => {
                         />
 
                         {/* Remember Me Checkbox */}
-                        <Pressable style={styles.checkboxContainer} onPress={() => setRememberMe(!rememberMe)}>
+                        <Pressable
+                            style={styles.checkboxContainer}
+                            onPress={async () => {
+                                const newValue = !rememberMe;
+                                setRememberMe(newValue);
+                                try {
+                                    await AsyncStorage.setItem('rememberMe', newValue ? 'true' : 'false');
+                                    if (!newValue) {
+                                        await AsyncStorage.removeItem('savedUsername');
+                                    }
+                                } catch (e) {
+                                    console.log('Failed to update remember-me preference');
+                                }
+                            }}
+                        >
                             <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]} />
                             <Text style={styles.checkboxText}>Remember Me</Text>
                         </Pressable>
 
                         {/* Forgot Password */}
-                        <Pressable onPress={() => console.log('Forgot Password Pressed')}>
+                        <Pressable onPress={() => props.navigation.navigate('ForgotPasswordRequest')}>
                             <Text style={styles.forgotPassword}>Forgot Password?</Text>
                         </Pressable>
                     </View>
