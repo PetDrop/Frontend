@@ -7,8 +7,9 @@ import AddImage from "../components/AddImage";
 import AddButton from "../components/CustomButton";
 import SaveChangesButton from '../components/CustomButton';
 import { GET_ACCOUNT_BY_EMAIL, httpRequest, UPDATE_ACCOUNT } from "../data/endpoints";
-import { Account } from "../data/dataTypes";
+import { Account, emptyAccount } from "../data/dataTypes";
 import { useReducer, useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import { NavigationProp } from "@react-navigation/native";
 import { useAccount } from "../context/AccountContext";
@@ -31,10 +32,9 @@ function updateSharedUsers(state: string[], action: { index: number, text: strin
 
 type ProfileType = {
   navigation: NavigationProp<any>;
-  route: any;
 };
 
-const Profile = ({ navigation, route }: ProfileType) => {
+const Profile = ({ navigation }: ProfileType) => {
   const { account, setAccount } = useAccount();
 
   const [image, setImage] = useState(account.image);
@@ -46,14 +46,17 @@ const Profile = ({ navigation, route }: ProfileType) => {
   const [numUsersSharedWith, setNumUsersSharedWith] = useState(Math.max(account.usersSharedWith.length, 1));
   const [usersSharedWith, setUsersSharedWith] = useReducer(updateSharedUsers, account.usersSharedWith);
 
-  const pushToken: string = route.params.pushToken;
-
   /* handles submit button being pressed
     checks to make sure required fields have values
     and removes empty values from sharedUsers and usersSharedWith - 
     passes the results into call to write to db
   */
   const UpdateAccount = () => {
+    // If nothing changed, just navigate back to Home
+    if (isUnchanged) {
+      navigation.navigate('Home');
+      return;
+    }
     let sharedUserContacts: string[] = [];
     sharedUsers.forEach(contact => {
       if (contact !== '') {
@@ -69,12 +72,36 @@ const Profile = ({ navigation, route }: ProfileType) => {
     WriteToDB(sharedUserContacts, userSharedWithContacts);
   }
 
+  const arraysEqual = (a: string[], b: string[]) => {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] !== b[i]) return false;
+    }
+    return true;
+  };
+
+  const isUnchanged = React.useMemo(() => {
+    const normalizedSharedUsers = (sharedUsers || []).filter((s) => s && s.trim() !== '');
+    const originalSharedUsers = (account.sharedUsers || []).filter((s) => s && s.trim() !== '');
+    const normalizedUsersSharedWith = (usersSharedWith || []).filter((s) => s && s.trim() !== '');
+    const originalUsersSharedWith = (account.usersSharedWith || []).filter((s) => s && s.trim() !== '');
+
+    return (
+      username === account.username &&
+      email === account.email &&
+      password === account.password &&
+      image === account.image &&
+      arraysEqual(normalizedSharedUsers, originalSharedUsers) &&
+      arraysEqual(normalizedUsersSharedWith, originalUsersSharedWith)
+    );
+  }, [username, email, password, image, sharedUsers, usersSharedWith, account]);
+
   /* puts all state info into an object 
   * that is then written to the db
   */
   const WriteToDB = async (sharedUserContacts: string[], usersSharedWithContacts: string[]) => {
-    // create updated account object with new info, to be put in the db
-    setAccount({
+    // build updated account object, update context, and send the same object to the backend
+    const updatedAccount: Account = {
       id: account.id,
       username: username,
       email: email,
@@ -84,10 +111,11 @@ const Profile = ({ navigation, route }: ProfileType) => {
       pets: account.pets,
       sharedPets: account.sharedPets,
       image: image
-    });
-    // then update the account in the db with the new info
+    };
+    setAccount(updatedAccount);
+    // then update the account in the db with the new info (do not use stale state)
     try {
-      const response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
+      const response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(updatedAccount));
       if (response.ok) {
         // navigate to home screen and pass the account there
         navigation.navigate('Home');
@@ -139,6 +167,44 @@ const Profile = ({ navigation, route }: ProfileType) => {
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
+  }
+
+  const Logout = async () => {
+    try {
+      // Clear account context
+      setAccount(emptyAccount);
+
+      // Remove saved password from secure storage (with AsyncStorage fallback)
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const SecureStore = require('expo-secure-store');
+        await SecureStore.deleteItemAsync('savedPassword');
+      } catch {
+        // ignore
+      }
+      try {
+        await AsyncStorage.removeItem('savedPassword_fallback');
+      } catch {
+        // ignore
+      }
+
+      // Clear Remember Me preference and saved username
+      try {
+        await AsyncStorage.setItem('rememberMe', 'false');
+      } catch {
+        // ignore
+      }
+      try {
+        await AsyncStorage.removeItem('savedUsername');
+      } catch {
+        // ignore
+      }
+
+    } catch (e) {
+      console.error(e);
+    }
+    // Navigate back to Login with stack reset to ensure remount
+    navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
   }
 
   return (
@@ -199,6 +265,11 @@ const Profile = ({ navigation, route }: ProfileType) => {
         {/* save changes button */}
         <View style={styles.saveChangesButtonContainer}>
           <SaveChangesButton disabled={false} onPressFunction={UpdateAccount} innerText={'Save'} color={Color.colorCornflowerblue} />
+        </View>
+
+        {/* logout button */}
+        <View style={styles.logoutButtonContainer}>
+          <AddButton disabled={false} onPressFunction={Logout} innerText={'Logout'} color={Color.colorCornflowerblue} />
         </View>
 
       </ScrollView>

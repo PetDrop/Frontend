@@ -18,7 +18,7 @@ import { Border, Color, FontFamily } from '../GlobalStyles';
 import BlueCircleBig from '../assets/blue_circle_big.svg';
 import { GET_ACCOUNT_BY_EMAIL, GET_ACCOUNT_BY_USERNAME, httpRequest } from '../data/endpoints';
 import { Account } from '../data/dataTypes';
-import { NavigationProp } from '@react-navigation/native';
+import { NavigationProp, useFocusEffect } from '@react-navigation/native';
 import { useAccount } from '../context/AccountContext';
 import { usePushToken } from '../context/PushTokenContext';
 import { convertDateStringsToDates } from '../utils/dateConversion';
@@ -72,25 +72,37 @@ const Login = (props: LoginType) => {
 
     const pendingNavigation: (() => void) | undefined = props.onLoginSuccess;
     
+    // Shared routine to refresh credentials from storage
+    const refreshCredentials = React.useCallback(async () => {
+        try {
+            const storedRemember = await AsyncStorage.getItem('rememberMe');
+            const shouldRemember = storedRemember === 'true';
+            setRememberMe(shouldRemember);
+            if (shouldRemember) {
+                const storedUsername = await AsyncStorage.getItem('savedUsername');
+                const storedPassword = await getSavedPassword();
+                setUsername(storedUsername || '');
+                setPassword(storedPassword || '');
+            } else {
+                setUsername('');
+                setPassword('');
+                // Extra safety: ensure password is not kept anywhere
+                try { await deleteSavedPassword(); } catch {}
+            }
+        } catch (e) {
+            console.log('Failed to refresh remembered credentials');
+        }
+    }, []);
+
     // Load saved remember-me preference and username on mount
     useEffect(() => {
-        const loadRememberedCredentials = async () => {
-            try {
-                const storedRemember = await AsyncStorage.getItem('rememberMe');
-                const shouldRemember = storedRemember === 'true';
-                setRememberMe(shouldRemember);
-                if (shouldRemember) {
-                    const storedUsername = await AsyncStorage.getItem('savedUsername');
-                    const storedPassword = await getSavedPassword();
-                    if (storedUsername) setUsername(storedUsername);
-                    if (storedPassword) setPassword(storedPassword);
-                }
-            } catch (e) {
-                console.log('Failed to load remembered credentials');
-            }
-        };
-        loadRememberedCredentials();
-    }, []);
+        refreshCredentials();
+    }, [refreshCredentials]);
+
+    // Refresh credentials on focus to reflect logout or changes
+    useFocusEffect(React.useCallback(() => {
+        refreshCredentials();
+    }, [refreshCredentials]));
 
     // populates the account's sharedPets with all the pets shared with them
     const addSharedInfo = async () => {

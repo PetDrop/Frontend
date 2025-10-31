@@ -69,6 +69,7 @@ export const styles = StyleSheet.create({
     addButtonContainer: {
         marginLeft: width * 0.625,
         marginTop: height * -0.02,
+        paddingBottom: height * 0.02,
     },
 
     // submit button
@@ -88,6 +89,10 @@ export const styles = StyleSheet.create({
         fontSize: FontSize.size_30,
         color: Color.colorFloralwhite,
         fontFamily: FontFamily.koulenRegular,
+    },
+    logoutButtonContainer: {
+        marginLeft: width * 0.1282,
+        marginTop: height * -0.05,
     },
 });
 
