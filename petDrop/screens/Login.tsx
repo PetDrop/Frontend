@@ -243,7 +243,7 @@ const Login = (props: LoginType) => {
                         </Pressable>
 
                         {/* Forgot Password */}
-                        <Pressable onPress={() => console.log('Forgot Password Pressed')}>
+                        <Pressable onPress={() => props.navigation.navigate('ForgotPasswordRequest')}>
                             <Text style={styles.forgotPassword}>Forgot Password?</Text>
                         </Pressable>
                     </View>

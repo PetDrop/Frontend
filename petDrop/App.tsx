@@ -11,6 +11,8 @@ type RootStackParamList = {
   Sponsors: undefined;
   Credits: undefined;
   LoadingScreen: undefined;
+  ForgotPasswordRequest: undefined;
+  ForgotPasswordVerify: { email?: string } | undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -28,6 +30,8 @@ import Profile from "./screens/Profile";
 import Instructions from "./screens/Instructions";
 import Sponsors from "./screens/Sponsors";
 import Credits from "./screens/Credits";
+import ForgotPasswordRequest from "./screens/ForgotPasswordRequest";
+import ForgotPasswordVerify from "./screens/ForgotPasswordVerify";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Signup from "./screens/Signup";
@@ -253,6 +257,16 @@ const AppContent = () => {
             <Stack.Screen
               name="LoadingScreen"
               component={LoadingScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ForgotPasswordRequest"
+              component={ForgotPasswordRequest}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ForgotPasswordVerify"
+              component={ForgotPasswordVerify}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

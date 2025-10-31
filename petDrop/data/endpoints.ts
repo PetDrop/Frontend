@@ -32,6 +32,10 @@ export const ADD_NOTIF = 'http://localhost:8080/add-notification';
 export const UPDATE_NOTIF = 'http://localhost:8080/update-notification';
 export const DELETE_NOTIF = 'http://localhost:8080/delete-notification/';
 
+// AUTH - PASSWORD RESET
+export const FORGOT_PASSWORD = 'http://localhost:8080/api/auth/password/forgot';
+export const RESET_PASSWORD = 'http://localhost:8080/api/auth/password/reset';
+
 // http function with parameters for url and request body
 import { Alert } from 'react-native';
 
