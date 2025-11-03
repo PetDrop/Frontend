@@ -89,9 +89,14 @@ const ForgotPasswordVerify = ({ navigation, route }: ScreenProps) => {
                     value={confirm}
                     onChangeText={setConfirm}
                 />
-                <Pressable style={[styles.button, loading && styles.buttonDisabled]} onPress={submit} disabled={loading}>
-                    <Text style={styles.buttonText}>{loading ? 'Resetting…' : 'Reset password'}</Text>
-                </Pressable>
+                <View style={styles.buttonRow}>
+                    <Pressable style={styles.secondaryButton} onPress={() => navigation.goBack()}>
+                        <Text style={styles.secondaryButtonText}>Back</Text>
+                    </Pressable>
+                    <Pressable style={[styles.button, loading && styles.buttonDisabled]} onPress={submit} disabled={loading}>
+                        <Text style={styles.buttonText}>{loading ? 'Resetting…' : 'Reset password'}</Text>
+                    </Pressable>
+                </View>
             </View>
         </KeyboardAvoidingView>
     );

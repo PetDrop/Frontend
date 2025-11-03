@@ -19,7 +19,7 @@ const ForgotPasswordRequest = ({ navigation }: ScreenProps) => {
         }
         setLoading(true);
         try {
-            await httpRequest(FORGOT_PASSWORD, 'POST', JSON.stringify({ email }), true);
+            await httpRequest(FORGOT_PASSWORD, 'POST', JSON.stringify({ email }), false);
             navigation.navigate('ForgotPasswordVerify', { email });
         } catch (e) {
             // httpRequest already alerted
@@ -42,9 +42,14 @@ const ForgotPasswordRequest = ({ navigation }: ScreenProps) => {
                     value={email}
                     onChangeText={setEmail}
                 />
-                <Pressable style={[styles.button, loading && styles.buttonDisabled]} onPress={submit} disabled={loading}>
-                    <Text style={styles.buttonText}>{loading ? 'Sending…' : 'Send code'}</Text>
-                </Pressable>
+                <View style={styles.buttonRow}>
+                    <Pressable style={styles.secondaryButton} onPress={() => navigation.navigate('Login')}>
+                        <Text style={styles.secondaryButtonText}>Cancel</Text>
+                    </Pressable>
+                    <Pressable style={[styles.button, loading && styles.buttonDisabled]} onPress={submit} disabled={loading}>
+                        <Text style={styles.buttonText}>{loading ? 'Sending…' : 'Send code'}</Text>
+                    </Pressable>
+                </View>
             </View>
         </KeyboardAvoidingView>
     );

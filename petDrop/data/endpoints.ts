@@ -5,6 +5,7 @@ export const GET_ALL_ACCOUNTS = 'http://localhost:8080/get-all-accounts';
 export const GET_ACCOUNT_BY_USERNAME = 'http://localhost:8080/get-account-by-username/';
 export const GET_ACCOUNT_BY_EMAIL = 'http://localhost:8080/get-account-by-email/';
 export const GET_ACCOUNT_BY_ID = 'http://localhost:8080/get-account-by-id/';
+export const VALIDATE_SIGNUP = 'http://localhost:8080/validate-signup';
 // PETS
 export const ADD_PET = 'http://localhost:8080/add-pet';
 export const UPDATE_PET = 'http://localhost:8080/update-pet';

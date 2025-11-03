@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { Border, Color, FontFamily } from '../GlobalStyles';
 import BlueCircleBig from '../assets/blue_circle_big.svg';
-import { ADD_ACCOUNT, httpRequest } from '../data/endpoints';
+import { ADD_ACCOUNT, VALIDATE_SIGNUP, httpRequest } from '../data/endpoints';
 import { Account } from '../data/dataTypes';
 import { NavigationProp } from '@react-navigation/native';
 import { useAccount } from '../context/AccountContext';
@@ -41,19 +41,108 @@ const Signup = ({ navigation }: SignupType) => {
 
     const ObjectID = require('bson-objectid');
 
+    // Validation regex patterns
+    const emailPattern = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    const passwordPattern = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,30}$/;
+    const usernamePattern = /^[A-Za-z].*/;
+
+    /* Validates email format */
+    const validateEmail = (email: string): boolean => {
+        return emailPattern.test(email);
+    };
+
+    /* Validates password requirements */
+    const validatePassword = (password: string): boolean => {
+        return passwordPattern.test(password);
+    };
+
+    /* Validates username format */
+    const validateUsername = (username: string): boolean => {
+        return usernamePattern.test(username);
+    };
+
+    /* Validates all input fields client-side */
+    const validateInputs = (): string | null => {
+        // Check if fields are empty
+        if (username.trim() === '' || email.trim() === '' || password === '') {
+            return 'Must enter username, email, and password';
+        }
+
+        // Validate username format
+        if (!validateUsername(username)) {
+            return 'Username must begin with a letter';
+        }
+
+        // Validate email format
+        if (!validateEmail(email)) {
+            return 'Please enter a valid email address';
+        }
+
+        // Validate password requirements
+        if (!validatePassword(password)) {
+            return 'Password must be 8-30 characters with at least one number, one lowercase letter, and one uppercase letter';
+        }
+
+        // Check if passwords match
+        if (password !== confirmPassword) {
+            return 'Passwords must match';
+        }
+
+        return null;
+    };
+
+    /* Checks if username or email already exists */
+    const checkUniqueness = async (): Promise<string | null> => {
+        try {
+            const response = await fetch(
+                `${VALIDATE_SIGNUP}?username=${encodeURIComponent(username)}&email=${encodeURIComponent(email)}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+
+            const data = await response.json();
+
+            if (!data.valid && data.errors) {
+                const errors = [];
+                if (data.errors.username) errors.push(data.errors.username);
+                if (data.errors.email) errors.push(data.errors.email);
+                return errors.join('\n');
+            }
+
+            return null;
+        } catch (error) {
+            console.error('Error checking uniqueness:', error);
+            return 'Unable to verify username/email. Please try again.';
+        }
+    };
+
     /* handles submit button being pressed
         and checks to make sure all fields have something entered
         as well as the passwords matching, then calls the write 
     */
-    const Submit = () => {
-        if (username === '' || email === '' || password === '') {
-            alert('Must enter username, email, and password');
-        } else if (password !== confirmPassword) {
-            alert('Passwords must match');
-        } else {
-            WriteToDB();
+    const Submit = async () => {
+        // First, validate inputs client-side
+        const validationError = validateInputs();
+        if (validationError) {
+            alert(validationError);
+            return;
         }
-    }
+
+        // Then check uniqueness with the backend
+        const uniquenessError = await checkUniqueness();
+        if (uniquenessError) {
+            alert(uniquenessError);
+            return;
+        }
+
+        // If all validations pass, proceed to create account
+        WriteToDB();
+    };
 
     /* creates new account with the information provided -
         navigates on success, alerts on failure */
@@ -70,17 +159,32 @@ const Signup = ({ navigation }: SignupType) => {
                 sharedPets: [],
                 image: ''
             }), false);
+            
             if (response.ok) {
                 // if account successfully created, navigate to profile page for additional info, and pass the account along
                 setAccount(await response.json());
                 navigation.navigate('Home');
             } else {
-                console.log('unable to write account to database: status code ' + response.status);
-                alert('submission failed');
+                // Try to parse error response
+                try {
+                    const errorData = await response.json();
+                    if (errorData.errors) {
+                        const errors = [];
+                        if (errorData.errors.username) errors.push(errorData.errors.username);
+                        if (errorData.errors.email) errors.push(errorData.errors.email);
+                        if (errorData.errors.password) errors.push(errorData.errors.password);
+                        alert(errors.join('\n'));
+                    } else {
+                        alert('Submission failed. Please try again.');
+                    }
+                } catch {
+                    console.log('unable to write account to database: status code ' + response.status);
+                    alert('Submission failed. Please try again.');
+                }
             }
         } catch (error) {
             console.error(error);
-
+            alert('Network error. Please try again.');
         }
     }
 
