@@ -110,7 +110,8 @@ const Profile = ({ navigation }: ProfileType) => {
       usersSharedWith: usersSharedWithContacts,
       pets: account.pets,
       sharedPets: account.sharedPets,
-      image: image
+      image: image,
+      expoPushToken: account.expoPushToken
     };
     setAccount(updatedAccount);
     // then update the account in the db with the new info (do not use stale state)

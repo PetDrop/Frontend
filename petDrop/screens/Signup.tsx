@@ -157,7 +157,8 @@ const Signup = ({ navigation }: SignupType) => {
                 usersSharedWith: [],
                 pets: [],
                 sharedPets: [],
-                image: ''
+                image: '',
+                expoPushToken: ''
             }), false);
             
             if (response.ok) {

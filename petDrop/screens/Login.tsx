@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { Border, Color, FontFamily } from '../GlobalStyles';
 import BlueCircleBig from '../assets/blue_circle_big.svg';
-import { GET_ACCOUNT_BY_EMAIL, GET_ACCOUNT_BY_USERNAME, httpRequest } from '../data/endpoints';
+import { GET_ACCOUNT_BY_EMAIL, GET_ACCOUNT_BY_USERNAME, UPDATE_ACCOUNT, httpRequest } from '../data/endpoints';
 import { Account } from '../data/dataTypes';
 import { NavigationProp, useFocusEffect } from '@react-navigation/native';
 import { useAccount } from '../context/AccountContext';
@@ -142,6 +142,15 @@ const Login = (props: LoginType) => {
                 if (temp.password === password) {
                     // if info is correct, populate the account with shared info
                     await addSharedInfo();
+                    // Update push token on the account
+                    if (pushToken) {
+                        temp.expoPushToken = pushToken;
+                        try {
+                            await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(temp), false);
+                        } catch (e) {
+                            console.log('Failed to update push token on account');
+                        }
+                    }
                     // convert date strings to dates and set account context
                     setAccount(convertDateStringsToDates(temp));
                     // persist remember-me selection (username only, never password)
