@@ -38,13 +38,19 @@ const styles = StyleSheet.create({
         color: Color.colorDarkslateblue,
         marginTop: height * 0.01,
     },
+    buttonRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: height * 0.02,
+        gap: width * 0.03,
+    },
     button: {
+        flex: 1,
         height: height * 0.06,
         backgroundColor: Color.colorCornflowerblue,
         borderRadius: Border.br_14,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: height * 0.02,
     },
     buttonDisabled: {
         opacity: 0.7,
@@ -52,6 +58,21 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: height * 0.022,
         color: 'white',
+        fontFamily: FontFamily.koulenRegular,
+    },
+    secondaryButton: {
+        flex: 1,
+        height: height * 0.06,
+        backgroundColor: Color.colorFloralwhite,
+        borderRadius: Border.br_14,
+        borderWidth: 2,
+        borderColor: Color.colorCornflowerblue,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    secondaryButtonText: {
+        fontSize: height * 0.022,
+        color: Color.colorCornflowerblue,
         fontFamily: FontFamily.koulenRegular,
     },
 });
