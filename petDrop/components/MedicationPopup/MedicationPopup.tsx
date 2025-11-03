@@ -16,6 +16,7 @@ import NotifCard from "../NotifCard";
 import CustomDateTimePicker from "./CustomDateTimePicker";
 import * as Notifications from 'expo-notifications';
 import { usePushToken } from '../../context/PushTokenContext';
+import { useAccount } from '../../context/AccountContext';
 
 type MedicationPopupType = {
   isActive: boolean;
@@ -30,6 +31,7 @@ type MedicationPopupType = {
 
 const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCopy, readonly, navigation }: MedicationPopupType) => {
 	const { pushToken: currentPushToken } = usePushToken();
+	const { account } = useAccount();
   const ObjectID = require('bson-objectid');
   const [propsChanged, setPropsChanged] = useState(true);
   const [sponsorMeds, setSponsorMeds] = useState<SponsorMedication[]>([]);
@@ -238,7 +240,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
           repeatInterval: state.repeatInterval,
           data: notificationData,
           body: `It's time to give ${pet.name} their ${medCopy.name}!`,
-          expoPushToken: currentPushToken
+          ownerUsername: account.username
         };
       }
       // If no state found, return the notification as-is (might be an empty notification)
@@ -378,7 +380,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
               {medCopy.notifications?.map((notif, index) => (
                 <NotifCard
                   key={notif.id}
-                  notification={{ ...notif, expoPushToken: currentPushToken }}
+                  notification={{ ...notif, ownerUsername: account.username }}
                   onChange={(updatedNotif: Notification) => {
                     setMedCopy((prev) => {
                       return { ...prev, notifications: prev.notifications.map((n, i) => (i === index ? updatedNotif : n)) }

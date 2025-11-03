@@ -7,7 +7,8 @@ export interface Account {
     usersSharedWith: string[],
     pets: Pet[],
     sharedPets: Pet[],
-    image: string
+    image: string,
+    expoPushToken: string
 }
 
 export interface Pet {
@@ -40,7 +41,7 @@ export interface SponsorMedication {
 
 export interface Notification {
     id: string,
-    expoPushToken: string,
+    ownerUsername: string,
     title: string,
     body: string,
     data: Record<string, any>,
@@ -56,8 +57,8 @@ export interface DateObj {
 }
 
 // global default values to avoid having to repeatedly create these in various files
-export const emptyAccount: Account = { id: '', username: '', email: '', password: '', sharedUsers: [], usersSharedWith: [], pets: [], sharedPets: [], image: '' }
+export const emptyAccount: Account = { id: '', username: '', email: '', password: '', sharedUsers: [], usersSharedWith: [], pets: [], sharedPets: [], image: '', expoPushToken: '' }
 export const emptyPet: Pet = { id: '', name: '', image: '', age: 0, breed: '', address: '', vet: '', vetPhone: '', medications: [] };
-export const emptyNotification: Notification = { id: '', expoPushToken: '', title: 'Reminder to Administer Medication', body: `It's time to give petName their medName!`, data: {}, nextRuns: [], finalRuns: [], repeatInterval: '' };
+export const emptyNotification: Notification = { id: '', ownerUsername: '', title: 'Reminder to Administer Medication', body: `It's time to give petName their medName!`, data: {}, nextRuns: [], finalRuns: [], repeatInterval: '' };
 export const emptyMed: Medication = { id: '', name: '', color: '', description: '', notifications: [], range: 4 };
 export const emptySponsorMed: SponsorMedication = { id: '', name: '', instructions: [], videoLink: '' };

@@ -78,18 +78,17 @@ const NewPet = ({ navigation, route }: NewPetType) => {
         }));
         if (response.ok) {
           // TODO: allow for editing of shared pets
+          let updatedAccountState: Account;
           if (petBeingEdited) {
             const updatedPet: Pet = await response.json();
-            setAccount((prev) => {
-              return { ...prev, pets: prev.pets.map((pet) => pet.id === updatedPet.id ? updatedPet : pet) };
-            });
+            updatedAccountState = { ...account, pets: account.pets.map((pet) => pet.id === updatedPet.id ? updatedPet : pet) };
+            setAccount(updatedAccountState);
           } else {
             const newPet: Pet = await response.json();
-            setAccount((prev) => {
-              return { ...prev, pets: prev.pets.concat([newPet]) };
-            });
+            updatedAccountState = { ...account, pets: account.pets.concat([newPet]) };
+            setAccount(updatedAccountState);
           }
-          response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
+          response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(updatedAccountState));
           if (response.ok) {
             alert('Submission successful. You have now been redirected to the Pet Info page where you can view it, as well as add medications and reminders for it.');
             navigation.navigate('PetInfo');
@@ -111,10 +110,9 @@ const NewPet = ({ navigation, route }: NewPetType) => {
     // TODO: ask for confirmation
     let response = await httpRequest(DELETE_PET_BY_ID + petBeingEdited.id, 'DELETE', '');
     if (response.ok) {
-      setAccount((prev) => {
-        return { ...prev, pets: prev.pets.filter((pet) => pet.id !== petBeingEdited.id) };
-      });
-      response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(account));
+      const updatedAccountState = { ...account, pets: account.pets.filter((pet) => pet.id !== petBeingEdited.id) };
+      setAccount(updatedAccountState);
+      response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(updatedAccountState));
       if (response.ok) {
         alert(`Pet: ${petBeingEdited.name} has been successfully deleted.`);
         navigation.navigate('PetInfo');

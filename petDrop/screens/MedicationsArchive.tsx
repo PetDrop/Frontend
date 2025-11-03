@@ -77,7 +77,6 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 		let response;
 		switch (popupState) {
 			case medState.MED_NOTHING_NOTIF_CREATED:
-				console.log('notifications: ', formatNotifs(medCopy.notifications));
 				response = await httpRequest(CREATE_NOTIFS_FOR_MED + medCopy.id, 'PUT', JSON.stringify(formatNotifs(medCopy.notifications)));
 				break;
 			case medState.MED_NOTHING_NOTIF_EDITED:

@@ -41,9 +41,10 @@ import { Button, Platform, View, Text } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
-import { AccountProvider } from "./context/AccountContext";
+import { AccountProvider, useAccount } from "./context/AccountContext";
 import { PushTokenProvider, usePushToken } from "./context/PushTokenContext";
 import { emptyAccount } from "./data/dataTypes";
+import { UPDATE_ACCOUNT, httpRequest } from "./data/endpoints";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -107,6 +108,7 @@ const AppContent = () => {
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined);
   const [pendingNavigation, setPendingNavigation] = useState<{medName: string, pushToken: string} | null>(null);
   const { pushToken, setPushToken } = usePushToken();
+  const { account, setAccount } = useAccount();
 
   // Function to handle navigation after login
   const handleNavigationAfterLogin = () => {
@@ -137,6 +139,23 @@ const AppContent = () => {
       notificationListener.remove();
     };
   }, [setPushToken]);
+
+  // Sync push token to account when both are available
+  useEffect(() => {
+    const syncPushToken = async () => {
+      if (pushToken && account.id && account.expoPushToken !== pushToken) {
+        try {
+          const updatedAccount = { ...account, expoPushToken: pushToken };
+          await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(updatedAccount), false);
+          setAccount(updatedAccount);
+          console.log('Push token synced to account');
+        } catch (e) {
+          console.log('Failed to sync push token to account:', e);
+        }
+      }
+    };
+    syncPushToken();
+  }, [pushToken, account.id]);
 
   // Set up response listener when pushToken is available
   useEffect(() => {
@@ -191,7 +210,6 @@ const AppContent = () => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <AccountProvider initialAccount={emptyAccount}>
       <NavigationContainer ref={navigationRef}>
         {hideSplashScreen ? (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -272,7 +290,6 @@ const AppContent = () => {
           </Stack.Navigator>
         ) : null}
       </NavigationContainer>
-      </AccountProvider>
     </GestureHandlerRootView>
   );
 };
@@ -280,7 +297,9 @@ const AppContent = () => {
 const App = () => {
   return (
     <PushTokenProvider>
-      <AppContent />
+      <AccountProvider initialAccount={emptyAccount}>
+        <AppContent />
+      </AccountProvider>
     </PushTokenProvider>
   );
 };
