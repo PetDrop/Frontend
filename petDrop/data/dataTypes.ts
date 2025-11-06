@@ -39,6 +39,13 @@ export interface SponsorMedication {
     videoLink: string
 }
 
+export interface Sponsor {
+    id: string,
+    name: string,
+    description: string,
+    image: string
+}
+
 export interface Notification {
     id: string,
     ownerUsername: string,
@@ -62,3 +69,4 @@ export const emptyPet: Pet = { id: '', name: '', image: '', age: 0, breed: '', a
 export const emptyNotification: Notification = { id: '', ownerUsername: '', title: 'Reminder to Administer Medication', body: `It's time to give petName their medName!`, data: {}, nextRuns: [], finalRuns: [], repeatInterval: '' };
 export const emptyMed: Medication = { id: '', name: '', color: '', description: '', notifications: [], range: 4 };
 export const emptySponsorMed: SponsorMedication = { id: '', name: '', instructions: [], videoLink: '' };
+export const emptySponsor: Sponsor = { id: '', name: '', description: '', image: '' };

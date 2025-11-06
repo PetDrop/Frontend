@@ -32,10 +32,16 @@ export const GET_SPONSOR_MEDICATION_BY_NAME = 'http://localhost:8080/get-sponsor
 export const ADD_NOTIF = 'http://localhost:8080/add-notification';
 export const UPDATE_NOTIF = 'http://localhost:8080/update-notification';
 export const DELETE_NOTIF = 'http://localhost:8080/delete-notification/';
-
 // AUTH - PASSWORD RESET
 export const FORGOT_PASSWORD = 'http://localhost:8080/api/auth/password/forgot';
 export const RESET_PASSWORD = 'http://localhost:8080/api/auth/password/reset';
+// SPONSORS
+export const ADD_SPONSOR = 'http://localhost:8080/add-sponsor';
+export const UPDATE_SPONSOR = 'http://localhost:8080/update-sponsor';
+export const GET_ALL_SPONSORS = 'http://localhost:8080/get-all-sponsors';
+export const GET_SPONSOR_BY_ID = 'http://localhost:8080/get-sponsor-by-id/';
+export const GET_SPONSOR_BY_NAME = 'http://localhost:8080/get-sponsor-by-name/';
+export const DELETE_SPONSOR = 'http://localhost:8080/delete-sponsor/';
 
 // http function with parameters for url and request body
 import { Alert } from 'react-native';

@@ -1,36 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, NativeScrollEvent, NativeSyntheticEvent, Dimensions } from 'react-native';
 import TopBottomBar from '../components/TopBottomBar';
 import { styles } from '../styles/Sponsors.styles';
 import { NavigationProp } from '@react-navigation/native';
 import { ScreenEnum } from '../GlobalStyles';
+import { GET_ALL_SPONSORS, httpRequest } from '../data/endpoints';
+import { Sponsor } from '../data/dataTypes';
 
 const { width } = Dimensions.get('window');
 
-const sponsors = [
-    {
-        id: '1',
-        name: 'Sponsor One',
-        image: require('../assets/blue_dog_big.png'),
-        description: 'Sponsor One is a company dedicated to doing pet related stuff and things that benefit the pet community, whatever that is. All I know is that I should make this description with a decent length so I can test to see how much space it really takes up, or rather, could theoretically take up.',
-    },
-    {
-        id: '2',
-        name: 'Sponsor Two',
-        image: require('../assets/blue_dog_big.png'),
-        description: 'same thing as 1',
-    },
-    {
-        id: '3',
-        name: 'Sponsor Three',
-        image: require('../assets/blue_dog_big.png'),
-        description: 'same thing as 1 and 2',
-    },
-];
 
 const Sponsors = ({ navigation } : { navigation: NavigationProp<any> }) => {
     // active pagination dot
     const [activeIndex, setActiveIndex] = useState(0);
+
+    // get all sponsors from db
+    const [sponsors, setSponsors] = useState<Sponsor[]>([]);
+
+    const getSponsors = async () => {
+        const response = await httpRequest(GET_ALL_SPONSORS, 'GET', '', false);
+        if (response.ok) {
+            setSponsors(await response.json());
+        } else {
+            console.log('Failed to get sponsors: error code ' + response.status);
+        }
+    };
+
+    useEffect(() => {
+        getSponsors();
+    }, []);
 
     // used to determine which pagination dot should be active
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -55,7 +53,7 @@ const Sponsors = ({ navigation } : { navigation: NavigationProp<any> }) => {
                 {sponsors.map((sponsor) => (
                     <View key={sponsor.id} style={styles.card}>
                         <Text style={styles.name}>{sponsor.name}</Text>
-                        <Image source={sponsor.image} style={styles.image} resizeMode="contain" />
+                        <Image source={{ uri: sponsor.image }} style={styles.image} resizeMode="contain" />
                         <Text style={styles.description}>{sponsor.description}</Text>
                     </View>
                 ))}
