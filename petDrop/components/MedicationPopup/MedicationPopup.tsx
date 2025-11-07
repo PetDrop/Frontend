@@ -1,11 +1,11 @@
 import * as React from "react";
-import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingView, Platform, Keyboard, Modal } from "react-native";
+import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingView, Platform, Keyboard, Modal, Dimensions } from "react-native";
 import { Image } from "expo-image";
 import DropdownArrow from "../../assets/dropdown_arrow.svg";
 import styles from '../../styles/MedicationPopup.styles';
 import { Notification, Medication, Pet, SponsorMedication, emptyNotification, emptyMed } from "../../data/dataTypes";
 import { useEffect, useMemo, useState } from "react";
-import { Color } from "../../GlobalStyles";
+import { Color, FontSize, FontFamily } from "../../GlobalStyles";
 import Selection from 'react-native-select-dropdown';
 import DeleteButton from '../CustomButton';
 import SaveButton from '../CustomButton';
@@ -33,6 +33,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
 	const { pushToken: currentPushToken } = usePushToken();
 	const { account } = useAccount();
   const ObjectID = require('bson-objectid');
+  const { width, height } = Dimensions.get('window');
   const [propsChanged, setPropsChanged] = useState(true);
   const [sponsorMeds, setSponsorMeds] = useState<SponsorMedication[]>([]);
   const [occurrencesMap, setOccurrencesMap] = useState<Record<string, number>>({});
@@ -326,29 +327,41 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
             {!readonly ?
               <Selection
                 data={
-                  sponsorMeds.map((sponsorMed) => {
-                    if (!pet.medications.some((med) => med.name == sponsorMed.name)) {
-                      return sponsorMed.name;
-                    }
-                  })
+                  sponsorMeds
+                    .map((sponsorMed) => {
+                      if (!pet.medications.some((med) => med.name == sponsorMed.name)) {
+                        return sponsorMed.name;
+                      }
+                      return null;
+                    })
+                    .filter((name): name is string => name !== null)
                 }
+                defaultValueByIndex={sponsorMeds.findIndex((sponsorMed) => sponsorMed.name === medCopy.name)}
                 onSelect={(selectedItem: string) => { setMedCopy({ ...medCopy, name: selectedItem }) }}
-                renderButton={(selectedItem: string) => {
+                renderButton={(selectedItem: string, isOpened: boolean) => {
                   return (
                     <View style={styles.dropdownButton}>
-                      <Text style={styles.dropdownText}>
+                      <Text style={styles.dropdownText} numberOfLines={1}>
                         {selectedItem ? selectedItem : med.name ? med.name : 'Select Medication'}
                       </Text>
                       <DropdownArrow width={19} height={12} />
                     </View>
                   )
                 }}
-                renderItem={(selectedItem: string) => {
+                renderItem={(selectedItem: string, index: number, isSelected: boolean) => {
                   return (
-                    <View style={styles.dropdownItemNew}>
-                      <Text style={styles.dropdownText}>{selectedItem}</Text>
+                    <View style={[styles.dropdownItemNew, isSelected && styles.dropdownItemSelected]}>
+                      <Text style={[styles.dropdownText, isSelected && { color: Color.colorDarkslateblue, fontWeight: '600' }]}>
+                        {selectedItem}
+                      </Text>
                     </View>
                   )
+                }}
+                dropdownStyle={{
+                  marginTop: height * -0.0125,
+                  borderWidth: 2,
+                  borderColor: Color.colorCornflowerblue,
+                  maxHeight: height * 0.3,
                 }}
               />
               :
