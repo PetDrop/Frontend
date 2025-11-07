@@ -58,6 +58,7 @@ export const Border = {
   br_20: 20,
   br_30: 30,
   br_31: 31,
+  br_100: 100,
 };
 /* screen enum */
 export enum ScreenEnum {
