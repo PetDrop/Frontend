@@ -9,10 +9,10 @@ import SaveChangesButton from '../components/CustomButton';
 import { GET_ACCOUNT_BY_EMAIL, httpRequest, UPDATE_ACCOUNT } from "../data/endpoints";
 import { Account, emptyAccount } from "../data/dataTypes";
 import { useReducer, useState } from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import { NavigationProp } from "@react-navigation/native";
 import { useAccount } from "../context/AccountContext";
+import { clearCredentials } from '../utils/credentialStorage';
 
 function updateSharedUsers(state: string[], action: { index: number, text: string }) {
   let newState;
@@ -175,31 +175,8 @@ const Profile = ({ navigation }: ProfileType) => {
       // Clear account context
       setAccount(emptyAccount);
 
-      // Remove saved password from secure storage (with AsyncStorage fallback)
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const SecureStore = require('expo-secure-store');
-        await SecureStore.deleteItemAsync('savedPassword');
-      } catch {
-        // ignore
-      }
-      try {
-        await AsyncStorage.removeItem('savedPassword_fallback');
-      } catch {
-        // ignore
-      }
-
-      // Clear Remember Me preference and saved username
-      try {
-        await AsyncStorage.setItem('rememberMe', 'false');
-      } catch {
-        // ignore
-      }
-      try {
-        await AsyncStorage.removeItem('savedUsername');
-      } catch {
-        // ignore
-      }
+      // Clear all saved credentials
+      await clearCredentials();
 
     } catch (e) {
       console.error(e);
