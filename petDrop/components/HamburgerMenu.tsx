@@ -29,7 +29,8 @@ const HamburgerMenu = ({ navigation }: HambugerMenuProps) => {
 
     const menuItems = [
         { label: 'Sponsors', onPress: () => { navigation.navigate('Sponsors') } },
-        { label: 'Credits', onPress: () => { navigation.navigate('Credits') } }
+        { label: 'Credits', onPress: () => { navigation.navigate('Credits') } },
+        { label: 'IOP Measurement', onPress: () => { navigation.navigate('IOPMeasurement') } }
     ].map((item, index) => (
         <TouchableOpacity key={index} style={styles.menuItem} onPress={() => {
             item.onPress();

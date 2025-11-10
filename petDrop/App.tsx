@@ -11,6 +11,7 @@ type RootStackParamList = {
   Sponsors: undefined;
   Credits: undefined;
   LoadingScreen: undefined;
+  IOPMeasurement: undefined;
   ForgotPasswordRequest: undefined;
   ForgotPasswordVerify: { email?: string } | undefined;
 };
@@ -30,6 +31,7 @@ import Profile from "./screens/Profile";
 import Instructions from "./screens/Instructions";
 import Sponsors from "./screens/Sponsors";
 import Credits from "./screens/Credits";
+import IOPMeasurement from "./screens/IOPMeasurement";
 import ForgotPasswordRequest from "./screens/ForgotPasswordRequest";
 import ForgotPasswordVerify from "./screens/ForgotPasswordVerify";
 
@@ -270,6 +272,11 @@ const AppContent = () => {
             <Stack.Screen
               name="Credits"
               component={Credits}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="IOPMeasurement"
+              component={IOPMeasurement}
               options={{ headerShown: false }}
             />
             <Stack.Screen
