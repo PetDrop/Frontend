@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Animated, Dimensions, } from 'react-native';
-import Icon from "react-native-vector-icons/Feather";
+import MenuIcon from './icons/MenuIcon';
+import CloseIcon from './icons/CloseIcon';
 import { styles } from '../styles/HamburgerMenu.styles';
 import { Color } from '../GlobalStyles';
 import { NavigationProp } from '@react-navigation/native';
@@ -42,7 +43,7 @@ const HamburgerMenu = ({ navigation }: HambugerMenuProps) => {
         <>
             {/* Hamburger Icon */}
             <TouchableOpacity style={styles.iconContainer} onPress={toggleMenu}>
-                <Icon name="menu" size={width * 0.1} color={Color.colorCornflowerblue} />
+                <MenuIcon size={width * 0.1} color={Color.colorCornflowerblue} />
             </TouchableOpacity>
 
             {/* Side Menu */}
@@ -50,7 +51,7 @@ const HamburgerMenu = ({ navigation }: HambugerMenuProps) => {
                 <View style={styles.menuHeader}>
                     <Text style={styles.menuTitle}>Pages</Text>
                     <TouchableOpacity onPress={toggleMenu}>
-                        <Icon name="x" size={width * 0.0718} color="#333" />
+                        <CloseIcon size={width * 0.0718} color="#333" />
                     </TouchableOpacity>
                 </View>
                 {menuItems}

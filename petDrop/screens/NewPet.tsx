@@ -75,7 +75,7 @@ const NewPet = ({ navigation, route }: NewPetType) => {
           vet: inputFields.get('pet vet'),
           vetPhone: inputFields.get('vet phone'),
           medications: petBeingEdited ? petBeingEdited.medications : []
-        }));
+        }), false);
         if (response.ok) {
           // TODO: allow for editing of shared pets
           let updatedAccountState: Account;
@@ -88,7 +88,7 @@ const NewPet = ({ navigation, route }: NewPetType) => {
             updatedAccountState = { ...account, pets: account.pets.concat([newPet]) };
             setAccount(updatedAccountState);
           }
-          response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(updatedAccountState));
+          response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(updatedAccountState), false);
           if (response.ok) {
             alert('Submission successful. You have now been redirected to the Pet Info page where you can view it, as well as add medications and reminders for it.');
             navigation.navigate('PetInfo');
@@ -108,7 +108,7 @@ const NewPet = ({ navigation, route }: NewPetType) => {
 
   const Delete = async () => {
     // TODO: ask for confirmation
-    let response = await httpRequest(DELETE_PET_BY_ID + petBeingEdited.id, 'DELETE', '');
+    let response = await httpRequest(DELETE_PET_BY_ID + petBeingEdited.id, 'DELETE', '', false);
     if (response.ok) {
       const updatedAccountState = { ...account, pets: account.pets.filter((pet) => pet.id !== petBeingEdited.id) };
       setAccount(updatedAccountState);

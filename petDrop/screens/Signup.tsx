@@ -20,6 +20,11 @@ import { ADD_ACCOUNT, VALIDATE_SIGNUP, httpRequest } from '../data/endpoints';
 import { Account } from '../data/dataTypes';
 import { NavigationProp } from '@react-navigation/native';
 import { useAccount } from '../context/AccountContext';
+import {
+    setRememberMePreference,
+    saveCredentials,
+    removeSavedUsername,
+} from '../utils/credentialStorage';
 
 const { width, height } = Dimensions.get('window');
 
@@ -164,6 +169,8 @@ const Signup = ({ navigation }: SignupType) => {
             if (response.ok) {
                 // if account successfully created, navigate to profile page for additional info, and pass the account along
                 setAccount(await response.json());
+                // persist remember-me selection (username only, never password)
+                await saveCredentials(rememberMe, username, password);
                 navigation.navigate('Home');
             } else {
                 // Try to parse error response
@@ -251,24 +258,19 @@ const Signup = ({ navigation }: SignupType) => {
                         />
 
                         <View style={styles.Checkboxes}>
-                            <Pressable style={styles.checkboxContainer} onPress={() => setRememberMe(!rememberMe)}>
+                            <Pressable
+                                style={styles.checkboxContainer}
+                                onPress={async () => {
+                                    const newValue = !rememberMe;
+                                    setRememberMe(newValue);
+                                    await setRememberMePreference(newValue);
+                                    if (!newValue) {
+                                        await removeSavedUsername();
+                                    }
+                                }}
+                            >
                                 <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]} />
                                 <Text style={styles.checkboxText}>Remember Me</Text>
-                            </Pressable>
-
-                            <Pressable style={styles.checkboxContainer} onPress={() => setTermsOfService(!termsOfService)}>
-                                <View style={[styles.checkbox, termsOfService && styles.checkboxChecked]} />
-                                <Text style={styles.checkboxText}>Accept Terms of Service</Text>
-                            </Pressable>
-
-                            <Pressable style={styles.checkboxContainer} onPress={() => setPrivacyPolicy(!privacyPolicy)}>
-                                <View style={[styles.checkbox, privacyPolicy && styles.checkboxChecked]} />
-                                <Text style={styles.checkboxText}>Accept Privacy Policy</Text>
-                            </Pressable>
-
-                            <Pressable style={styles.checkboxContainer} onPress={() => setDataUsage(!dataUsage)}>
-                                <View style={[styles.checkbox, dataUsage && styles.checkboxChecked]} />
-                                <Text style={styles.checkboxText}>Consent to PetDrop using your data</Text>
                             </Pressable>
                         </View>
                     </View>

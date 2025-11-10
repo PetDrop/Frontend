@@ -22,37 +22,15 @@ import { NavigationProp, useFocusEffect } from '@react-navigation/native';
 import { useAccount } from '../context/AccountContext';
 import { usePushToken } from '../context/PushTokenContext';
 import { convertDateStringsToDates } from '../utils/dateConversion';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-// Secure password storage helper functions with runtime fallback
-const getSavedPassword = async (): Promise<string | null> => {
-    try {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const SecureStore = require('expo-secure-store');
-        return await SecureStore.getItemAsync('savedPassword');
-    } catch {
-        return await AsyncStorage.getItem('savedPassword_fallback');
-    }
-};
-
-const setSavedPassword = async (value: string): Promise<void> => {
-    try {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const SecureStore = require('expo-secure-store');
-        await SecureStore.setItemAsync('savedPassword', value);
-    } catch {
-        await AsyncStorage.setItem('savedPassword_fallback', value);
-    }
-};
-
-const deleteSavedPassword = async (): Promise<void> => {
-    try {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const SecureStore = require('expo-secure-store');
-        await SecureStore.deleteItemAsync('savedPassword');
-    } catch {
-        await AsyncStorage.removeItem('savedPassword_fallback');
-    }
-};
+import {
+    getSavedPassword,
+    getSavedUsername,
+    getRememberMePreference,
+    setRememberMePreference,
+    saveCredentials,
+    deleteSavedPassword,
+    removeSavedUsername,
+} from '../utils/credentialStorage';
 
 const { width, height } = Dimensions.get('window');
 
@@ -75,11 +53,10 @@ const Login = (props: LoginType) => {
     // Shared routine to refresh credentials from storage
     const refreshCredentials = React.useCallback(async () => {
         try {
-            const storedRemember = await AsyncStorage.getItem('rememberMe');
-            const shouldRemember = storedRemember === 'true';
+            const shouldRemember = await getRememberMePreference();
             setRememberMe(shouldRemember);
             if (shouldRemember) {
-                const storedUsername = await AsyncStorage.getItem('savedUsername');
+                const storedUsername = await getSavedUsername();
                 const storedPassword = await getSavedPassword();
                 setUsername(storedUsername || '');
                 setPassword(storedPassword || '');
@@ -154,19 +131,7 @@ const Login = (props: LoginType) => {
                     // convert date strings to dates and set account context
                     setAccount(convertDateStringsToDates(temp));
                     // persist remember-me selection (username only, never password)
-                    try {
-                        await AsyncStorage.setItem('rememberMe', rememberMe ? 'true' : 'false');
-                        if (rememberMe) {
-                            await AsyncStorage.setItem('savedUsername', username);
-                            // Store password securely for auto-login
-                            await setSavedPassword(password);
-                        } else {
-                            await AsyncStorage.removeItem('savedUsername');
-                            await deleteSavedPassword();
-                        }
-                    } catch (e) {
-                        console.log('Failed to persist remember-me preference');
-                    }
+                    await saveCredentials(rememberMe, username, password);
                     // handle pending navigation if it exists, otherwise navigate home
                     if (pendingNavigation) {
                         pendingNavigation();
@@ -237,13 +202,9 @@ const Login = (props: LoginType) => {
                             onPress={async () => {
                                 const newValue = !rememberMe;
                                 setRememberMe(newValue);
-                                try {
-                                    await AsyncStorage.setItem('rememberMe', newValue ? 'true' : 'false');
-                                    if (!newValue) {
-                                        await AsyncStorage.removeItem('savedUsername');
-                                    }
-                                } catch (e) {
-                                    console.log('Failed to update remember-me preference');
+                                await setRememberMePreference(newValue);
+                                if (!newValue) {
+                                    await removeSavedUsername();
                                 }
                             }}
                         >
