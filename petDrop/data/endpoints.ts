@@ -42,6 +42,8 @@ export const GET_ALL_SPONSORS = 'http://localhost:8080/get-all-sponsors';
 export const GET_SPONSOR_BY_ID = 'http://localhost:8080/get-sponsor-by-id/';
 export const GET_SPONSOR_BY_NAME = 'http://localhost:8080/get-sponsor-by-name/';
 export const DELETE_SPONSOR = 'http://localhost:8080/delete-sponsor/';
+// IOP MEASUREMENT
+export const SEND_IOP_MEASUREMENT = 'http://localhost:8080/send-iop-measurement';
 
 // http function with parameters for url and request body
 import { Alert } from 'react-native';

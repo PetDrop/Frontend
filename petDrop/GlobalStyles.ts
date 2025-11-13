@@ -73,6 +73,7 @@ export enum ScreenEnum {
   Sponsors = 8,
   Credits = 9,
   LoadingScreen = 10,
+  IOPMeasurement = 11,
 };
 
 export const petImages: { [key: string]: any } = {
