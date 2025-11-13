@@ -17,6 +17,9 @@ import NotificationPopup from "../components/Reminders/NotificationPopup";
 import { CREATE_NOTIFS_FOR_MED, DELETE_NOTIF, DELETE_NOTIFS_FROM_MED, httpRequest, UPDATE_NOTIF } from "../data/endpoints";
 import structuredClone from '@ungap/structured-clone';
 import { useAccount } from "../context/AccountContext";
+import HelpButton from "../components/HelpButton";
+import HelpPopup from "../components/HelpPopup";
+import { helpText } from "../data/helpText";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -30,6 +33,7 @@ const Reminders = ({ navigation, route }: Props) => {
   const [med, setMed] = useState<Medication>(emptyMed);
   const [notification, setNotification] = useState<Notification>(emptyNotification);
   const [notificationCopy, setNotificationCopy] = useState<Notification>(emptyNotification);
+  const [showHelp, setShowHelp] = useState(false);
 
   // derive the selected pet from account whenever it changes
   const selectedPet = React.useMemo(() => {
@@ -176,6 +180,13 @@ const Reminders = ({ navigation, route }: Props) => {
         notif={notification}
         notifCopy={notificationCopy}
         setNotifCopy={setNotificationCopy}
+      />
+
+      <HelpButton onPress={() => setShowHelp(true)} />
+      <HelpPopup
+        isVisible={showHelp}
+        helpText={helpText.Reminders}
+        onClose={() => setShowHelp(false)}
       />
     </View>
   );

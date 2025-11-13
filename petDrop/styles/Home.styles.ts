@@ -101,6 +101,8 @@ export const styles = StyleSheet.create({
 	medSwitchContainer: {
 		top: 400,
 		left: 70,
+		zIndex: 1002,
+		elevation: 1002,
 	},
 });
 

@@ -17,6 +17,9 @@ import CustomDateTimePicker from "./CustomDateTimePicker";
 import * as Notifications from 'expo-notifications';
 import { usePushToken } from '../../context/PushTokenContext';
 import { useAccount } from '../../context/AccountContext';
+import HelpButton from '../HelpButton';
+import HelpPopup from '../HelpPopup';
+import { helpText } from '../../data/helpText';
 
 type MedicationPopupType = {
   isActive: boolean;
@@ -41,6 +44,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
   const [pickerVisible, setPickerVisible] = useState(false);
   const [pickerMode, setPickerMode] = useState<'date' | 'time'>('date');
   const [onPickerConfirm, setOnPickerConfirm] = useState<((date: Date) => void) | null>(null);
+  const [showHelp, setShowHelp] = useState(false);
 
   const openPicker = (mode: 'date' | 'time', onConfirm: (date: Date) => void) => {
     Keyboard.dismiss();
@@ -318,6 +322,9 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
             />
           </Pressable>
 
+          {/* Help button */}
+          <HelpButton onPress={() => setShowHelp(true)} inPopup={true} />
+
           {/* Header with color indicator and medication selection */}
           <View style={styles.headerContainer}>
             {/* Color indicator */}
@@ -467,6 +474,12 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
             setPickerVisible(false);
           }}
           onCancel={() => setPickerVisible(false)}
+        />
+
+        <HelpPopup
+          isVisible={showHelp}
+          helpText={helpText.MedicationPopup}
+          onClose={() => setShowHelp(false)}
         />
       </Pressable>
     );

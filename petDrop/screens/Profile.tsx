@@ -13,6 +13,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { NavigationProp } from "@react-navigation/native";
 import { useAccount } from "../context/AccountContext";
 import { clearCredentials } from '../utils/credentialStorage';
+import HelpButton from "../components/HelpButton";
+import HelpPopup from "../components/HelpPopup";
+import { helpText } from "../data/helpText";
 
 function updateSharedUsers(state: string[], action: { index: number, text: string }) {
   let newState;
@@ -45,6 +48,7 @@ const Profile = ({ navigation }: ProfileType) => {
   const [sharedUsers, setSharedUsers] = useReducer(updateSharedUsers, account.sharedUsers);
   const [numUsersSharedWith, setNumUsersSharedWith] = useState(Math.max(account.usersSharedWith.length, 1));
   const [usersSharedWith, setUsersSharedWith] = useReducer(updateSharedUsers, account.usersSharedWith);
+  const [showHelp, setShowHelp] = useState(false);
 
   /* handles submit button being pressed
     checks to make sure required fields have values
@@ -251,6 +255,13 @@ const Profile = ({ navigation }: ProfileType) => {
         </View>
 
       </ScrollView>
+
+      <HelpButton onPress={() => setShowHelp(true)} />
+      <HelpPopup
+        isVisible={showHelp}
+        helpText={helpText.Profile}
+        onClose={() => setShowHelp(false)}
+      />
     </KeyboardAvoidingView>
   );
 };

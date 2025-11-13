@@ -31,6 +31,9 @@ import {
     deleteSavedPassword,
     removeSavedUsername,
 } from '../utils/credentialStorage';
+import HelpButton from '../components/HelpButton';
+import HelpPopup from '../components/HelpPopup';
+import { helpText } from '../data/helpText';
 
 const { width, height } = Dimensions.get('window');
 
@@ -47,6 +50,7 @@ const Login = (props: LoginType) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
+    const [showHelp, setShowHelp] = useState(false);
 
     const pendingNavigation: (() => void) | undefined = props.onLoginSuccess;
     
@@ -236,6 +240,12 @@ const Login = (props: LoginType) => {
                     />
                 </ScrollView>
             </TouchableWithoutFeedback>
+            <HelpButton onPress={() => setShowHelp(true)} />
+            <HelpPopup
+                isVisible={showHelp}
+                helpText={helpText.Login}
+                onClose={() => setShowHelp(false)}
+            />
         </KeyboardAvoidingView>
     );
 };

@@ -25,6 +25,9 @@ import {
     saveCredentials,
     removeSavedUsername,
 } from '../utils/credentialStorage';
+import HelpButton from '../components/HelpButton';
+import HelpPopup from '../components/HelpPopup';
+import { helpText } from '../data/helpText';
 
 const { width, height } = Dimensions.get('window');
 
@@ -43,6 +46,7 @@ const Signup = ({ navigation }: SignupType) => {
     const [termsOfService, setTermsOfService] = useState(false);
     const [privacyPolicy, setPrivacyPolicy] = useState(false);
     const [dataUsage, setDataUsage] = useState(false);
+    const [showHelp, setShowHelp] = useState(false);
 
     const ObjectID = require('bson-objectid');
 
@@ -289,6 +293,12 @@ const Signup = ({ navigation }: SignupType) => {
                     />
                 </ScrollView>
             </TouchableWithoutFeedback>
+            <HelpButton onPress={() => setShowHelp(true)} />
+            <HelpPopup
+                isVisible={showHelp}
+                helpText={helpText.Signup}
+                onClose={() => setShowHelp(false)}
+            />
         </KeyboardAvoidingView>
     );
 };

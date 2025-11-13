@@ -9,6 +9,9 @@ import { emptySponsorMed, SponsorMedication } from "../data/dataTypes";
 import { useEffect, useState } from "react";
 import { GET_SPONSOR_MEDICATION_BY_NAME, httpRequest } from "../data/endpoints";
 import VideoScreen from "../components/Instructions/VideoScreen";
+import HelpButton from "../components/HelpButton";
+import HelpPopup from "../components/HelpPopup";
+import { helpText } from "../data/helpText";
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -17,6 +20,7 @@ interface Props {
 
 const Instructions = ({ navigation, route }: Props) => {
   const [med, setMed] = useState<SponsorMedication>(emptySponsorMed);
+  const [showHelp, setShowHelp] = useState(false);
 
   // get the sponsor med from the db
   const getMed = async () => {
@@ -62,6 +66,13 @@ const Instructions = ({ navigation, route }: Props) => {
 
       {/* Bottom Navigation */}
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Instructions} />
+
+      <HelpButton onPress={() => setShowHelp(true)} />
+      <HelpPopup
+        isVisible={showHelp}
+        helpText={helpText.Instructions}
+        onClose={() => setShowHelp(false)}
+      />
 
     </View>
   );

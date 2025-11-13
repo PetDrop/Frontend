@@ -9,6 +9,9 @@ import { ScreenEnum, Color } from '../GlobalStyles';
 import { useAccount } from '../context/AccountContext';
 import { Pet, emptyPet } from '../data/dataTypes';
 import { SEND_IOP_MEASUREMENT, httpRequest } from '../data/endpoints';
+import HelpButton from '../components/HelpButton';
+import HelpPopup from '../components/HelpPopup';
+import { helpText } from '../data/helpText';
 
 const { height } = Dimensions.get('window');
 
@@ -25,6 +28,7 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
     const [selectedRange, setSelectedRange] = useState<string>('');
     const [manualValue, setManualValue] = useState<string>('');
     const [error, setError] = useState<string>('');
+    const [showHelp, setShowHelp] = useState(false);
 
     // Derive the selected pet from account whenever it changes
     const selectedPet = useMemo(() => {
@@ -288,6 +292,13 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
             </ScrollView>
 
             <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.IOPMeasurement} />
+
+            <HelpButton onPress={() => setShowHelp(true)} />
+            <HelpPopup
+                isVisible={showHelp}
+                helpText={helpText.IOPMeasurement}
+                onClose={() => setShowHelp(false)}
+            />
         </View>
     );
 };

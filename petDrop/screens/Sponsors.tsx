@@ -6,6 +6,9 @@ import { NavigationProp } from '@react-navigation/native';
 import { ScreenEnum } from '../GlobalStyles';
 import { GET_ALL_SPONSORS, httpRequest } from '../data/endpoints';
 import { Sponsor } from '../data/dataTypes';
+import HelpButton from '../components/HelpButton';
+import HelpPopup from '../components/HelpPopup';
+import { helpText } from '../data/helpText';
 
 const { width } = Dimensions.get('window');
 
@@ -13,6 +16,7 @@ const { width } = Dimensions.get('window');
 const Sponsors = ({ navigation } : { navigation: NavigationProp<any> }) => {
     // active pagination dot
     const [activeIndex, setActiveIndex] = useState(0);
+    const [showHelp, setShowHelp] = useState(false);
 
     // get all sponsors from db
     const [sponsors, setSponsors] = useState<Sponsor[]>([]);
@@ -73,6 +77,13 @@ const Sponsors = ({ navigation } : { navigation: NavigationProp<any> }) => {
             </View>
 
             <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Sponsors} />
+
+            <HelpButton onPress={() => setShowHelp(true)} />
+            <HelpPopup
+                isVisible={showHelp}
+                helpText={helpText.Sponsors}
+                onClose={() => setShowHelp(false)}
+            />
         </View >
     );
 };

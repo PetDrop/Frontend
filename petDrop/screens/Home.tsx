@@ -17,6 +17,9 @@ import { medState } from "../data/enums";
 import SelectMedPopup from "../components/SelectMedPopup";
 import { useAccount } from "../context/AccountContext";
 import { usePushToken } from "../context/PushTokenContext";
+import HelpButton from "../components/HelpButton";
+import HelpPopup from "../components/HelpPopup";
+import { helpText } from "../data/helpText";
 
 type HomeProps = {
   navigation: NavigationProp<any>;
@@ -31,6 +34,7 @@ const Home = ({ navigation, route }: HomeProps) => {
   const [markedDates, setMarkedDates] = useState<MarkedDates>({});
   const [popupState, setPopupState] = useState<medState>(medState.NO_ACTION);
   const [medMap, setMedMap] = useState<Map<string, { pet: Pet, med: Medication }[]>>(new Map());
+  const [showHelp, setShowHelp] = useState(false);
 
 
 
@@ -188,7 +192,7 @@ const Home = ({ navigation, route }: HomeProps) => {
 
       {/* popup that displays all meds on a certain date */}
       {switchDisplay && (
-        <View style={{ position: 'absolute' }}>
+        <View style={{ position: 'absolute', zIndex: 1000, elevation: 1000 }}>
           <SelectMedPopup close={() => { setSwitchDisplay(undefined) }} />
           <View style={styles.medSwitchContainer}>
             <MedSwitch
@@ -211,6 +215,13 @@ const Home = ({ navigation, route }: HomeProps) => {
         pet={infoToDisplay ? infoToDisplay.pet : emptyPet}
         readonly={true}
         navigation={navigation}
+      />
+
+      <HelpButton onPress={() => setShowHelp(true)} />
+      <HelpPopup
+        isVisible={showHelp}
+        helpText={helpText.Home}
+        onClose={() => setShowHelp(false)}
       />
 
     </View>

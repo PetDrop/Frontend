@@ -9,6 +9,9 @@ import DeleteButton from "../CustomButton";
 import SaveButton from "../CustomButton";
 import CustomDateTimePicker from "../MedicationPopup/CustomDateTimePicker";
 import styles from "../../styles/NotificationPopup.styles";
+import HelpButton from "../HelpButton";
+import HelpPopup from "../HelpPopup";
+import { helpText } from "../../data/helpText";
 
 const { width } = Dimensions.get('window');
 
@@ -24,6 +27,7 @@ const NotificationPopup = ({ isActive, setPopupState, notif, notifCopy, setNotif
     const [pickerVisible, setPickerVisible] = useState(false);
     const [pickerMode, setPickerMode] = useState<'date' | 'time'>('date');
     const [onPickerConfirm, setOnPickerConfirm] = useState<((date: Date) => void) | null>(null);
+    const [showHelp, setShowHelp] = useState(false);
     const [localNotifState, setLocalNotifState] = useState<{ startDates: Date[], endDates: Date[], times: Date[], repeatInterval: string, occurrences: number }>({
         startDates: [],
         endDates: [],
@@ -171,6 +175,9 @@ const NotificationPopup = ({ isActive, setPopupState, notif, notifCopy, setNotif
                         />
                     </Pressable>
 
+                    {/* Help button */}
+                    <HelpButton onPress={() => setShowHelp(true)} inPopup={true} />
+
                     {/* Title */}
                     <Text style={styles.titleText}>{`${notif.id !== '' ? 'Edit' : 'Add'} Reminder`}</Text>
 
@@ -222,6 +229,12 @@ const NotificationPopup = ({ isActive, setPopupState, notif, notifCopy, setNotif
                         setPickerVisible(false);
                     }}
                     onCancel={() => setPickerVisible(false)}
+                />
+
+                <HelpPopup
+                    isVisible={showHelp}
+                    helpText={helpText.NotificationPopup}
+                    onClose={() => setShowHelp(false)}
                 />
             </Pressable>
         );

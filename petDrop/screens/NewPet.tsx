@@ -13,6 +13,9 @@ import DeleteButton from "../components/CustomButton";
 import { ADD_PET, DELETE_PET_BY_ID, httpRequest, UPDATE_ACCOUNT, UPDATE_PET } from "../data/endpoints";
 import * as ImagePicker from 'expo-image-picker';
 import { useAccount } from "../context/AccountContext";
+import HelpButton from "../components/HelpButton";
+import HelpPopup from "../components/HelpPopup";
+import { helpText } from "../data/helpText";
 
 type NewPetType = {
   navigation: NavigationProp<any>;
@@ -30,6 +33,7 @@ const NewPet = ({ navigation, route }: NewPetType) => {
     ['pet vet', ''],
     ['vet phone', ''],
   ]));
+  const [showHelp, setShowHelp] = useState(false);
 
   const ObjectID = require('bson-objectid');
 
@@ -170,6 +174,13 @@ const NewPet = ({ navigation, route }: NewPetType) => {
 
       {/* Top Banner and Bottom Navigation */}
       <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.NewPet} />
+
+      <HelpButton onPress={() => setShowHelp(true)} />
+      <HelpPopup
+        isVisible={showHelp}
+        helpText={helpText.NewPet}
+        onClose={() => setShowHelp(false)}
+      />
 
     </KeyboardAvoidingView>
   );
