@@ -4,9 +4,6 @@ import TopBottomBar from '../components/TopBottomBar';
 import { styles } from '../styles/Credits.styles';
 import { NavigationProp } from '@react-navigation/native';
 import { ScreenEnum } from '../GlobalStyles';
-import HelpButton from '../components/HelpButton';
-import HelpPopup from '../components/HelpPopup';
-import { helpText } from '../data/helpText';
 
 const { width } = Dimensions.get('window');
 
@@ -40,7 +37,6 @@ const authors = [
 const Credits = ({ navigation }: { navigation: NavigationProp<any> }) => {
     // active pagination dot
     const [activeIndex, setActiveIndex] = useState(0);
-    const [showHelp, setShowHelp] = useState(false);
 
     // used to determine which pagination dot should be active
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -86,12 +82,6 @@ const Credits = ({ navigation }: { navigation: NavigationProp<any> }) => {
 
             <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Credits} />
 
-            <HelpButton onPress={() => setShowHelp(true)} />
-            <HelpPopup
-                isVisible={showHelp}
-                helpText={helpText.Credits}
-                onClose={() => setShowHelp(false)}
-            />
         </View >
     );
 };
