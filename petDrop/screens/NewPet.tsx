@@ -43,7 +43,7 @@ const NewPet = ({ navigation, route }: NewPetType) => {
   }
 
   // get pet from param in case one is being edited (if undefined then creating new pet)
-  const petBeingEdited: Pet = route.params.pet;
+  const petBeingEdited: Pet = route.params?.pet;
 
   useEffect(() => {
     // pet being defined means it was passed as a param -> it's being edited, not creating a new one
