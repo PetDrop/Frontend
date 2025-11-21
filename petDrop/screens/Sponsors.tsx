@@ -53,7 +53,7 @@ const Sponsors = ({ navigation } : { navigation: NavigationProp<any> }) => {
                 {sponsors.map((sponsor) => (
                     <View key={sponsor.id} style={styles.card}>
                         <Text style={styles.name}>{sponsor.name}</Text>
-                        <Image source={{ uri: sponsor.image || 'https://via.placeholder.com/150' }} style={styles.image} resizeMode="contain" />
+                        <Image source={{ uri: sponsor.image }} style={styles.image} resizeMode="contain" />
                         <Text style={styles.description}>{sponsor.description}</Text>
                     </View>
                 ))}
@@ -73,6 +73,7 @@ const Sponsors = ({ navigation } : { navigation: NavigationProp<any> }) => {
             </View>
 
             <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Sponsors} />
+
         </View >
     );
 };

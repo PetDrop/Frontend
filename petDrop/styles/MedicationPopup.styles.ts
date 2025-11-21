@@ -13,7 +13,9 @@ const styles = StyleSheet.create({
         bottom: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        zIndex: 1000,
+        elevation: 1000,
     },
     modalContainer: {
         backgroundColor: 'white',
@@ -28,7 +30,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: width * 0.01,
         elevation: 5,
-        justifyContent: 'flex-start'
+        justifyContent: 'flex-start',
+        position: 'relative',
     },
     closeButton: {
         position: 'absolute',

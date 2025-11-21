@@ -81,6 +81,7 @@ const Credits = ({ navigation }: { navigation: NavigationProp<any> }) => {
             </View>
 
             <TopBottomBar navigation={navigation} currentScreen={ScreenEnum.Credits} />
+
         </View >
     );
 };

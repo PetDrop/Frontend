@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Text, TextInput, View, Pressable } from 'react-native';
 import { RESET_PASSWORD, httpRequest } from '../data/endpoints';
 import styles from '../styles/ForgotPasswordVerify.styles';
+import HelpButton from '../components/HelpButton';
+import HelpPopup from '../components/HelpPopup';
+import { helpText } from '../data/helpText';
 
 type ScreenProps = {
     navigation: any;
@@ -16,6 +19,7 @@ const ForgotPasswordVerify = ({ navigation, route }: ScreenProps) => {
     const [password, setPassword] = useState('');
     const [confirm, setConfirm] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showHelp, setShowHelp] = useState(false);
 
     const submit = async () => {
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -98,6 +102,12 @@ const ForgotPasswordVerify = ({ navigation, route }: ScreenProps) => {
                     </Pressable>
                 </View>
             </View>
+            <HelpButton onPress={() => setShowHelp(true)} />
+            <HelpPopup
+                isVisible={showHelp}
+                helpText={helpText.ForgotPasswordVerify}
+                onClose={() => setShowHelp(false)}
+            />
         </KeyboardAvoidingView>
     );
 };

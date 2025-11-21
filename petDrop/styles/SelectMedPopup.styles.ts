@@ -9,12 +9,17 @@ const styles = StyleSheet.create({
     opacity: 0.5,
     height: height,
     width: width,
+    zIndex: 999,
+    elevation: 999,
   },
   reminderPopup: {
     top: height * -0.65,
     height: height * 0.25,
     width: width * 0.923,
     left: width * 0.038,
+    position: 'relative',
+    zIndex: 1001,
+    elevation: 1001,
   },
   topBanner: {
     borderTopLeftRadius: Border.br_31,
@@ -22,7 +27,8 @@ const styles = StyleSheet.create({
     backgroundColor: Color.colorCornflowerblue,
     height: height * 0.079,
     width: width * 0.923,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    position: 'relative',
   },
   text: {
     top: height * 0.015,
@@ -33,8 +39,6 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.koulenRegular,
   },
   closePopup: {
-    top: height * 0.015,
-    left: width * 0.075,
     width: width * 0.115,
     height: height * 0.053,
   },

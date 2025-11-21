@@ -15,6 +15,9 @@ import Header from "../components/Header";
 import structuredClone from '@ungap/structured-clone';
 import { useAccount } from "../context/AccountContext";
 import { usePushToken } from "../context/PushTokenContext";
+import HelpButton from "../components/HelpButton";
+import HelpPopup from "../components/HelpPopup";
+import { helpText } from "../data/helpText";
 
 const PetInfo = ({ navigation }: { navigation: NavigationProp<any> }) => {
   const { account, setAccount } = useAccount();
@@ -23,6 +26,7 @@ const PetInfo = ({ navigation }: { navigation: NavigationProp<any> }) => {
   const [petBeingEdited, setPetBeingEdited] = useState<Pet>(emptyPet); // the pet the user is adding a medication to
   const [med, setMed] = useState<Medication>(emptyMed);
   const [medCopy, setMedCopy] = useState<Medication>(emptyMed);
+  const [showHelp, setShowHelp] = useState(false);
 
   // only when med is updated should medCopy be reset
   useEffect(() => {
@@ -83,6 +87,12 @@ const PetInfo = ({ navigation }: { navigation: NavigationProp<any> }) => {
         setMedCopy={setMedCopy}
         readonly={false}
         navigation={navigation}
+      />
+      <HelpButton onPress={() => setShowHelp(true)} />
+      <HelpPopup
+        isVisible={showHelp}
+        helpText={helpText.PetInfo}
+        onClose={() => setShowHelp(false)}
       />
     </View>
   );

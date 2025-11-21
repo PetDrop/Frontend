@@ -20,6 +20,9 @@ import {
 import structuredClone from '@ungap/structured-clone';
 import { useAccount } from '../context/AccountContext';
 import { usePushToken } from '../context/PushTokenContext';
+import HelpButton from '../components/HelpButton';
+import HelpPopup from '../components/HelpPopup';
+import { helpText } from '../data/helpText';
 
 type MedicationsArchiveProps = {
 	navigation: NavigationProp<any>;
@@ -33,6 +36,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 	const [medCopy, setMedCopy] = useState<Medication>(emptyMed);
 	const [popupState, setPopupState] = useState(medState.NO_ACTION);
 	const [selectedPetId, setSelectedPetId] = useState(account.pets[0]?.id || account.sharedPets[0]?.id || '');
+	const [showHelp, setShowHelp] = useState(false);
 
 	// derive the selected pet from account whenever it changes
 	const selectedPet = React.useMemo(() => {
@@ -197,6 +201,13 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				setMedCopy={setMedCopy}
 				readonly={false}
 				navigation={navigation}
+			/>
+
+			<HelpButton onPress={() => setShowHelp(true)} />
+			<HelpPopup
+				isVisible={showHelp}
+				helpText={helpText.MedicationsArchive}
+				onClose={() => setShowHelp(false)}
 			/>
 		</View>
 	);
