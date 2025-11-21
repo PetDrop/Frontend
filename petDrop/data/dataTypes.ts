@@ -63,6 +63,21 @@ export interface DateObj {
     recurrances: number
 }
 
+export interface IOPMeasurement {
+    id: string;
+    value: string;
+    timestamp: Date;
+}
+
+export interface IOPMeasurementSession {
+    petId: string;
+    startDate: Date;
+    numberOfDays: number;
+    timesOfDay: Date[];
+    measurements: IOPMeasurement[];
+    isComplete: boolean;
+}
+
 // global default values to avoid having to repeatedly create these in various files
 export const emptyAccount: Account = { id: '', username: '', email: '', password: '', sharedUsers: [], usersSharedWith: [], pets: [], sharedPets: [], image: '', expoPushToken: '' }
 export const emptyPet: Pet = { id: '', name: '', image: '', age: 0, breed: '', address: '', vet: '', vetPhone: '', medications: [] };
