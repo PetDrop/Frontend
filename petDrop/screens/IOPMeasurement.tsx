@@ -44,10 +44,12 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
     const [showHelp, setShowHelp] = useState(false);
     
     // Session setup state
+    const [startDate, setStartDate] = useState<Date | null>(null);
     const [numberOfDays, setNumberOfDays] = useState<string>('');
     const [timesOfDay, setTimesOfDay] = useState<Date[]>([]);
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [datePickerMode, setDatePickerMode] = useState<'date' | 'time'>('date');
+    const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+    const [datePickerMode, setDatePickerMode] = useState<'date' | 'time'>('time');
     const [tempDate, setTempDate] = useState<Date>(new Date());
     
     // Measurement input state
@@ -82,6 +84,10 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
         if (!selectedPetId) return;
         const loadedSession = await getIOPMeasurementSession(selectedPetId);
         setSession(loadedSession);
+        if (loadedSession) {
+            // Use stored inputMode or default to 'range' for backward compatibility
+            setInputMode(loadedSession.inputMode || 'range');
+        }
     };
 
     const rangeOptions = [
@@ -106,7 +112,6 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
             const parts = value.split('.');
             if (parts.length <= 2 && (parts[1] === undefined || parts[1].length <= 1)) {
                 setManualValue(value);
-                setError('');
             }
         }
     };
@@ -127,6 +132,22 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
             hour: 'numeric',
             minute: '2-digit',
             hour12: true,
+        });
+    };
+
+    const formatTimeOnly = (date: Date): string => {
+        return date.toLocaleString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+        });
+    };
+
+    const formatDateOnly = (date: Date): string => {
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
         });
     };
 
@@ -154,32 +175,38 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
 
     const handleStartSession = async () => {
         if (!selectedPet || selectedPet.id === '') {
-            setError('Please select a pet');
+            Alert.alert('Error', 'Please select a pet');
+            return;
+        }
+
+        if (!startDate) {
+            Alert.alert('Error', 'Please select a start date');
             return;
         }
 
         if (!numberOfDays || parseInt(numberOfDays) <= 0) {
-            setError('Please enter a valid number of days');
+            Alert.alert('Error', 'Please enter a valid number of days');
             return;
         }
 
         if (timesOfDay.length === 0) {
-            setError('Please add at least one measurement time');
+            Alert.alert('Error', 'Please add at least one measurement time');
             return;
         }
 
         const newSession: IOPMeasurementSession = {
             petId: selectedPet.id,
-            startDate: new Date(),
+            startDate: startDate,
             numberOfDays: parseInt(numberOfDays),
             timesOfDay: timesOfDay,
+            inputMode: inputMode,
             measurements: [],
             isComplete: false,
         };
 
         await saveIOPMeasurementSession(newSession);
         setSession(newSession);
-        setError('');
+        setStartDate(null);
         setNumberOfDays('');
         setTimesOfDay([]);
     };
@@ -191,28 +218,26 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
     };
 
     const handleDatePickerConfirm = (date: Date) => {
-        if (datePickerMode === 'date') {
-            setTempDate(date);
-            setDatePickerMode('time');
-        } else {
-            // Combine date and time
-            const combinedDate = new Date(tempDate);
-            combinedDate.setHours(date.getHours());
-            combinedDate.setMinutes(date.getMinutes());
-            combinedDate.setSeconds(0);
-            combinedDate.setMilliseconds(0);
-            
-            // Check if this time already exists
-            const timeExists = timesOfDay.some(t => 
-                t.getTime() === combinedDate.getTime()
-            );
-            
-            if (!timeExists) {
-                setTimesOfDay([...timesOfDay, combinedDate].sort((a, b) => a.getTime() - b.getTime()));
-            }
-            setShowDatePicker(false);
-            setDatePickerMode('date');
+        // Store only time (normalize to epoch date so it only represents time)
+        const timeOnly = new Date(0); // Epoch date (1970-01-01)
+        timeOnly.setHours(date.getHours());
+        timeOnly.setMinutes(date.getMinutes());
+        timeOnly.setSeconds(0);
+        timeOnly.setMilliseconds(0);
+        
+        // Check if this time already exists (compare only hours and minutes)
+        const timeExists = timesOfDay.some(t => 
+            t.getHours() === timeOnly.getHours() && t.getMinutes() === timeOnly.getMinutes()
+        );
+        
+        if (!timeExists) {
+            setTimesOfDay([...timesOfDay, timeOnly].sort((a, b) => {
+                const aMinutes = a.getHours() * 60 + a.getMinutes();
+                const bMinutes = b.getHours() * 60 + b.getMinutes();
+                return aMinutes - bMinutes;
+            }));
         }
+        setShowDatePicker(false);
     };
 
     const handleRemoveTime = (index: number) => {
@@ -224,19 +249,68 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
 
         const measurement = getIOPMeasurement();
         if (!measurement) {
-            setError('Please enter or select an IOP measurement');
+            Alert.alert('Error', 'Please enter or select an IOP measurement');
             return;
         }
 
         if (inputMode === 'manual') {
             if (!validateManualInput(measurement)) {
-                setError('Please enter a valid number with at most one decimal place');
+                Alert.alert('Error', 'Please enter a valid number with at most one decimal place');
                 return;
             }
         }
 
         if (!selectedMeasurementTime) {
-            setError('Please select a measurement time');
+            Alert.alert('Error', 'Please select a measurement time');
+            return;
+        }
+
+        // Check if maximum number of measurements has been reached
+        const maxMeasurements = session.timesOfDay.length * session.numberOfDays;
+        if (session.measurements.length >= maxMeasurements) {
+            Alert.alert('Error', `Maximum number of measurements (${maxMeasurements}) has been reached`);
+            return;
+        }
+
+        // Check for duplicate measurement times (same date and time)
+        const duplicateMeasurement = session.measurements.find(m => {
+            const mTime = m.timestamp.getTime();
+            const selectedTime = selectedMeasurementTime.getTime();
+            // Check if times are within the same minute (allowing for small differences)
+            return Math.abs(mTime - selectedTime) < 60000; // 60000ms = 1 minute
+        });
+        if (duplicateMeasurement) {
+            Alert.alert('Error', 'A measurement already exists at this date and time');
+            return;
+        }
+
+        // Check if the selected time matches one of the allowed times of day
+        const selectedHour = selectedMeasurementTime.getHours();
+        const selectedMinute = selectedMeasurementTime.getMinutes();
+        const timeMatches = session.timesOfDay.some(timeOfDay => {
+            return timeOfDay.getHours() === selectedHour && timeOfDay.getMinutes() === selectedMinute;
+        });
+        if (!timeMatches) {
+            const allowedTimes = session.timesOfDay.map(t => formatTimeOnly(t)).join(', ');
+            Alert.alert('Error', `Measurement time must match one of the allowed times: ${allowedTimes}`);
+            return;
+        }
+
+        // Check if the selected date is within the valid date range
+        const startDate = new Date(session.startDate);
+        startDate.setHours(0, 0, 0, 0); // Start of start date
+        
+        const endDate = new Date(session.startDate);
+        endDate.setDate(endDate.getDate() + session.numberOfDays - 1); // Last valid day
+        endDate.setHours(23, 59, 59, 999); // End of last day
+        
+        const selectedDate = new Date(selectedMeasurementTime);
+        if (selectedDate < startDate || selectedDate > endDate) {
+            const startDateStr = formatDateOnly(session.startDate);
+            const endDateObj = new Date(session.startDate);
+            endDateObj.setDate(endDateObj.getDate() + session.numberOfDays - 1);
+            const endDateStr = formatDateOnly(endDateObj);
+            Alert.alert('Error', `Measurement date must be between ${startDateStr} and ${endDateStr}`);
             return;
         }
 
@@ -251,7 +325,6 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
         setSelectedRange('');
         setManualValue('');
         setSelectedMeasurementTime(null);
-        setError('');
     };
 
     const handleRemoveMeasurement = async (measurementId: string) => {
@@ -305,21 +378,48 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
         }
     };
 
+    const handleCancelSession = async () => {
+        if (!session) return;
+
+        Alert.alert(
+            'Cancel Measurement Period',
+            'Are you sure you want to cancel this measurement period? All measurements will be lost.',
+            [
+                {
+                    text: 'No',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Yes, Cancel',
+                    style: 'destructive',
+                    onPress: async () => {
+                        await clearIOPMeasurementSession(session.petId);
+                        setSession(null);
+                        setSelectedRange('');
+                        setManualValue('');
+                        setSelectedMeasurementTime(null);
+                        setInputMode('range');
+                    },
+                },
+            ]
+        );
+    };
+
     const handleSendReport = async () => {
         if (!session || !selectedPet) return;
 
         if (session.measurements.length === 0) {
-            setError('No measurements to send');
+            Alert.alert('Error', 'No measurements to send');
             return;
         }
 
         if (!selectedPet.vet || selectedPet.vet.trim() === '') {
-            setError('Selected pet does not have a veterinarian email address');
+            Alert.alert('Error', 'Selected pet does not have a veterinarian email address');
             return;
         }
 
         if (!account.email || account.email.trim() === '') {
-            setError('Account email is missing');
+            Alert.alert('Error', 'Account email is missing');
             return;
         }
 
@@ -354,10 +454,10 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
                 Alert.alert('Success', 'IOP measurement report sent successfully to veterinarian');
             } else {
                 const errorData = await response.json().catch(() => ({}));
-                setError(errorData.message || 'Failed to send IOP measurement report');
+                Alert.alert('Error', errorData.message || 'Failed to send IOP measurement report');
             }
         } catch (error) {
-            setError('Network error. Please try again.');
+            Alert.alert('Error', 'Network error. Please try again.');
             console.error('Error sending IOP measurement report:', error);
         }
     };
@@ -439,8 +539,53 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
         };
     };
 
+    const formatYAxisLabel = (value: string | number): string => {
+        if (!session || session.inputMode !== 'range') {
+            // For manual mode, return the numeric value as-is
+            return String(value);
+        }
+        
+        // For range mode, convert numeric values back to range labels
+        // The chart may generate intermediate values, so we need to handle ranges
+        const numValue = typeof value === 'number' ? value : parseFloat(String(value));
+        
+        // Map numeric values to range labels
+        // Data points: 10 = '<15', 20 = '15-25', 30 = '26-35', 40 = '>35'
+        if (isNaN(numValue)) return String(value);
+        if (numValue <= 0) return '';
+        if (numValue <= 15) return '<15';
+        if (numValue <= 25) return '15-25';
+        if (numValue <= 35) return '26-35';
+        return '>35';
+    };
+
     const chartData = prepareChartData();
     const isSessionComplete = session && session.measurements.length >= session.timesOfDay.length * session.numberOfDays;
+    
+    // Calculate number of segments for Y-axis based on unique range values in range mode
+    const getYAxisSegments = (): number => {
+        if (!session || session.inputMode !== 'range' || session.measurements.length === 0) {
+            return 4; // Default for manual mode
+        }
+        
+        // Get unique numeric values from measurements (after conversion to chart values)
+        const uniqueNumericValues = new Set(
+            session.measurements.map(m => {
+                if (m.value === '<15') return 10;
+                if (m.value === '15-25') return 20;
+                if (m.value === '26-35') return 30;
+                if (m.value === '>35') return 40;
+                return parseFloat(m.value) || 0;
+            })
+        );
+        
+        const uniqueCount = uniqueNumericValues.size;
+        
+        // segments prop controls intervals: segments={N} shows N+1 labels
+        // So for N unique values, we want segments={N-1}
+        // Minimum 0 segments (1 label), maximum 3 segments (4 labels for all ranges)
+        return Math.max(0, Math.min(3, uniqueCount - 1));
+    };
 
     return (
         <View style={styles.container}>
@@ -456,7 +601,6 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
                             selectedItem={selectedPet}
                             onSwitch={(item: Pet) => {
                                 setSelectedPetId(item.id);
-                                setError('');
                             }}
                             switchItem="Pet"
                         />
@@ -467,6 +611,21 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
                     {!session ? (
                         // Session Setup Mode
                         <>
+                            <Text style={styles.sectionTitle}>Start Date</Text>
+                            <TouchableOpacity
+                                style={styles.dateTimeSelector}
+                                onPress={() => {
+                                    setTempDate(startDate || new Date());
+                                    setShowStartDatePicker(true);
+                                }}
+                            >
+                                <Text style={styles.dateTimeSelectorText}>
+                                    {startDate
+                                        ? startDate.toDateString()
+                                        : 'Select start date'}
+                                </Text>
+                            </TouchableOpacity>
+
                             <Text style={styles.sectionTitle}>Number of Days</Text>
                             <TextInput
                                 style={styles.numberInput}
@@ -480,7 +639,7 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
                             <View style={styles.timeListContainer}>
                                 {timesOfDay.map((time, index) => (
                                     <View key={index} style={styles.timeItem}>
-                                        <Text style={styles.timeItemText}>{formatDateTime(time)}</Text>
+                                        <Text style={styles.timeItemText}>{formatTimeOnly(time)}</Text>
                                         <TouchableOpacity
                                             style={styles.removeTimeButton}
                                             onPress={() => handleRemoveTime(index)}
@@ -495,15 +654,56 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
                                 <Text style={styles.addTimeButtonText}>Add Measurement Time</Text>
                             </TouchableOpacity>
 
-                            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+                            {/* Input Mode Selection */}
+                            <Text style={styles.sectionTitle}>Input Method</Text>
+                            <View style={styles.inputModeContainer}>
+                                <TouchableOpacity
+                                    style={[
+                                        styles.modeButton,
+                                        inputMode === 'range' && styles.modeButtonActive,
+                                    ]}
+                                    onPress={() => {
+                                        setInputMode('range');
+                                        setManualValue('');
+                                    }}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.modeButtonText,
+                                            inputMode === 'range' && styles.modeButtonTextActive,
+                                        ]}
+                                    >
+                                        Range
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[
+                                        styles.modeButton,
+                                        inputMode === 'manual' && styles.modeButtonActive,
+                                    ]}
+                                    onPress={() => {
+                                        setInputMode('manual');
+                                        setSelectedRange('');
+                                    }}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.modeButtonText,
+                                            inputMode === 'manual' && styles.modeButtonTextActive,
+                                        ]}
+                                    >
+                                        Manual
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
 
                             <TouchableOpacity
                                 style={[
                                     styles.submitButton,
-                                    (!numberOfDays || timesOfDay.length === 0) && styles.submitButtonDisabled,
+                                    (!startDate || !numberOfDays || timesOfDay.length === 0) && styles.submitButtonDisabled,
                                 ]}
                                 onPress={handleStartSession}
-                                disabled={!numberOfDays || timesOfDay.length === 0}
+                                disabled={!startDate || !numberOfDays || timesOfDay.length === 0}
                             >
                                 <Text style={styles.submitButtonText}>Start Measurement Period</Text>
                             </TouchableOpacity>
@@ -524,11 +724,12 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
                                             data={chartData}
                                             width={width * 0.89}
                                             height={height * 0.3}
+                                            formatYLabel={formatYAxisLabel}
                                             chartConfig={{
                                                 backgroundColor: Color.colorWhite,
                                                 backgroundGradientFrom: Color.colorWhite,
                                                 backgroundGradientTo: Color.colorWhite,
-                                                decimalPlaces: 1,
+                                                decimalPlaces: session.inputMode === 'range' ? 0 : 1,
                                                 color: (opacity = 1) => `rgba(100, 149, 237, ${opacity})`,
                                                 labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                                                 style: {
@@ -550,7 +751,7 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
                                             }}
                                             withVerticalLabels={true}
                                             withHorizontalLabels={true}
-                                            segments={4}
+                                            segments={getYAxisSegments()}
                                         />
                                     </View>
                                 </View>
@@ -558,50 +759,9 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
 
                             {/* Measurement Input */}
                             <Text style={styles.sectionTitle}>Add Measurement</Text>
-
-                            {/* Input Mode Selection */}
-                            <View style={styles.inputModeContainer}>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.modeButton,
-                                        inputMode === 'range' && styles.modeButtonActive,
-                                    ]}
-                                    onPress={() => {
-                                        setInputMode('range');
-                                        setManualValue('');
-                                        setError('');
-                                    }}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.modeButtonText,
-                                            inputMode === 'range' && styles.modeButtonTextActive,
-                                        ]}
-                                    >
-                                        Range
-                                    </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.modeButton,
-                                        inputMode === 'manual' && styles.modeButtonActive,
-                                    ]}
-                                    onPress={() => {
-                                        setInputMode('manual');
-                                        setSelectedRange('');
-                                        setError('');
-                                    }}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.modeButtonText,
-                                            inputMode === 'manual' && styles.modeButtonTextActive,
-                                        ]}
-                                    >
-                                        Manual
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
+                            <Text style={styles.inputLabel}>
+                                Input Method: {inputMode === 'range' ? 'Range' : 'Manual'}
+                            </Text>
 
                             {/* Range Selection */}
                             {inputMode === 'range' && (
@@ -615,7 +775,6 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
                                             ]}
                                             onPress={() => {
                                                 setSelectedRange(option.value);
-                                                setError('');
                                             }}
                                         >
                                             <View
@@ -660,16 +819,25 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
                                 </Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity
-                                style={[
-                                    styles.submitButton,
-                                    (!getIOPMeasurement() || !selectedMeasurementTime) && styles.submitButtonDisabled,
-                                ]}
-                                onPress={handleAddMeasurement}
-                                disabled={!getIOPMeasurement() || !selectedMeasurementTime}
-                            >
-                                <Text style={styles.submitButtonText}>Add Measurement</Text>
-                            </TouchableOpacity>
+                            {(() => {
+                                const maxMeasurements = session.timesOfDay.length * session.numberOfDays;
+                                const isMaxReached = session.measurements.length >= maxMeasurements;
+                                const isDisabled = !getIOPMeasurement() || !selectedMeasurementTime || isMaxReached;
+                                return (
+                                    <TouchableOpacity
+                                        style={[
+                                            styles.submitButton,
+                                            isDisabled && styles.submitButtonDisabled,
+                                        ]}
+                                        onPress={handleAddMeasurement}
+                                        disabled={isDisabled}
+                                    >
+                                        <Text style={styles.submitButtonText}>
+                                            {isMaxReached ? 'Maximum Measurements Reached' : 'Add Measurement'}
+                                        </Text>
+                                    </TouchableOpacity>
+                                );
+                            })()}
 
                             {/* Measurement List */}
                             {session.measurements.length > 0 && (
@@ -693,7 +861,13 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
                                 </View>
                             )}
 
-                            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+                            {/* Cancel Period Button */}
+                            <TouchableOpacity
+                                style={styles.cancelButton}
+                                onPress={handleCancelSession}
+                            >
+                                <Text style={styles.cancelButtonText}>Cancel Measurement Period</Text>
+                            </TouchableOpacity>
 
                             {/* Send Report Button */}
                             <TouchableOpacity
@@ -722,12 +896,22 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
 
             {/* Date/Time Pickers */}
             <CustomDateTimePicker
+                isVisible={showStartDatePicker}
+                mode="date"
+                onConfirm={(date: Date) => {
+                    setStartDate(date);
+                    setShowStartDatePicker(false);
+                }}
+                onCancel={() => setShowStartDatePicker(false)}
+                initialDate={tempDate}
+            />
+
+            <CustomDateTimePicker
                 isVisible={showDatePicker}
                 mode={datePickerMode}
                 onConfirm={handleDatePickerConfirm}
                 onCancel={() => {
                     setShowDatePicker(false);
-                    setDatePickerMode('date');
                 }}
                 initialDate={tempDate}
             />

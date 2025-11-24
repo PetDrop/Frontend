@@ -74,6 +74,7 @@ export interface IOPMeasurementSession {
     startDate: Date;
     numberOfDays: number;
     timesOfDay: Date[];
+    inputMode: 'range' | 'manual';
     measurements: IOPMeasurement[];
     isComplete: boolean;
 }
