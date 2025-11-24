@@ -8,16 +8,18 @@ export const styles = StyleSheet.create({
         position: 'absolute',
         top: height * 0.06,
         left: width * 0.85,
+        zIndex: 101,
     },
     menuContainer: {
         position: 'absolute',
         width: width * 0.5,
         height: height * 2,
-        backgroundColor: Color.colorGainsboro_100,
+        backgroundColor: Color.colorLightskyblue,
         top: height * -0.5,
         paddingTop: height * 0.6,
         paddingHorizontal: width * 0.0513,
         zIndex: 100,
+        elevation: 100,
     },
     menuHeader: {
         flexDirection: 'row',
@@ -39,6 +41,25 @@ export const styles = StyleSheet.create({
     menuText: {
         fontFamily: FontFamily.juaRegular,
         fontSize: FontSize.size_lg,
+    },
+    modalContainer: {
+        flex: 1,
+        position: 'relative',
+    },
+    backdrop: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100%',
+        height: '100%',
+    },
+    backdropOverlay: {
+        flex: 1,
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
     },
 });
 
