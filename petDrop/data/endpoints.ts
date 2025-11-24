@@ -49,6 +49,7 @@ export const GET_SPONSOR_BY_NAME = `${BASE_URL}/get-sponsor-by-name/`;
 export const DELETE_SPONSOR = `${BASE_URL}/delete-sponsor/`;
 // IOP MEASUREMENT
 export const SEND_IOP_MEASUREMENT = `${BASE_URL}/send-iop-measurement`;
+export const SEND_IOP_MEASUREMENT_REPORT = `${BASE_URL}/send-iop-measurement-report`;
 
 // http function with parameters for url and request body
 import { Alert } from 'react-native';
