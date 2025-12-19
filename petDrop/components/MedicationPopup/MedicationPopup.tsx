@@ -414,6 +414,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
                   onOccurrenceChange={(occ) => handleOccurrenceChange(notif.id, occ)}
                   onOpenPicker={(mode, handler) => openPicker(mode, handler)}
                   onStateChange={(state) => handleNotifStateChange(notif.id, state)}
+                  readonly={readonly}
                 />
               ))}
             </View>

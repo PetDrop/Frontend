@@ -9,17 +9,21 @@ export const styles = StyleSheet.create({
         backgroundColor: Color.colorFloralwhite,
         alignItems: 'center'
     },
+    headerWrapper: {
+        marginTop: height * 0.05,
+        marginLeft: width * -0.35,
+    },
     header: {
         fontSize: FontSize.size_45xl,
         fontWeight: 'bold',
         fontFamily: FontFamily.juaRegular,
         color: Color.colorCornflowerblue,
-        marginTop: height * 0.13,
+        marginTop: height * 0.02,
     },
     card: {
         width: width * 0.8,
-        height: height * 0.45,
-        marginTop: height * 0.05,
+        height: height * 0.4,
+        marginTop: height * 0.02,
         marginHorizontal: width * 0.1,
         borderRadius: Border.br_100,
         backgroundColor: Color.colorGainsboro_200,

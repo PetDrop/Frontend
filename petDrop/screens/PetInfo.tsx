@@ -6,7 +6,7 @@ import AddNewPetButton from "../components/Pets/AddNewPetButton";
 import styles from "../styles/Pets.styles";
 import { ScreenEnum, logoImage } from "../GlobalStyles";
 import { NavigationProp } from "@react-navigation/native";
-import { Account, emptyMed, emptyPet, Medication, Pet } from "../data/dataTypes";
+import { Account, emptyMed, emptyPet, Medication, Notification, Pet } from "../data/dataTypes";
 import { useEffect, useState } from "react";
 import MedicationPopup from "../components/MedicationPopup/MedicationPopup";
 import { ADD_MEDICATION, CREATE_NOTIFS_FOR_MED, DELETE_MEDICATION, DELETE_NOTIFS_FROM_MED, EDIT_NOTIFS_FOR_MED, httpRequest, UPDATE_ACCOUNT, UPDATE_MED_AND_NOTIFS, UPDATE_MED_CREATE_NOTIFS, UPDATE_MED_DELETE_NOTIFS, UPDATE_MED_NOT_NOTIFS, UPDATE_PET } from "../data/endpoints";
@@ -20,7 +20,7 @@ import HelpPopup from "../components/HelpPopup";
 import { helpText } from "../data/helpText";
 
 const PetInfo = ({ navigation }: { navigation: NavigationProp<any> }) => {
-  const { account, setAccount } = useAccount();
+  const { account, setAccount, updatePetMedications } = useAccount();
   const { pushToken } = usePushToken();
   const [popupState, setPopupState] = useState(medState.NO_ACTION);
   const [petBeingEdited, setPetBeingEdited] = useState<Pet>(emptyPet); // the pet the user is adding a medication to
@@ -28,16 +28,42 @@ const PetInfo = ({ navigation }: { navigation: NavigationProp<any> }) => {
   const [medCopy, setMedCopy] = useState<Medication>(emptyMed);
   const [showHelp, setShowHelp] = useState(false);
 
+  const ObjectID = require('bson-objectid');
+
   // only when med is updated should medCopy be reset
   useEffect(() => {
-    setMedCopy(structuredClone(med));
+    const tempMed = structuredClone(med);
+    setMedCopy({ ...tempMed, id: med.id || ObjectID(), color: med.color || `#${Math.round(Math.random() * 899998 + 100000)}` });
   }, [med]);
 
+  // format the notifications' nextRuns and finalRuns for the database
+  const formatNotifs = (notifs: Notification[]) => {
+    return notifs.map((notif) => {
+      return {
+        ...notif,
+        nextRuns: notif.nextRuns.map((nextRun) => nextRun.toISOString()),
+        finalRuns: notif.finalRuns.map((finalRun) => finalRun.toISOString())
+      };
+    });
+  };
 
   const WriteToDB = async () => {
-    let response = await httpRequest(ADD_MEDICATION + petBeingEdited.id, 'POST', JSON.stringify({ med: medCopy }));
-    setPetBeingEdited(prev => { return { ...prev, medications: prev.medications.concat([medCopy]) } });
-    if (!response.ok) {
+    console.log('medCopy', medCopy);
+    let response = await httpRequest(ADD_MEDICATION + petBeingEdited.id, 'POST', JSON.stringify({ ...medCopy, notifications: formatNotifs(medCopy.notifications || []) }));
+    if (response.ok) {
+      const newMed = await response.json();
+      console.log('newMed', newMed);
+      // Update the account's pet medications so the UI reflects the change
+      const petFromAccount = account.pets.find(p => p.id === petBeingEdited.id) || account.sharedPets?.find(p => p.id === petBeingEdited.id);
+      if (petFromAccount) {
+        const updatedMeds = petFromAccount.medications.some((m) => m.id === newMed.id)
+          ? petFromAccount.medications.map((m) => (m.id === newMed.id ? newMed : m))
+          : [...petFromAccount.medications, newMed];
+        updatePetMedications(petBeingEdited.id, updatedMeds);
+      }
+      setPetBeingEdited(prev => { return { ...prev, medications: prev.medications.concat([newMed]) } });
+      setMed(emptyMed); // Reset med state
+    } else {
       console.error(`http request failed with error code ${response.status}`);
     }
     setPopupState(medState.NO_ACTION);

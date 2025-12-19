@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, NativeScrollEvent, NativeSyntheticEvent, Dimensions } from 'react-native';
 import TopBottomBar from '../components/TopBottomBar';
+import Header from '../components/Header';
 import { styles } from '../styles/Sponsors.styles';
 import { NavigationProp } from '@react-navigation/native';
 import { ScreenEnum } from '../GlobalStyles';
@@ -39,6 +40,9 @@ const Sponsors = ({ navigation } : { navigation: NavigationProp<any> }) => {
 
     return (
         <View style={styles.container}>
+            <View style={styles.headerWrapper}>
+                <Header navigation={navigation} />
+            </View>
             <Text style={styles.header}>{`Thank You To \nOur Sponsors!`}</Text>
 
             {/* horizontal scrollview for sponsors */}
