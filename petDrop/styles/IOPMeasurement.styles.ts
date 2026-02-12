@@ -159,6 +159,13 @@ export const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: Color.colorCornflowerblue,
     },
+    graphLogo: {
+        position: 'absolute',
+        top: height * -0.02,
+        right: width * 0.03,
+        width: width * 0.25,
+        height: width * 0.25,
+    },
     graphWrapper: {
         alignItems: 'center',
     },

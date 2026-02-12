@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, Dimensions } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, Dimensions, Image } from 'react-native';
 import { NavigationProp, useFocusEffect } from '@react-navigation/native';
 import { LineChart } from 'react-native-chart-kit';
 import { captureRef } from 'react-native-view-shot';
@@ -73,6 +73,36 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
     useEffect(() => {
         loadSession();
     }, [selectedPetId]);
+
+    // Auto-set measurement time to next slot when session or measurements change
+    useEffect(() => {
+        if (!session) {
+            setSelectedMeasurementTime(null);
+            return;
+        }
+        const existingTimestamps = new Set(
+            session.measurements.map(m => {
+                const d = new Date(m.timestamp);
+                d.setSeconds(0, 0);
+                return d.getTime();
+            })
+        );
+        for (let dayOffset = 0; dayOffset < session.numberOfDays; dayOffset++) {
+            const currentDate = new Date(session.startDate);
+            currentDate.setDate(currentDate.getDate() + dayOffset);
+            currentDate.setHours(0, 0, 0, 0);
+            for (const timeOfDay of session.timesOfDay) {
+                const slot = new Date(currentDate);
+                slot.setHours(timeOfDay.getHours(), timeOfDay.getMinutes(), 0, 0);
+                const slotTime = slot.getTime();
+                if (!existingTimestamps.has(slotTime)) {
+                    setSelectedMeasurementTime(slot);
+                    return;
+                }
+            }
+        }
+        setSelectedMeasurementTime(null);
+    }, [session]);
 
     useFocusEffect(
         useCallback(() => {
@@ -324,7 +354,6 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
         await loadSession();
         setSelectedRange('');
         setManualValue('');
-        setSelectedMeasurementTime(null);
     };
 
     const handleRemoveMeasurement = async (measurementId: string) => {
@@ -333,8 +362,39 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
         await loadSession();
     };
 
+    const getNextMeasurementSlot = (): Date | null => {
+        if (!session) return null;
+
+        const existingTimestamps = new Set(
+            session.measurements.map(m => {
+                const d = new Date(m.timestamp);
+                d.setSeconds(0, 0);
+                return d.getTime();
+            })
+        );
+
+        for (let dayOffset = 0; dayOffset < session.numberOfDays; dayOffset++) {
+            const currentDate = new Date(session.startDate);
+            currentDate.setDate(currentDate.getDate() + dayOffset);
+            currentDate.setHours(0, 0, 0, 0);
+
+            for (const timeOfDay of session.timesOfDay) {
+                const slot = new Date(currentDate);
+                slot.setHours(timeOfDay.getHours(), timeOfDay.getMinutes(), 0, 0);
+
+                const slotTime = slot.getTime();
+                if (!existingTimestamps.has(slotTime)) {
+                    return slot;
+                }
+            }
+        }
+
+        return null;
+    };
+
     const handleSelectMeasurementTime = () => {
-        setTempMeasurementDate(new Date());
+        const nextSlot = getNextMeasurementSlot();
+        setTempMeasurementDate(nextSlot ?? new Date());
         setShowMeasurementDatePicker(true);
     };
 
@@ -718,6 +778,11 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
                             {/* Graph */}
                             {session.measurements.length > 0 && (
                                 <View style={styles.graphContainer} ref={graphRef} collapsable={false}>
+                                    <Image
+                                        source={{ uri: 'https://tonovet.com/wp-content/themes/suunta/images/logo_tonovet-2.png' }}
+                                        style={styles.graphLogo}
+                                        resizeMode="contain"
+                                    />
                                     <Text style={styles.sectionTitle}>Measurement Graph</Text>
                                     <View style={styles.graphWrapper}>
                                         <LineChart
@@ -807,7 +872,7 @@ const IOPMeasurement = ({ navigation }: IOPMeasurementProps) => {
                             )}
 
                             {/* Measurement Time Selection */}
-                            <Text style={styles.sectionTitle}>Measurement Time</Text>
+                            <Text style={styles.sectionTitle}>Measurement Time (tap to change)</Text>
                             <TouchableOpacity
                                 style={styles.dateTimeSelector}
                                 onPress={handleSelectMeasurementTime}
