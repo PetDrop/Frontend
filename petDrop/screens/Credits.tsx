@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Image, NativeScrollEvent, NativeSyntheticEvent, Dimensions } from 'react-native';
 import TopBottomBar from '../components/TopBottomBar';
+import Header from '../components/Header';
 import { styles } from '../styles/Credits.styles';
 import { NavigationProp } from '@react-navigation/native';
 import { ScreenEnum } from '../GlobalStyles';
@@ -47,6 +48,9 @@ const Credits = ({ navigation }: { navigation: NavigationProp<any> }) => {
 
     return (
         <View style={styles.container}>
+            <View style={styles.headerWrapper}>
+                <Header navigation={navigation} />
+            </View>
             <Text style={styles.header}>{`Credits`}</Text>
 
             {/* horizontal scrollview for authors */}

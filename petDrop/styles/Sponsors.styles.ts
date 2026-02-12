@@ -9,17 +9,21 @@ export const styles = StyleSheet.create({
         backgroundColor: Color.colorFloralwhite,
         alignItems: 'center'
     },
+    headerWrapper: {
+        marginTop: height * 0.05,
+        marginLeft: width * -0.35,
+    },
     header: {
         fontSize: FontSize.size_30,
         fontWeight: 'bold',
         fontFamily: FontFamily.juaRegular,
         color: Color.colorCornflowerblue,
-        marginTop: height * 0.11,
+        marginTop: height * -0.02,
     },
     card: {
         width: width * 0.8,
-        height: height * 0.6,
-        marginTop: height * 0.025,
+        height: height * 0.5,
+        marginTop: height * 0.02,
         marginHorizontal: width * 0.1,
         borderRadius: Border.br_14,
         backgroundColor: Color.colorGainsboro_200,
@@ -39,6 +43,7 @@ export const styles = StyleSheet.create({
     },
     description: {
         marginHorizontal: width * 0.05,
+        marginTop: height * -0.07,
         fontSize: FontSize.size_xl,
         fontWeight: 'bold',
         textAlign: 'center',

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, FlatList, Keyboard, Platform } from 'react-native';
 import { Notification } from '../data/dataTypes';
 import styles from '../styles/NotifCard.styles';
+import switchStyles from '../styles/Medications.styles';
 import IntervalSwitch from './ItemSwitch';
 
 type NumberInputProps = {
@@ -76,9 +77,10 @@ type NotifCardProps = {
     onOccurrenceChange?: (n: number) => void;
     onOpenPicker?: (mode: 'date' | 'time', onConfirm: (date: Date) => void) => void;
     onStateChange?: (state: { startDates: Date[], endDates: Date[], times: Date[], repeatInterval: string, occurrences: number }) => void;
+    readonly?: boolean;
 };
 
-export default function NotifCard({ notification, onChange, onDelete, onOccurrenceChange, onOpenPicker, onStateChange }: NotifCardProps) {
+export default function NotifCard({ notification, onChange, onDelete, onOccurrenceChange, onOpenPicker, onStateChange, readonly = false }: NotifCardProps) {
     const [currentAction, setCurrentAction] = React.useState<'addStart' | 'addEnd' | 'addTime'>();
     const [occurrences, setOccurrences] = useState<number>(1);
     const [localRepeatInterval, setLocalRepeatInterval] = useState<string>(notification.repeatInterval || 'daily');
@@ -261,16 +263,22 @@ export default function NotifCard({ notification, onChange, onDelete, onOccurren
     return (
         <View style={styles.container}>
             <View style={styles.intervalSwitchContainer}>
-                <IntervalSwitch
-                    data={[{ name: 'daily' }, { name: 'weekly' }, { name: 'monthly' }]}
-                    onSwitch={item => {
-                        const name = item.name;
-                        setLocalRepeatInterval(name);
-                    }}
-                    selectedItem={{ name: localRepeatInterval }}
-                    switchItem={'Interval'}
-                    text={localRepeatInterval}
-                />
+                {readonly ? (
+                    <View style={switchStyles.switchButton}>
+                        <Text style={switchStyles.switchText}>{localRepeatInterval}</Text>
+                    </View>
+                ) : (
+                    <IntervalSwitch
+                        data={[{ name: 'daily' }, { name: 'weekly' }, { name: 'monthly' }]}
+                        onSwitch={item => {
+                            const name = item.name;
+                            setLocalRepeatInterval(name);
+                        }}
+                        selectedItem={{ name: localRepeatInterval }}
+                        switchItem={'Interval'}
+                        text={localRepeatInterval}
+                    />
+                )}
             </View>
             {renderIntervalSection()}
             <NotificationTimes times={localTimes} onAddTime={() => showPicker('addTime', 'time')} onRemoveTime={removeTime} />

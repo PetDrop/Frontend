@@ -269,6 +269,21 @@ export const styles = StyleSheet.create({
         fontFamily: FontFamily.juaRegular,
         color: Color.colorDarkslateblue,
     },
+    cancelButton: {
+        backgroundColor: Color.colorFirebrick,
+        borderRadius: Border.br_10,
+        paddingVertical: height * 0.02,
+        paddingHorizontal: width * 0.1,
+        marginTop: height * 0.02,
+        alignItems: 'center',
+        marginHorizontal: width * 0.05,
+    },
+    cancelButtonText: {
+        fontSize: FontSize.size_xl,
+        fontFamily: FontFamily.juaRegular,
+        color: Color.colorWhite,
+        fontWeight: 'bold',
+    },
 });
 
 export default styles;
