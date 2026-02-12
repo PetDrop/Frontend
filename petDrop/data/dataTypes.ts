@@ -16,6 +16,7 @@ export interface Pet {
     name: string,
     image: string,
     age: number,
+    species: string,
     breed: string,
     address: string,
     vet: string,
@@ -81,7 +82,7 @@ export interface IOPMeasurementSession {
 
 // global default values to avoid having to repeatedly create these in various files
 export const emptyAccount: Account = { id: '', username: '', email: '', password: '', sharedUsers: [], usersSharedWith: [], pets: [], sharedPets: [], image: '', expoPushToken: '' }
-export const emptyPet: Pet = { id: '', name: '', image: '', age: 0, breed: '', address: '', vet: '', vetPhone: '', medications: [] };
+export const emptyPet: Pet = { id: '', name: '', image: '', age: 0, species: '', breed: '', address: '', vet: '', vetPhone: '', medications: [] };
 export const emptyNotification: Notification = { id: '', ownerUsername: '', title: 'Reminder to Administer Medication', body: `It's time to give petName their medName!`, data: {}, nextRuns: [], finalRuns: [], repeatInterval: '' };
 export const emptyMed: Medication = { id: '', name: '', color: '', description: '', notifications: [], range: 4 };
 export const emptySponsorMed: SponsorMedication = { id: '', name: '', instructions: [], videoLink: '' };

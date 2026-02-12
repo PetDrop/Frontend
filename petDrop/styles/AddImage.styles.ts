@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
         borderWidth: 10,
         borderColor: Color.colorLightskyblue,
         borderRadius: Border.br_31,
+        zIndex: 1,
     },
     plusSign: {
         marginTop: height * 0.05,
@@ -43,6 +44,25 @@ const styles = StyleSheet.create({
         height: height * 0.15,
         top: height * 0.012,
         left: width * 0.025
+    },
+    imageWrapper: {
+        width: width * 0.375,
+        height: height * 0.173,
+        position: 'relative',
+    },
+    clearButton: {
+        position: 'absolute',
+        top: 4,
+        right: 4,
+        padding: 6,
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        borderRadius: 14,
+        zIndex: 2,
+        elevation: 5,
+    },
+    clearButtonIcon: {
+        width: 22,
+        height: 22,
     },
 });
 

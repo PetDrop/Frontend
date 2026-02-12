@@ -203,7 +203,7 @@ const Profile = ({ navigation }: ProfileType) => {
         <Text style={styles.title}>{`${account.username}'s Profile`}</Text>
 
         {/* profile picture */}
-        <AddImage onPressFunction={addImage} containerStyle={styles.addPictureContainer} uri={image} />
+        <AddImage onPressFunction={addImage} containerStyle={styles.addPictureContainer} source={image} onClearImage={() => setImage('')} />
 
 
         {/* text inputs */}

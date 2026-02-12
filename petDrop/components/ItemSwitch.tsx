@@ -2,6 +2,9 @@ import * as React from 'react';
 import { useState } from 'react';
 import { FlatList, Image, Modal, Pressable, Text, TouchableOpacity, View } from 'react-native';
 import styles from '../styles/Medications.styles';
+import { isValidImageUri } from '../utils/imageUtils';
+
+const DEFAULT_PET_IMAGE = require('../assets/default_dog.png');
 
 interface ItemSwitchProps {
 	text: string;
@@ -22,12 +25,14 @@ const ItemSwitch = ({ text, selectedItem, data, onSwitch, switchItem }: ItemSwit
 	// if switch is for pets, then put the image portion else don't
 	let image;
 	if (switchItem === 'Pet') {
-		// the following should always be able to set imageString to selectedItem.image
 		const imageString = selectedItem.image ? selectedItem.image : '';
+		const imageSource = isValidImageUri(imageString)
+			? { uri: imageString }
+			: DEFAULT_PET_IMAGE;
 		image =
 			<View>
 				<View style={styles.imageOutline}>
-					<Image src={imageString} style={styles.itemImage} />
+					<Image source={imageSource} style={styles.itemImage} />
 				</View>
 			</View>;
 	}

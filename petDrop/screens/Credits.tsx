@@ -13,25 +13,25 @@ const authors = [
         id: '1',
         name: 'Jesus Diaz Bujan',
         title: 'App Creator',
-        image: require('../assets/blue_dog_big.png'),
+        image: require('../assets/default_dog.png'),
     },
     {
         id: '2',
         name: 'Emily Peshke',
         title: 'App Designer',
-        image: require('../assets/blue_dog_big.png'),
+        image: require('../assets/default_dog.png'),
     },
     {
         id: '3',
         name: 'Jesse Williams',
         title: 'App Developer',
-        image: require('../assets/blue_dog_big.png'),
+        image: require('../assets/default_dog.png'),
     },
     {
         id: '4',
         name: 'Blake Bryan',
         title: 'App Developer',
-        image: require('../assets/blue_dog_big.png'),
+        image: require('../assets/default_dog.png'),
     },
 ];
 

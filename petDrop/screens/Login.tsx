@@ -168,7 +168,7 @@ const Login = (props: LoginType) => {
                     <View>
                         <Image
                             style={styles.dogImage}
-                            source={require('../assets/blue_dog_big.png')}
+                            source={require('../assets/default_dog.png')}
                         />
                         {/* Blue Circle */}
                         <BlueCircleBig

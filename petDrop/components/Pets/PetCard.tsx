@@ -6,6 +6,14 @@ import AddMedicationButton from '../../components/CustomButton';
 import { Account, Pet } from '../../data/dataTypes';
 import { NavigationProp } from '@react-navigation/core';
 import { Color } from '../../GlobalStyles';
+import { isValidImageUri } from '../../utils/imageUtils';
+
+const DEFAULT_IMAGES: Record<string, number> = {
+	dog: require('../../assets/default_dog.png'),
+	cat: require('../../assets/default_cat.png'),
+	horse: require('../../assets/default_horse.png'),
+	rabbit: require('../../assets/default_rabbit.png'),
+};
 
 type PetCardProps = {
 	pet: Pet;
@@ -15,10 +23,14 @@ type PetCardProps = {
 }
 
 const PetCard = ({ pet, account, onPressFunction, navigation }: PetCardProps) => {
+	const imageSource = isValidImageUri(pet.image)
+		? { uri: pet.image }
+		: DEFAULT_IMAGES[pet.species?.toLowerCase()] ?? DEFAULT_IMAGES.dog;
+
 	return (
 		<View style={styles.petCard}>
 			<View style={styles.petHeader}>
-				<Image src={pet.image} style={styles.petImage} />
+				<Image source={imageSource} style={styles.petImage} />
 				<View style={styles.imageOutline} />
 				<View style={styles.petInfo}>
 					<Text style={styles.petName}>{pet.name}</Text>
