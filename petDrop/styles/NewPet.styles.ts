@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
         backgroundColor: Color.colorFloralwhite,
     },
     scrollContainer: {
-        paddingBottom: height * 0.7,
+        paddingBottom: height * 0.8,
     },
     nameTypo: {
         textAlign: "left",
@@ -76,12 +76,12 @@ const styles = StyleSheet.create({
 		color: Color.colorCornflowerblue,
 	},
     deleteButtonContainer: {
-        marginTop: height * 0.875,
+        marginTop: height * 0.95,
         marginLeft: width * 0.05,
         position: 'absolute',
     },
     submitButtonContainer: {
-        marginTop: height * 0.875,
+        marginTop: height * 0.95,
         marginLeft: width * 0.65,
         position: 'absolute',
     },

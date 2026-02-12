@@ -11,6 +11,7 @@ export type NewPetAddButtonType = {
 
 const NewPetAddButton = ({ innerText, initialValue, inputFieldsSetter }: NewPetAddButtonType) => {
   const [input, setInput] = useState('');
+  const { height } = Dimensions.get('window');
 
   useEffect(() => {
     setInput(initialValue);
@@ -21,6 +22,7 @@ const NewPetAddButton = ({ innerText, initialValue, inputFieldsSetter }: NewPetA
       style={[styles.textInput]}
       placeholder={`Enter ${innerText}`}
       placeholderTextColor='#A9A9A9'
+      multiline={true}
       value={input}
       onChangeText={(input) => {
         setInput(input);

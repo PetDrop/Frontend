@@ -77,7 +77,7 @@ export enum ScreenEnum {
 };
 
 export const petImages: { [key: string]: any } = {
-  sparky: require("./assets/blue_dog_big.png"),
+  sparky: require("./assets/default_dog.png"),
   blue: require("./assets/pink_dog_big.png"),
   small_blue: require("./assets/pink_dog_small.png"),
   small_sparky: require("./assets/blue_dog_small.png"),

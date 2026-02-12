@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     ],
   },
   textInput: {
-    height: height * 0.06,
+    minHeight: height * 0.06,
     borderWidth: Border.br_4,
     borderColor: Color.colorCornflowerblue,
     borderRadius: Border.br_14,

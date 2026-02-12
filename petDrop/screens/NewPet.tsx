@@ -16,22 +16,42 @@ import { useAccount } from "../context/AccountContext";
 import HelpButton from "../components/HelpButton";
 import HelpPopup from "../components/HelpPopup";
 import { helpText } from "../data/helpText";
+import { isValidImageUri } from "../utils/imageUtils";
+
+const DEFAULT_IMAGES: Record<string, number> = {
+  dog: require("../assets/default_dog.png"),
+  cat: require("../assets/default_cat.png"),
+  horse: require("../assets/default_horse.png"),
+  rabbit: require("../assets/default_rabbit.png"),
+};
 
 type NewPetType = {
   navigation: NavigationProp<any>;
   route: any;
 }
 
+const VALID_SPECIES = ['dog', 'cat', 'horse', 'rabbit'];
+const INPUT_KEYS = {
+  PET_NAME: 'pet name',
+  PET_AGE: 'pet age (years)',
+  PET_SPECIES: 'pet species (dog, cat, horse, rabbit)',
+  PET_BREED: 'pet breed',
+  PET_ADDRESS: 'pet address',
+  VET_EMAIL: 'vet email',
+  VET_PHONE: 'vet phone',
+} as const;
+
 const NewPet = ({ navigation, route }: NewPetType) => {
   const { account, setAccount } = useAccount();
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState<string | number>('');
   const [inputFields, setInputFields] = useState(new Map<string, string>([
-    ['pet name', ''],
-    ['pet age', ''],
-    ['pet breed', ''],
-    ['pet address', ''],
-    ['pet vet', ''],
-    ['vet phone', ''],
+    [INPUT_KEYS.PET_NAME, ''],
+    [INPUT_KEYS.PET_AGE, ''],
+    [INPUT_KEYS.PET_SPECIES, ''],
+    [INPUT_KEYS.PET_BREED, ''],
+    [INPUT_KEYS.PET_ADDRESS, ''],
+    [INPUT_KEYS.VET_EMAIL, ''],
+    [INPUT_KEYS.VET_PHONE, ''],
   ]));
   const [showHelp, setShowHelp] = useState(false);
 
@@ -42,19 +62,29 @@ const NewPet = ({ navigation, route }: NewPetType) => {
     setInputFields((prevState) => new Map(prevState.set(key, value)));
   }
 
+  // function for determining the image to use for the pet
+  // if the image is not provided or invalid (e.g. "1.png"), use a placeholder based on species
+  function determineImage(image: string, species: string): string | number {
+    if (isValidImageUri(image)) {
+      return image;
+    }
+    return DEFAULT_IMAGES[species] ?? DEFAULT_IMAGES.dog;
+  }
+
   // get pet from param in case one is being edited (if undefined then creating new pet)
   const petBeingEdited: Pet = route.params?.pet;
 
   useEffect(() => {
     // pet being defined means it was passed as a param -> it's being edited, not creating a new one
     if (petBeingEdited) {
-      setImage(petBeingEdited.image);
-      updateInputFields('pet name', petBeingEdited.name);
-      updateInputFields('pet age', `${petBeingEdited.age}`);
-      updateInputFields('pet breed', petBeingEdited.breed);
-      updateInputFields('pet address', petBeingEdited.address);
-      updateInputFields('pet vet', petBeingEdited.vet);
-      updateInputFields('vet phone', petBeingEdited.vetPhone);
+      setImage(determineImage(petBeingEdited.image, petBeingEdited.species));
+      updateInputFields(INPUT_KEYS.PET_NAME, petBeingEdited.name);
+      updateInputFields(INPUT_KEYS.PET_AGE, `${petBeingEdited.age}`);
+      updateInputFields(INPUT_KEYS.PET_SPECIES, petBeingEdited.species);
+      updateInputFields(INPUT_KEYS.PET_BREED, petBeingEdited.breed);
+      updateInputFields(INPUT_KEYS.PET_ADDRESS, petBeingEdited.address);
+      updateInputFields(INPUT_KEYS.VET_EMAIL, petBeingEdited.vet);
+      updateInputFields(INPUT_KEYS.VET_PHONE, petBeingEdited.vetPhone);
     }
   }, []);
 
@@ -63,21 +93,27 @@ const NewPet = ({ navigation, route }: NewPetType) => {
       console.log('at least one input field has no entered value');
       alert('You must input all info for your pet. Tap the blue buttons along the right side of the screen to get text boxes to type in.');
     } else {
+      const species = inputFields.get(INPUT_KEYS.PET_SPECIES)?.trim().toLowerCase();
+      if (!species || !VALID_SPECIES.includes(species)) {
+        alert(`Species must be one of: ${VALID_SPECIES.join(', ')}`);
+        return;
+      }
       try {
-        let ageString: string | undefined = inputFields.get('pet age');
+        let ageString: string | undefined = inputFields.get(INPUT_KEYS.PET_AGE);
         let age: number = Number.parseInt(ageString ? ageString : '0');
         let id: string = petBeingEdited ? petBeingEdited.id : ObjectID();
         const url: string = petBeingEdited ? UPDATE_PET : ADD_PET;
         const method: string = petBeingEdited ? 'PUT' : 'POST';
         let response = await httpRequest(url, method, JSON.stringify({
           id: id,
-          name: inputFields.get('pet name'),
-          image: image,
+          name: inputFields.get(INPUT_KEYS.PET_NAME),
+          image: typeof image === 'string' ? image : '',
           age: age,
-          breed: inputFields.get('pet breed'),
-          address: inputFields.get('pet address'),
-          vet: inputFields.get('pet vet'),
-          vetPhone: inputFields.get('vet phone'),
+          species: species!,
+          breed: inputFields.get(INPUT_KEYS.PET_BREED),
+          address: inputFields.get(INPUT_KEYS.PET_ADDRESS),
+          vet: inputFields.get(INPUT_KEYS.VET_EMAIL),
+          vetPhone: inputFields.get(INPUT_KEYS.VET_PHONE),
           medications: petBeingEdited ? petBeingEdited.medications : []
         }), false);
         if (response.ok) {
@@ -152,11 +188,24 @@ const NewPet = ({ navigation, route }: NewPetType) => {
         <Text style={[styles.newPetAddPet, styles.addPetTypo]}>Add Pet</Text>
 
         {/* Add Image Circle w/ Plus Sign */}
-        <AddPetImage onPressFunction={addImage} containerStyle={styles.addImageContainer} uri={image} />
+        <AddPetImage
+          onPressFunction={addImage}
+          containerStyle={styles.addImageContainer}
+          source={image}
+          onClearImage={() => {
+            const species = inputFields.get(INPUT_KEYS.PET_SPECIES)?.trim().toLowerCase();
+            setImage(DEFAULT_IMAGES[species || 'dog'] ?? DEFAULT_IMAGES.dog);
+          }}
+        />
 
         {/* Pet Info Input Section */}
         <Text style={[styles.newPetName, styles.nameTypo]}>Pet Info</Text>
         <AddButtons inputFields={inputFields} inputFieldsSetter={updateInputFields} />
+
+        {/* submit button */}
+        <View style={styles.submitButtonContainer}>
+          <SubmitButton disabled={false} onPressFunction={Submit} innerText={'Submit'} color={Color.colorCornflowerblue} />
+        </View>
 
         {/* delete button */}
         {petBeingEdited && (
@@ -164,11 +213,6 @@ const NewPet = ({ navigation, route }: NewPetType) => {
             <DeleteButton disabled={false} onPressFunction={Delete} innerText={'Delete'} color={Color.colorFirebrick} />
           </View>
         )}
-
-        {/* submit button */}
-        <View style={styles.submitButtonContainer}>
-          <SubmitButton disabled={false} onPressFunction={Submit} innerText={'Submit'} color={Color.colorCornflowerblue} />
-        </View>
 
       </ScrollView>
 

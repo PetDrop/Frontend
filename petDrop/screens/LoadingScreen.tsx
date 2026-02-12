@@ -12,7 +12,7 @@ const LoadingScreen = () => {
       <Image
         style={styles.untitledArtwork52Copy1}
         contentFit="cover"
-        source={require("../assets/blue_dog_big.png")}
+        source={require("../assets/default_dog.png")}
       />
       <BlueCircleBig style={styles.subtractIcon}/>
       <Text style={[styles.petdrop, styles.petdropFlexBox]}>petdrop.</Text>
