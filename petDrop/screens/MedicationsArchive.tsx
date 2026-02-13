@@ -47,6 +47,8 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 		);
 	}, [account, selectedPetId]);
 
+	const isSharedPet = account.sharedPets?.some((p) => p.id === selectedPet.id) ?? false;
+
 	// format the notifications' nextRuns and finalRuns for the database
 	const formatNotifs = (notifs: Notification[]) => {
 		return notifs.map((notif) => {
@@ -145,6 +147,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 			medication={medication}
 			pet={selectedPet}
 			showingFunction={editMedication}
+			readonly={isSharedPet}
 		/>
 	));
 
@@ -169,7 +172,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 
 				{medicationCards}
 
-				{selectedPet.id !== '' && (
+				{selectedPet.id !== '' && !isSharedPet && (
 					<View style={styles.addMedicationButton}>
 						<AddMedicationButton
 							disabled={false}
@@ -199,7 +202,7 @@ const MedicationsArchive = ({ navigation, route }: MedicationsArchiveProps) => {
 				med={med}
 				medCopy={medCopy}
 				setMedCopy={setMedCopy}
-				readonly={false}
+				readonly={isSharedPet}
 				navigation={navigation}
 			/>
 

@@ -235,8 +235,12 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
       if (state) {
         const { nextRuns, finalRuns } = generateNotificationRuns(state);
         // Use string repeatInterval directly for the notification object
-        // Create data object with medName for navigation
-        const notificationData = { medName: { value: medCopy.name } };
+        // Create data object with medName for navigation, plus owner/pet for administered notification
+        const notificationData = { 
+          medName: { value: medCopy.name }, 
+          ownerUsername: account.username,
+          petName: pet.name 
+        };
         
         return {
           ...notif,

@@ -9,9 +9,10 @@ interface MedicationCardProps {
 	medication: Medication;
 	pet: Pet;
 	showingFunction: Function;
+	readonly?: boolean;
 }
 
-const MedicationCard = ({ medication, pet, showingFunction }: MedicationCardProps) => {
+const MedicationCard = ({ medication, pet, showingFunction, readonly = false }: MedicationCardProps) => {
 	const remindersText = useMemo(() => {
 		if (medication.notifications.length > 0) {
 			// Get unique times from nextRuns
@@ -38,9 +39,11 @@ const MedicationCard = ({ medication, pet, showingFunction }: MedicationCardProp
 					<View style={[styles.medicationColor, { backgroundColor: medication.color }]}></View>
 					<Text style={styles.medicationTitle}>{medication.name}</Text>
 				</View>
-				<Pressable onPress={() => {showingFunction(medication)}}>
-					<EditIcon style={styles.editIcon} />
-				</Pressable>
+				{!readonly && (
+					<Pressable onPress={() => {showingFunction(medication)}}>
+						<EditIcon style={styles.editIcon} />
+					</Pressable>
+				)}
 			</View>
 
 			{/* Medication Body */}

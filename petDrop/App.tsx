@@ -7,7 +7,7 @@ type RootStackParamList = {
   NewPet: undefined;
   Reminders: undefined;
   MedicationsArchive: undefined;
-  Instructions: { medName: string; pushToken: string };
+  Instructions: { medName: string; pushToken: string; ownerUsername?: string; petName?: string };
   Sponsors: undefined;
   Credits: undefined;
   LoadingScreen: undefined;
@@ -108,7 +108,7 @@ const AppContent = () => {
   const navigationRef = React.useRef<any>(null);
   const [hideSplashScreen, setHideSplashScreen] = useState(true);
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined);
-  const [pendingNavigation, setPendingNavigation] = useState<{medName: string, pushToken: string} | null>(null);
+  const [pendingNavigation, setPendingNavigation] = useState<{medName: string, pushToken: string, ownerUsername?: string, petName?: string} | null>(null);
   const { pushToken, setPushToken } = usePushToken();
   const { account, setAccount } = useAccount();
 
@@ -182,22 +182,23 @@ const AppContent = () => {
 
   // Function to handle notification response
   const handleNotificationResponse = (response: any) => {
-    const medNameData = response.notification.request.content.data?.medName as any;
+    const data = response.notification.request.content.data;
+    const medNameData = data?.medName as any;
     const medName = medNameData?.value || medNameData;
-    
+    const ownerUsername = data?.ownerUsername as string | undefined;
+    const petName = data?.petName as string | undefined;
+
     if (medName && navigationRef.current) {
       // Check if user is already logged in by checking if we're passed the login screen
       const currentRoute = navigationRef.current.getCurrentRoute();
-      
+      const navParams = { medName, pushToken: pushToken, ownerUsername, petName };
+
       if (currentRoute?.name !== 'Login' && currentRoute?.name !== 'Signup') {
         // User is already logged in, navigate directly to Instructions
-        navigationRef.current.navigate('Instructions', {
-          medName: medName,
-          pushToken: pushToken
-        });
+        navigationRef.current.navigate('Instructions', navParams);
       } else {
         // User is not logged in, set pending navigation and go to Login
-        setPendingNavigation({ medName, pushToken: pushToken });
+        setPendingNavigation(navParams);
         navigationRef.current.navigate('Login');
       }
     } else {

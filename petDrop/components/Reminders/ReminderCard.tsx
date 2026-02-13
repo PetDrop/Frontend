@@ -9,9 +9,10 @@ type ReminderCardProps = {
 	med: Medication;
 	notif: Notification;
 	showingFunction: Function;
+	readonly?: boolean;
 }
 
-const ReminderCard = ({ med, notif, showingFunction }: ReminderCardProps) => {
+const ReminderCard = ({ med, notif, showingFunction, readonly = false }: ReminderCardProps) => {
 	const notificationsString = useMemo(() => {
 		if (notif.nextRuns.length > 0) {
 			// Get unique times from nextRuns
@@ -36,9 +37,11 @@ const ReminderCard = ({ med, notif, showingFunction }: ReminderCardProps) => {
 					<View style={[styles.reminderColor, { backgroundColor: med.color }]} />
 					<Text style={styles.reminderTitle}>{med.name}</Text>
 				</View>
-				<Pressable onPress={() => { showingFunction(notif, med) }}>
-					<EditIcon style={styles.editIcon} />
-				</Pressable>
+				{!readonly && (
+					<Pressable onPress={() => { showingFunction(notif, med) }}>
+						<EditIcon style={styles.editIcon} />
+					</Pressable>
+				)}
 			</View>
 			<View style={styles.body}>
 				<Text style={styles.reminderDetails}>

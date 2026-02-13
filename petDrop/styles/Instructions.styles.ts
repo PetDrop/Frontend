@@ -34,6 +34,21 @@ export const styles = StyleSheet.create({
 	video: {
 		alignContent: 'center'
 	  },
+	administeredButton: {
+		backgroundColor: Color.colorCornflowerblue,
+		paddingHorizontal: width * 0.05,
+		paddingVertical: height * 0.015,
+		borderRadius: width * 0.02,
+		marginTop: height * 0.02,
+		marginBottom: height * 0.02,
+		marginHorizontal: width * 0.05,
+		alignItems: 'center',
+	},
+	administeredButtonText: {
+		color: 'white',
+		fontSize: FontSize.size_base,
+		fontWeight: 'bold',
+	},
 });
 
 export default styles;
