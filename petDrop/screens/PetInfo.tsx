@@ -98,7 +98,8 @@ const PetInfo = ({ navigation }: { navigation: NavigationProp<any> }) => {
               pet={pet}
               account={account}
               onPressFunction={() => { }}
-              navigation={navigation} />
+              navigation={navigation}
+              readonly={true} />
           </View>
         ))}
         <AddNewPetButton navigation={navigation} />

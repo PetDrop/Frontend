@@ -44,6 +44,8 @@ const Reminders = ({ navigation, route }: Props) => {
     );
   }, [account, selectedPetId]);
 
+  const isSharedPet = account.sharedPets?.some((p) => p.id === selectedPet.id) ?? false;
+
   // only when notification is updated should notificationCopy be reset
   useEffect(() => {
     setNotificationCopy(structuredClone(notification));
@@ -118,10 +120,11 @@ const Reminders = ({ navigation, route }: Props) => {
           med={med}
           notif={notif}
           showingFunction={editNotification}
+          readonly={isSharedPet}
         />
       ))
     );
-  }, [selectedPet.medications, editNotification]);
+  }, [selectedPet.medications, editNotification, isSharedPet]);
 
   return (
     <View style={styles.container}>
@@ -145,7 +148,7 @@ const Reminders = ({ navigation, route }: Props) => {
         {reminderCards}
 
         {/* Add Reminder Button */}
-        {selectedPet.id !== '' && selectedPet.medications.length > 0 ? (
+        {selectedPet.id !== '' && !isSharedPet && selectedPet.medications.length > 0 ? (
           <View style={styles.addReminderButton}>
             <AddReminderButton
               disabled={false}

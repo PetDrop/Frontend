@@ -74,10 +74,19 @@ const NewPet = ({ navigation, route }: NewPetType) => {
 
   // get pet from param in case one is being edited (if undefined then creating new pet)
   const petBeingEdited: Pet = route.params?.pet;
+  const isSharedPet = petBeingEdited ? (account.sharedPets?.some((p) => p.id === petBeingEdited.id) ?? false) : false;
+
+  useEffect(() => {
+    // shared pets are readonly - redirect back
+    if (isSharedPet) {
+      navigation.navigate('PetInfo');
+      return;
+    }
+  }, [isSharedPet, navigation]);
 
   useEffect(() => {
     // pet being defined means it was passed as a param -> it's being edited, not creating a new one
-    if (petBeingEdited) {
+    if (petBeingEdited && !isSharedPet) {
       setImage(determineImage(petBeingEdited.image, petBeingEdited.species));
       updateInputFields(INPUT_KEYS.PET_NAME, petBeingEdited.name);
       updateInputFields(INPUT_KEYS.PET_AGE, `${petBeingEdited.age}`);
@@ -90,6 +99,7 @@ const NewPet = ({ navigation, route }: NewPetType) => {
   }, []);
 
   const Submit = async () => {
+    if (isSharedPet) return;
     if (!Array.from(inputFields.values()).every((value: string) => value !== '')) {
       console.log('at least one input field has no entered value');
       alert('You must input all info for your pet. Tap the blue buttons along the right side of the screen to get text boxes to type in.');
@@ -169,6 +179,7 @@ const NewPet = ({ navigation, route }: NewPetType) => {
   };
 
   const Delete = async () => {
+    if (isSharedPet) return;
     // TODO: ask for confirmation
     let response = await httpRequest(DELETE_PET_BY_ID + petBeingEdited.id, 'DELETE', '', false);
     if (response.ok) {
@@ -195,6 +206,10 @@ const NewPet = ({ navigation, route }: NewPetType) => {
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
+  }
+
+  if (isSharedPet) {
+    return null;
   }
 
   return (

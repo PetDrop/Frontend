@@ -21,9 +21,10 @@ type PetCardProps = {
 	account: Account;
 	onPressFunction: () => void;
 	navigation: NavigationProp<any>;
+	readonly?: boolean;
 }
 
-const PetCard = ({ pet, account, onPressFunction, navigation }: PetCardProps) => {
+const PetCard = ({ pet, account, onPressFunction, navigation, readonly = false }: PetCardProps) => {
 	const imageSource = isValidImageUri(pet.image)
 		? { uri: pet.image }
 		: DEFAULT_IMAGES[pet.species?.toLowerCase()] ?? DEFAULT_IMAGES.dog;
@@ -43,9 +44,11 @@ const PetCard = ({ pet, account, onPressFunction, navigation }: PetCardProps) =>
 					<Text style={styles.petDetails}>Vet: {pet.vet}</Text>
 					<Text style={styles.petDetails}>{pet.vetPhone ? formatPhoneDisplay(pet.vetPhone) : ''}</Text>
 				</View>
-				<Pressable onPress={() => { navigation.navigate('NewPet', { pet: pet }) }}>
-					<EditIcon style={styles.editIcon} />
-				</Pressable>
+				{!readonly && (
+					<Pressable onPress={() => { navigation.navigate('NewPet', { pet: pet }) }}>
+						<EditIcon style={styles.editIcon} />
+					</Pressable>
+				)}
 			</View>
 			<Text style={styles.medicationsTitle}>Medications:</Text>
 			<View style={styles.medicationsContainer}>
@@ -61,9 +64,11 @@ const PetCard = ({ pet, account, onPressFunction, navigation }: PetCardProps) =>
 					</View>
 				))}
 			</View>
-			<View style={styles.addMedicationButton}>
-				<AddMedicationButton disabled={false} onPressFunction={onPressFunction} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
-			</View>
+			{!readonly && (
+				<View style={styles.addMedicationButton}>
+					<AddMedicationButton disabled={false} onPressFunction={onPressFunction} innerText={'+ ADD'} color={Color.colorCornflowerblue} />
+				</View>
+			)}
 			<View style={styles.separatorBar} />
 		</View>
 	);

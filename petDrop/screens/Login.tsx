@@ -85,24 +85,25 @@ const Login = (props: LoginType) => {
         refreshCredentials();
     }, [refreshCredentials]));
 
-    // populates the account's sharedPets with all the pets shared with them
-    const addSharedInfo = async () => {
+    // populates sharedPets with pets from users who shared their info with the logged-in user
+    const addSharedInfo = async (loggedInAccount: Account): Promise<Account['sharedPets']> => {
+        const sharedPets: Account['sharedPets'] = [];
+        const sharedUsers = loggedInAccount.sharedUsers || [];
         // check each account they requested info from
-        account.sharedUsers.forEach(async (sharedUser) => {
+        for (const sharedUser of sharedUsers) {
             const response = await httpRequest(GET_ACCOUNT_BY_USERNAME + sharedUser, 'GET', '', false);
             if (response.ok) {
-                // if account found check if they volunteered their info
                 const sharedAccount: Account = await response.json();
-                if (sharedAccount.usersSharedWith.includes(account.username)) {
+                // only add pets if they volunteered (bidirectional: they have us in usersSharedWith)
+                if (sharedAccount.usersSharedWith?.includes(loggedInAccount.username)) {
                     const convertedSharedAccount = convertDateStringsToDates(sharedAccount);
-                    setAccount((prev) => {
-                        return { ...prev, sharedPets: prev.sharedPets.concat(convertedSharedAccount.pets) };
-                    });
+                    sharedPets.push(...(convertedSharedAccount.pets || []));
                 }
             } else {
                 console.log('could not find account with username: ' + sharedUser + '\n status code: ' + response.status);
             }
-        })
+        }
+        return sharedPets;
     }
 
     /* handles submit button being pressed
@@ -121,8 +122,8 @@ const Login = (props: LoginType) => {
                 // if account found check its password against the one entered
                 const temp: Account = await response.json();
                 if (temp.password === password) {
-                    // if info is correct, populate the account with shared info
-                    await addSharedInfo();
+                    // fetch pets from users who shared their info with this user
+                    const sharedPets = await addSharedInfo(temp);
                     // Update push token on the account
                     if (pushToken) {
                         temp.expoPushToken = pushToken;
@@ -132,8 +133,8 @@ const Login = (props: LoginType) => {
                             console.log('Failed to update push token on account');
                         }
                     }
-                    // convert date strings to dates and set account context
-                    setAccount(convertDateStringsToDates(temp));
+                    // convert date strings to dates and set account context (include sharedPets)
+                    setAccount(convertDateStringsToDates({ ...temp, sharedPets }));
                     // persist remember-me selection (username only, never password)
                     await saveCredentials(rememberMe, username, password);
                     // handle pending navigation if it exists, otherwise navigate home
