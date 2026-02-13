@@ -26,6 +26,16 @@ const styles = StyleSheet.create({
         fontFamily: FontFamily.jsMathCmbx10,
         position: "absolute",
     },
+    inputFieldsWrapper: {
+        position: 'absolute',
+        top: height * 0.38,
+        left: width * 0.43,
+        width: width * 0.5,
+    },
+    inputFieldsWrapperWithLabels: {
+        left: width * 0.15,
+        width: width * 0.78,
+    },
     newPetName: {
         top: (height * 0.32),
         left: (width * 0.4513),

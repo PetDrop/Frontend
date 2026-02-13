@@ -17,6 +17,7 @@ import HelpButton from "../components/HelpButton";
 import HelpPopup from "../components/HelpPopup";
 import { helpText } from "../data/helpText";
 import { isValidImageUri } from "../utils/imageUtils";
+import { formatPhoneDisplay, isValidAge, isValidEmail, isValidPhone, normalizePhoneInput } from "../utils/validationUtils";
 
 const DEFAULT_IMAGES: Record<string, number> = {
   dog: require("../assets/default_dog.png"),
@@ -34,7 +35,7 @@ const VALID_SPECIES = ['dog', 'cat', 'horse', 'rabbit'];
 const INPUT_KEYS = {
   PET_NAME: 'pet name',
   PET_AGE: 'pet age (years)',
-  PET_SPECIES: 'pet species (dog, cat, horse, rabbit)',
+  PET_SPECIES: 'pet species',
   PET_BREED: 'pet breed',
   PET_ADDRESS: 'pet address',
   VET_EMAIL: 'vet email',
@@ -84,7 +85,7 @@ const NewPet = ({ navigation, route }: NewPetType) => {
       updateInputFields(INPUT_KEYS.PET_BREED, petBeingEdited.breed);
       updateInputFields(INPUT_KEYS.PET_ADDRESS, petBeingEdited.address);
       updateInputFields(INPUT_KEYS.VET_EMAIL, petBeingEdited.vet);
-      updateInputFields(INPUT_KEYS.VET_PHONE, petBeingEdited.vetPhone);
+      updateInputFields(INPUT_KEYS.VET_PHONE, normalizePhoneInput(petBeingEdited.vetPhone));
     }
   }, []);
 
@@ -92,57 +93,78 @@ const NewPet = ({ navigation, route }: NewPetType) => {
     if (!Array.from(inputFields.values()).every((value: string) => value !== '')) {
       console.log('at least one input field has no entered value');
       alert('You must input all info for your pet. Tap the blue buttons along the right side of the screen to get text boxes to type in.');
-    } else {
-      const species = inputFields.get(INPUT_KEYS.PET_SPECIES)?.trim().toLowerCase();
-      if (!species || !VALID_SPECIES.includes(species)) {
-        alert(`Species must be one of: ${VALID_SPECIES.join(', ')}`);
-        return;
-      }
-      try {
-        let ageString: string | undefined = inputFields.get(INPUT_KEYS.PET_AGE);
-        let age: number = Number.parseInt(ageString ? ageString : '0');
-        let id: string = petBeingEdited ? petBeingEdited.id : ObjectID();
-        const url: string = petBeingEdited ? UPDATE_PET : ADD_PET;
-        const method: string = petBeingEdited ? 'PUT' : 'POST';
-        let response = await httpRequest(url, method, JSON.stringify({
-          id: id,
-          name: inputFields.get(INPUT_KEYS.PET_NAME),
-          image: typeof image === 'string' ? image : '',
-          age: age,
-          species: species!,
-          breed: inputFields.get(INPUT_KEYS.PET_BREED),
-          address: inputFields.get(INPUT_KEYS.PET_ADDRESS),
-          vet: inputFields.get(INPUT_KEYS.VET_EMAIL),
-          vetPhone: inputFields.get(INPUT_KEYS.VET_PHONE),
-          medications: petBeingEdited ? petBeingEdited.medications : []
-        }), false);
-        if (response.ok) {
-          // TODO: allow for editing of shared pets
-          let updatedAccountState: Account;
-          if (petBeingEdited) {
-            const updatedPet: Pet = await response.json();
-            updatedAccountState = { ...account, pets: account.pets.map((pet) => pet.id === updatedPet.id ? updatedPet : pet) };
-            setAccount(updatedAccountState);
-          } else {
-            const newPet: Pet = await response.json();
-            updatedAccountState = { ...account, pets: account.pets.concat([newPet]) };
-            setAccount(updatedAccountState);
-          }
-          response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(updatedAccountState), false);
-          if (response.ok) {
-            alert('Submission successful. You have now been redirected to the Pet Info page where you can view it, as well as add medications and reminders for it.');
-            navigation.navigate('PetInfo');
-          } else {
-            console.log('unable to add pet to account');
-            alert('submission failed');
-          }
+      return;
+    }
+
+    const ageResult = isValidAge(inputFields.get(INPUT_KEYS.PET_AGE) ?? '');
+    if (!ageResult.valid) {
+      alert(ageResult.error);
+      return;
+    }
+
+    const emailResult = isValidEmail(inputFields.get(INPUT_KEYS.VET_EMAIL) ?? '');
+    if (!emailResult.valid) {
+      alert(emailResult.error);
+      return;
+    }
+
+    const phoneDigits = normalizePhoneInput(inputFields.get(INPUT_KEYS.VET_PHONE) ?? '');
+    const phoneResult = isValidPhone(phoneDigits);
+    if (!phoneResult.valid) {
+      alert(phoneResult.error);
+      return;
+    }
+
+    const species = inputFields.get(INPUT_KEYS.PET_SPECIES)?.trim().toLowerCase();
+    if (!species || !VALID_SPECIES.includes(species)) {
+      alert(`Species must be one of: ${VALID_SPECIES.join(', ')}`);
+      return;
+    }
+
+    try {
+      const ageString: string | undefined = inputFields.get(INPUT_KEYS.PET_AGE);
+      const age: number = Number.parseInt(ageString ? ageString : '0');
+      const id: string = petBeingEdited ? petBeingEdited.id : ObjectID();
+      const url: string = petBeingEdited ? UPDATE_PET : ADD_PET;
+      const method: string = petBeingEdited ? 'PUT' : 'POST';
+      let response = await httpRequest(url, method, JSON.stringify({
+        id: id,
+        name: inputFields.get(INPUT_KEYS.PET_NAME),
+        image: typeof image === 'string' ? image : '',
+        age: age,
+        species: species!,
+        breed: inputFields.get(INPUT_KEYS.PET_BREED),
+        address: inputFields.get(INPUT_KEYS.PET_ADDRESS),
+        vet: inputFields.get(INPUT_KEYS.VET_EMAIL)?.trim(),
+        vetPhone: phoneDigits,
+        medications: petBeingEdited ? petBeingEdited.medications : []
+      }), false);
+      if (response.ok) {
+        // TODO: allow for editing of shared pets
+        let updatedAccountState: Account;
+        if (petBeingEdited) {
+          const updatedPet: Pet = await response.json();
+          updatedAccountState = { ...account, pets: account.pets.map((pet: Pet) => pet.id === updatedPet.id ? updatedPet : pet) };
+          setAccount(updatedAccountState);
         } else {
-          console.log('unable to write pet to database: status code ' + response.status);
+          const newPet: Pet = await response.json();
+          updatedAccountState = { ...account, pets: account.pets.concat([newPet]) };
+          setAccount(updatedAccountState);
+        }
+        response = await httpRequest(UPDATE_ACCOUNT, 'PUT', JSON.stringify(updatedAccountState), false);
+        if (response.ok) {
+          alert('Submission successful. You have now been redirected to the Pet Info page where you can view it, as well as add medications and reminders for it.');
+          navigation.navigate('PetInfo');
+        } else {
+          console.log('unable to add pet to account');
           alert('submission failed');
         }
-      } catch (error) {
-        console.error(error);
+      } else {
+        console.log('unable to write pet to database: status code ' + response.status);
+        alert('submission failed');
       }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -200,7 +222,23 @@ const NewPet = ({ navigation, route }: NewPetType) => {
 
         {/* Pet Info Input Section */}
         <Text style={[styles.newPetName, styles.nameTypo]}>Pet Info</Text>
-        <AddButtons inputFields={inputFields} inputFieldsSetter={updateInputFields} />
+        <View style={[
+          styles.inputFieldsWrapper,
+          petBeingEdited && styles.inputFieldsWrapperWithLabels,
+        ]}>
+          <AddButtons
+          inputFields={inputFields}
+          inputFieldsSetter={updateInputFields}
+          optionsForField={{ [INPUT_KEYS.PET_SPECIES]: VALID_SPECIES }}
+          fieldConfig={{
+            [INPUT_KEYS.PET_AGE]: { keyboardType: 'number-pad', multiline: false },
+            [INPUT_KEYS.VET_EMAIL]: { keyboardType: 'email-address', multiline: false },
+            [INPUT_KEYS.VET_PHONE]: { keyboardType: 'phone-pad', multiline: false, isPhone: true },
+          }}
+          showLabels={!!petBeingEdited}
+          labelExcludeKey={INPUT_KEYS.PET_NAME}
+          />
+        </View>
 
         {/* submit button */}
         <View style={styles.submitButtonContainer}>

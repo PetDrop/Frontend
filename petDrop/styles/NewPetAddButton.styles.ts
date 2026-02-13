@@ -4,6 +4,31 @@ import { Border, Color, FontFamily, FontSize } from '../GlobalStyles';
 const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+  dropdownButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  dropdownText: {
+    color: Color.colorCornflowerblue,
+    fontFamily: FontFamily.koulenRegular,
+    fontWeight: '700',
+    flex: 1,
+  },
+  dropdownItem: {
+    paddingHorizontal: width * 0.0256,
+    paddingVertical: height * 0.015,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: Color.colorGainsboro_200,
+  },
+  dropdownItemSelected: {
+    backgroundColor: Color.colorLightskyblue,
+  },
+  dropdownItemTextSelected: {
+    color: Color.colorDarkslateblue,
+    fontWeight: '600',
+  },
   newPetAddButtonBlueOval: {
     height: height * 0.06,
     width: '100%',
@@ -49,6 +74,27 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     color: Color.colorCornflowerblue,
     paddingLeft: width * 0.0256,
+  },
+  fieldRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: height * 0.02,
+  },
+  labelSpacer: {
+    width: width * 0.28,
+    marginRight: width * 0.02,
+  },
+  fieldLabel: {
+    width: width * 0.28,
+    marginRight: width * 0.02,
+    fontFamily: FontFamily.koulenRegular,
+    fontSize: FontSize.size_base,
+    color: Color.colorCornflowerblue,
+    fontWeight: '600',
+  },
+  inputInRow: {
+    marginBottom: 0,
+    flex: 1,
   },
 });
 

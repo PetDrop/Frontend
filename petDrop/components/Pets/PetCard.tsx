@@ -7,6 +7,7 @@ import { Account, Pet } from '../../data/dataTypes';
 import { NavigationProp } from '@react-navigation/core';
 import { Color } from '../../GlobalStyles';
 import { isValidImageUri } from '../../utils/imageUtils';
+import { formatPhoneDisplay } from '../../utils/validationUtils';
 
 const DEFAULT_IMAGES: Record<string, number> = {
 	dog: require('../../assets/default_dog.png'),
@@ -40,7 +41,7 @@ const PetCard = ({ pet, account, onPressFunction, navigation }: PetCardProps) =>
 						Address: {pet.address}
 					</Text>
 					<Text style={styles.petDetails}>Vet: {pet.vet}</Text>
-					<Text style={styles.petDetails}>{pet.vetPhone}</Text>
+					<Text style={styles.petDetails}>{pet.vetPhone ? formatPhoneDisplay(pet.vetPhone) : ''}</Text>
 				</View>
 				<Pressable onPress={() => { navigation.navigate('NewPet', { pet: pet }) }}>
 					<EditIcon style={styles.editIcon} />
