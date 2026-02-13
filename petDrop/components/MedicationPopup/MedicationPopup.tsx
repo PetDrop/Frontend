@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingView, Platform, Keyboard, Modal, Dimensions } from "react-native";
+import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingView, Platform, Keyboard, Modal, Dimensions, TouchableOpacity, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import DropdownArrow from "../../assets/dropdown_arrow.svg";
 import styles from '../../styles/MedicationPopup.styles';
@@ -303,11 +303,13 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
 
   if (isActive) {
     return (
-      <Pressable 
-        style={styles.modalBackground}
-        onPress={() => Keyboard.dismiss()}
-      >
-        {/* Background container */}
+      <View style={styles.modalBackground}>
+        {/* Dimmed background - Pressable only here so it doesn't capture scroll gestures from the modal content */}
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={() => Keyboard.dismiss()}
+        />
+        {/* Modal content - not inside Pressable so ScrollView receives scroll gestures */}
         <View style={styles.modalContainer}>
 
           {/* close button */}
@@ -382,7 +384,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
           <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false} nestedScrollEnabled={true}>
 
             {!readonly && (
-              <Pressable
+              <TouchableOpacity
                 style={styles.addReminderButton}
                 onPress={() => {
                   setMedCopy((prev) => {
@@ -392,7 +394,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
                 }}
               >
                 <Text style={styles.addReminderText}>Add Reminder</Text>
-              </Pressable>
+              </TouchableOpacity>
             )}
 
             {/* Notification cards */}
@@ -482,7 +484,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
           helpText={helpText.MedicationPopup}
           onClose={() => setShowHelp(false)}
         />
-      </Pressable>
+      </View>
     );
   }
 };
