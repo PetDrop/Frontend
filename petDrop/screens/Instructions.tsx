@@ -26,13 +26,14 @@ const Instructions = ({ navigation, route }: Props) => {
   const { account } = useAccount();
   const { ownerUsername, petName } = route.params || {};
 
-  // get the sponsor med from the db
+  // get the sponsor med from the db (suppress alert for 404 - expected for custom meds)
   const getMed = async () => {
     const medName = route.params?.medName;
     if (!medName) return;
-    let response = await httpRequest(GET_SPONSOR_MEDICATION_BY_NAME + medName, 'GET', '');
+    const response = await httpRequest(GET_SPONSOR_MEDICATION_BY_NAME + encodeURIComponent(medName), 'GET', '', false);
     if (response.ok) {
-      setMed(await response.json());
+      const data = await response.json();
+      setMed(data ?? emptySponsorMed);
     }
   };
 
@@ -63,15 +64,27 @@ const Instructions = ({ navigation, route }: Props) => {
     }
   };
 
+  const medName = route.params?.medName || med?.name || 'Medication';
+
   // container of text elements corresponding to steps in instructions
-  let instructionsText: React.JSX.Element = <View></View>;
-  if (med.instructions.length > 0) {
-    instructionsText =
+  const instructions = med?.instructions ?? [];
+  let instructionsContent: React.JSX.Element;
+  if (instructions.length > 0) {
+    instructionsContent = (
       <View style={styles.instructionsContainer}>
-        {med.instructions.map((instruction: string, index: number) =>
+        {instructions.map((instruction: string, index: number) =>
           <Text style={styles.instructionText} key={`instruction${index}`}>{instruction}</Text>
         )}
       </View>
+    );
+  } else {
+    instructionsContent = (
+      <View style={styles.instructionsContainer}>
+        <Text style={styles.instructionText}>
+          There is no information for the app to provide since it doesn't have any info on it from the database.
+        </Text>
+      </View>
+    );
   }
 
   return (
@@ -81,10 +94,10 @@ const Instructions = ({ navigation, route }: Props) => {
         <Image source={require("../assets/petdrop_slogan.png")} style={logoImage} />
 
         {/* Page Title */}
-        <Text style={styles.pageTitle}>{`How to Administer \n${med.name}`}</Text>
+        <Text style={styles.pageTitle}>{`How to Administer \n${medName}`}</Text>
 
         {/* Med Instructions */}
-        {instructionsText}
+        {instructionsContent}
 
         {/* I finished giving it button - only when opened from notification tap */}
         {ownerUsername && (
@@ -99,10 +112,12 @@ const Instructions = ({ navigation, route }: Props) => {
           </Pressable>
         )}
 
-        {/* Med Video */}
-        <View style={styles.video}>
-          {VideoScreen(med.videoLink)}
-        </View>
+        {/* Med Video - only render when videoLink exists to avoid useVideoPlayer errors */}
+        {med?.videoLink && med.videoLink.trim() !== '' && (
+          <View style={styles.video}>
+            {VideoScreen(med.videoLink)}
+          </View>
+        )}
 
       </ScrollView>
 

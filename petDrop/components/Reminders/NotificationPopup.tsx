@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Pressable, View, Keyboard, ScrollView, Text, Dimensions } from "react-native"
+import { Pressable, View, Keyboard, ScrollView, Text, Dimensions, Alert } from "react-native"
 import { Image } from "expo-image";
 import { emptyNotification, Notification } from "../../data/dataTypes";
 import NotifCard from "../NotifCard";
@@ -192,7 +192,16 @@ const NotificationPopup = ({ isActive, setPopupState, notif, notifCopy, setNotif
                         <NotifCard
                             notification={notifCopy}
                             onChange={updatedNotif => setNotifCopy(updatedNotif)}
-                            onDelete={() => { setNotifCopy(emptyNotification) }}
+                            onDelete={() => {
+                              Alert.alert(
+                                'Delete Reminder',
+                                'Are you sure you want to remove this reminder?',
+                                [
+                                  { text: 'Cancel', style: 'cancel' },
+                                  { text: 'Delete', style: 'destructive', onPress: () => setNotifCopy(emptyNotification) },
+                                ]
+                              );
+                            }}
                             onOpenPicker={(mode, handler) => openPicker(mode, handler)}
                             onStateChange={(state) => setLocalNotifState(state)}
                         />
@@ -203,7 +212,16 @@ const NotificationPopup = ({ isActive, setPopupState, notif, notifCopy, setNotif
                         {notif.id !== '' && (
                             <View style={styles.deleteButtonWrapper}>
                                 <DeleteButton
-                                    onPressFunction={() => { setPopupState(notifState.NOTIF_DELETED) }}
+                                    onPressFunction={() => {
+                                      Alert.alert(
+                                        'Delete Reminder',
+                                        'Are you sure you want to delete this reminder? This cannot be undone.',
+                                        [
+                                          { text: 'Cancel', style: 'cancel' },
+                                          { text: 'Delete', style: 'destructive', onPress: () => setPopupState(notifState.NOTIF_DELETED) },
+                                        ]
+                                      );
+                                    }}
                                     innerText={'delete'}
                                     color={Color.colorFirebrick}
                                     disabled={false}

@@ -20,6 +20,12 @@ import { usePushToken } from "../context/PushTokenContext";
 import HelpButton from "../components/HelpButton";
 import HelpPopup from "../components/HelpPopup";
 import { helpText } from "../data/helpText";
+import {
+	CREATE_NOTIFS_FOR_MED, DELETE_MEDICATION, DELETE_NOTIFS_FROM_MED,
+	EDIT_NOTIFS_FOR_MED, httpRequest, UPDATE_MED_AND_NOTIFS, UPDATE_MED_CREATE_NOTIFS,
+	UPDATE_MED_DELETE_NOTIFS, UPDATE_MED_NOT_NOTIFS
+} from "../data/endpoints";
+import structuredClone from '@ungap/structured-clone';
 
 type HomeProps = {
   navigation: NavigationProp<any>;
@@ -27,14 +33,33 @@ type HomeProps = {
 };
 
 const Home = ({ navigation, route }: HomeProps) => {
-  const { account, setAccount } = useAccount();
+  const { account, updatePetMedications } = useAccount();
   const { pushToken } = usePushToken();
   const [switchDisplay, setSwitchDisplay] = useState<Medication[]>();
   const [infoToDisplay, setInfoToDisplay] = useState<{ pet: Pet, med: Medication }>();
+  const [medCopy, setMedCopy] = useState<Medication>(emptyMed);
   const [markedDates, setMarkedDates] = useState<MarkedDates>({});
   const [popupState, setPopupState] = useState<medState>(medState.NO_ACTION);
   const [medMap, setMedMap] = useState<Map<string, { pet: Pet, med: Medication }[]>>(new Map());
   const [showHelp, setShowHelp] = useState(false);
+
+  const isSharedPet = infoToDisplay ? (account.sharedPets?.some((p) => p.id === infoToDisplay.pet.id) ?? false) : false;
+
+  const formatNotifs = (notifs: Notification[]) => {
+    return notifs.map((notif) => ({
+      ...notif,
+      nextRuns: notif.nextRuns.map((nextRun) => new Date(nextRun).toISOString()),
+      finalRuns: notif.finalRuns.map((finalRun) => new Date(finalRun).toISOString())
+    }));
+  };
+
+  useEffect(() => {
+    if (infoToDisplay) {
+      const tempMed = structuredClone(infoToDisplay.med);
+      const ObjectID = require('bson-objectid');
+      setMedCopy({ ...tempMed, id: tempMed.id || ObjectID(), color: tempMed.color || `#${Math.round(Math.random() * 899998 + 100000)}` });
+    }
+  }, [infoToDisplay]);
 
 
 
@@ -144,6 +169,61 @@ const Home = ({ navigation, route }: HomeProps) => {
     setPopupState(medState.SHOW_POPUP);
   }
 
+  const WriteToDB = async () => {
+    if (!infoToDisplay) return;
+    const { pet, med } = infoToDisplay;
+    let response;
+    switch (popupState) {
+      case medState.MED_NOTHING_NOTIF_CREATED:
+        response = await httpRequest(CREATE_NOTIFS_FOR_MED + medCopy.id, 'PUT', JSON.stringify(formatNotifs(medCopy.notifications)));
+        break;
+      case medState.MED_NOTHING_NOTIF_EDITED:
+        response = await httpRequest(EDIT_NOTIFS_FOR_MED + medCopy.id, 'PUT', JSON.stringify(formatNotifs(medCopy.notifications)));
+        break;
+      case medState.MED_NOTHING_NOTIF_DELETED:
+        response = await httpRequest(DELETE_NOTIFS_FROM_MED + medCopy.id, 'PUT', '');
+        break;
+      case medState.MED_EDITED_NOTIF_NOTHING:
+        response = await httpRequest(UPDATE_MED_NOT_NOTIFS, 'PUT', JSON.stringify({ ...medCopy, notifications: formatNotifs(medCopy.notifications) }));
+        break;
+      case medState.MED_EDITED_NOTIF_CREATED:
+        response = await httpRequest(UPDATE_MED_CREATE_NOTIFS, 'PUT', JSON.stringify({ ...medCopy, notifications: formatNotifs(medCopy.notifications) }));
+        break;
+      case medState.MED_EDITED_NOTIF_EDITED:
+        response = await httpRequest(UPDATE_MED_AND_NOTIFS, 'PUT', JSON.stringify({ ...medCopy, notifications: formatNotifs(medCopy.notifications) }));
+        break;
+      case medState.MED_EDITED_NOTIF_DELETED:
+        response = await httpRequest(UPDATE_MED_DELETE_NOTIFS, 'PUT', JSON.stringify({ ...medCopy, notifications: formatNotifs(medCopy.notifications) }));
+        break;
+      case medState.MED_DELETED:
+        response = await httpRequest(DELETE_MEDICATION + medCopy.id, 'DELETE', '');
+        if (response?.ok) {
+          updatePetMedications(pet.id, pet.medications.filter((m) => m.id !== medCopy.id));
+          setInfoToDisplay(undefined);
+        }
+        setPopupState(medState.NO_ACTION);
+        return;
+      default:
+        setPopupState(medState.NO_ACTION);
+        return;
+    }
+    if (response?.ok) {
+      const newMed = await response.json();
+      const meds = pet.medications.some((m) => m.id === newMed.id)
+        ? pet.medications.map((m) => (m.id === newMed.id ? newMed : m))
+        : [...pet.medications, newMed];
+      updatePetMedications(pet.id, meds);
+      setInfoToDisplay(undefined);
+    }
+    setPopupState(medState.NO_ACTION);
+  };
+
+  useEffect(() => {
+    if (popupState !== medState.SHOW_POPUP && popupState !== medState.NO_ACTION && infoToDisplay) {
+      WriteToDB();
+    }
+  }, [popupState]);
+
   if (popupState === medState.NO_ACTION && infoToDisplay) {
     setInfoToDisplay(undefined);
     setSwitchDisplay(undefined);
@@ -210,10 +290,10 @@ const Home = ({ navigation, route }: HomeProps) => {
         isActive={infoToDisplay ? true : false}
         setPopupState={setPopupState}
         med={infoToDisplay ? infoToDisplay.med : emptyMed}
-        medCopy={infoToDisplay ? infoToDisplay.med : emptyMed}
-        setMedCopy={() => { }}
+        medCopy={medCopy}
+        setMedCopy={setMedCopy}
         pet={infoToDisplay ? infoToDisplay.pet : emptyPet}
-        readonly={true}
+        readonly={isSharedPet}
         navigation={navigation}
       />
 

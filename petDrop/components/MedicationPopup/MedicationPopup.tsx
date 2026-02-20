@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingView, Platform, Keyboard, Modal, Dimensions, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Pressable, Button, TextInput, ScrollView, KeyboardAvoidingView, Platform, Keyboard, Modal, Dimensions, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { Image } from "expo-image";
 import DropdownArrow from "../../assets/dropdown_arrow.svg";
 import styles from '../../styles/MedicationPopup.styles';
@@ -45,6 +45,7 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
   const [pickerMode, setPickerMode] = useState<'date' | 'time'>('date');
   const [onPickerConfirm, setOnPickerConfirm] = useState<((date: Date) => void) | null>(null);
   const [showHelp, setShowHelp] = useState(false);
+  const [medicationSource, setMedicationSource] = useState<'database' | 'custom'>('database');
 
   const openPicker = (mode: 'date' | 'time', onConfirm: (date: Date) => void) => {
     Keyboard.dismiss();
@@ -153,6 +154,14 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
     getSponsorMedications();
   }, []);
 
+  // Infer medicationSource only when editing an existing med (don't override when adding - user may have chosen custom)
+  useEffect(() => {
+    if (isActive && med.id !== '' && sponsorMeds.length > 0) {
+      const isInDb = sponsorMeds.some(sm => sm.name === medCopy.name);
+      setMedicationSource(isInDb ? 'database' : 'custom');
+    }
+  }, [isActive, med.id, sponsorMeds, medCopy.name]);
+
   // rerenders the popup when it's opened if it's possible something changed
   if (isActive && propsChanged) {
     setPropsChanged(false);
@@ -169,12 +178,24 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
     setNotifStates({});
     setOccurrencesMap({});
     setPropsChanged(true);
+    setMedicationSource('database');
     setPopupState(state);
   }
 
+  const handleSourceChange = (source: 'database' | 'custom') => {
+    setMedicationSource(source);
+    if (source === 'database' && medCopy.name && !sponsorMeds.some(sm => sm.name === medCopy.name)) {
+      setMedCopy(prev => ({ ...prev, name: '' }));
+    }
+  };
+
   // Validation functions
   const validateMedicationName = () => {
-    return medCopy.name && medCopy.name.trim() !== '';
+    if (!medCopy.name || medCopy.name.trim() === '') return false;
+    if (medicationSource === 'database') {
+      return sponsorMeds.some(sm => sm.name === medCopy.name);
+    }
+    return true;
   };
 
   const validateNotifications = () => {
@@ -202,7 +223,9 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
 
     // Check medication name
     if (!validateMedicationName()) {
-      errors.push('Please select a medication from the dropdown.');
+      errors.push(medicationSource === 'database'
+        ? 'Please select a medication from the dropdown.'
+        : 'Please enter a medication name.');
     }
 
     // Check notifications
@@ -336,52 +359,86 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
             {/* Color indicator */}
             <View style={[styles.colorIndicatorNew, { backgroundColor: medCopy.color }]} />
 
-            {/* Medication selection */}
-            {!readonly ?
-              <Selection
-                data={
-                  sponsorMeds
-                    .map((sponsorMed) => {
-                      if (!pet.medications.some((med) => med.name == sponsorMed.name)) {
-                        return sponsorMed.name;
-                      }
-                      return null;
-                    })
-                    .filter((name): name is string => name !== null)
-                }
-                defaultValueByIndex={sponsorMeds.findIndex((sponsorMed) => sponsorMed.name === medCopy.name)}
-                onSelect={(selectedItem: string) => { setMedCopy({ ...medCopy, name: selectedItem }) }}
-                renderButton={(selectedItem: string, isOpened: boolean) => {
-                  return (
-                    <View style={styles.dropdownButton}>
-                      <Text style={styles.dropdownText} numberOfLines={1}>
-                        {selectedItem ? selectedItem : med.name ? med.name : 'Select Medication'}
-                      </Text>
-                      <DropdownArrow width={19} height={12} />
-                    </View>
-                  )
-                }}
-                renderItem={(selectedItem: string, index: number, isSelected: boolean) => {
-                  return (
-                    <View style={[styles.dropdownItemNew, isSelected && styles.dropdownItemSelected]}>
-                      <Text style={[styles.dropdownText, isSelected && { color: Color.colorDarkslateblue, fontWeight: '600' }]}>
-                        {selectedItem}
-                      </Text>
-                    </View>
-                  )
-                }}
-                dropdownStyle={{
-                  marginTop: height * -0.0125,
-                  borderWidth: 2,
-                  borderColor: Color.colorCornflowerblue,
-                  maxHeight: height * 0.3,
-                }}
-              />
-              :
-              <View style={styles.readonlyDropdown}>
-                <Text style={styles.dropdownText}>{medCopy.name}</Text>
-              </View>
-            }
+            <View style={{ flex: 1 }}>
+              {/* Toggle: From list vs Custom name - only when editable */}
+              {!readonly && (
+                <View style={styles.sourceToggleContainer}>
+                  <Pressable
+                    style={[styles.sourceToggleOption, medicationSource === 'database' && styles.sourceToggleOptionSelected]}
+                    onPress={() => handleSourceChange('database')}
+                  >
+                    <Text style={[styles.sourceToggleText, medicationSource === 'database' && styles.sourceToggleTextSelected]}>
+                      From list
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.sourceToggleOption, medicationSource === 'custom' && styles.sourceToggleOptionSelected]}
+                    onPress={() => handleSourceChange('custom')}
+                  >
+                    <Text style={[styles.sourceToggleText, medicationSource === 'custom' && styles.sourceToggleTextSelected]}>
+                      Custom name
+                    </Text>
+                  </Pressable>
+                </View>
+              )}
+
+              {/* Medication selection */}
+              {readonly ? (
+                <View style={styles.readonlyDropdown}>
+                  <Text style={styles.readonlyMedicationText}>{medCopy.name}</Text>
+                </View>
+              ) : medicationSource === 'database' ? (
+                <Selection
+                  data={
+                    sponsorMeds
+                      .map((sponsorMed) => {
+                        if (!pet.medications.some((m) => m.name == sponsorMed.name)) {
+                          return sponsorMed.name;
+                        }
+                        return null;
+                      })
+                      .filter((name): name is string => name !== null)
+                  }
+                  defaultValueByIndex={sponsorMeds.findIndex((sponsorMed) => sponsorMed.name === medCopy.name)}
+                  onSelect={(selectedItem: string) => { setMedCopy({ ...medCopy, name: selectedItem }) }}
+                  renderButton={(selectedItem: string, isOpened: boolean) => {
+                    return (
+                      <View style={styles.dropdownButton}>
+                        <Text style={styles.dropdownText} numberOfLines={1}>
+                          {selectedItem ? selectedItem : med.name ? med.name : 'Select Medication'}
+                        </Text>
+                        <DropdownArrow width={19} height={12} />
+                      </View>
+                    )
+                  }}
+                  renderItem={(selectedItem: string, index: number, isSelected: boolean) => {
+                    return (
+                      <View style={[styles.dropdownItemNew, isSelected && styles.dropdownItemSelected]}>
+                        <Text style={[styles.dropdownText, isSelected && { color: Color.colorDarkslateblue, fontWeight: '600' }]}>
+                          {selectedItem}
+                        </Text>
+                      </View>
+                    )
+                  }}
+                  dropdownStyle={{
+                    marginTop: height * -0.0125,
+                    borderWidth: 2,
+                    borderColor: Color.colorCornflowerblue,
+                    maxHeight: height * 0.3,
+                  }}
+                />
+              ) : (
+                <TextInput
+                  style={styles.customNameInput}
+                  placeholder="Enter medication name"
+                  placeholderTextColor={Color.colorCornflowerblue}
+                  value={medCopy.name}
+                  onChangeText={(text) => setMedCopy(prev => ({ ...prev, name: text }))}
+                  selectionColor={Color.colorCornflowerblue}
+                  underlineColorAndroid="transparent"
+                />
+              )}
+            </View>
           </View>
 
           {/* Scrollable content area */}
@@ -413,9 +470,18 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
                     });
                   }}
                   onDelete={() => {
-                    setMedCopy((prev) => {
-                      return { ...prev, notifications: prev.notifications.filter(n => n.id !== notif.id) }
-                    });
+                    Alert.alert(
+                      'Delete Reminder',
+                      'Are you sure you want to remove this reminder?',
+                      [
+                        { text: 'Cancel', style: 'cancel' },
+                        { text: 'Delete', style: 'destructive', onPress: () => {
+                          setMedCopy((prev) => {
+                            return { ...prev, notifications: prev.notifications.filter(n => n.id !== notif.id) }
+                          });
+                        }},
+                      ]
+                    );
                   }}
                   onOccurrenceChange={(occ) => handleOccurrenceChange(notif.id, occ)}
                   onOpenPicker={(mode, handler) => openPicker(mode, handler)}
@@ -463,7 +529,16 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
             {/* Delete button */}
             {(med.id !== '' && !readonly) && (
               <Pressable
-                onPress={() => { closeWithAction(true) }}
+                onPress={() => {
+                  Alert.alert(
+                    'Delete Medication',
+                    `Are you sure you want to delete ${medCopy.name}? This will remove the medication and all its reminders.`,
+                    [
+                      { text: 'Cancel', style: 'cancel' },
+                      { text: 'Delete', style: 'destructive', onPress: () => closeWithAction(true) },
+                    ]
+                  );
+                }}
                 style={styles.deleteButton}
               >
                 <Text style={styles.buttonText}>Delete</Text>
