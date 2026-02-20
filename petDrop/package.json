@@ -29,7 +29,7 @@
     "expo": "^53.0.0",
     "expo-asset": "~11.1.7",
     "expo-constants": "~17.1.7",
-    "expo-dev-client": "~5.2.4",
+    "expo-dev-client": "~6.0.20",
     "expo-device": "~7.1.4",
     "expo-file-system": "~18.1.9",
     "expo-font": "~13.3.1",
