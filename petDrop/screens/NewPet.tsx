@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Text, View, Image, KeyboardAvoidingView, ScrollView } from "react-native";
+import { Text, View, Image, KeyboardAvoidingView, ScrollView, Alert } from "react-native";
 import AddButtons from "../components/AddPets/NewPetAddButtons";
 import TopBottomBar from "../components/TopBottomBar";
 import { Color, logoImage, ScreenEnum } from "../GlobalStyles";
@@ -180,7 +180,18 @@ const NewPet = ({ navigation, route }: NewPetType) => {
 
   const Delete = async () => {
     if (isSharedPet) return;
-    // TODO: ask for confirmation
+    Alert.alert(
+      'Delete Pet',
+      `Are you sure you want to delete ${petBeingEdited.name}? This cannot be undone.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: performDelete },
+      ]
+    );
+  };
+
+  const performDelete = async () => {
+    if (isSharedPet) return;
     let response = await httpRequest(DELETE_PET_BY_ID + petBeingEdited.id, 'DELETE', '', false);
     if (response.ok) {
       const updatedAccountState = { ...account, pets: account.pets.filter((pet) => pet.id !== petBeingEdited.id) };

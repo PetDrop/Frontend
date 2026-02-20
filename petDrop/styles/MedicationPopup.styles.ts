@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: height * 0.025,
         width: '100%',
-        paddingTop: height * 0.025
+        paddingTop: height * 0.07
     },
     colorIndicatorNew: {
         width: width * 0.05,
@@ -91,13 +91,58 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: Color.colorCornflowerblue,
         borderRadius: width * 0.025,
-        backgroundColor: Color.colorFloralwhite,
+        backgroundColor: Color.colorWhite,
         minWidth: width * 0.5,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
+    },
+    readonlyMedicationText: {
+        color: Color.colorDarkslateblue,
+        fontSize: FontSize.size_base,
+        fontFamily: FontFamily.koulenRegular,
+    },
+    sourceToggleContainer: {
+        flexDirection: 'row',
+        marginBottom: height * 0.015,
+        width: '100%',
+    },
+    sourceToggleOption: {
+        flex: 1,
+        paddingVertical: height * 0.01,
+        paddingHorizontal: width * 0.02,
+        borderRadius: Border.br_10,
+        borderWidth: 2,
+        borderColor: Color.colorCornflowerblue,
+        marginHorizontal: width * 0.01,
+        alignItems: 'center',
+    },
+    sourceToggleOptionSelected: {
+        backgroundColor: Color.colorCornflowerblue,
+    },
+    sourceToggleText: {
+        fontSize: FontSize.size_mini,
+        fontFamily: FontFamily.koulenRegular,
+        color: Color.colorDarkslateblue,
+    },
+    sourceToggleTextSelected: {
+        color: 'white',
+    },
+    customNameInput: {
+        flex: 1,
+        borderWidth: 2,
+        borderColor: Color.colorCornflowerblue,
+        borderRadius: Border.br_10,
+        paddingHorizontal: width * 0.05,
+        paddingVertical: height * 0.018,
+        fontSize: FontSize.size_base,
+        fontFamily: FontFamily.koulenRegular,
+        color: Color.colorDarkslateblue,
+        backgroundColor: Color.colorWhite,
+        minWidth: width * 0.5,
+        minHeight: height * 0.055,
     },
     scrollContainer: {
         width: '100%',
