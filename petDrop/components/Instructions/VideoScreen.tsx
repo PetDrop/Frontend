@@ -5,7 +5,7 @@ import styles from '../../styles/VideoScreen.styles';
 
 export default function VideoScreen(videoLink: string) {
   const player = useVideoPlayer(videoLink, player => {
-    player.loop = true;
+    player.loop = false;
   });
 
   return (

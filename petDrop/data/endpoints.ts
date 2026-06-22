@@ -37,6 +37,7 @@ export const GET_SPONSOR_MEDICATION_BY_NAME = `${BASE_URL}/get-sponsor-medicatio
 export const ADD_NOTIF = `${BASE_URL}/add-notification`;
 export const UPDATE_NOTIF = `${BASE_URL}/update-notification`;
 export const DELETE_NOTIF = `${BASE_URL}/delete-notification/`;
+export const NOTIFY_MEDICATION_ADMINISTERED = `${BASE_URL}/notify-medication-administered`;
 // AUTH - PASSWORD RESET
 export const FORGOT_PASSWORD = `${BASE_URL}/api/auth/password/forgot`;
 export const RESET_PASSWORD = `${BASE_URL}/api/auth/password/reset`;

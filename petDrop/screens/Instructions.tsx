@@ -5,9 +5,8 @@ import TopBottomBar from "../components/TopBottomBar";
 import { logoImage, ScreenEnum } from "../GlobalStyles";
 import styles from "../styles/Instructions.styles";
 import { NavigationProp } from "@react-navigation/native";
-import { emptySponsorMed, SponsorMedication } from "../data/dataTypes";
-import { useEffect, useState } from "react";
-import { GET_SPONSOR_MEDICATION_BY_NAME, NOTIFY_MEDICATION_ADMINISTERED, httpRequest } from "../data/endpoints";
+import { useState } from "react";
+import { NOTIFY_MEDICATION_ADMINISTERED, httpRequest } from "../data/endpoints";
 import VideoScreen from "../components/Instructions/VideoScreen";
 import HelpButton from "../components/HelpButton";
 import HelpPopup from "../components/HelpPopup";
@@ -20,26 +19,13 @@ interface Props {
 }
 
 const Instructions = ({ navigation, route }: Props) => {
-  const [med, setMed] = useState<SponsorMedication>(emptySponsorMed);
   const [showHelp, setShowHelp] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { account } = useAccount();
   const { ownerUsername, petName } = route.params || {};
 
-  // get the sponsor med from the db (suppress alert for 404 - expected for custom meds)
-  const getMed = async () => {
-    const medName = route.params?.medName;
-    if (!medName) return;
-    const response = await httpRequest(GET_SPONSOR_MEDICATION_BY_NAME + encodeURIComponent(medName), 'GET', '', false);
-    if (response.ok) {
-      const data = await response.json();
-      setMed(data ?? emptySponsorMed);
-    }
-  };
-
-  useEffect(() => {
-    getMed();
-  }, []);
+  const EYE_DROP_VIDEO = "https://www.youtube.com/watch?v=CzzqUUqYxiA";
+  const EYE_OINTMENT_VIDEO = "https://www.youtube.com/watch?v=brjZbuI-JlM";
 
   const handleMedicationAdministered = async () => {
     if (!ownerUsername || isSubmitting) return;
@@ -64,29 +50,6 @@ const Instructions = ({ navigation, route }: Props) => {
     }
   };
 
-  const medName = route.params?.medName || med?.name || 'Medication';
-
-  // container of text elements corresponding to steps in instructions
-  const instructions = med?.instructions ?? [];
-  let instructionsContent: React.JSX.Element;
-  if (instructions.length > 0) {
-    instructionsContent = (
-      <View style={styles.instructionsContainer}>
-        {instructions.map((instruction: string, index: number) =>
-          <Text style={styles.instructionText} key={`instruction${index}`}>{instruction}</Text>
-        )}
-      </View>
-    );
-  } else {
-    instructionsContent = (
-      <View style={styles.instructionsContainer}>
-        <Text style={styles.instructionText}>
-          There is no information for the app to provide since it doesn't have any info on it from the database.
-        </Text>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -94,12 +57,9 @@ const Instructions = ({ navigation, route }: Props) => {
         <Image source={require("../assets/petdrop_slogan.png")} style={logoImage} />
 
         {/* Page Title */}
-        <Text style={styles.pageTitle}>{`How to Administer \n${medName}`}</Text>
+        <Text style={styles.pageTitle}>{`How to Administer Eye Drops and Eye Ointments`}</Text>
 
-        {/* Med Instructions */}
-        {instructionsContent}
-
-        {/* I finished giving it button - only when opened from notification tap */}
+        {/* "I finished giving it" button - only when opened from notification tap */}
         {ownerUsername && (
           <Pressable
             onPress={handleMedicationAdministered}
@@ -112,12 +72,14 @@ const Instructions = ({ navigation, route }: Props) => {
           </Pressable>
         )}
 
-        {/* Med Video - only render when videoLink exists to avoid useVideoPlayer errors */}
-        {med?.videoLink && med.videoLink.trim() !== '' && (
-          <View style={styles.video}>
-            {VideoScreen(med.videoLink)}
-          </View>
-        )}
+        {/* Videos for how to administer meds */}
+        <View style={styles.video}>
+          {VideoScreen(EYE_DROP_VIDEO)}
+        </View>
+
+        <View style={styles.video}>
+          {VideoScreen(EYE_OINTMENT_VIDEO)}
+        </View>
 
       </ScrollView>
 

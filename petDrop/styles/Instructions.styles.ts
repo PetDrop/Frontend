@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
 		fontFamily: FontFamily.jsMathCmbx10,
 		color: Color.colorCornflowerblue,
 		textAlign: 'center',
-        marginLeft: width * 0.05,
+		marginLeft: width * 0.05,
 	},
 	instructionsContainer: {
 		paddingTop: height * 0.02,
@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
 	},
 	video: {
 		alignContent: 'center'
-	  },
+	},
 	administeredButton: {
 		backgroundColor: Color.colorCornflowerblue,
 		paddingHorizontal: width * 0.05,
