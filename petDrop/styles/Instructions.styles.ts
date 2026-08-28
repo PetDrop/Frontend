@@ -9,7 +9,6 @@ export const styles = StyleSheet.create({
 		backgroundColor: Color.colorFloralwhite,
 	},
 	scrollContainer: {
-		paddingBottom: height * 0.2,
 		paddingTop: height * 0.05,
 	},
 	pageTitle: {
@@ -32,7 +31,10 @@ export const styles = StyleSheet.create({
 
 	},
 	video: {
-		alignContent: 'center'
+		width: '75%',
+		height: '25%',
+		left: '12.5%',
+		top: '2.5%'
 	},
 	administeredButton: {
 		backgroundColor: Color.colorCornflowerblue,

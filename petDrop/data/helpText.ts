@@ -13,7 +13,7 @@ export const helpText: { [key: string]: string } = {
     
     MedicationsArchive: 'View all medications for all your pets in one place. Tap on a medication\'s edit icon to view its details, edit it, or delete it.',
     
-    Instructions: 'View detailed instructions for administering this medication. Follow the instructions carefully and consult your veterinarian if you have questions.',
+    Instructions: 'View detailed instructions for administering medications. Follow the instructions carefully and consult your veterinarian if you have questions.',
     
     IOPMeasurement: 'Record intraocular pressure (IOP) measurements for your pet. This information helps track your pet\'s eye health over time. Select a measurement method (range or manual) and enter the measurement value. Tap "Send to Veterinarian" when finished.',
     

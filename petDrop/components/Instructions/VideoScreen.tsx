@@ -1,16 +1,17 @@
-import { useVideoPlayer, VideoView } from 'expo-video';
-import React from 'react';
-import { View } from 'react-native';
-import styles from '../../styles/VideoScreen.styles';
+import React from "react";
+import YoutubePlayer from "react-native-youtube-iframe";
 
-export default function VideoScreen(videoLink: string) {
-  const player = useVideoPlayer(videoLink, player => {
-    player.loop = false;
-  });
+interface VideoScreenProps {
+  videoId: string;
+}
 
+export default function VideoScreen({ videoId }: VideoScreenProps) {
   return (
-    <View style={styles.contentContainer}>
-      <VideoView style={styles.video} player={player} allowsFullscreen allowsPictureInPicture />
-    </View>
+    <YoutubePlayer
+      height={300}
+      width={"100%"}
+      play={false}
+      videoId={videoId}
+    />
   );
 }

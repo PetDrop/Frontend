@@ -24,8 +24,8 @@ const Instructions = ({ navigation, route }: Props) => {
   const { account } = useAccount();
   const { ownerUsername, petName } = route.params || {};
 
-  const EYE_DROP_VIDEO = "https://www.youtube.com/watch?v=CzzqUUqYxiA";
-  const EYE_OINTMENT_VIDEO = "https://www.youtube.com/watch?v=brjZbuI-JlM";
+  const EYE_DROP_VIDEO = "CzzqUUqYxiA";
+  const EYE_OINTMENT_VIDEO = "brjZbuI-JlM";
 
   const handleMedicationAdministered = async () => {
     if (!ownerUsername || isSubmitting) return;
@@ -57,7 +57,7 @@ const Instructions = ({ navigation, route }: Props) => {
         <Image source={require("../assets/petdrop_slogan.png")} style={logoImage} />
 
         {/* Page Title */}
-        <Text style={styles.pageTitle}>{`How to Administer Eye Drops and Eye Ointments`}</Text>
+        <Text style={styles.pageTitle}>{`How to Administer\nEye Drops and\nEye Ointments`}</Text>
 
         {/* "I finished giving it" button - only when opened from notification tap */}
         {ownerUsername && (
@@ -74,11 +74,11 @@ const Instructions = ({ navigation, route }: Props) => {
 
         {/* Videos for how to administer meds */}
         <View style={styles.video}>
-          {VideoScreen(EYE_DROP_VIDEO)}
+          <VideoScreen videoId={EYE_DROP_VIDEO}/>
         </View>
 
         <View style={styles.video}>
-          {VideoScreen(EYE_OINTMENT_VIDEO)}
+          <VideoScreen videoId={EYE_OINTMENT_VIDEO}/>
         </View>
 
       </ScrollView>
