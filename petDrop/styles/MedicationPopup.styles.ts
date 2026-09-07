@@ -186,14 +186,6 @@ const styles = StyleSheet.create({
         marginBottom: height * 0.0125,
         alignItems: 'center'
     },
-    instructionsButton: {
-        backgroundColor: Color.colorCornflowerblue,
-        paddingHorizontal: width * 0.05,
-        paddingVertical: height * 0.015,
-        borderRadius: width * 0.02,
-        marginBottom: height * 0.0125,
-        alignItems: 'center'
-    },
     saveButton: {
         backgroundColor: Color.colorCornflowerblue,
         paddingHorizontal: width * 0.05,

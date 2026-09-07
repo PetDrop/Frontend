@@ -506,15 +506,6 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
 
           {/* Action buttons */}
           <View style={styles.actionButtonsContainer}>
-            {/* Instructions button */}
-            {med.id !== '' && (
-              <Pressable 
-                onPress={() => { navigation.navigate('Instructions') }}
-                style={styles.instructionsButton}
-              >
-                <Text style={styles.buttonText}>Instructions</Text>
-              </Pressable>
-            )}
 
             {/* Save button */}
             {!readonly && (

@@ -94,9 +94,10 @@ const HamburgerMenu = ({ navigation }: HambugerMenuProps) => {
     }, [navigation, translateX, backdropOpacity]);
 
     const menuItems = [
+        { label: 'Instructions', onPress: () => { navigation.navigate('Instructions') } },
+        { label: 'IOP Measurement', onPress: () => { navigation.navigate('IOPMeasurement') } },
         { label: 'Sponsors', onPress: () => { navigation.navigate('Sponsors') } },
-        { label: 'Credits', onPress: () => { navigation.navigate('Credits') } },
-        { label: 'IOP Measurement', onPress: () => { navigation.navigate('IOPMeasurement') } }
+        { label: 'Credits', onPress: () => { navigation.navigate('Credits') } }
     ].map((item, index) => (
         <TouchableOpacity key={index} style={styles.menuItem} onPress={() => {
             item.onPress();
