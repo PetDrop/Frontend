@@ -9,7 +9,6 @@ export const styles = StyleSheet.create({
 		backgroundColor: Color.colorFloralwhite,
 	},
 	scrollContainer: {
-		paddingBottom: height * 0.2,
 		paddingTop: height * 0.05,
 	},
 	pageTitle: {
@@ -17,7 +16,7 @@ export const styles = StyleSheet.create({
 		fontFamily: FontFamily.jsMathCmbx10,
 		color: Color.colorCornflowerblue,
 		textAlign: 'center',
-        marginLeft: width * 0.05,
+		marginLeft: width * 0.05,
 	},
 	instructionsContainer: {
 		paddingTop: height * 0.02,
@@ -32,8 +31,11 @@ export const styles = StyleSheet.create({
 
 	},
 	video: {
-		alignContent: 'center'
-	  },
+		width: '75%',
+		height: '25%',
+		left: '12.5%',
+		top: '2.5%'
+	},
 	administeredButton: {
 		backgroundColor: Color.colorCornflowerblue,
 		paddingHorizontal: width * 0.05,

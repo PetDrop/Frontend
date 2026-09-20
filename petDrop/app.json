@@ -4,7 +4,7 @@
     "slug": "petdrop_project",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "https://docs.expo.dev/static/images/tutorial/icon.png",
+    "icon": "./assets/adaptive-icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -52,7 +52,8 @@
       "expo-video",
       "expo-notifications",
       "expo-asset",
-      "expo-secure-store"
+      "expo-secure-store",
+      "@react-native-community/datetimepicker"
     ],
     "extra": {
       "eas": {
