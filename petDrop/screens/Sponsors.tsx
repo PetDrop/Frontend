@@ -11,7 +11,7 @@ import { Sponsor } from '../data/dataTypes';
 const { width } = Dimensions.get('window');
 
 
-const Sponsors = ({ navigation } : { navigation: NavigationProp<any> }) => {
+const Sponsors = ({ navigation }: { navigation: NavigationProp<any> }) => {
     // active pagination dot
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -57,8 +57,25 @@ const Sponsors = ({ navigation } : { navigation: NavigationProp<any> }) => {
                 {sponsors.map((sponsor) => (
                     <View key={sponsor.id} style={styles.card}>
                         <Text style={styles.name}>{sponsor.name}</Text>
-                        <Image source={{ uri: sponsor.image }} style={styles.image} resizeMode="contain" />
-                        <Text style={styles.description}>{sponsor.description}</Text>
+
+                        {sponsor.image?.trim() ? (
+                            <Image
+                                source={{ uri: sponsor.image }}
+                                style={styles.image}
+                                resizeMode="contain"
+                            />
+                        ) : null}
+
+                        <View style={styles.descriptionContainer}>
+                            <ScrollView
+                                showsVerticalScrollIndicator={true}
+                                nestedScrollEnabled={true}
+                            >
+                                <Text style={styles.description}>
+                                    {sponsor.description}
+                                </Text>
+                            </ScrollView>
+                        </View>
                     </View>
                 ))}
             </ScrollView>
