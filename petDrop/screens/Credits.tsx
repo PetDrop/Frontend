@@ -14,24 +14,28 @@ const authors = [
         name: 'Jesus Diaz Bujan',
         title: 'App Creator',
         image: require('../assets/default_dog.png'),
+        bio: 'Dr. Jesus Diaz Bujan received his veterinary degree from the University of León (Spain) in 2010. After three years in small animal practice in the United Kingdom, he completed an internship at the Animal Health Trust in 2016, followed by an ophthalmology internship at a private referral center in the United Kingdom. In 2021, he completed a three-year ophthalmology residency program with a master’s degree at the Royal Veterinary College, London. After two years working in a private referral hospital in Ottawa (Canada), he joined the ophthalmology service at Iowa State University (ISU), where he is currently a clinical assistant professor, in September 2023.',
     },
     {
         id: '2',
         name: 'Emily Peshke',
         title: 'App Designer',
         image: require('../assets/default_dog.png'),
+        bio: 'Hello! My name is Emily Peschke, the UI/UX and brand designer for Pet Drop. As I near graduation, experiences like these have helped to launch me forward in the professional space, and I am deeply grateful for that. I am so excited to see where the app goes, and I am so thankful to have been part of such a wonderful team. From branding to app capabilities/design, our app is made with its users in mind. I hope you enjoy: Pet Drop!',
     },
     {
         id: '3',
         name: 'Jesse Williams',
         title: 'App Developer',
         image: require('../assets/default_dog.png'),
+        bio: '',
     },
     {
         id: '4',
         name: 'Blake Bryan',
         title: 'App Developer',
         image: require('../assets/default_dog.png'),
+        bio: '',
     },
 ];
 
@@ -67,6 +71,7 @@ const Credits = ({ navigation }: { navigation: NavigationProp<any> }) => {
                         <Text style={styles.name}>{author.name}</Text>
                         <Text style={styles.title}>{author.title}</Text>
                         <Image source={author.image} style={styles.image} resizeMode="contain" />
+                        <Text style={styles.bio}>{author.bio}</Text>
                     </View>
                 ))}
             </ScrollView>
