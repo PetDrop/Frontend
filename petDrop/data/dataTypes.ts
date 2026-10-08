@@ -42,7 +42,8 @@ export interface Sponsor {
     id: string,
     name: string,
     description: string,
-    image: string
+    image: string,
+    link: string
 }
 
 export interface Notification {
@@ -84,4 +85,4 @@ export const emptyPet: Pet = { id: '', name: '', image: '', age: 0, species: '',
 export const emptyNotification: Notification = { id: '', ownerUsername: '', title: 'Reminder to Administer Medication', body: `It's time to give petName their medName!`, data: {}, nextRuns: [], finalRuns: [], repeatInterval: '' };
 export const emptyMed: Medication = { id: '', name: '', color: '', description: '', notifications: [], range: 4 };
 export const emptySponsorMed: SponsorMedication = { id: '', name: ''};
-export const emptySponsor: Sponsor = { id: '', name: '', description: '', image: '' };
+export const emptySponsor: Sponsor = { id: '', name: '', description: '', image: '', link: '' };

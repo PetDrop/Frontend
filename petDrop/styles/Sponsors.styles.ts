@@ -29,10 +29,18 @@ export const styles = StyleSheet.create({
         backgroundColor: Color.colorGainsboro_200,
         alignItems: 'center',
     },
+    imageContainer: {
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginVertical: height * 0.03,
+    },
+    imagePressable: {
+        alignSelf: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     image: {
-        width: '40%',
-        height: '28%',
-        marginVertical: height * 0.015,
     },
     name: {
         marginTop: height * 0.025,
@@ -44,8 +52,7 @@ export const styles = StyleSheet.create({
     descriptionContainer: {
         width: '90%',
         flex: 1,
-        marginTop: height * 0.01,
-        marginBottom: height * 0.03,
+        marginVertical: height * 0.03,
     },
     description: {
         fontSize: FontSize.size_xl,
