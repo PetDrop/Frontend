@@ -189,6 +189,12 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
     }
   };
 
+  // Keep medications that the pet does not already have, with non-generic
+  // sponsor medications first and generic medications after them.
+  const availableSponsorMeds = sponsorMeds
+    .filter((sponsorMed) => !pet.medications.some((m) => m.name === sponsorMed.name))
+    .sort((a, b) => Number(a.generic) - Number(b.generic));
+
   // Validation functions
   const validateMedicationName = () => {
     if (!medCopy.name || medCopy.name.trim() === '') return false;
@@ -389,17 +395,8 @@ const MedicationPopup = ({ isActive, setPopupState, pet, med, medCopy, setMedCop
                 </View>
               ) : medicationSource === 'database' ? (
                 <Selection
-                  data={
-                    sponsorMeds
-                      .map((sponsorMed) => {
-                        if (!pet.medications.some((m) => m.name == sponsorMed.name)) {
-                          return sponsorMed.name;
-                        }
-                        return null;
-                      })
-                      .filter((name): name is string => name !== null)
-                  }
-                  defaultValueByIndex={sponsorMeds.findIndex((sponsorMed) => sponsorMed.name === medCopy.name)}
+                  data={availableSponsorMeds.map((sponsorMed) => sponsorMed.name)}
+                  defaultValueByIndex={availableSponsorMeds.findIndex((sponsorMed) => sponsorMed.name === medCopy.name)}
                   onSelect={(selectedItem: string) => { setMedCopy({ ...medCopy, name: selectedItem }) }}
                   renderButton={(selectedItem: string, isOpened: boolean) => {
                     return (
